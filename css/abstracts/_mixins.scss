@@ -1,0 +1,51 @@
+/* FONT-FACE */
+@mixin font-face($name, $file, $weight) {
+  @font-face {
+    font-family: "#{$name}";
+    src: url("../../fonts/#{$file}.eot");
+    src: url("../../fonts/#{$file}.eot?#iefix") format("embedded-opentype"),
+    url("../../fonts/#{$file}.woff") format("woff"),
+    url("../../fonts/#{$file}.ttf") format("truetype"),
+    url("../../fonts/#{$file}.svg?#webfont") format("svg");
+    font-weight: $weight;
+    font-style: normal;
+  }
+}
+
+@font-face {
+  font-family: 'ludicrousregular';
+  src: url('../../fonts/ludicrous.woff2') format('woff2'),
+       url('../../fonts/ludicrous.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+ 
+ /* COLUMNAS */
+@mixin columns($name, $start, $end) {
+  @for $i from $start through $end {
+   .col-#{$name}#{$i} {
+      -ms-flex: 0 0 $col-width * $i * 1%;
+      flex: 0 0 $col-width * $i * 1%;
+      max-width: $col-width * $i * 1%;
+    }
+  }
+}
+
+/* ORDERS */
+@mixin orders($name, $start, $end) {
+  @for $i from $start through $end {
+    .order-#{$name}#{$i} {
+      -ms-flex-order: $i;
+      order: $i;
+    }
+  }
+}
+
+/* OFFSETS */
+@mixin offsets($name, $start, $end) {
+  @for $i from $start through $end {
+    .offset-#{$name}#{$i} {
+      margin-left: $col-width * $i * 1%;
+    }
+  }
+}
