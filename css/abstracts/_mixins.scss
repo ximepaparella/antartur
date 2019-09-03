@@ -11,14 +11,6 @@
     font-style: normal;
   }
 }
-
-@font-face {
-  font-family: 'ludicrousregular';
-  src: url('../../fonts/ludicrous.woff2') format('woff2'),
-       url('../../fonts/ludicrous.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
  
  /* COLUMNAS */
 @mixin columns($name, $start, $end) {

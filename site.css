@@ -1,11 +1,4 @@
 /* FONT-FACE */
-@font-face {
-  font-family: 'ludicrousregular';
-  src: url("../../fonts/ludicrous.woff2") format("woff2"), url("../../fonts/ludicrous.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
 /* COLUMNAS */
 /* ORDERS */
 /* OFFSETS */
@@ -185,6 +178,14 @@ main {
 }
 
 /* FONTS --------------- */
+@font-face {
+  font-family: "ludicrousregular";
+  src: url("../../fonts/ludicrous.eot");
+  src: url("../../fonts/ludicrous.eot?#iefix") format("embedded-opentype"), url("../../fonts/ludicrous.woff") format("woff"), url("../../fonts/ludicrous.ttf") format("truetype"), url("../../fonts/ludicrous.svg?#webfont") format("svg");
+  font-weight: 500;
+  font-style: normal;
+}
+
 @font-face {
   font-family: "icons";
   src: url("../../fonts/icon.eot");
