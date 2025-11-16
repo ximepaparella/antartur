@@ -1,0 +1,73 @@
+{
+  "home": {
+    "title": "EXPERIENCIA & AVENTURA",
+    "subtitle": "",
+    "backgroundImage": "/images/banners/hero-home.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.4
+  },
+  "invierno": {
+    "title": "INVIERNO EN EL FIN DEL MUNDO",
+    "subtitle": "Conocé las experiencias de invierno que tenemos para vos",
+    "backgroundImage": "/images/banners/hero-invierno.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "verano": {
+    "title": "VERANO EN EL FIN DEL MUNDO",
+    "subtitle": "Conocé las experiencias de verano que tenemos para vos",
+    "backgroundImage": "/images/banners/hero-verano.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "antartida": {
+    "title": "ANTÁRTIDA",
+    "subtitle": "Un intrépido viaje al continente blanco...",
+    "backgroundImage": "/images/banners/hero-antartida.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "turismo-corporativo": {
+    "title": "TURISMO CORPORATIVO",
+    "subtitle": "Experiencia en desarrollo de Incentivos a medida",
+    "backgroundImage": "/images/banners/hero-corporativo.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "ushuaia": {
+    "title": "USHUAIA",
+    "subtitle": "La ciudad más austral del mundo",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "ushuaia-hoteles": {
+    "title": "INFORMACIÓN HOTELERA",
+    "subtitle": "Te mostramos algunos lugares donde quedarte en Ushuaia",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "ushuaia-gastronomia": {
+    "title": "INFORMACIÓN GASTRONÓMICA",
+    "subtitle": "Te mostramos algunos lugares donde comer en Ushuaia",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "clima": {
+    "title": "CLIMA",
+    "subtitle": "Conocé el clima de los próximos días en Ushuaia",
+    "backgroundImage": "/images/banners/hero-clima.jpg",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "contacto": {
+    "title": "CONTACTO",
+    "subtitle": "ESTAMOS SIEMPRE DISPONIBLES PARA ASISTIRTE.",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  }
+}
+
