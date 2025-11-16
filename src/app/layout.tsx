@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Work_Sans } from "next/font/google";
+import { Work_Sans, Roboto } from "next/font/google";
+import { Header } from "@/modules/layout/components/Header/Header";
 import { Footer } from "@/modules/layout/components/Footer/Footer";
 import "@/styles/globals.scss";
 
@@ -8,6 +9,13 @@ const workSans = Work_Sans({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   variable: "--font-work-sans",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-roboto",
 });
 
 export const metadata: Metadata = {
@@ -21,8 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={workSans.variable}>
+    <html lang="es" className={`${workSans.variable} ${roboto.variable}`}>
       <body>
+        <Header />
         {children}
         <Footer />
       </body>

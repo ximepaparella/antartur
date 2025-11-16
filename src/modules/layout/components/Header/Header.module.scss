@@ -1,0 +1,436 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// ============================================
+// HEADER BASE
+// ============================================
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  color: $white;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.headerSticky {
+  background: $white;
+  color: $black;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .headerInner {
+    @include desktop {
+      padding: $spacing-4 $spacing-32;
+      height: 90px;
+    }
+  }
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: $spacing-16 $spacing-16;
+  height: 80px;
+  
+  @include desktop {
+    padding: $spacing-20 $spacing-32;
+    height: 90px;
+  }
+}
+
+// ============================================
+// LOGO
+// ============================================
+
+.logo {
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+  flex-shrink: 0;
+}
+
+.logoImage {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  transition: height 0.3s ease;
+  
+  @include desktop {
+    height: 60px;
+  }
+}
+
+// ============================================
+// DESKTOP NAVIGATION
+// ============================================
+
+.nav {
+  display: none;
+  
+  @include desktop {
+    display: block;
+    flex: 1;
+    margin: 0 $spacing-32;
+  }
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-32;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.navItemHasDropdown {
+  // Estilos adicionales si se necesitan
+  
+  // Área extendida para facilitar el hover al dropdown
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    left: -20px;
+    right: -20px;
+    height: 20px;
+    background: transparent;
+    z-index: 2;
+  }
+}
+
+.navLink {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: $line-height-normal;
+  color: currentColor;
+  text-decoration: none;
+  position: relative;
+  padding: $spacing-8 0;
+  display: block;
+  transition: color 0.2s ease;
+  
+  // Underline animation (right to left) - más fino y más cerca
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s ease-out;
+  }
+  
+  &:hover,
+  &:focus {
+    outline: none;
+    
+    &::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+  }
+}
+
+.navLinkActive {
+  &::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+// ============================================
+// DROPDOWN (Desktop)
+// ============================================
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: $gray-800;
+  min-width: 220px;
+  list-style: none;
+  padding: $spacing-4 0;
+  margin: 0;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  
+  // Área extendida superior para facilitar el hover
+  &::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: transparent;
+  }
+  
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.navItemHasDropdown:hover .dropdown,
+.navItemHasDropdown:focus-within .dropdown,
+.navItemHasDropdown:hover .dropdown::before,
+.navItemHasDropdown:focus-within .dropdown::before {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+// Mantener el dropdown visible cuando se hace hover sobre él
+.dropdown:hover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdownLink {
+  @include body-text($font-size-14, $line-height-normal);
+  font-weight: 400;
+  color: $gray-200;
+  text-decoration: none;
+  display: block;
+  padding: $spacing-8 $spacing-16;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    background: rgba(255, 255, 255, 0.1);
+    color: $white;
+    outline: none;
+  }
+}
+
+.dropdownLinkActive {
+  background: rgba(255, 255, 255, 0.1);
+  color: $white;
+  font-weight: $font-weight-semibold;
+}
+
+// ============================================
+// CART ICON
+// ============================================
+
+.cartIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  text-decoration: none;
+  width: 44px;
+  height: 44px;
+  transition: opacity 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    opacity: 0.7;
+    outline: none;
+  }
+  
+  @include desktop {
+    margin-left: $spacing-16;
+  }
+}
+
+// ============================================
+// MOBILE TOGGLE
+// ============================================
+
+.mobileToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: currentColor;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  z-index: 1001;
+  transition: opacity 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    opacity: 0.7;
+    outline: none;
+  }
+  
+  @include desktop {
+    display: none;
+  }
+}
+
+// ============================================
+// MOBILE MENU
+// ============================================
+
+.mobileMenu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: $white;
+  color: $black;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+  
+  @include desktop {
+    display: none;
+  }
+}
+
+.mobileMenuVisible {
+  max-height: 100vh;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.mobileNavList {
+  list-style: none;
+  margin: 0;
+  padding: $spacing-16 0;
+}
+
+.mobileNavItem {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.mobileNavLink {
+  @include body-text($font-size-16, $line-height-normal);
+  font-weight: $font-weight-medium;
+  color: $black;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-16 $spacing-20;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    background: $gray-100;
+    outline: none;
+  }
+}
+
+.mobileNavLinkOpen {
+  background: $gray-100;
+}
+
+.mobileNavLinkActive {
+  color: $primary-color;
+  font-weight: $font-weight-semibold;
+}
+
+.chevronIcon {
+  transition: transform 0.2s ease;
+  color: currentColor;
+}
+
+.mobileNavLinkOpen .chevronIcon {
+  transform: rotate(180deg);
+}
+
+.mobileSubmenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: $gray-100;
+}
+
+.mobileSubmenuOpen {
+  max-height: 500px;
+}
+
+.mobileSubmenuLink {
+  @include body-text($font-size-14, $line-height-normal);
+  color: $gray-500;
+  text-decoration: none;
+  display: block;
+  padding: $spacing-12 $spacing-20 $spacing-12 $spacing-48;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    background: rgba(0, 0, 0, 0.05);
+    color: $black;
+    outline: none;
+  }
+}
+
+// ============================================
+// STICKY STATE STYLES
+// ============================================
+
+.headerSticky {
+  .navLink {
+    color: #333333;
+    
+    &::after {
+      background: $primary-color;
+    }
+  }
+  
+  .logoImage {
+    height: 35px; // 30% más pequeño que 50px (50 * 0.7 = 35)
+    
+    @include desktop {
+      height: 42px; // 30% más pequeño que 60px (60 * 0.7 = 42)
+    }
+  }
+  
+  .cartIcon {
+    color: $black;
+  }
+  
+  .mobileToggle {
+    color: $black;
+  }
+}
+

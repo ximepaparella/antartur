@@ -1,0 +1,56 @@
+{
+  "logo": {
+    "src": "/images/logo-antartur.png",
+    "alt": "Antartur - Turismo de Aventura",
+    "href": "/"
+  },
+  "navItems": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "Invierno",
+      "href": "/invierno"
+    },
+    {
+      "label": "Verano",
+      "href": "/verano"
+    },
+    {
+      "label": "Antártida",
+      "href": "/antartida"
+    },
+    {
+      "label": "Turismo Corporativo",
+      "href": "/turismo-corporativo"
+    },
+    {
+      "label": "Ushuaia",
+      "href": "/ushuaia",
+      "children": [
+        {
+          "label": "Información Hotelera",
+          "href": "/ushuaia/hoteles"
+        },
+        {
+          "label": "Información Gastronómica",
+          "href": "/ushuaia/gastronomia"
+        }
+      ]
+    },
+    {
+      "label": "Clima",
+      "href": "/clima"
+    },
+    {
+      "label": "Contacto",
+      "href": "/contacto"
+    }
+  ],
+  "cart": {
+    "href": "/carrito",
+    "ariaLabel": "Ver carrito de compras"
+  }
+}
+
