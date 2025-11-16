@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Hero } from "@/modules/content/components/Hero/Hero";
 
 export const metadata: Metadata = {
   title: "Antártida - Antartur",
@@ -7,9 +8,12 @@ export const metadata: Metadata = {
 
 export default function AntartidaPage() {
   return (
-    <main style={{ paddingTop: "90px", minHeight: "100vh", padding: "90px 2rem 2rem" }}>
-      <h1>Antártida</h1>
-    </main>
+    <>
+      <Hero variant="internal" pageKey="antartida" />
+      <main style={{ padding: "2rem", minHeight: "50vh" }}>
+        {/* Contenido de la página */}
+      </main>
+    </>
   );
 }
 

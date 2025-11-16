@@ -14,7 +14,7 @@ $gray-500: #575a5f;
 $gray-600: #be9794;
 $gray-700: #b1837e;
 $gray-800: #292e31;
-$gray-900: #1d2226;
+$gray-900: #333333;
 $gray-icon: #4f5356; // Color para iconos sociales en footer
 
 
@@ -87,6 +87,7 @@ $font-size-large: $font-size-20;
 // TIPOGRAFÍA - PESO DE FUENTE
 // ============================================
 $font-weight-light: 300;
+$font-weight-normal: 400;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
@@ -96,6 +97,7 @@ $font-weight-black: 900;
 // ============================================
 // TIPOGRAFÍA - ALTURA DE LÍNEA
 // ============================================
+$line-height-extra-tight: 1;    // Títulos
 $line-height-tight: 1.2;    // Títulos
 $line-height-normal: 1.5;   // Texto base
 $line-height-relaxed: 1.8;   // Texto largo, legibilidad

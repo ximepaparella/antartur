@@ -74,15 +74,16 @@
 .title {
   font-family: "ludicrousregular", sans-serif;
   font-size: $font-size-58;
-  font-weight: $font-weight-regular;
+  font-weight: $font-weight-normal;
   color: $white;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  line-height: $line-height-tight;
+  line-height: $line-height-extra-tight;
   margin: 0;
   
   @include desktop {
     font-size: $font-size-64;
+    line-height: $line-height-tight;
   }
 }
 

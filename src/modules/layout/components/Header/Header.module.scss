@@ -17,18 +17,6 @@
   width: 100%;
 }
 
-.headerSticky {
-  background: $white;
-  color: $black;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-  .headerInner {
-    @include desktop {
-      padding: $spacing-4 $spacing-32;
-      height: 90px;
-    }
-  }
-}
 
 .headerInner {
   display: flex;
@@ -409,8 +397,19 @@
 // ============================================
 
 .headerSticky {
+  background: $white;
+  color: $black;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .headerInner {
+    @include desktop {
+      padding: $spacing-4 $spacing-32;
+      height: 90px;
+    }
+  }
+
   .navLink {
-    color: #333333;
+    color: $gray-900;
     
     &::after {
       background: $primary-color;
