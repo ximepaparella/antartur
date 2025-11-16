@@ -35,12 +35,15 @@ export const Icon: React.FC<IconProps> = ({
   className = "",
   ariaLabel,
 }) => {
+  const hasAriaLabel = ariaLabel !== undefined;
+  
   return (
     <span
       className={`${styles.icon} ${className}`}
       style={{ width: `${size}px`, height: `${size}px` }}
-      aria-label={ariaLabel}
-      role="img"
+      aria-label={hasAriaLabel ? ariaLabel : undefined}
+      aria-hidden={!hasAriaLabel ? "true" : undefined}
+      role={hasAriaLabel ? "img" : undefined}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +51,7 @@ export const Icon: React.FC<IconProps> = ({
         fill="currentColor"
         width={size}
         height={size}
+        aria-hidden="true"
       >
         <path d={iconPaths[name]} />
       </svg>

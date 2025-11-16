@@ -29,6 +29,7 @@ export const Badge: React.FC<BadgeProps> = ({
       height={height}
       className={styles.image}
       loading="lazy"
+      decoding="async"
     />
   );
 

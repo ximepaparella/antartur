@@ -30,84 +30,117 @@ export const Footer: React.FC = () => {
 
             {/* Sección Seguinos */}
             <FooterSection title="Seguinos">
-              <div className={styles.socialIcons}>
-                <SocialIcon
-                  platform="facebook"
-                  href="https://www.facebook.com/antartur"
-                  ariaLabel="Seguinos en Facebook"
-                />
-                <SocialIcon
-                  platform="instagram"
-                  href="https://www.instagram.com/antartur"
-                  ariaLabel="Seguinos en Instagram"
-                />
-              </div>
+              <nav aria-label="Redes sociales">
+                <ul className={styles.socialIcons} role="list">
+                  <li role="listitem">
+                    <SocialIcon
+                      platform="facebook"
+                      href="https://www.facebook.com/antartur"
+                      ariaLabel="Seguinos en Facebook"
+                    />
+                  </li>
+                  <li role="listitem">
+                    <SocialIcon
+                      platform="instagram"
+                      href="https://www.instagram.com/antartur"
+                      ariaLabel="Seguinos en Instagram"
+                    />
+                  </li>
+                </ul>
+              </nav>
             </FooterSection>
           </div>
 
           {/* Segunda columna: Datos de Contacto */}
           <div className={styles.secondColumn}>
             <FooterSection title="Datos de Contacto">
-              <ContactItem
-                icon="email"
-                text="hola@antartur.tur.ar"
-                href="mailto:hola@antartur.tur.ar"
-              />
-              <ContactItem
-                icon="phone"
-                text="+54 9 2901 48-7838"
-                href="tel:+542901487838"
-              />
-              <ContactItem
-                icon="document"
-                text="Términos y Condiciones"
-                href="/terminos-y-condiciones"
-              />
-              <ContactItem
-                icon="document"
-                text="Políticas de privacidad"
-                href="/politicas-de-privacidad"
-              />
-              <ContactItem icon="location" text="Juan Manuel de Rosas 184" />
+              <address className={styles.address}>
+                <ContactItem
+                  icon="email"
+                  text="hola@antartur.tur.ar"
+                  href="mailto:hola@antartur.tur.ar"
+                  ariaLabel="Enviar correo electrónico a hola@antartur.tur.ar"
+                />
+                <ContactItem
+                  icon="phone"
+                  text="+54 9 2901 48-7838"
+                  href="tel:+542901487838"
+                  ariaLabel="Llamar al teléfono +54 9 2901 48-7838"
+                />
+                <ContactItem
+                  icon="location"
+                  text="Juan Manuel de Rosas 184"
+                  ariaLabel="Dirección: Juan Manuel de Rosas 184"
+                />
+              </address>
+              <nav aria-label="Enlaces legales">
+                <ul className={styles.legalLinks} role="list">
+                  <li role="listitem">
+                    <ContactItem
+                      icon="document"
+                      text="Términos y Condiciones"
+                      href="/terminos-y-condiciones"
+                      ariaLabel="Leer términos y condiciones"
+                    />
+                  </li>
+                  <li role="listitem">
+                    <ContactItem
+                      icon="document"
+                      text="Políticas de privacidad"
+                      href="/politicas-de-privacidad"
+                      ariaLabel="Leer políticas de privacidad"
+                    />
+                  </li>
+                </ul>
+              </nav>
               <ContactItem
                 icon="info"
                 text="N° Legajo 12896 del Ministerio de Turismo de la República Argentina"
+                ariaLabel="Número de legajo 12896 del Ministerio de Turismo de la República Argentina"
               />
             </FooterSection>
           </div>
 
           {/* Tercera columna: Badges */}
           <div className={styles.thirdColumn}>
-            <div className={styles.badges}>
-              <Badge
-                image="/images/logos-premios-lugares.png"
-                alt="Premios Lugares 2012"
-                width={100}
-                height={100}
-              />
-              <Badge
-                image="/images/logo_miembro_aaetav.ai_.png"
-                alt="AAETAV Miembro"
-                width={100}
-                height={100}
-              />
-              <Badge
-                image="http://www.afip.gob.ar/images/f960/DATAWEB.jpg"
-                alt="Data Fiscal"
-                href="http://qr.afip.gob.ar/?qr=vq8kOZRTEEQmBZOx6jRFdw,,"
-                target="_F960AFIPInfo"
-                rel="noopener"
-                width={100}
-                height={100}
-              />
-            </div>
+            <nav aria-label="Certificaciones y reconocimientos">
+              <ul className={styles.badges} role="list">
+                <li role="listitem">
+                  <Badge
+                    image="/images/logos-premios-lugares.png"
+                    alt="Premios Lugares 2012 - Reconocimiento turístico"
+                    width={100}
+                    height={100}
+                  />
+                </li>
+                <li role="listitem">
+                  <Badge
+                    image="/images/logo_miembro_aaetav.ai_.png"
+                    alt="Miembro de AAETAV - Asociación Argentina de Ecoturismo y Turismo Aventura"
+                    width={100}
+                    height={100}
+                  />
+                </li>
+                <li role="listitem">
+                  <Badge
+                    image="https://www.afip.gob.ar/images/f960/DATAWEB.jpg"
+                    alt="Data Fiscal - Verificar información fiscal"
+                    href="https://qr.afip.gob.ar/?qr=vq8kOZRTEEQmBZOx6jRFdw,,"
+                    target="_F960AFIPInfo"
+                    rel="noopener noreferrer"
+                    width={100}
+                    height={100}
+                  />
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
+      </div>
 
-        {/* Crédito de diseño */}
-        <div className={styles.credit}>
-          <p>Diseñado X Estudio Equis</p>
-        </div>
+      {/* Crédito de diseño */}
+      <div className={styles.footerCopyright} role="contentinfo">
+        <p>Diseñado X Estudio Equis</p>
       </div>
 
       {/* Botón WhatsApp */}
