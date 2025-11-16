@@ -1,0 +1,16 @@
+// ============================================
+// FUENTES
+// ============================================
+
+// Ludicrous (fuente local)
+@font-face {
+  font-family: "ludicrousregular";
+  src: url("/fonts/ludicrous.woff2") format("woff2"),
+       url("/fonts/ludicrous.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Work Sans se carga desde Google Fonts en el layout.tsx
+

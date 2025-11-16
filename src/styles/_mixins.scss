@@ -1,0 +1,82 @@
+@use "variables" as *;
+
+// ============================================
+// MIXINS DE TIPOGRAFÍA
+// ============================================
+
+// Mixin para aplicar tamaño de fuente y altura de línea
+@mixin font-size($size, $line-height: null) {
+  font-size: $size;
+  @if $line-height {
+    line-height: $line-height;
+  }
+}
+
+// Mixin para títulos
+@mixin heading($size, $weight: $font-weight-bold, $line-height: $line-height-tight) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+  font-family: $font-primary;
+}
+
+// Mixin para texto de cuerpo
+@mixin body-text($size: $font-size-16, $line-height: $line-height-normal) {
+  font-size: $size;
+  line-height: $line-height;
+  font-family: $font-secondary;
+}
+
+// ============================================
+// MIXINS DE ESPACIADO
+// ============================================
+
+// Margin
+@mixin margin($top: null, $right: null, $bottom: null, $left: null) {
+  @if $top { margin-top: $top; }
+  @if $right { margin-right: $right; }
+  @if $bottom { margin-bottom: $bottom; }
+  @if $left { margin-left: $left; }
+}
+
+// Padding
+@mixin padding($top: null, $right: null, $bottom: null, $left: null) {
+  @if $top { padding-top: $top; }
+  @if $right { padding-right: $right; }
+  @if $bottom { padding-bottom: $bottom; }
+  @if $left { padding-left: $left; }
+}
+
+// ============================================
+// MIXINS DE RESPONSIVE
+// ============================================
+
+// Breakpoints (basados en el análisis del sitio)
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1280px;
+
+@mixin mobile {
+  @media (max-width: #{$breakpoint-mobile - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-mobile}) and (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: #{$breakpoint-desktop}) {
+    @content;
+  }
+}
+

@@ -2,12 +2,89 @@
 // Aquí se definirán los tokens de diseño del sitio
 
 // Colores
-// $primary-color: #000;
-// $secondary-color: #fff;
+$primary-color: #24384d;
+$secondary-color: #4054B2;
+$white: #ffffff;
+$black: #000000;
+$gray: #575a5f;
+$light-gray: #f9f5f6;
+$dark-gray: #1d2226;
 
 // Tipografía
-// $font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$font-primary: "ludicrousregular", sans-serif;
+$font-secondary: var(--font-work-sans, 'Work Sans'), sans-serif;
 
-// Espaciado
-// $spacing-unit: 8px;
+// ============================================
+// ESPACIADO
+// ============================================
+// Sistema de espaciado basado en múltiplos de 4px
+$spacing-unit: 4px;
 
+// Espaciado por tamaño (usando nomenclatura numérica)
+$spacing-4: 4px;    // 1x
+$spacing-8: 8px;    // 2x
+$spacing-12: 12px;  // 3x
+$spacing-16: 16px;  // 4x
+$spacing-20: 20px;  // 5x
+$spacing-24: 24px;  // 6x
+$spacing-32: 32px;  // 8x
+$spacing-40: 40px;  // 10x
+$spacing-48: 48px;  // 12x
+$spacing-64: 64px;  // 16x
+$spacing-80: 80px;  // 20x
+$spacing-96: 96px;  // 24x
+$spacing-128: 128px; // 32x
+
+// Aliases para compatibilidad (opcional, pueden eliminarse)
+$spacing-small: $spacing-8;
+$spacing-medium: $spacing-16;
+$spacing-large: $spacing-32;
+$spacing-x-large: $spacing-64;
+
+// ============================================
+// TIPOGRAFÍA - TAMAÑOS DE FUENTE
+// ============================================
+// Sistema de escalas tipográficas completo sin saltos
+// Nomenclatura: font-size-{tamaño-en-px}
+$font-size-12: 12px;   // Texto muy pequeño, labels
+$font-size-14: 14px;   // Texto pequeño, captions
+$font-size-16: 16px;   // Texto base, body
+$font-size-18: 18px;   // Texto ligeramente grande
+$font-size-20: 20px;   // Texto destacado, lead
+$font-size-24: 24px;  // Subtítulos pequeños, h4
+$font-size-28: 28px;  // Subtítulos, h3
+$font-size-32: 32px;  // Títulos medianos, h2
+$font-size-36: 36px;  // Títulos grandes, h2 destacado
+$font-size-40: 40px;  // Títulos muy grandes
+$font-size-48: 48px;  // Títulos hero, h1 pequeño
+$font-size-56: 56px;  // Títulos hero medianos
+$font-size-64: 64px;  // Títulos hero grandes
+$font-size-72: 72px;  // Títulos hero extra grandes
+$font-size-80: 80px;  // Títulos hero máximo
+
+// Aliases semánticos para casos de uso comunes (opcional)
+$font-size-body: $font-size-16;
+$font-size-small: $font-size-14;
+$font-size-large: $font-size-20;
+
+// ============================================
+// TIPOGRAFÍA - PESO DE FUENTE
+// ============================================
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-black: 900;
+
+// ============================================
+// TIPOGRAFÍA - ALTURA DE LÍNEA
+// ============================================
+$line-height-tight: 1.2;    // Títulos
+$line-height-normal: 1.5;   // Texto base
+$line-height-relaxed: 1.8;   // Texto largo, legibilidad
+
+// Aliases
+$line-height-small: $line-height-tight;
+$line-height-medium: $line-height-normal;
+$line-height-large: $line-height-relaxed;
