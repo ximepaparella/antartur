@@ -1,0 +1,157 @@
+# Workspace Rules – Next.js Booking Site Migration
+
+## 1. Contexto del workspace
+
+- Proyecto: Migración de un sitio WordPress/Elementor a **Next.js 100%**.
+- El sitio actual sirve como **referencia visual y de contenido**, pero NO copiamos el HTML generado por Elementor.
+- La mayor parte del contenido es estático; el dominio dinámico principal es **Booking/Reservas**:
+  - Formulario público de reservas.
+  - Backoffice simple para ver y gestionar reservas.
+  -
+
+## 2. Stack y restricciones
+- Usa SIEMPRE NVM USE 20 para este proyecto.
+- Framework: **Next.js (App Router) + TypeScript**.
+- Directorios:
+  - Usar `src/` como raíz:
+    - `src/app/**` → rutas (App Router).
+    - `src/modules/**` → módulos de dominio.
+    - `src/components/**` → componentes UI genéricos.
+    - `src/lib/**` → utilidades, helpers, servicios.
+    - `src/styles/**` → estilos globales, variables, mixins.
+- Estilos:
+  - Por defecto: **CSS Modules con Sass** (`*.module.scss`).
+  - NO agregar TailwindCSS, MUI, Chakra, etc., salvo que Ximena lo pida explícitamente.
+- Imágenes:
+  - Evitar `next/image` salvo decisión explícita en sentido contrario.
+  - Usar `<img>` con buenas prácticas (`alt`, tamaños razonables, `srcset/sizes` si se optimiza manualmente).
+- Dependencias:
+  - No agregar nuevas dependencias a `package.json` salvo:
+    - Justificación clara.
+    - No exista alternativa simple con código propio.
+    - Se explicite impacto en bundle/performance.
+  - No usar librerías pesadas para problemas simples (ej. no usar lodash para un simple `map/filter`, no usar moment para un formateo trivial).
+
+## 3. Arquitectura y organización
+
+### 3.1 Orientación a dominios
+
+Estructura sugerida:
+
+- `src/app`
+  - `layout.tsx` – Layout raíz.
+  - `page.tsx` – Home.
+  - `[route]/page.tsx` – páginas públicas (servicios, contacto, etc.).
+  - `admin/**` – secciones de backoffice (ej. reservas).
+  - `api/**` – rutas de API (reservas, etc.).
+- `src/modules`
+  - `layout` – componentes y lógica del layout general (header, footer, nav).
+  - `booking` – todo lo relativo a reservas:
+    - `components` – formularios, listados, tablas.
+    - `lib` – mapeos, helpers, adaptadores de API.
+    - `types` – tipos de dominio (Reservation, Service, etc.).
+  - `content` – bloques/secciones de páginas estáticas (hero, grids, etc.) si se necesitan agrupar.
+- `src/components`
+  - `common` – UI genérica (Buttons, Inputs, Cards, Modal, etc.).
+- `src/lib`
+  - Funciones utilitarias, adaptadores (ej. cliente HTTP si hace falta).
+- `src/styles`
+  - `globals.scss` – estilos globales.
+  - `_variables.scss`, `_mixins.scss` – tokens de diseño.
+
+### 3.2 Responsabilidades
+
+- **Páginas (`app/.../page.tsx`)**
+  - Orquestan datos y layout.
+  - Pequeña lógica de composición, nunca lógica de negocio pesada.
+- **Módulos de dominio (`src/modules/<dominio>`)**
+  - Contienen lógica y componentes específicos de ese dominio (ej. booking).
+- **Componentes comunes**
+  - Sin conocimiento de dominio.
+  - Reutilizables en cualquier contexto (buttons, layout primitives, etc.).
+- **Lib**
+  - Utilidades puras, sin efectos colaterales cuando sea posible.
+  - Funciones bien tipadas y testables.
+
+## 4. Estilo de código y buenas prácticas
+
+- TypeScript:
+  - Activar modo estricto.
+  - Tipos explícitos en props de componentes.
+  - Evitar `any` salvo casos muy excepcionales (justificar en comentario).
+- Componentes:
+  - Por defecto, usar **Server Components** en App Router.
+  - Convertir a Client Component solo cuando haya:
+    - Estado local interactivo.
+    - Efectos en el navegador (`useEffect`, listeners, etc.).
+  - Mantenerlos pequeños y bien enfocados.
+- Principios:
+  - KISS (Keep It Simple, Stupid).
+  - DRY, pero no abstraer prematuramente.
+  - Single Responsibility: un componente hace una cosa clara.
+- Importaciones:
+  - Usar rutas relativas cortas o configurar `tsconfig` paths (`@/modules/...`, `@/components/...`) cuando tenga sentido.
+  - No mezclar estilos inline con clases salvo casos justificadísimos.
+
+## 5. Performance y SEO
+
+- Performance:
+  - Minimizar el código en el cliente.
+  - Evitar lógica de datos en el cliente si puede ir en el servidor.
+  - Usar SSG/ISR para páginas estáticas o semi-estáticas cuando sea razonable.
+  - Evitar renders innecesarios (memoizar con criterio, no por inercia).
+- SEO:
+  - Usar `metadata` en `app/**/page.tsx` (title, description).
+  - Mantener estructura semántica: 1 solo `<h1>` por página, luego `h2`, `h3`, etc.
+  - Asegurar atributos `alt` significativos en imágenes.
+
+## 6. Dominio de Booking/Reservas
+
+- Todo lo relacionado a reservas debe vivir bajo `src/modules/booking`.
+- Definir tipos de dominio:
+  - `Reservation`, `Service`, `Customer`, etc., en `src/modules/booking/types`.
+- API:
+  - Rutas en `src/app/api/booking/...`.
+  - Validación de entradas (usar utilidades propias o libs MUY ligeras solo si se justifica).
+- Backoffice:
+  - Rutas bajo `src/app/admin/booking/...`.
+  - Empezar con un listado simple de reservas, con filtros básicos.
+- Autenticación:
+  - No agregar NextAuth u otras libs hasta que se defina claramente la necesidad.
+  - Para un MVP de admin se puede empezar con una solución mínima (ej. basic auth en middleware) y luego mejorar.
+
+## 7. Reglas para el asistente de IA (Cursor)
+
+Cuando el asistente genere código o sugerencias, debe:
+
+1. **Pensar antes de codificar**
+   - Explicar brevemente el objetivo concreto de la tarea.
+   - Listar los pasos a seguir.
+2. **Respetar la arquitectura**
+   - Crear archivos en los directorios adecuados según dominio y responsabilidad.
+   - No mezclar código de dominio con componentes totalmente genéricos.
+3. **No agregar dependencias sin permiso**
+   - Si cree necesaria una librería:
+     - Explicar problema, alternativa nativa y trade-offs.
+     - Esperar confirmación antes de asumir su uso.
+4. **Mostrar archivos completos**
+   - Al crear o modificar un archivo, mostrar el contenido completo actualizado.
+5. **Mantener coherencia**
+   - Seguir el mismo estilo de nombres, patrones de diseño y organización de archivos.
+   - Reutilizar componentes comunes cuando ya existan.
+6. **Señalar mejoras**
+   - Si detecta deuda técnica, comentar brevemente qué mejoraría en una fase posterior (sin bloquear la tarea actual).
+
+## 8. Testing (cuando corresponda)
+
+- No agregar librerías de testing hasta que se decida explícitamente (Jest/Vitest, Testing Library, etc.).
+- El código debe escribirse de forma que **sea testable**:
+  - Separar lógica pura en funciones independientes.
+  - Minimizar lógica dentro de JSX.
+- Cuando se agreguen tests:
+  - Mantenerlos cerca del código (`*.test.ts(x)` en el mismo directorio o `__tests__`).
+
+---
+
+Estas reglas aplican a todo el código nuevo en este workspace.  
+Si en algún momento una regla entra en conflicto con una instrucción específica de Ximena, **priorizar siempre la instrucción explícita de Ximena**.
