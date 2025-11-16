@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Hero } from "@/modules/content/components/Hero/Hero";
+import { WindyWidget } from "@/modules/content/components/WindyWidget/WindyWidget";
 
 export const metadata: Metadata = {
   title: "Clima - Antartur",
@@ -7,9 +9,11 @@ export const metadata: Metadata = {
 
 export default function ClimaPage() {
   return (
-    <main style={{ paddingTop: "90px", minHeight: "100vh", padding: "90px 2rem 2rem" }}>
-      <h1>Clima</h1>
-    </main>
+    <>
+      <Hero variant="internal" pageKey="clima" />
+      <main style={{ margin: 0, padding: 0, width: "100%" }}>
+        <WindyWidget />
+      </main>
+    </>
   );
 }
-
