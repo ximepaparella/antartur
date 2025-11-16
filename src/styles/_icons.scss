@@ -1,0 +1,107 @@
+@use "variables" as *;
+
+// ============================================
+// ICONOS SVG INLINE
+// ============================================
+// Iconos reutilizables para el footer y otros componentes
+
+// Mixin para iconos base
+@mixin icon-base($size: 20px) {
+  display: inline-block;
+  width: $size;
+  height: $size;
+  fill: currentColor;
+  vertical-align: middle;
+}
+
+// Clase base para iconos
+.icon {
+  @include icon-base();
+}
+
+// ============================================
+// ICONOS DE CONTACTO
+// ============================================
+
+// Icono de teléfono
+.icon-phone {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Icono de email (usar icon-mail de icomoon si está disponible)
+// Por ahora definimos un SVG simple
+.icon-email {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Icono de documento
+.icon-document {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Icono de información
+.icon-info {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Icono de ubicación/mapa (usar icon-map de icomoon si está disponible)
+.icon-location {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ============================================
+// ICONOS DE REDES SOCIALES
+// ============================================
+
+.icon-facebook {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.icon-instagram {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.icon-whatsapp {
+  @include icon-base();
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+

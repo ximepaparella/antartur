@@ -1,0 +1,26 @@
+@use "@/styles/variables" as *;
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: $gray-icon;
+  transition: color 0.2s ease, transform 0.2s ease;
+  
+  &:hover {
+    color: $secondary-color;
+    transform: scale(1.1);
+  }
+  
+  &:focus {
+    outline: 2px solid $secondary-color;
+    outline-offset: 2px;
+  }
+}
+
+.icon {
+  color: currentColor;
+}
+

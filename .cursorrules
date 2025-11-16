@@ -21,6 +21,7 @@
     - `src/styles/**` → estilos globales, variables, mixins.
 - Estilos:
   - Por defecto: **CSS Modules con Sass** (`*.module.scss`).
+  - Usa siempre FLEXBOX por sobre GRID.
   - NO agregar TailwindCSS, MUI, Chakra, etc., salvo que Ximena lo pida explícitamente.
 - Imágenes:
   - Evitar `next/image` salvo decisión explícita en sentido contrario.
