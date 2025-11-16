@@ -14,7 +14,7 @@ $gray-500: #575a5f;
 $gray-600: #be9794;
 $gray-700: #b1837e;
 $gray-800: #292e31;
-$gray-900: #1d2226;
+$gray-900: #333333;
 $gray-icon: #4f5356; // Color para iconos sociales en footer
 
 
@@ -42,6 +42,13 @@ $spacing-64: 64px;  // 16x
 $spacing-80: 80px;  // 20x
 $spacing-96: 96px;  // 24x
 $spacing-128: 128px; // 32x
+$spacing-500: 500px; // Hero interno height
+
+// ============================================
+// LAYOUT
+// ============================================
+$header-height: 90px; // Altura del header sticky
+$max-width-container: 1280px; // Ancho máximo del contenedor principal
 
 // Aliases para compatibilidad (opcional, pueden eliminarse)
 $spacing-small: $spacing-8;
@@ -66,7 +73,8 @@ $font-size-36: 36px;  // Títulos grandes, h2 destacado
 $font-size-40: 40px;  // Títulos muy grandes
 $font-size-48: 48px;  // Títulos hero, h1 pequeño
 $font-size-56: 56px;  // Títulos hero medianos
-$font-size-64: 64px;  // Títulos hero grandes
+$font-size-58: 58px;  // Títulos hero mobile
+$font-size-64: 64px;  // Títulos hero desktop
 $font-size-72: 72px;  // Títulos hero extra grandes
 $font-size-80: 80px;  // Títulos hero máximo
 
@@ -79,6 +87,7 @@ $font-size-large: $font-size-20;
 // TIPOGRAFÍA - PESO DE FUENTE
 // ============================================
 $font-weight-light: 300;
+$font-weight-normal: 400;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
@@ -88,6 +97,7 @@ $font-weight-black: 900;
 // ============================================
 // TIPOGRAFÍA - ALTURA DE LÍNEA
 // ============================================
+$line-height-extra-tight: 1;    // Títulos
 $line-height-tight: 1.2;    // Títulos
 $line-height-normal: 1.5;   // Texto base
 $line-height-relaxed: 1.8;   // Texto largo, legibilidad

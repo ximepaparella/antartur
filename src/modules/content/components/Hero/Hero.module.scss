@@ -1,0 +1,103 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// ============================================
+// HERO BASE
+// ============================================
+
+.hero {
+  position: relative;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0; // Detrás del header (z-index: 1000)
+}
+
+.heroNoImage {
+  background-color: $primary-color;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $black;
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  max-width: $max-width-container;
+  padding: 0 $spacing-16;
+  
+  @include desktop {
+    padding: 0 $spacing-32;
+  }
+}
+
+// ============================================
+// HERO FULL HEIGHT (Home)
+// ============================================
+
+.heroFull {
+  min-height: 100vh;
+  padding-top: $header-height; // Compensar el header sticky
+  
+  @include desktop {
+    padding-top: $header-height;
+  }
+}
+
+// ============================================
+// HERO INTERNAL (Páginas internas)
+// ============================================
+
+.heroInternal {
+  min-height: $spacing-500;
+  margin-top: 0; // Sin margin para quedar detrás del header transparente
+  padding-top: $header-height; // Padding para que el contenido quede visible detrás del header
+  box-sizing: border-box; // Incluir padding en la altura total
+}
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+
+.title {
+  font-family: "ludicrousregular", sans-serif;
+  font-size: $font-size-58;
+  font-weight: $font-weight-normal;
+  color: $white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: $line-height-extra-tight;
+  margin: 0;
+  
+  @include desktop {
+    font-size: $font-size-64;
+    line-height: $line-height-tight;
+  }
+}
+
+.subtitle {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-regular;
+  color: $white;
+  line-height: $line-height-normal;
+  margin: $spacing-16 0 0 0;
+  
+  @include desktop {
+    font-size: $font-size-20;
+    margin-top: $spacing-20;
+  }
+}
+
