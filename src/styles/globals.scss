@@ -93,16 +93,6 @@ p {
   line-height: $line-height-normal;
 }
 
-a {
-  color: $primary-color;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  
-  &:hover {
-    color: $secondary-color;
-  }
-}
-
 // ============================================
 // UTILIDADES DE TEXTO
 // ============================================

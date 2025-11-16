@@ -1,0 +1,158 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.footer {
+  position: relative;
+  background: $gray-800;
+  color: $gray-200;
+  padding: 70px 0 0;
+  margin-top: -1px;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 $spacing-16;
+  
+  @include desktop {
+    padding: 0 $spacing-32;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-32;
+  margin-bottom: $spacing-32;
+  
+  @include tablet {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-40;
+  }
+  
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-48;
+    margin-bottom: $spacing-48;
+  }
+}
+
+.firstColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-32;
+  flex: 1;
+  
+  @include desktop {
+    gap: $spacing-48;
+    flex: 1;
+  }
+}
+
+.secondColumn {
+  flex: 1;
+  
+  @include desktop {
+    flex: 1;
+  }
+}
+
+.thirdColumn {
+  flex: 1;
+  
+  @include desktop {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+
+.paragraph {
+  @include body-text($font-size-14, $line-height-relaxed);
+  font-family: $font-secondary;
+  color: $gray-200;
+  margin-bottom: $spacing-16;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.socialIcons {
+  display: flex;
+  gap: $spacing-16;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.address {
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
+.legalLinks {
+  list-style: none;
+  margin: $spacing-16 0 0 0;
+  padding: 0;
+  
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.badges {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-16;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+  @include desktop {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $spacing-20;
+  }
+  
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.footerCopyright {
+  background: #23272a;
+  padding: 30px 0 20px;
+  width: 100%;
+  text-align: center;
+  
+  p {
+    @include body-text($font-size-14, $line-height-normal);
+    color: $gray-200;
+    margin: 0;
+  }
+}
+
+.whatsappButton {
+  position: fixed;
+  bottom: $spacing-24;
+  right: $spacing-24;
+  z-index: 1000;
+  
+  @include mobile {
+    bottom: $spacing-16;
+    right: $spacing-16;
+  }
+}
+

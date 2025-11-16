@@ -1,0 +1,29 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.section {
+  margin-bottom: $spacing-32;
+  
+  @include desktop {
+    margin-bottom: 0;
+  }
+}
+
+.title {
+  position: relative;
+  font-family: $font-secondary;
+  font-size: $font-size-18;
+  font-weight: $font-weight-regular;
+  margin-top: 0;
+  padding-bottom: 20px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: $gray-200;
+}
+
+.content {
+  @include body-text($font-size-16, $line-height-normal);
+  color: $gray-200;
+  
+}
+
