@@ -14,94 +14,37 @@
   vertical-align: middle;
 }
 
-// Clase base para iconos
+// Clase base para iconos - consolida todas las reglas comunes
 .icon {
   @include icon-base();
+  
+  // Regla universal para todos los SVG dentro de iconos
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
 }
 
 // ============================================
-// ICONOS DE CONTACTO
+// ICONOS ESPECÍFICOS
 // ============================================
+// Las clases específicas ahora solo extienden la clase base
+// para uso semántico o sobrescrituras específicas si son necesarias
 
-// Icono de teléfono
-.icon-phone {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-// Icono de email (usar icon-mail de icomoon si está disponible)
-// Por ahora definimos un SVG simple
-.icon-email {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-// Icono de documento
-.icon-document {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-// Icono de información
-.icon-info {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-// Icono de ubicación/mapa (usar icon-map de icomoon si está disponible)
+// Iconos de contacto
+.icon-phone,
+.icon-email,
+.icon-document,
+.icon-info,
 .icon-location {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
+  @extend .icon;
 }
 
-// ============================================
-// ICONOS DE REDES SOCIALES
-// ============================================
-
-.icon-facebook {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.icon-instagram {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
+// Iconos de redes sociales
+.icon-facebook,
+.icon-instagram,
 .icon-whatsapp {
-  @include icon-base();
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
+  @extend .icon;
 }
 

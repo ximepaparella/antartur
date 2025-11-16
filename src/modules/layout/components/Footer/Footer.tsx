@@ -4,6 +4,7 @@ import { ContactItem } from "@/components/common/ContactItem/ContactItem";
 import { SocialIcon } from "@/components/common/SocialIcon/SocialIcon";
 import { Badge } from "@/components/common/Badge/Badge";
 import { WhatsAppButton } from "@/components/common/WhatsAppButton/WhatsAppButton";
+import footerData from "./footerdata.json";
 import styles from "./Footer.module.scss";
 
 export const Footer: React.FC = () => {
@@ -14,38 +15,27 @@ export const Footer: React.FC = () => {
           {/* Primera columna: Nosotros y Seguinos */}
           <div className={styles.firstColumn}>
             {/* Sección Nosotros */}
-            <FooterSection title="Nosotros">
-              <p className={styles.paragraph}>
-                Si te gusta la naturaleza y la aventura, la cultura y la
-                historia, te invitamos a compartir nuestros excursiones, ANTARTUR
-                es una empresa familiar que desde 1990 comparte experiencia e
-                idoneidad organizando tours en grupos reducidos.
-              </p>
-              <p className={styles.paragraph}>
-                Guias especializados acompañados de moderno equipamiento te
-                harán llevar de Tierra Del Fuego la imagen clara e inolvidable de
-                un viaje maravilloso.
-              </p>
+            <FooterSection title={footerData.nosotros.title}>
+              {footerData.nosotros.paragraphs.map((paragraph, index) => (
+                <p key={index} className={styles.paragraph}>
+                  {paragraph}
+                </p>
+              ))}
             </FooterSection>
 
             {/* Sección Seguinos */}
-            <FooterSection title="Seguinos">
+            <FooterSection title={footerData.seguinos.title}>
               <nav aria-label="Redes sociales">
                 <ul className={styles.socialIcons} role="list">
-                  <li role="listitem">
-                    <SocialIcon
-                      platform="facebook"
-                      href="https://www.facebook.com/antartur"
-                      ariaLabel="Seguinos en Facebook"
-                    />
-                  </li>
-                  <li role="listitem">
-                    <SocialIcon
-                      platform="instagram"
-                      href="https://www.instagram.com/antartur"
-                      ariaLabel="Seguinos en Instagram"
-                    />
-                  </li>
+                  {footerData.seguinos.socialLinks.map((social, index) => (
+                    <li key={index} role="listitem">
+                      <SocialIcon
+                        platform={social.platform as "facebook" | "instagram"}
+                        href={social.href}
+                        ariaLabel={social.ariaLabel}
+                      />
+                    </li>
+                  ))}
                 </ul>
               </nav>
             </FooterSection>
@@ -53,50 +43,44 @@ export const Footer: React.FC = () => {
 
           {/* Segunda columna: Datos de Contacto */}
           <div className={styles.secondColumn}>
-            <FooterSection title="Datos de Contacto">
+            <FooterSection title={footerData.contacto.title}>
               <address className={styles.address}>
                 <ContactItem
                   icon="email"
-                  text="hola@antartur.tur.ar"
-                  href="mailto:hola@antartur.tur.ar"
-                  ariaLabel="Enviar correo electrónico a hola@antartur.tur.ar"
+                  text={footerData.contacto.address.email.text}
+                  href={footerData.contacto.address.email.href}
+                  ariaLabel={footerData.contacto.address.email.ariaLabel}
                 />
                 <ContactItem
                   icon="phone"
-                  text="+54 9 2901 48-7838"
-                  href="tel:+542901487838"
-                  ariaLabel="Llamar al teléfono +54 9 2901 48-7838"
+                  text={footerData.contacto.address.phone.text}
+                  href={footerData.contacto.address.phone.href}
+                  ariaLabel={footerData.contacto.address.phone.ariaLabel}
                 />
                 <ContactItem
                   icon="location"
-                  text="Juan Manuel de Rosas 184"
-                  ariaLabel="Dirección: Juan Manuel de Rosas 184"
+                  text={footerData.contacto.address.location.text}
+                  ariaLabel={footerData.contacto.address.location.ariaLabel}
                 />
               </address>
               <nav aria-label="Enlaces legales">
                 <ul className={styles.legalLinks} role="list">
-                  <li role="listitem">
-                    <ContactItem
-                      icon="document"
-                      text="Términos y Condiciones"
-                      href="/terminos-y-condiciones"
-                      ariaLabel="Leer términos y condiciones"
-                    />
-                  </li>
-                  <li role="listitem">
-                    <ContactItem
-                      icon="document"
-                      text="Políticas de privacidad"
-                      href="/politicas-de-privacidad"
-                      ariaLabel="Leer políticas de privacidad"
-                    />
-                  </li>
+                  {footerData.contacto.legalLinks.map((link, index) => (
+                    <li key={index} role="listitem">
+                      <ContactItem
+                        icon="document"
+                        text={link.text}
+                        href={link.href}
+                        ariaLabel={link.ariaLabel}
+                      />
+                    </li>
+                  ))}
                 </ul>
               </nav>
               <ContactItem
                 icon="info"
-                text="N° Legajo 12896 del Ministerio de Turismo de la República Argentina"
-                ariaLabel="Número de legajo 12896 del Ministerio de Turismo de la República Argentina"
+                text={footerData.contacto.legajo.text}
+                ariaLabel={footerData.contacto.legajo.ariaLabel}
               />
             </FooterSection>
           </div>
@@ -105,33 +89,19 @@ export const Footer: React.FC = () => {
           <div className={styles.thirdColumn}>
             <nav aria-label="Certificaciones y reconocimientos">
               <ul className={styles.badges} role="list">
-                <li role="listitem">
-                  <Badge
-                    image="/images/logos-premios-lugares.png"
-                    alt="Premios Lugares 2012 - Reconocimiento turístico"
-                    width={100}
-                    height={100}
-                  />
-                </li>
-                <li role="listitem">
-                  <Badge
-                    image="/images/logo_miembro_aaetav.ai_.png"
-                    alt="Miembro de AAETAV - Asociación Argentina de Ecoturismo y Turismo Aventura"
-                    width={100}
-                    height={100}
-                  />
-                </li>
-                <li role="listitem">
-                  <Badge
-                    image="https://www.afip.gob.ar/images/f960/DATAWEB.jpg"
-                    alt="Data Fiscal - Verificar información fiscal"
-                    href="https://qr.afip.gob.ar/?qr=vq8kOZRTEEQmBZOx6jRFdw,,"
-                    target="_F960AFIPInfo"
-                    rel="noopener noreferrer"
-                    width={100}
-                    height={100}
-                  />
-                </li>
+                {footerData.badges.map((badge, index) => (
+                  <li key={index} role="listitem">
+                    <Badge
+                      image={badge.image}
+                      alt={badge.alt}
+                      width={badge.width}
+                      height={badge.height}
+                      href={badge.href}
+                      target={badge.target}
+                      rel={badge.rel}
+                    />
+                  </li>
+                ))}
               </ul>
             </nav>
           </div>
@@ -140,12 +110,15 @@ export const Footer: React.FC = () => {
 
       {/* Crédito de diseño */}
       <div className={styles.footerCopyright} role="contentinfo">
-        <p>Diseñado X Estudio Equis</p>
+        <p>{footerData.copyright.text}</p>
       </div>
 
       {/* Botón WhatsApp */}
       <div className={styles.whatsappButton}>
-        <WhatsAppButton phoneNumber="+54 9 2901 48-7838" />
+        <WhatsAppButton
+          phoneNumber={footerData.whatsapp.phoneNumber}
+          message={footerData.whatsapp.message}
+        />
       </div>
     </footer>
   );
