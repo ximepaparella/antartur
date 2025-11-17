@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Icon, IconName } from "../Icon/Icon";
+import { Icon, IconName } from "@/components/icons/Icon";
 import styles from "./SocialIcon.module.scss";
 
 type SocialPlatform = "facebook" | "instagram";

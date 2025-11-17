@@ -38,6 +38,11 @@
   font-style: normal;
   margin: 0;
   padding: 0;
+  
+  // Aplicar color gray-700 a los ContactItem en la página de contacto
+  :global(.text) {
+    color: $gray-700;
+  }
 }
 
 .socialIcons {

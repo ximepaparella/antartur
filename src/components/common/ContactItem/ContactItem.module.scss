@@ -26,6 +26,7 @@
 
 .text {
   @include body-text($font-size-14, $line-height-normal);
-  color: $gray-200;
+  // Color se aplica desde los módulos padre (Footer o ContactInfo)
+  color: currentColor;
 }
 

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/icons/Icon";
 import headerData from "./headerdata.json";
 import styles from "./Header.module.scss";
 
