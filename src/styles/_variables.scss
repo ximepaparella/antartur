@@ -8,14 +8,19 @@ $white: #ffffff;
 $black: #000000;
 $gray-100: #f9f5f6;
 $gray-200: #d2d2d2;
-$gray-300: #e5d3d8;
+$gray-300: #f7f5f5;
 $gray-400: #d8bfc0;
 $gray-500: #575a5f;
 $gray-600: #be9794;
-$gray-700: #b1837e;
+$gray-700: #28372f;
 $gray-800: #292e31;
 $gray-900: #333333;
 $gray-icon: #4f5356; // Color para iconos sociales en footer
+
+// ============================================
+// COLORES ADICIONALES
+// ============================================
+$tertiary-color: #6fa5cb; // Color para iconos en headings
 
 
 // Tipografía
@@ -48,7 +53,9 @@ $spacing-500: 500px; // Hero interno height
 // LAYOUT
 // ============================================
 $header-height: 90px; // Altura del header sticky
-$max-width-container: 1280px; // Ancho máximo del contenedor principal
+$max-width-main: 1440px; // Ancho máximo del main container
+$main-margin-mobile: 16px; // Margen del main en mobile
+$main-margin-desktop: 60px; // Margen del main en desktop
 
 // Aliases para compatibilidad (opcional, pueden eliminarse)
 $spacing-small: $spacing-8;
