@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Carrito - Antartur",
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CarritoPage() {
   return (
-    <main style={{ paddingTop: "90px", minHeight: "100vh", padding: "90px 2rem 2rem" }}>
+    <main className="mainContainer" style={{ paddingTop: "90px" }}>
       <h1>Carrito</h1>
     </main>
   );

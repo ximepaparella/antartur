@@ -13,7 +13,8 @@ export type IconName =
   | "menu"
   | "close"
   | "bag"
-  | "chevron-down";
+  | "chevron-down"
+  | "map-route";
 
 interface IconProps {
   name: IconName;
@@ -35,6 +36,7 @@ const iconPaths: Record<IconName, string> = {
   close: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
   bag: "M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 16H5V8h14v11z",
   "chevron-down": "M7 10l5 5 5-5z",
+  "map-route": "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 5v14H5V5h3zm8 0v14h-3V5h3zm-4 0v14M6.5 8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S8.83 10 8 10s-1.5-.67-1.5-1.5zm9 7c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zM7.5 9.5c.5 1 1.5 2.5 2.5 3.5s2 2.5 2.5 3.5",
 };
 
 export const Icon: React.FC<IconProps> = ({

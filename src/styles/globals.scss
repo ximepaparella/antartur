@@ -22,8 +22,8 @@ body {
   font-family: $font-secondary;
   font-size: $font-size-16;
   line-height: $line-height-normal;
-  color: $black;
-  background-color: $white;
+  color: $gray-700;
+  background-color: $gray-300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -111,5 +111,20 @@ p {
 
 .text-medium {
   font-weight: $font-weight-medium;
+}
+
+// ============================================
+// MAIN CONTAINER
+// ============================================
+
+.mainContainer {
+  width: 100%;
+  max-width: $max-width-main;
+  margin: 0 auto;
+  padding: 0 $main-margin-mobile;
+  
+  @include desktop {
+    padding: 0 $main-margin-desktop;
+  }
 }
 
