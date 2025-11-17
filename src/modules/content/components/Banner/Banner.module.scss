@@ -21,7 +21,10 @@
   transition: transform 0.1s ease-out;
   background-color: $gray-300; // Color de respaldo para evitar fondo gris
   background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-attachment: scroll;
+  min-height: 100%;
 }
 
 .content {

@@ -83,11 +83,7 @@ export const Banner: React.FC<BannerProps> = ({
 
   const backgroundStyle: React.CSSProperties = {
     backgroundImage: `url(${backgroundImage})`,
-    backgroundPosition: "center center",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
     transform: `translateY(${scrollY}px)`,
-    minHeight: "100%",
   };
 
   return (
