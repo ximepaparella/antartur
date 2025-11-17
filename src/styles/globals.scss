@@ -128,3 +128,8 @@ p {
   }
 }
 
+// Modifier para páginas que necesitan padding-top adicional (ej: carrito)
+.mainContainer--cart {
+  padding-top: $header-height;
+}
+

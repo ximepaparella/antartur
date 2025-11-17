@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CarritoPage() {
   return (
-    <main className="mainContainer" style={{ paddingTop: "90px" }}>
+    <main className="mainContainer mainContainer--cart">
       <h1>Carrito</h1>
     </main>
   );
