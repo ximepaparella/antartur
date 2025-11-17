@@ -4,8 +4,20 @@ import { Heading } from "@/components/common/Heading/Heading";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Turismo Corporativo - Antartur",
-  description: "Turismo corporativo en Tierra del Fuego",
+  title: "Turismo Corporativo - Incentivos y Eventos Corporativos | Antartur",
+  description: "Gestión de viajes corporativos, eventos, organización de incentivos y team buildings. Programas multiaventuras invierno y verano en Tierra del Fuego.",
+  keywords: ["turismo corporativo", "incentivos", "eventos corporativos", "team building", "viajes corporativos", "Ushuaia"],
+  openGraph: {
+    title: "Turismo Corporativo - Incentivos y Eventos Corporativos | Antartur",
+    description: "Gestión de viajes corporativos, eventos, organización de incentivos y team buildings.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Turismo Corporativo - Incentivos y Eventos | Antartur",
+    description: "Gestión de viajes corporativos, eventos, organización de incentivos y team buildings.",
+  },
 };
 
 export default function TurismoCorporativoPage() {

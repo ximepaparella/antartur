@@ -4,8 +4,20 @@ import { Heading } from "@/components/common/Heading/Heading";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Antártida - Antartur",
-  description: "Viajes a la Antártida",
+  title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
+  description: "Por su ubicación estratégica, Ushuaia se constituye como Ciudad Puerta de Entrada a la Antártida. La temporada se extiende entre noviembre y abril. Descubrí nuestros viajes a la Antártida.",
+  keywords: ["Antártida", "viajes Antártida", "cruceros Antártida", "expedición Antártida", "Ushuaia", "Península Antártica"],
+  openGraph: {
+    title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
+    description: "Ushuaia se constituye como Ciudad Puerta de Entrada a la Antártida. La temporada se extiende entre noviembre y abril.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Antártida - Viajes al Continente Blanco | Antartur",
+    description: "Ushuaia se constituye como Ciudad Puerta de Entrada a la Antártida.",
+  },
 };
 
 export default function AntartidaPage() {

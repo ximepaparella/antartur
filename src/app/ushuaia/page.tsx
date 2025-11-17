@@ -3,8 +3,20 @@ import { Hero } from "@/modules/content/components/Hero/Hero";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Ushuaia - Antartur",
-  description: "Información sobre Ushuaia",
+  title: "Ushuaia - La Ciudad Más Austral del Mundo | Antartur",
+  description: "Ushuaia, la ciudad más austral del mundo. Información sobre turismo, excursiones, hoteles y gastronomía en Ushuaia, Tierra del Fuego.",
+  keywords: ["Ushuaia", "ciudad más austral", "Tierra del Fuego", "turismo Ushuaia", "Fin del Mundo"],
+  openGraph: {
+    title: "Ushuaia - La Ciudad Más Austral del Mundo | Antartur",
+    description: "Ushuaia, la ciudad más austral del mundo. Información sobre turismo, excursiones, hoteles y gastronomía.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ushuaia - La Ciudad Más Austral | Antartur",
+    description: "Ushuaia, la ciudad más austral del mundo.",
+  },
 };
 
 export default function UshuaiaPage() {

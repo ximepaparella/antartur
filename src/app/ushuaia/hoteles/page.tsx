@@ -4,8 +4,20 @@ import { Heading } from "@/components/common/Heading/Heading";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Información Hotelera - Ushuaia - Antartur",
-  description: "Información hotelera en Ushuaia",
+  title: "Hoteles en Ushuaia - Alojamientos | Antartur",
+  description: "Tenemos más de 100 alojamientos habilitados en Ushuaia, incluyendo hoteles cinco estrellas de categoría internacional, cabañas de primer nivel, aparts y hostels.",
+  keywords: ["hoteles Ushuaia", "alojamientos Ushuaia", "cabañas Ushuaia", "hostels Ushuaia", "hoteles Tierra del Fuego"],
+  openGraph: {
+    title: "Hoteles en Ushuaia - Alojamientos | Antartur",
+    description: "Tenemos más de 100 alojamientos habilitados en Ushuaia, incluyendo hoteles cinco estrellas de categoría internacional.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hoteles en Ushuaia | Antartur",
+    description: "Tenemos más de 100 alojamientos habilitados en Ushuaia.",
+  },
 };
 
 export default function HotelesPage() {

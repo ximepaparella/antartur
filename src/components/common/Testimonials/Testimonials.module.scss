@@ -84,6 +84,7 @@
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
   
   @include desktop {
     width: 80px;

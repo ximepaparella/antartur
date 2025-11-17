@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Carrito - Antartur",
-  description: "Carrito de compras",
+  title: "Carrito - Carrito de Compras | Antartur",
+  description: "Tu carrito de compras en Antartur. Gestioná tus reservas y excursiones seleccionadas.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function CarritoPage() {

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Icon } from "@/components/common/Icon/Icon";
 import headerData from "./headerdata.json";
 import styles from "./Header.module.scss";
@@ -178,12 +179,13 @@ export const HeaderClient: React.FC = () => {
       <div className={styles.headerInner}>
         {/* Logo */}
         <Link href={headerData.logo.href} className={styles.logo}>
-          <img
+          <Image
             src={isSticky ? "/images/logo-color.svg" : "/images/logo-color-2.svg"}
             alt={headerData.logo.alt}
             className={styles.logoImage}
             width={150}
             height={60}
+            priority
           />
         </Link>
 

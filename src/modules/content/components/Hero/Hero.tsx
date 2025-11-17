@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Hero.module.scss";
 import heroData from "./herodata.json";
+import type { HeroContent } from "./types";
 
 interface HeroProps {
   variant?: "home" | "internal";
@@ -10,7 +11,7 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ variant = "internal", pageKey }) => {
   // Si no se proporciona pageKey, intentar inferirlo desde la ruta o usar home
   const dataKey = pageKey || "home";
-  const heroContent = heroData[dataKey as keyof typeof heroData] || heroData.home;
+  const heroContent: HeroContent = (heroData[dataKey as keyof typeof heroData] || heroData.home) as HeroContent;
 
   const isHome = variant === "home";
   const hasSubtitle = heroContent.subtitle && heroContent.subtitle.length > 0;
