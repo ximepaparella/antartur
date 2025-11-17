@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import styles from "./TourGallery.module.scss";
 
 export interface GalleryImage {
@@ -17,79 +16,161 @@ interface TourGalleryProps {
 
 /**
  * Componente TourGallery para mostrar un carousel horizontal de imágenes
+ * Full width, sin gaps, desliza 3 imágenes en desktop y 1 en mobile
+ * Optimizado para performance y Web Vitals
  */
 export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [slidesToShow, setSlidesToShow] = useState(3);
+
+  // Debounce para el resize listener
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const updateSlidesToShow = () => {
+      if (window.innerWidth < 768) {
+        setSlidesToShow(1);
+      } else {
+        setSlidesToShow(3);
+      }
+    };
+
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateSlidesToShow, 150);
+    };
+
+    updateSlidesToShow();
+    window.addEventListener("resize", handleResize, { passive: true });
+    
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  const maxIndex = useMemo(
+    () => Math.max(0, images.length - slidesToShow),
+    [images.length, slidesToShow]
+  );
+
+  const slideWidth = useMemo(() => 100 / slidesToShow, [slidesToShow]);
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => {
+      if (prev <= 0) {
+        return maxIndex;
+      }
+      return prev - slidesToShow;
+    });
+  }, [maxIndex, slidesToShow]);
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => {
+      if (prev >= maxIndex) {
+        return 0;
+      }
+      return Math.min(prev + slidesToShow, maxIndex);
+    });
+  }, [maxIndex, slidesToShow]);
+
+  // Determinar qué imágenes deben cargarse (lazy loading)
+  const getImageLoading = useCallback(
+    (index: number) => {
+      // Cargar las primeras 3 imágenes inmediatamente (eager)
+      if (index < 3) return "eager";
+      // Cargar las imágenes visibles y las adyacentes
+      const visibleStart = currentIndex;
+      const visibleEnd = currentIndex + slidesToShow - 1;
+      if (index >= visibleStart - 1 && index <= visibleEnd + 1) {
+        return "lazy";
+      }
+      return "lazy";
+    },
+    [currentIndex, slidesToShow]
+  );
 
   if (images.length === 0) {
     return null;
   }
 
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
+  const transformValue = `translateX(-${currentIndex * slideWidth}%)`;
 
   return (
     <section className={styles.gallery}>
-      <div className={styles.container}>
-        <div className={styles.carousel}>
-          <button
-            className={styles.navButton}
-            onClick={goToPrevious}
-            aria-label="Imagen anterior"
+      <div className={styles.carousel}>
+        <button
+          className={styles.navButton}
+          onClick={goToPrevious}
+          aria-label="Imagen anterior"
+          type="button"
+        >
+          <svg
+            className={styles.arrowIcon}
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
-            ‹
-          </button>
-          
-          <div className={styles.slidesContainer}>
-            <div
-              className={styles.slides}
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
-              {images.map((image) => (
-                <div key={image.id} className={styles.slide}>
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    width={1200}
-                    height={600}
-                    className={styles.image}
-                    priority={image.id === images[0].id}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <button
-            className={styles.navButton}
-            onClick={goToNext}
-            aria-label="Imagen siguiente"
-          >
-            ›
-          </button>
-        </div>
+            <path
+              d="M15 18l-6-6 6-6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
         
-        {images.length > 1 && (
-          <div className={styles.dots}>
-            {images.map((_, index) => (
-              <button
-                key={index}
-                className={`${styles.dot} ${index === currentIndex ? styles.dotActive : ""}`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Ir a imagen ${index + 1}`}
-              />
+        <div className={styles.slidesContainer}>
+          <div
+            className={styles.slides}
+            style={{ 
+              transform: transformValue,
+            }}
+          >
+            {images.map((image, index) => (
+              <div 
+                key={image.id} 
+                className={styles.slide} 
+                style={{ width: `${slideWidth}%` }}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className={styles.image}
+                  loading={getImageLoading(index)}
+                  decoding="async"
+                  width="800"
+                  height="400"
+                />
+              </div>
             ))}
           </div>
-        )}
+        </div>
+        
+        <button
+          className={styles.navButton}
+          onClick={goToNext}
+          aria-label="Imagen siguiente"
+          type="button"
+        >
+          <svg
+            className={styles.arrowIcon}
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M9 18l6-6-6-6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
     </section>
   );
