@@ -64,7 +64,7 @@ export type IconProps = {
   size?: number;
   /** Label para accesibilidad (alternativa a title) */
   ariaLabel?: string;
-} & Omit<SVGProps<SVGSVGElement>, "name" | "size">;
+} & Omit<SVGProps<SVGSVGElement>, "name" | "width" | "height">;
 
 /**
  * Mapa de nombres de iconos a componentes de Lucide
@@ -128,7 +128,8 @@ export const Icon: FC<IconProps> = ({
   return (
     <Component
       className={className}
-      size={size}
+      width={size}
+      height={size}
       strokeWidth={1.5}
       aria-hidden={hasAriaLabel ? undefined : true}
       role={hasAriaLabel ? "img" : "presentation"}
