@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/common/Input";
 import { Select } from "@/components/common/Select";
 import { Button } from "@/components/common/Button/Button";
@@ -103,43 +103,59 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     label: day.toString().padStart(2, "0"),
   }));
 
-  // Parsear fecha de nacimiento
+  // Parsear fecha de nacimiento inicial
   const fechaNacimiento = passenger.fechaNacimiento || "";
   const fechaParts = fechaNacimiento ? fechaNacimiento.split("-") : [];
-  const birthYear = fechaParts[0] || "";
-  const birthMonth = fechaParts[1] ? fechaParts[1].padStart(2, "0") : "";
-  const birthDay = fechaParts[2] ? fechaParts[2].padStart(2, "0") : "";
+  const parsedBirthYear = fechaParts[0] || "";
+  const parsedBirthMonth = fechaParts[1] ? fechaParts[1].padStart(2, "0") : "";
+  const parsedBirthDay = fechaParts[2] ? fechaParts[2].padStart(2, "0") : "";
+
+  // Estado local para las partes de la fecha (persiste valores parciales)
+  const [birthYear, setBirthYear] = useState(parsedBirthYear);
+  const [birthMonth, setBirthMonth] = useState(parsedBirthMonth);
+  const [birthDay, setBirthDay] = useState(parsedBirthDay);
+
+  // Sincronizar estado cuando cambia passenger.fechaNacimiento externamente
+  // Solo sincronizar si la fecha está completa
+  useEffect(() => {
+    if (fechaNacimiento) {
+      const fechaParts = fechaNacimiento.split("-");
+      if (fechaParts.length === 3 && fechaParts[0] && fechaParts[1] && fechaParts[2]) {
+        const newYear = fechaParts[0];
+        const newMonth = fechaParts[1].padStart(2, "0");
+        const newDay = fechaParts[2].padStart(2, "0");
+        // Usar función de actualización para evitar dependencias
+        setBirthYear((prev) => prev !== newYear ? newYear : prev);
+        setBirthMonth((prev) => prev !== newMonth ? newMonth : prev);
+        setBirthDay((prev) => prev !== newDay ? newDay : prev);
+      }
+    } else {
+      // Si fechaNacimiento se borra externamente, limpiar el estado local
+      setBirthYear("");
+      setBirthMonth("");
+      setBirthDay("");
+    }
+  }, [fechaNacimiento]);
 
   const handleDateChange = (type: "year" | "month" | "day", value: string) => {
-    // Usar el estado actual del pasajero para evitar problemas con closures
-    const currentFecha = passenger.fechaNacimiento || "";
-    const currentParts = currentFecha ? currentFecha.split("-") : [];
-    const currentYear = currentParts[0] || "";
-    const currentMonth = currentParts[1] ? currentParts[1].padStart(2, "0") : "";
-    const currentDay = currentParts[2] ? currentParts[2].padStart(2, "0") : "";
+    // Calcular los nuevos valores usando el estado actual + el nuevo valor
+    const newYear = type === "year" ? value : birthYear;
+    const newMonth = type === "month" ? value : birthMonth;
+    const newDay = type === "day" ? value : birthDay;
     
-    const newYear = type === "year" ? value : currentYear;
-    const newMonth = type === "month" ? value : currentMonth;
-    const newDay = type === "day" ? value : currentDay;
+    // Actualizar el estado local correspondiente
+    if (type === "year") setBirthYear(value);
+    if (type === "month") setBirthMonth(value);
+    if (type === "day") setBirthDay(value);
     
+    // Solo actualizar passenger.fechaNacimiento cuando todos los campos estén completos
     if (newYear && newMonth && newDay) {
       const dateStr = `${newYear}-${newMonth}-${newDay}`;
+      // Actualizar el pasajero con la fecha completa
+      // replacePassenger ya valida automáticamente, así que no necesitamos llamar onValidateField aquí
       handleChange("fechaNacimiento", dateStr);
-      // Validar cuando se completa la fecha
-      onValidateField?.();
-    } else {
-      // Si la fecha está incompleta, actualizar el pasajero con los valores parciales
-      // pero solo si hay al menos un valor
-      if (newYear || newMonth || newDay) {
-        // Construir fecha parcial (puede estar incompleta)
-        const partialDate = `${newYear || ""}-${newMonth || ""}-${newDay || ""}`.replace(/^-+|-+$/g, "");
-        if (partialDate) {
-          handleChange("fechaNacimiento", partialDate);
-        }
-        // Validar para limpiar errores si corresponde
-        onValidateField?.();
-      }
     }
+    // No validar con valores parciales - esperar a que se complete la fecha
   };
 
   return (
@@ -195,40 +211,37 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           <label className={styles.label}>
             Fecha de Nacimiento <span className={styles.required}>*</span>
           </label>
-          <div className={styles.dateInputs}>
+          <div className={`${styles.dateInputs} ${errors.fechaNacimiento ? styles.dateInputsError : ""}`}>
             <Select
               name={`passenger-${passengerNumber}-day`}
               options={dayOptions}
               value={birthDay}
-              onChange={(e) => {
-                handleDateChange("day", e.target.value);
-                onValidateField?.();
-              }}
+              onChange={(e) => handleDateChange("day", e.target.value)}
+              error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />
             <Select
               name={`passenger-${passengerNumber}-month`}
               options={monthOptions}
               value={birthMonth}
-              onChange={(e) => {
-                handleDateChange("month", e.target.value);
-                onValidateField?.();
-              }}
+              onChange={(e) => handleDateChange("month", e.target.value)}
+              error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />
             <Select
               name={`passenger-${passengerNumber}-year`}
               options={yearOptions}
               value={birthYear}
-              onChange={(e) => {
-                handleDateChange("year", e.target.value);
-                onValidateField?.();
-              }}
+              onChange={(e) => handleDateChange("year", e.target.value)}
+              error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />
           </div>
+          {errors.fechaNacimiento && (
+            <span className={styles.errorMessage}>{errors.fechaNacimiento}</span>
+          )}
         </div>
-          </div>
+      </div>
 
           <div className={styles.formRow}>
             <Input

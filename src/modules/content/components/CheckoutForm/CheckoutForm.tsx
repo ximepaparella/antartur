@@ -147,6 +147,46 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     onPassengersChange,
   });
 
+  // Ref para rastrear la última cantidad de pasajeros procesada
+  const lastPassengersCountRef = useRef<{ adults: number; children: number } | null>(null);
+
+  // Actualizar bookingData cuando cambian los pasajeros
+  // Esto asegura que exceedsAvailability se actualice cuando se agregan/quitan pasajeros
+  useEffect(() => {
+    const currentAdults = passengers.filter((p) => p.esAdulto).length;
+    const currentChildren = passengers.filter((p) => !p.esAdulto).length;
+    
+    const lastCount = lastPassengersCountRef.current;
+    // Solo actualizar si la cantidad de pasajeros realmente cambió
+    if (
+      !lastCount ||
+      lastCount.adults !== currentAdults ||
+      lastCount.children !== currentChildren
+    ) {
+      lastPassengersCountRef.current = { adults: currentAdults, children: currentChildren };
+      
+      // Pequeño delay para asegurar que updatePendingBookingPassengers haya terminado
+      setTimeout(() => {
+        // Recargar bookingData desde localStorage (ya debería estar actualizado por updatePendingBookingPassengers)
+        const updated = getPendingBooking();
+        if (updated) {
+          setBookingData((prev) => {
+            // Solo actualizar si los valores realmente cambiaron
+            if (
+              !prev ||
+              updated.adults !== prev.adults ||
+              updated.children !== prev.children ||
+              updated.exceedsAvailability !== prev.exceedsAvailability
+            ) {
+              return updated;
+            }
+            return prev;
+          });
+        }
+      }, 0);
+    }
+  }, [passengers.length, passengers]);
+
   // Notificar cambios en violaciones de restricciones
   useEffect(() => {
     if (onRestrictionViolationsChange) {
@@ -206,11 +246,60 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   // Ref para el mensaje de validación (para hacer focus)
   const validationMessageRef = useRef<HTMLDivElement>(null);
   const prevHasValidationErrorsRef = useRef<boolean>(false);
+  // Ref para rastrear si el usuario está activamente editando campos
+  const isUserEditingRef = useRef<boolean>(false);
+  // Ref para rastrear el último momento en que el usuario editó un campo
+  const lastEditTimeRef = useRef<number>(0);
+  // Ref para rastrear la última cantidad de pasajeros (para detectar cuando se agregan nuevos)
+  const lastPassengerCountRef = useRef<number>(0);
+
+  // Marcar que el usuario está editando cuando cambian los pasajeros o billing info
+  useEffect(() => {
+    const currentPassengerCount = passengers.length;
+    const passengerCountChanged = currentPassengerCount !== lastPassengerCountRef.current;
+    
+    // Si cambió la cantidad de pasajeros, puede ser que se agregó uno nuevo
+    // En ese caso, marcar como "editando" pero con un delay más largo para evitar scroll inmediato
+    if (passengerCountChanged) {
+      lastPassengerCountRef.current = currentPassengerCount;
+      // Cuando se agrega un pasajero nuevo, dar más tiempo antes de permitir scroll
+      isUserEditingRef.current = true;
+      lastEditTimeRef.current = Date.now();
+      
+      // Resetear el flag después de un delay más largo (2 segundos) cuando se agregan pasajeros
+      const timeoutId = setTimeout(() => {
+        isUserEditingRef.current = false;
+      }, 2000);
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      // Si solo cambió el contenido (no la cantidad), el usuario está editando activamente
+      isUserEditingRef.current = true;
+      lastEditTimeRef.current = Date.now();
+      
+      // Resetear el flag después de un breve delay (500ms sin cambios)
+      const timeoutId = setTimeout(() => {
+        isUserEditingRef.current = false;
+      }, 500);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [passengers, billingInfo]);
 
   // Hacer focus en el mensaje de validación solo cuando aparezcan errores por primera vez
+  // Y solo si el usuario NO está activamente editando campos
   useEffect(() => {
-    // Solo hacer scroll si cambió de false a true (errores aparecieron)
-    if (hasValidationErrors && !prevHasValidationErrorsRef.current && validationMessageRef.current) {
+    // Solo hacer scroll si:
+    // 1. Cambió de false a true (errores aparecieron)
+    // 2. El usuario NO está activamente editando (o pasó suficiente tiempo desde la última edición)
+    const timeSinceLastEdit = Date.now() - lastEditTimeRef.current;
+    const shouldScroll = 
+      hasValidationErrors && 
+      !prevHasValidationErrorsRef.current && 
+      validationMessageRef.current &&
+      (!isUserEditingRef.current || timeSinceLastEdit > 2000);
+    
+    if (shouldScroll) {
       validationMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       validationMessageRef.current.focus();
     }
@@ -233,22 +322,67 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     );
   }
 
-  // Opciones para provincias argentinas (ejemplo básico)
+  // Opciones para provincias argentinas (23 provincias + CABA)
   const provinceOptions = [
-    { value: "Tierra del Fuego", label: "Tierra del Fuego" },
     { value: "Buenos Aires", label: "Buenos Aires" },
+    { value: "Catamarca", label: "Catamarca" },
+    { value: "Chaco", label: "Chaco" },
+    { value: "Chubut", label: "Chubut" },
+    { value: "Ciudad Autónoma de Buenos Aires", label: "Ciudad Autónoma de Buenos Aires" },
     { value: "Córdoba", label: "Córdoba" },
-    { value: "Santa Fe", label: "Santa Fe" },
+    { value: "Corrientes", label: "Corrientes" },
+    { value: "Entre Ríos", label: "Entre Ríos" },
+    { value: "Formosa", label: "Formosa" },
+    { value: "Jujuy", label: "Jujuy" },
+    { value: "La Pampa", label: "La Pampa" },
+    { value: "La Rioja", label: "La Rioja" },
     { value: "Mendoza", label: "Mendoza" },
-    // Agregar más según necesidad
+    { value: "Misiones", label: "Misiones" },
+    { value: "Neuquén", label: "Neuquén" },
+    { value: "Río Negro", label: "Río Negro" },
+    { value: "Salta", label: "Salta" },
+    { value: "San Juan", label: "San Juan" },
+    { value: "San Luis", label: "San Luis" },
+    { value: "Santa Cruz", label: "Santa Cruz" },
+    { value: "Santa Fe", label: "Santa Fe" },
+    { value: "Santiago del Estero", label: "Santiago del Estero" },
+    { value: "Tierra del Fuego", label: "Tierra del Fuego" },
+    { value: "Tucumán", label: "Tucumán" },
   ];
 
+  // Opciones para países (lista internacional completa)
   const countryOptions = [
     { value: "Argentina", label: "Argentina" },
     { value: "Chile", label: "Chile" },
-    { value: "Brasil", label: "Brasil" },
     { value: "Uruguay", label: "Uruguay" },
-    // Agregar más según necesidad
+    { value: "Brasil", label: "Brasil" },
+    { value: "Paraguay", label: "Paraguay" },
+    { value: "Bolivia", label: "Bolivia" },
+    { value: "Perú", label: "Perú" },
+    { value: "Colombia", label: "Colombia" },
+    { value: "Ecuador", label: "Ecuador" },
+    { value: "Venezuela", label: "Venezuela" },
+    { value: "Estados Unidos", label: "Estados Unidos" },
+    { value: "Canadá", label: "Canadá" },
+    { value: "México", label: "México" },
+    { value: "Reino Unido", label: "Reino Unido" },
+    { value: "España", label: "España" },
+    { value: "Francia", label: "Francia" },
+    { value: "Alemania", label: "Alemania" },
+    { value: "Italia", label: "Italia" },
+    { value: "Portugal", label: "Portugal" },
+    { value: "Países Bajos", label: "Países Bajos" },
+    { value: "Bélgica", label: "Bélgica" },
+    { value: "Suiza", label: "Suiza" },
+    { value: "Austria", label: "Austria" },
+    { value: "Australia", label: "Australia" },
+    { value: "Nueva Zelanda", label: "Nueva Zelanda" },
+    { value: "China", label: "China" },
+    { value: "Japón", label: "Japón" },
+    { value: "India", label: "India" },
+    { value: "Corea del Sur", label: "Corea del Sur" },
+    { value: "Israel", label: "Israel" },
+    { value: "Sudáfrica", label: "Sudáfrica" },
   ];
 
   return (

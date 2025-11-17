@@ -23,7 +23,6 @@ import {
   Ship,
   MessageCircle,
   BookA,
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Building2,
@@ -61,7 +60,6 @@ export type IconName =
   | "off-road"
   | "kayak"
   | "book-a"
-  | "calendar-days"
   | "chevron-left"
   | "chevron-right"
   | "chevron-up"
@@ -110,7 +108,7 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   "off-road": CarFront,
   kayak: Ship,
   "book-a": BookA,
-  "calendar-days": CalendarDays,
+  "calendar-days": Calendar,
   "chevron-left": ChevronLeft,
   "chevron-right": ChevronRight,
   "chevron-up": ChevronUp,

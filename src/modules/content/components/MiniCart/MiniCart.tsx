@@ -82,8 +82,8 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   const hasProblems = exceedsAvailability || hasRestrictionViolations;
   const ctaText = hasProblems ? "CONSULTAR DISPONIBILIDAD" : "RESERVAR";
   
-  // Botón deshabilitado si hay restricciones violadas o errores de validación
-  const isButtonDisabled = hasRestrictionViolations || hasValidationErrors;
+  // Botón deshabilitado solo si hay errores de validación (permite consulta flow)
+  const isButtonDisabled = hasValidationErrors;
   
   // Mostrar métodos de pago solo si no hay problemas (ni exceso de disponibilidad ni restricciones)
   const showPaymentMethods = !exceedsAvailability && !hasRestrictionViolations;

@@ -186,6 +186,18 @@
   .dateSelect {
     flex: 1;
   }
+  
+  // Ocultar mensajes de error individuales de los Selects dentro de dateInputs
+  // porque mostramos un mensaje único debajo
+  :global(.selectGroup) {
+    :global(.errorMessage) {
+      display: none;
+    }
+  }
+  
+  &.dateInputsError {
+    // Los selects mostrarán el estado visual de error (borde rojo)
+  }
 }
 
 .radioGroup {

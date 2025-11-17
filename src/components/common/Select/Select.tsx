@@ -1,4 +1,4 @@
-import React, { SelectHTMLAttributes } from "react";
+import React, { SelectHTMLAttributes, useId } from "react";
 import styles from "./Select.module.scss";
 
 interface SelectOption {
@@ -45,7 +45,8 @@ export const Select: React.FC<SelectProps> = ({
   id,
   ...props
 }) => {
-  const selectId = id || `select-${props.name || Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const selectId = id || `select-${props.name || generatedId}`;
 
   return (
     <div className={`${styles.selectGroup} ${className}`.trim()}>

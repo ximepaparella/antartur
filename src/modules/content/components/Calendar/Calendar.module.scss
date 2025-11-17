@@ -239,6 +239,14 @@
   flex: 1;
 }
 
+.helperText {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  color: $gray-400;
+  margin: $spacing-4 0 0 0;
+  line-height: $line-height-normal;
+}
+
 .disclaimer {
   display: flex;
   align-items: flex-start;

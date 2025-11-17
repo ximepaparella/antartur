@@ -71,7 +71,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   // Obtener días del mes
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  // Convertir de Sunday-first (0-6) a Monday-first (0-6) donde Monday=0, Sunday=6
+  const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
   const lastDayOfPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
 
   // Nombres de meses y días
@@ -117,7 +118,9 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   // Formatear fecha para mostrar
   const formatDisplayDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
+    // Parsear como fecha local para evitar problemas de timezone
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
     const months = [
       "enero", "febrero", "marzo", "abril", "mayo", "junio",
       "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
@@ -407,6 +410,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               }
             }}
           />
+          <p className={styles.helperText}>Máximo 11 pasajeros menores</p>
         </div>
       </div>
 

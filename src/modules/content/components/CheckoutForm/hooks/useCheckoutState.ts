@@ -168,6 +168,10 @@ export function useCheckoutState({
         const updated = [...prev];
         updated[index] = passenger;
         
+        // Validar usando el pasajero actualizado del array (no el parámetro)
+        // para asegurar que siempre validamos con el estado más reciente
+        const passengerToValidate = updated[index];
+        
         // Validar inmediatamente con el estado actualizado
         setErrors((prevErrors) => {
           const newErrors = { ...prevErrors };
@@ -179,9 +183,9 @@ export function useCheckoutState({
             }
           });
           
-          // Revalidar todos los campos del pasajero
+          // Revalidar todos los campos del pasajero usando el pasajero del array actualizado
           const passengerErrors = validatePassengerField(
-            passenger,
+            passengerToValidate,
             index,
             "",
             restrictions
