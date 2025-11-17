@@ -1,0 +1,78 @@
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+// Estilos de modal movidos al componente Modal genérico
+// Solo se mantienen estilos específicos del contenido del PaymentModal
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-bottom: $spacing-24;
+  padding: $spacing-16;
+  background-color: $gray-100;
+  border-radius: $spacing-8;
+}
+
+.orderNumber {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.orderTotal {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  margin: 0;
+}
+
+.paymentMethod {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  color: $gray-400;
+  margin: 0;
+}
+
+.paymentNote {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-8;
+  padding: $spacing-12;
+  background-color: $gray-100;
+  border-radius: $spacing-4;
+  margin-bottom: $spacing-24;
+
+  svg {
+    flex-shrink: 0;
+    color: $gray-400;
+    margin-top: 2px;
+  }
+
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $gray-400;
+    margin: 0;
+    line-height: $line-height-normal;
+  }
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+
+  @include desktop {
+    flex-direction: row;
+  }
+
+  :global(.button) {
+    flex: 1;
+  }
+}
+

@@ -6,6 +6,8 @@ import { Icon } from "@/components/icons/Icon";
 import { Tooltip } from "@/components/common/Tooltip";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
+import { Message } from "@/components/common/Message";
+import { Modal } from "@/components/common/Modal";
 import styles from "./Calendar.module.scss";
 
 interface AvailabilityDate {
@@ -150,6 +152,28 @@ export const Calendar: React.FC<CalendarProps> = ({
   const handleBooking = () => {
     if (!selectedDate) return;
     
+    const selectedAvailability = availabilityMap.get(selectedDate);
+    if (!selectedAvailability) return;
+
+    // Crear objeto de reserva inicial
+    const bookingData = {
+      tourId,
+      tourTitle,
+      date: selectedDate,
+      adults,
+      children,
+      pricing,
+      timeSlot: selectedAvailability.timeSlot,
+      exceedsAvailability: adults + children > selectedAvailability.available,
+    };
+
+    // Guardar en localStorage
+    try {
+      localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+    } catch (error) {
+      console.error("Error al guardar datos de reserva:", error);
+    }
+
     const params = new URLSearchParams({
       tourId,
       date: selectedDate,
@@ -273,7 +297,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           available={selectedAvailability.available}
           pricing={pricing}
           adults={adults}
-          children={children}
+          childrenCount={children}
           onAdultsChange={setAdults}
           onChildrenChange={setChildren}
           onClose={() => {
@@ -299,7 +323,7 @@ interface BookingModalProps {
   available: number;
   pricing: Pricing;
   adults: number;
-  children: number;
+  childrenCount: number;
   onAdultsChange: (value: number) => void;
   onChildrenChange: (value: number) => void;
   onClose: () => void;
@@ -315,7 +339,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   available,
   pricing,
   adults,
-  children,
+  childrenCount,
   onAdultsChange,
   onChildrenChange,
   onClose,
@@ -323,7 +347,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   exceedsAvailability,
   isClosing = false,
 }) => {
-  const subtotal = adults * pricing.priceAdult + children * pricing.priceChild;
+  const subtotal = adults * pricing.priceAdult + childrenCount * pricing.priceChild;
 
   const formatPrice = (amount: number): string => {
     if (pricing.currency === "ARS") {
@@ -333,98 +357,90 @@ const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   return (
-    <div className={`${styles.modalOverlay} ${isClosing ? styles.modalOverlayClosing : ""}`} onClick={onClose}>
-      <div className={`${styles.modalContent} ${isClosing ? styles.modalContentClosing : ""}`} onClick={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          onClick={onClose}
-          className={styles.modalClose}
-          aria-label="Cerrar"
-        >
-          <Icon name="close" size={24} />
-        </button>
+    <Modal
+      isOpen={true}
+      isClosing={isClosing}
+      title="REALIZAR UNA RESERVA"
+      size="medium"
+      onClose={onClose}
+    >
+      <div className={styles.modalReservationInfo}>
+        <p className={styles.modalActivity}>{tourTitle}</p>
+        <p className={styles.modalDateTime}>
+          <Icon name="calendar-days" size={20} className={styles.modalIcon} />
+          {date} a {timeSlot}
+        </p>
+      </div>
 
-        <h2 className={styles.modalTitle}>REALIZAR UNA RESERVA</h2>
-
-        <div className={styles.modalReservationInfo}>
-          <p className={styles.modalActivity}>{tourTitle}</p>
-          <p className={styles.modalDateTime}>
-            <Icon name="calendar-days" size={20} className={styles.modalIcon} />
-            {date} a {timeSlot}
-          </p>
-        </div>
-
-        {exceedsAvailability && (
-          <div className={styles.warning}>
-            <Icon name="info" size={20} />
-            <p>
+      {exceedsAvailability && (
+        <Message variant="warning">
+          <p>
             La cantidad de pasajeros supera la disponibilidad. Puede continuar y enviar una consulta de disponibilidad a nuestro equipo.
-            </p>  
-          </div>
-        )}
+          </p>
+        </Message>
+      )}
 
-        <div className={styles.passengersRow}>
-          <div className={styles.passengerInput}>
-            <Input
-              label="Pasajeros Adultos"
-              name="adults"
-              type="number"
-              min="1"
-              max="10"
-              required
-              value={adults.toString()}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                if (value >= 1 && value <= 10) {
-                  onAdultsChange(value);
-                }
-              }}
-            />
-          </div>
-          <div className={styles.passengerInput}>
-            <Input
-              label="Pasajeros Menores (0-11 años)"
-              name="children"
-              type="number"
-              min="0"
-              max="11"
-              value={children.toString()}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                if (value >= 0 && value <= 11) {
-                  onChildrenChange(value);
-                }
-              }}
-            />
-          </div>
+      <div className={styles.passengersRow}>
+        <div className={styles.passengerInput}>
+          <Input
+            label="Pasajeros Adultos"
+            name="adults"
+            type="number"
+            min="1"
+            max="10"
+            required
+            value={adults.toString()}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (value >= 1 && value <= 10) {
+                onAdultsChange(value);
+              }
+            }}
+          />
         </div>
-
-        <div className={styles.disclaimer}>
-          <Icon name="info" size={16} />
-          <p>La información de los pasajeros se solicitará en el siguiente paso.</p>
-        </div>
-
-        <div className={styles.subtotalSection}>
-          <p className={styles.subtotalLabel}>Subtotal:</p>
-          <p className={styles.subtotalAmount}>{formatPrice(subtotal)}</p>
-        </div>
-
-        <div className={styles.modalActions}>
-          <Button
-            variant="primary"
-            onClick={onBooking}
-          >
-            Realizar una reserva
-          </Button>
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
-            Cancelar Reserva
-          </Button>
+        <div className={styles.passengerInput}>
+          <Input
+            label="Pasajeros Menores (0-11 años)"
+            name="children"
+            type="number"
+            min="0"
+            max="11"
+            value={childrenCount.toString()}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (value >= 0 && value <= 11) {
+                onChildrenChange(value);
+              }
+            }}
+          />
         </div>
       </div>
-    </div>
+
+      <div className={styles.disclaimer}>
+        <Icon name="info" size={16} />
+        <p>La información de los pasajeros se solicitará en el siguiente paso.</p>
+      </div>
+
+      <div className={styles.subtotalSection}>
+        <p className={styles.subtotalLabel}>Subtotal:</p>
+        <p className={styles.subtotalAmount}>{formatPrice(subtotal)}</p>
+      </div>
+
+      <div className={styles.modalActions}>
+        <Button
+          variant="primary"
+          onClick={onBooking}
+        >
+          Realizar una reserva
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onClose}
+        >
+          Cancelar Reserva
+        </Button>
+      </div>
+    </Modal>
   );
 };
 

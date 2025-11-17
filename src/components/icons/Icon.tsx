@@ -26,6 +26,9 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
+  Building2,
+  Wallet,
+  ChevronUp,
 } from "lucide-react";
 
 /**
@@ -52,6 +55,7 @@ export type IconName =
   | "credit-card"
   | "clock"
   | "difficulty"
+  | "alert-circle"
   | "family"
   | "lunch"
   | "off-road"
@@ -59,7 +63,10 @@ export type IconName =
   | "book-a"
   | "calendar-days"
   | "chevron-left"
-  | "chevron-right";
+  | "chevron-right"
+  | "chevron-up"
+  | "bank"
+  | "wallet";
 
 export type IconProps = {
   /** Nombre del icono a mostrar */
@@ -97,6 +104,7 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   "credit-card": CreditCard,
   clock: Clock,
   difficulty: AlertCircle,
+  "alert-circle": AlertCircle,
   family: Users,
   lunch: UtensilsCrossed,
   "off-road": CarFront,
@@ -105,6 +113,9 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   "calendar-days": CalendarDays,
   "chevron-left": ChevronLeft,
   "chevron-right": ChevronRight,
+  "chevron-up": ChevronUp,
+  "bank": Building2,
+  "wallet": Wallet,
 };
 
 /**

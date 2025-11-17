@@ -68,6 +68,13 @@
     "backgroundImage": "",
     "backgroundPosition": "center center",
     "overlayOpacity": 0.5
+  },
+  "checkout": {
+    "title": "FINALIZAR RESERVA",
+    "subtitle": "",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
   }
 }
 

@@ -1,0 +1,33 @@
+@use "@/styles/variables" as *;
+
+.card {
+  background-color: $white;
+  border-radius: $spacing-8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: $spacing-24;
+  width: 100%;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  &.compact {
+    padding: $spacing-16;
+  }
+}
+
+.title {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  margin: 0 0 $spacing-16 0;
+  padding: 0 0 $spacing-8 0;
+  border-bottom: 0.5px solid $border-divider;
+}
+
+.content {
+  width: 100%;
+}
+

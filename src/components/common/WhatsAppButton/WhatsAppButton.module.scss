@@ -7,16 +7,16 @@
   justify-content: space-between;
   gap: $spacing-12;
   padding: $spacing-16 $spacing-24;
-  background-color: #25d366; // Color oficial de WhatsApp
+  background-color: $whatsapp-color;
   color: $white;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: $spacing-8;
   font-weight: $font-weight-semibold;
   font-size: $font-size-14;
   transition: background-color 0.2s ease, transform 0.2s ease;
   
   &:hover {
-    background-color: #20ba5a;
+    background-color: $whatsapp-color-hover;
     transform: translateY(-2px);
   }
   

@@ -1,0 +1,70 @@
+@use "@/styles/variables" as *;
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-12;
+  padding: $spacing-16;
+  border-radius: $spacing-8;
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  line-height: $line-height-normal;
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.content {
+  flex: 1;
+  
+  p {
+    margin: 0;
+    
+    &:not(:last-child) {
+      margin-bottom: $spacing-8;
+    }
+  }
+}
+
+.warning {
+  background-color: $warning-bg;
+  border: 1px solid $warning-border;
+  color: $warning-text;
+  
+  .icon {
+    color: $warning-border;
+  }
+}
+
+.alert {
+  background-color: $error-bg;
+  border: 1px solid $error-border;
+  color: $error-text;
+  
+  .icon {
+    color: $error-color;
+  }
+}
+
+.success {
+  background-color: $success-bg;
+  border: 1px solid $success-border;
+  color: $success-text;
+  
+  .icon {
+    color: $success-color;
+  }
+}
+
+.info {
+  background-color: rgba($tertiary-color, 0.1);
+  border: 1px solid $tertiary-color;
+  color: $gray-700;
+  
+  .icon {
+    color: $tertiary-color;
+  }
+}
+

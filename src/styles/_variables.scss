@@ -7,6 +7,7 @@ $secondary-color: #4054B2;
 $tertiary-color: #6fa5cb; 
 $white: #ffffff;
 $black: #000000;
+$gray-50: #fafafa;
 $gray-100: #f8f8f8;
 $gray-200: #d2d2d2;
 $gray-300: #f7f5f5;
@@ -18,25 +19,38 @@ $gray-800: #292e31;
 $gray-900: #333333;
 $gray-icon: #4f5356;
 
-$blue-light: #6fa5cb;
-$blue-dark: #4054B2;
-$blue-medium: #24384d;
-$blue-dark: #24384d;
+// Colores adicionales
+$border-divider: rgba(155, 155, 155, 0.68);
+$footer-bg: #23272a;
+$whatsapp-color: #25d366;
+$whatsapp-color-hover: #20ba5a;
 
-
-// Warning colors
+// Warning colors (paleta de naranjas)
 $warning-bg: #fff3cd;
 $warning-border: #ffc107;
-$warning-text: $gray-700;
+$warning-text: #856404;
+
+// Error/Alert colors (paleta de rojos)
+$error-color: #dc3545;
+$error-bg: rgba(220, 53, 69, 0.1);
+$error-border: #dc3545;
+$error-text: #721c24;
+
+// Success colors (usar colores terciarios)
+$success-color: $tertiary-color;
+$success-bg: rgba(111, 165, 203, 0.1);
+$success-border: $tertiary-color;
+$success-text: $gray-700;
 
 // Modal overlay
-$overlay-bg: rgba(0, 0, 0, 0.5); 
+$overlay-bg: rgba(0, 0, 0, 0.5);
+$overlay-bg-dark: rgba(0, 0, 0, 0.6); 
 
 
 // Tipografía
 $font-primary: "ludicrousregular", sans-serif;
-$font-secondary: var(--font-work-sans, 'Work Sans'), sans-serif;
 $font-roboto: var(--font-roboto, 'Roboto'), sans-serif;
+$font-secondary: $font-roboto;
 
 // ============================================
 // ESPACIADO

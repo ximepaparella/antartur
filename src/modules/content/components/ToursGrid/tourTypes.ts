@@ -108,5 +108,22 @@ export interface Tour {
     canonicalUrl: string;
     ogImage: string;
   };
+  
+  // Booking (opcional)
+  booking?: {
+    pricing: {
+      currency: "ARS" | "USD";
+      priceAdult: number;
+      priceChild: number;
+    };
+    availability: Array<{
+      date: string; // YYYY-MM-DD
+      available: number;
+      timeSlot: {
+        start: string; // HH:mm
+        end: string; // HH:mm
+      };
+    }>;
+  };
 }
 

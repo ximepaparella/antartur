@@ -3,18 +3,34 @@
 @use "@/styles/mixins" as *;
 
 .button {
-  display: inline-block;
-  font-family: var(--font-roboto), sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-8;
+  font-family: $font-roboto;
   font-size: $font-size-16;
   font-weight: $font-weight-semibold;
   text-transform: uppercase;
   text-decoration: none;
   text-align: center;
   border: none;
-  border-radius: 4px;
+  border-radius: $spacing-4;
   cursor: pointer;
   transition: all 0.2s ease;
   line-height: 1.5;
+  
+  // Estilos para iconos dentro del botón
+  svg,
+  :global(svg) {
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  // Si solo hay icono, sin texto
+  &:has(> svg:only-child),
+  &:has(> :global(svg):only-child) {
+    padding: $spacing-8;
+  }
   
   &:disabled {
     opacity: 0.6;

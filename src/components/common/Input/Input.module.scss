@@ -40,7 +40,7 @@
   }
 
   &.error {
-    border-color: $gray-400;
+    border-color: $error-color;
   }
 
   &:disabled {
@@ -52,6 +52,6 @@
 .errorMessage {
   font-family: $font-roboto;
   font-size: $font-size-12;
-  color: $gray-400;
+  color: $error-color;
 }
 

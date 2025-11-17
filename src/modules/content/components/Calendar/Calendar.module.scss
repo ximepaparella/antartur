@@ -172,106 +172,8 @@
 
 
 // Modal styles
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: $overlay-bg;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: $spacing-16;
-  animation: fadeInOverlay 0.2s ease-out;
-}
-
-@keyframes fadeInOverlay {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.modalOverlayClosing {
-  animation: fadeOutOverlay 0.2s ease-out forwards;
-}
-
-@keyframes fadeOutOverlay {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.modalContent {
-  background-color: $white;
-  border-radius: $spacing-8;
-  padding: $spacing-32;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modalContentClosing {
-  animation: modalSlideOut 0.2s ease-out forwards;
-}
-
-@keyframes modalSlideOut {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-}
-
-.modalClose {
-  position: absolute;
-  top: $spacing-16;
-  right: $spacing-16;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: $spacing-8;
-  color: $gray-400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    color: $gray-700;
-  }
-}
-
-.modalTitle {
-  font-family: $font-roboto;
-  font-size: $font-size-24;
-  font-weight: $font-weight-bold;
-  color: $gray-700;
-  margin: 0 0 $spacing-24 0;
-}
+// Estilos de modal movidos al componente Modal genérico
+// Solo se mantienen estilos específicos del contenido del BookingModal
 
 .modalReservationInfo {
   background-color: $primary-color;
@@ -303,20 +205,20 @@
 }
 
 .warning {
-  background-color: $blue-light;
-  border: 1px solid $blue-light;
+  background-color: $warning-bg;
+  border: 1px solid $warning-border;
   border-radius: $spacing-8;
   padding: $spacing-16;
   margin-bottom: $spacing-24;
   display: flex;
   gap: $spacing-12;
-  color: $white;
+  color: $warning-text;
   align-items: flex-start;
 
   p {
     font-family: $font-roboto;
     font-size: $font-size-14;
-    color: $white;
+    color: $warning-text;
     margin: 0;
   }
 }
