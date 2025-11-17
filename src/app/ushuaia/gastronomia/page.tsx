@@ -4,8 +4,20 @@ import { Heading } from "@/components/common/Heading/Heading";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Información Gastronómica - Ushuaia - Antartur",
-  description: "Información gastronómica en Ushuaia",
+  title: "Gastronomía en Ushuaia - Restaurantes y Comida | Antartur",
+  description: "Descubrí la gastronomía de Ushuaia. Restaurantes, comida típica de Tierra del Fuego y opciones gastronómicas en la ciudad más austral del mundo.",
+  keywords: ["gastronomía Ushuaia", "restaurantes Ushuaia", "comida Ushuaia", "gastronomía Tierra del Fuego"],
+  openGraph: {
+    title: "Gastronomía en Ushuaia - Restaurantes y Comida | Antartur",
+    description: "Descubrí la gastronomía de Ushuaia. Restaurantes, comida típica de Tierra del Fuego y opciones gastronómicas.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gastronomía en Ushuaia | Antartur",
+    description: "Descubrí la gastronomía de Ushuaia. Restaurantes y comida típica de Tierra del Fuego.",
+  },
 };
 
 export default function GastronomiaPage() {

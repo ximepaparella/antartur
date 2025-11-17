@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
-import { WindyWidget } from "@/modules/content/components/WindyWidget/WindyWidget";
+import { WindyWidgetClient } from "@/modules/content/components/WindyWidget/WindyWidgetClient";
 
 export const metadata: Metadata = {
-  title: "Clima - Antartur",
-  description: "Información del clima en Tierra del Fuego",
+  title: "Clima - Información del Clima en Ushuaia | Antartur",
+  description: "Conocé el clima de los próximos días en Ushuaia. Información actualizada del clima y condiciones meteorológicas en Tierra del Fuego.",
+  keywords: ["clima", "Ushuaia", "tiempo", "meteorología", "Tierra del Fuego", "pronóstico"],
+  openGraph: {
+    title: "Clima - Información del Clima en Ushuaia | Antartur",
+    description: "Conocé el clima de los próximos días en Ushuaia. Información actualizada del clima y condiciones meteorológicas.",
+    type: "website",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary",
+    title: "Clima - Información del Clima en Ushuaia | Antartur",
+    description: "Conocé el clima de los próximos días en Ushuaia.",
+  },
 };
 
 export default function ClimaPage() {
@@ -12,7 +24,7 @@ export default function ClimaPage() {
     <>
       <Hero variant="internal" pageKey="clima" />
       <main style={{ margin: 0, padding: 0, width: "100%" }}>
-        <WindyWidget />
+        <WindyWidgetClient />
       </main>
     </>
   );

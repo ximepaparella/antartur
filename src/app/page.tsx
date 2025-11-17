@@ -1,17 +1,30 @@
+import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
+import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
 import "@/styles/globals.scss";
 
+export const metadata: Metadata = {
+  title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
+  description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego. Excursiones de invierno y verano, viajes a la Antártida y turismo corporativo.",
+  keywords: ["Ushuaia", "Tierra del Fuego", "Antártida", "excursiones", "turismo", "aventura"],
+  openGraph: {
+    title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
+    description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego.",
+    type: "website",
+    locale: "es_AR",
+    siteName: "Antartur",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Antartur - Experiencia & Aventura",
+    description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego.",
+  },
+};
+
 export default function Home() {
-  const testimonials = [
-    {
-      text: "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
-      author: "Adriana S. Magalhães",
-      avatar: "/images/testimonials/author-1.jpg",
-      country: "Brasil",
-    },
-  ];
+  const testimonials = testimonialsData.home;
 
   return (
     <>

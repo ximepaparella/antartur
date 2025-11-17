@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Work_Sans, Roboto } from "next/font/google";
 import { Header } from "@/modules/layout/components/Header/Header";
 import { Footer } from "@/modules/layout/components/Footer/Footer";
+import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoundaryClient";
 import "@/styles/globals.scss";
 
 const workSans = Work_Sans({
@@ -19,8 +20,38 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Antartur",
-  description: "Sitio web de Antartur",
+  title: {
+    default: "Antartur - Experiencia & Aventura en Tierra del Fuego",
+    template: "%s | Antartur",
+  },
+  description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego. Excursiones de invierno y verano, viajes a la Antártida y turismo corporativo.",
+  keywords: ["Ushuaia", "Tierra del Fuego", "Antártida", "excursiones", "turismo", "aventura"],
+  authors: [{ name: "Antartur" }],
+  creator: "Antartur",
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    url: "https://antartur.com",
+    siteName: "Antartur",
+    title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
+    description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Antartur - Experiencia & Aventura",
+    description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -31,9 +62,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${workSans.variable} ${roboto.variable}`}>
       <body>
-        <Header />
-        {children}
-        <Footer />
+        <ErrorBoundaryClient>
+          <Header />
+          {children}
+          <Footer />
+        </ErrorBoundaryClient>
       </body>
     </html>
   );
