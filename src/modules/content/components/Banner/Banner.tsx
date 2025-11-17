@@ -69,10 +69,12 @@ export const Banner: React.FC<BannerProps> = ({
     };
   }, []);
 
-  const backgroundStyle: React.CSSProperties = {
-    backgroundImage: `url(${backgroundImage})`,
-    transform: `translateY(${scrollY}px)`,
-  };
+  const backgroundStyle: React.CSSProperties = backgroundImage
+    ? {
+        backgroundImage: `url(${backgroundImage})`,
+        transform: `translateY(${scrollY}px)`,
+      }
+    : {};
 
   return (
     <section
@@ -80,8 +82,12 @@ export const Banner: React.FC<BannerProps> = ({
       className={styles.banner}
       style={{ minHeight: `${minHeight}px` }}
     >
-      <div className={styles.background} style={backgroundStyle} />
-      {showOverlay && <div className={styles.overlay} />}
+      {backgroundImage && (
+        <>
+          <div className={styles.background} style={backgroundStyle} />
+          {showOverlay && <div className={styles.overlay} />}
+        </>
+      )}
       <div className={styles.content}>
         {children}
       </div>

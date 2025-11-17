@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon, IconName } from "@/components/icons/Icon";
+import { Calendar } from "@/modules/content/components/Calendar";
 import styles from "./BannerBooking.module.scss";
 
 interface BookingStep {
@@ -8,9 +9,32 @@ interface BookingStep {
   text: string;
 }
 
+interface AvailabilityDate {
+  date: string;
+  available: number;
+  timeSlot: {
+    start: string;
+    end: string;
+  };
+}
+
+interface Pricing {
+  currency: "ARS" | "USD";
+  priceAdult: number;
+  priceChild: number;
+}
+
 interface BannerBookingProps {
   /** Pasos del proceso de reserva */
   steps?: BookingStep[];
+  /** ID del tour */
+  tourId?: string;
+  /** Título del tour */
+  tourTitle?: string;
+  /** Fechas con disponibilidad */
+  availability?: AvailabilityDate[];
+  /** Precios del tour */
+  pricing?: Pricing;
 }
 
 const defaultSteps: BookingStep[] = [
@@ -49,6 +73,10 @@ const defaultSteps: BookingStep[] = [
  */
 export const BannerBooking: React.FC<BannerBookingProps> = ({
   steps = defaultSteps,
+  tourId,
+  tourTitle,
+  availability,
+  pricing,
 }) => {
   return (
     <div className={styles.bookingContainer}>
@@ -64,7 +92,16 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
         </ul>
       </div>
       <div className={styles.rightColumn}>
-        <h2 className={styles.calendarTitle}>Calendario</h2>
+        {tourId && tourTitle && availability && pricing ? (
+          <Calendar
+            tourId={tourId}
+            tourTitle={tourTitle}
+            availability={availability}
+            pricing={pricing}
+          />
+        ) : (
+          <h2 className={styles.calendarTitle}>Calendario</h2>
+        )}
       </div>
     </div>
   );

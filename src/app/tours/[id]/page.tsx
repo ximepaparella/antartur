@@ -120,7 +120,12 @@ export default async function TourPage({ params }: TourPageProps) {
           showOverlay={true}
         >
           <div id="booking">
-            <BannerBooking />
+            <BannerBooking
+              tourId={fullTour.card.id}
+              tourTitle={fullTour.card.title}
+              availability={fullTour.booking?.availability}
+              pricing={fullTour.booking?.pricing}
+            />
           </div>
         </Banner>
 

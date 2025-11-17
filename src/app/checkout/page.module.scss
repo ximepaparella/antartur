@@ -1,0 +1,40 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.checkoutBanner {
+  width: 100%;
+  background-color: $primary-color;
+  padding-top: $spacing-64;
+  padding-bottom: $spacing-64;
+  
+  @include desktop {
+    padding-top: $spacing-96;
+    padding-bottom: $spacing-96;
+  }
+}
+
+.checkoutContainer {
+  max-width: $max-width-main;
+  margin: 0 auto;
+  padding-left: $main-margin-mobile;
+  padding-right: $main-margin-mobile;
+  
+  @include desktop {
+    padding-left: $main-margin-desktop;
+    padding-right: $main-margin-desktop;
+  }
+}
+
+.checkoutTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-48;
+  font-weight: $font-weight-normal;
+  color: $white;
+  margin: 0;
+  text-align: center;
+  
+  @include desktop {
+    font-size: $font-size-64;
+  }
+}
+

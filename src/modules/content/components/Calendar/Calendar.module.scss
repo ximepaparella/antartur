@@ -1,0 +1,404 @@
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.calendar {
+  background-color: $white;
+  border-radius: $spacing-8;
+  padding: $spacing-16;
+  width: 100%;
+  max-width: 400px;
+  margin:0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-24;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray-700;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+    border-radius: $spacing-4;
+  }
+}
+
+.monthYear {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.daysOfWeek {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-8;
+  margin-bottom: $spacing-8;
+}
+
+.dayName {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-400;
+  text-align: center;
+  padding: $spacing-8;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-8;
+}
+
+.dayCell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $spacing-4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  color: $gray-700;
+  transform: scale(1);
+
+  &.otherMonth {
+    color: $gray-200;
+  }
+
+  &.disabled {
+    color: $gray-200;
+    cursor: not-allowed;
+  }
+
+  &.available {
+    color: $primary-color;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      background-color: $tertiary-color;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &.selected {
+    background-color: $primary-color;
+    color: $white;
+    animation: selectDate 0.3s ease-out;
+  }
+}
+
+@keyframes selectDate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.dayNumber {
+  z-index: 1;
+}
+
+
+.selectedDateInfo {
+  margin-top: $spacing-16;
+  padding-top: $spacing-16;
+  border-top: 1px solid $gray-200;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selectedDateText {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  color: $gray-700;
+  margin: 0;
+  animation: fadeIn 0.4s ease-out 0.1s both;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+// Modal styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $overlay-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-16;
+  animation: fadeInOverlay 0.2s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.modalOverlayClosing {
+  animation: fadeOutOverlay 0.2s ease-out forwards;
+}
+
+@keyframes fadeOutOverlay {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.modalContent {
+  background-color: $white;
+  border-radius: $spacing-8;
+  padding: $spacing-32;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalContentClosing {
+  animation: modalSlideOut 0.2s ease-out forwards;
+}
+
+@keyframes modalSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+.modalClose {
+  position: absolute;
+  top: $spacing-16;
+  right: $spacing-16;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-8;
+  color: $gray-400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $gray-700;
+  }
+}
+
+.modalTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-24 0;
+}
+
+.modalReservationInfo {
+  background-color: $primary-color;
+  border-radius: $spacing-8;
+  padding: $spacing-16;
+  margin-bottom: $spacing-24;
+}
+
+.modalActivity {
+  font-family: $font-roboto;
+  font-size: $font-size-18;
+  font-weight: $font-weight-medium;
+  color: $white;
+  margin: 0 0 $spacing-12 0;
+}
+
+.modalDateTime {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  color: $white;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.modalIcon {
+  color: $white;
+}
+
+.warning {
+  background-color: $blue-light;
+  border: 1px solid $blue-light;
+  border-radius: $spacing-8;
+  padding: $spacing-16;
+  margin-bottom: $spacing-24;
+  display: flex;
+  gap: $spacing-12;
+  color: $white;
+  align-items: flex-start;
+
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $white;
+    margin: 0;
+  }
+}
+
+.passengersRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-bottom: $spacing-24;
+
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-16;
+  }
+}
+
+.passengerInput {
+  flex: 1;
+}
+
+.disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-8;
+  padding: $spacing-12;
+  background-color: $gray-100;
+  border-radius: $spacing-4;
+  margin-bottom: $spacing-24;
+
+  svg {
+    flex-shrink: 0;
+    color: $gray-400;
+    margin-top: 2px;
+  }
+
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $gray-400;
+    margin: 0;
+    line-height: $line-height-normal;
+  }
+}
+
+.subtotalSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-16;
+  margin-top: $spacing-24;
+  margin-bottom: $spacing-24;
+  border-top: 1px solid $gray-200;
+}
+
+.subtotalLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-18;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.subtotalAmount {
+  font-family: $font-roboto;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  margin: 0;
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  justify-content: space-between;
+
+  @include desktop {
+    flex-direction: row;
+  }
+
+  :global(.button) {
+    flex: 1;
+  }
+}
+

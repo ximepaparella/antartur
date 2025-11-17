@@ -7,7 +7,7 @@ $secondary-color: #4054B2;
 $tertiary-color: #6fa5cb; 
 $white: #ffffff;
 $black: #000000;
-$gray-100: #f9f5f6;
+$gray-100: #f8f8f8;
 $gray-200: #d2d2d2;
 $gray-300: #f7f5f5;
 $gray-400: #54595f;
@@ -16,7 +16,21 @@ $gray-600: #be9794;
 $gray-700: #28372f;
 $gray-800: #292e31;
 $gray-900: #333333;
-$gray-icon: #4f5356; 
+$gray-icon: #4f5356;
+
+$blue-light: #6fa5cb;
+$blue-dark: #4054B2;
+$blue-medium: #24384d;
+$blue-dark: #24384d;
+
+
+// Warning colors
+$warning-bg: #fff3cd;
+$warning-border: #ffc107;
+$warning-text: $gray-700;
+
+// Modal overlay
+$overlay-bg: rgba(0, 0, 0, 0.5); 
 
 
 // Tipografía

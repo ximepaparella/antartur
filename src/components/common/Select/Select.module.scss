@@ -1,0 +1,54 @@
+@use "@/styles/variables" as *;
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.label {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+}
+
+.required {
+  color: $gray-400;
+  margin-left: $spacing-4;
+}
+
+.select {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  padding: $spacing-12;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-4;
+  color: $gray-700;
+  background-color: $white;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+  }
+
+  &.error {
+    border-color: $gray-400;
+  }
+
+  &:disabled {
+    background-color: $gray-100;
+    cursor: not-allowed;
+  }
+}
+
+.errorMessage {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  color: $gray-400;
+}
+

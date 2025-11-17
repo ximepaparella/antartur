@@ -18,12 +18,13 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  justify-content: center;
 }
 
 .title {
   font-family: $font-roboto;
   font-weight: $font-weight-normal;
-  font-size: $font-size-34;
+  font-size: $font-size-40;
   color: $white;
   margin: 0 0 $spacing-32 0;
 }
@@ -53,7 +54,7 @@
 .stepText {
   font-family: $font-roboto;
   font-weight: $font-weight-normal;
-  font-size: $font-size-16;
+  font-size: $font-size-20;
   color: $white;
   line-height: $line-height-normal;
 }
@@ -62,6 +63,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  justify-content: right;
 }
 
 .calendarTitle {

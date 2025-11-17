@@ -72,6 +72,23 @@
   }
 }
 
+.buttonOutline {
+  background-color: transparent;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  font-weight: 400;
+  
+  &:hover:not(:disabled) {
+    background-color: transparent;
+    border-color: color.adjust($primary-color, $lightness: -70%);
+    color: color.adjust($primary-color, $lightness: -70%);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 // ============================================
 // SIZES
 // ============================================

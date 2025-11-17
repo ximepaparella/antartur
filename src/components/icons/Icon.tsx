@@ -24,6 +24,8 @@ import {
   MessageCircle,
   BookA,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 /**
@@ -55,7 +57,9 @@ export type IconName =
   | "off-road"
   | "kayak"
   | "book-a"
-  | "calendar-days";
+  | "calendar-days"
+  | "chevron-left"
+  | "chevron-right";
 
 export type IconProps = {
   /** Nombre del icono a mostrar */
@@ -99,6 +103,8 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   kayak: Ship,
   "book-a": BookA,
   "calendar-days": CalendarDays,
+  "chevron-left": ChevronLeft,
+  "chevron-right": ChevronRight,
 };
 
 /**
