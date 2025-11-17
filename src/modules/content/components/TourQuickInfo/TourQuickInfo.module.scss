@@ -4,24 +4,50 @@
 .quickInfo {
   background-color: $primary-color;
   color: $white;
-  padding: $spacing-48 $main-margin-mobile;
+  padding-top: $spacing-16;
+  padding-bottom: $spacing-16;
   
   @include desktop {
-    padding: $spacing-64 $main-margin-desktop;
+    padding-top: $spacing-24;
+    padding-bottom: $spacing-24;
+  }
+}
+
+.wrapper {
+  max-width: $max-width-main;
+  margin: 0 auto;
+  padding-left: $main-margin-mobile;
+  padding-right: $main-margin-mobile;
+  
+  @include desktop {
+    padding-left: $main-margin-desktop;
+    padding-right: $main-margin-desktop;
   }
 }
 
 .container {
-  max-width: $max-width-main;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $spacing-32;
+  gap: $spacing-16;
   
   @include desktop {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
-    gap: $spacing-48;
+    gap: $spacing-16;
+  }
+}
+
+.topSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-16;
+  width: 100%;
+  
+  @include desktop {
+    display: contents;
   }
 }
 
@@ -30,10 +56,33 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  flex: 1;
   
   @include desktop {
+    grid-column: 1;
+    grid-row: 1;
     align-items: flex-start;
     text-align: left;
+    flex: 0 0 auto;
+  }
+}
+
+.itemsColumn {
+  @include desktop {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+.ctaColumn {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  @include desktop {
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: flex-end;
     flex: 0 0 auto;
   }
 }
@@ -60,22 +109,30 @@
 }
 
 .itemsColumn {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: $spacing-16;
   flex: 1;
+  min-width: 0;
+  width: 100%;
+  justify-content: center;
   
   @include desktop {
-    flex-direction: row;
-    gap: $spacing-24;
-    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 
 .item {
   display: flex;
-  align-items: center;
-  gap: $spacing-12;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-16;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .icon {
@@ -85,88 +142,63 @@
 
 .itemContent {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: $spacing-4;
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  
+  // Cuando hay label, mantener en una línea
+  &:has(.itemLabel) {
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+  }
+}
+
+.itemContentRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-4;
+  white-space: nowrap;
 }
 
 .itemLabel {
   font-family: $font-roboto;
-  font-size: $font-size-14;
+  font-size: $font-size-20;
   font-weight: $font-weight-normal;
   color: $white;
   opacity: 0.9;
+  white-space: nowrap;
+  
+  &::after {
+    content: " ";
+  }
 }
 
 .itemValue {
   font-family: $font-roboto;
-  font-size: $font-size-16;
+  font-size: $font-size-20;
   font-weight: $font-weight-medium;
   color: $white;
-}
-
-.ctaColumn {
-  display: flex;
-  justify-content: center;
-  
-  @include desktop {
-    justify-content: flex-end;
-    flex: 0 0 auto;
-  }
-}
-
-.restriction {
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-12;
-  margin-top: $spacing-24;
-  
-  @include desktop {
-    margin-top: $spacing-32;
-  }
-}
-
-.restrictionIcon {
-  flex-shrink: 0;
-  color: $white;
-  margin-top: 2px;
-}
-
-.restrictionText {
-  font-family: $font-roboto;
-  font-size: $font-size-14;
-  font-weight: $font-weight-normal;
-  color: $white;
   line-height: $line-height-normal;
+  white-space: nowrap;
 }
 
-.alternative {
-  display: flex;
-  align-items: center;
-  gap: $spacing-12;
-  margin-top: $spacing-16;
+.itemFullWidth {
+  width: 100%;
   
-  @include desktop {
-    margin-top: $spacing-24;
+  .itemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    white-space: normal;
+  }
+  
+  .itemValue {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
-
-.alternativeIcon {
-  flex-shrink: 0;
-  color: $white;
-}
-
-.alternativeText {
-  font-family: $font-roboto;
-  font-size: $font-size-16;
-  font-weight: $font-weight-normal;
-  color: $white;
-}
-
-.alternativePrice {
-  font-family: $font-roboto;
-  font-size: $font-size-16;
-  font-weight: $font-weight-semibold;
-  color: $white;
-  margin-left: auto;
-}
-
