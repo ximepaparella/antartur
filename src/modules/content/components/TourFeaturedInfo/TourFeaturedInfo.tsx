@@ -1,13 +1,10 @@
 import React from "react";
-import { Icon, IconName } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common/Icon/Icon";
+import type { FeaturedInfoItem } from "@/modules/content/components/ToursGrid/tourTypes";
 import styles from "./TourFeaturedInfo.module.scss";
 
-export interface FeaturedInfoItem {
-  id: string;
-  icon: IconName;
-  title: string;
-  description: string;
-}
+// Re-exportar el tipo para conveniencia
+export type { FeaturedInfoItem };
 
 interface TourFeaturedInfoProps {
   /** Array de items de información destacada */

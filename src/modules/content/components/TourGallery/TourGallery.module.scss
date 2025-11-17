@@ -94,6 +94,7 @@
 }
 
 .slide {
+  position: relative;
   flex-shrink: 0;
   height: 300px;
   overflow: hidden;
@@ -109,9 +110,6 @@
   object-fit: cover;
   display: block;
   // Prevenir layout shift - altura ya está definida en .slide
-  // Optimización de rendering
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
   // Mejorar carga progresiva
   background-color: $gray-300;
 }

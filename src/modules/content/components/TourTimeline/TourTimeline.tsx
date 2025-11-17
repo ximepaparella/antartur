@@ -21,7 +21,10 @@ interface TourTimelineProps {
  * Componente TourTimeline para mostrar el itinerario del tour con funcionalidad de acordeón
  */
 export const TourTimeline: React.FC<TourTimelineProps> = ({ items, importantNote }) => {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  // Inicializar con todos los items expandidos por defecto
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(
+    new Set(items.map((item) => item.id))
+  );
 
   if (items.length === 0) {
     return null;
@@ -37,6 +40,13 @@ export const TourTimeline: React.FC<TourTimelineProps> = ({ items, importantNote
       }
       return newSet;
     });
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent, itemId: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleItem(itemId);
+    }
   };
 
   return (
@@ -57,15 +67,22 @@ export const TourTimeline: React.FC<TourTimelineProps> = ({ items, importantNote
               <div key={item.id} className={styles.timelineItem}>
                 <div className={styles.timelineMarker} />
                 <div className={styles.timelineContent}>
-                  <div 
+                  <button
                     className={styles.timeTitleRow}
                     onClick={() => toggleItem(item.id)}
+                    onKeyDown={(e) => handleKeyDown(e, item.id)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`timeline-description-${item.id}`}
+                    type="button"
                   >
                     <span className={styles.timeLabel}>{item.timeLabel}</span>
                     <span className={styles.itemTitle}> - {item.title}</span>
-                  </div>
+                  </button>
                   <div 
+                    id={`timeline-description-${item.id}`}
                     className={`${styles.descriptionWrapper} ${isExpanded ? styles.expanded : styles.collapsed}`}
+                    role="region"
+                    aria-hidden={!isExpanded}
                   >
                     <p className={styles.itemDescription}>{item.description}</p>
                   </div>

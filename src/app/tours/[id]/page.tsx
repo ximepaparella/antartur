@@ -14,6 +14,7 @@ import { getTourById } from "@/modules/content/components/ToursGrid/toursData";
 import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
 import { getAllTours } from "@/modules/content/components/ToursGrid/toursData";
 import type { Testimonial as TestimonialType } from "@/modules/content/components/Testimonials/types";
+import styles from "./page.module.scss";
 
 interface TourPageProps {
   params: Promise<{ id: string }>;
@@ -77,8 +78,8 @@ export default async function TourPage({ params }: TourPageProps) {
           variant="tour"
           title={fullTour.hero.headline}
           backgroundImage={fullTour.hero.backgroundImage}
-          ctaText="RESERVAR"
-          ctaHref="#booking"
+          ctaText={fullTour.quickInfo.ctaLabel || "RESERVAR"}
+          ctaHref={fullTour.quickInfo.ctaHref || "#booking"}
         />
 
         {/* 2. QuickInfo */}
@@ -121,22 +122,11 @@ export default async function TourPage({ params }: TourPageProps) {
           linkText=""
           linkUrl=""
         >
-          <div id="booking" style={{ padding: "2rem", textAlign: "center" }}>
-            <h2 style={{ 
-              fontFamily: "var(--font-roboto), sans-serif",
-              fontSize: "1.5rem",
-              fontWeight: 400,
-              color: "#28372F",
-              marginBottom: "1rem"
-            }}>
+          <div id="booking" className={styles.bookingPlaceholder}>
+            <h2 className={styles.bookingTitle}>
               ¡Hacé tu reserva!
             </h2>
-            <p style={{ 
-              fontFamily: "var(--font-roboto), sans-serif",
-              fontSize: "1rem",
-              color: "#28372F",
-              marginBottom: "1.5rem"
-            }}>
+            <p className={styles.bookingText}>
               Módulo de reservas en desarrollo
             </p>
           </div>
@@ -152,9 +142,9 @@ export default async function TourPage({ params }: TourPageProps) {
           title="MÁS AVENTURAS"
           paragraph="Conocé todas las aventuras que te esperan con Antartur Turismo."
         />
-        <main className="mainContainer">
+        <div className="mainContainer">
           <ToursGrid tours={allTours} category={relatedCategory} />
-        </main>
+        </div>
       </>
     );
   }

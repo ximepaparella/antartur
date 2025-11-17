@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import Image from "next/image";
 import styles from "./TourGallery.module.scss";
 
 export interface GalleryImage {
   id: string;
   src: string;
   alt: string;
+  blurDataURL?: string;
 }
 
 interface TourGalleryProps {
@@ -61,34 +63,19 @@ export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
       if (prev <= 0) {
         return maxIndex;
       }
-      return prev - slidesToShow;
+      return prev - 1;
     });
-  }, [maxIndex, slidesToShow]);
+  }, [maxIndex]);
 
   const goToNext = useCallback(() => {
     setCurrentIndex((prev) => {
       if (prev >= maxIndex) {
         return 0;
       }
-      return Math.min(prev + slidesToShow, maxIndex);
+      return prev + 1;
     });
-  }, [maxIndex, slidesToShow]);
+  }, [maxIndex]);
 
-  // Determinar qué imágenes deben cargarse (lazy loading)
-  const getImageLoading = useCallback(
-    (index: number) => {
-      // Cargar las primeras 3 imágenes inmediatamente (eager)
-      if (index < 3) return "eager";
-      // Cargar las imágenes visibles y las adyacentes
-      const visibleStart = currentIndex;
-      const visibleEnd = currentIndex + slidesToShow - 1;
-      if (index >= visibleStart - 1 && index <= visibleEnd + 1) {
-        return "lazy";
-      }
-      return "lazy";
-    },
-    [currentIndex, slidesToShow]
-  );
 
   if (images.length === 0) {
     return null;
@@ -135,14 +122,15 @@ export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
                 className={styles.slide} 
                 style={{ width: `${slideWidth}%` }}
               >
-                <img
+                <Image
                   src={image.src}
                   alt={image.alt}
                   className={styles.image}
-                  loading={getImageLoading(index)}
-                  decoding="async"
-                  width="800"
-                  height="400"
+                  width={800}
+                  height={400}
+                  priority={index === 0}
+                  placeholder={image.blurDataURL ? "blur" : undefined}
+                  blurDataURL={image.blurDataURL}
                 />
               </div>
             ))}
