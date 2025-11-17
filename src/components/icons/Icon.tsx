@@ -23,6 +23,7 @@ import {
   Ship,
   MessageCircle,
   BookA,
+  CalendarDays,
 } from "lucide-react";
 
 /**
@@ -53,7 +54,8 @@ export type IconName =
   | "lunch"
   | "off-road"
   | "kayak"
-  | "book-a";
+  | "book-a"
+  | "calendar-days";
 
 export type IconProps = {
   /** Nombre del icono a mostrar */
@@ -96,6 +98,7 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   "off-road": CarFront,
   kayak: Ship,
   "book-a": BookA,
+  "calendar-days": CalendarDays,
 };
 
 /**

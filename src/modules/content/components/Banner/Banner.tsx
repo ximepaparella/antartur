@@ -2,57 +2,45 @@
 
 import React, { useEffect, useRef, useState, ReactNode } from "react";
 import styles from "./Banner.module.scss";
-import { BannerText } from "./BannerText";
 
 interface BannerProps {
   /** URL de la imagen de fondo */
   backgroundImage: string;
-  /** Título del banner */
-  title: string;
-  /** Extracto o descripción */
-  excerpt: string;
-  /** Texto del link */
-  linkText: string;
-  /** URL del link */
-  linkUrl: string;
   /** Altura mínima del banner en píxeles (default: 500px) */
   minHeight?: number;
-  /** Children opcional para contenido personalizado (ej: módulo de reservas) */
-  children?: ReactNode;
+  /** Mostrar overlay oscuro sobre la imagen (default: false) */
+  showOverlay?: boolean;
+  /** Contenido del banner (BannerText, BannerBooking, etc.) */
+  children: ReactNode;
 }
 
 /**
  * Componente Banner con efecto parallax
  * 
- * Muestra una card blanca con título, extracto y link.
- * También puede recibir children para contenido personalizado (ej: módulo de reservas).
+ * Contenedor base para banners con imagen de fondo y efecto parallax.
+ * Siempre debe recibir children (BannerText, BannerBooking, etc.).
  * 
  * @param backgroundImage - URL de la imagen de fondo
- * @param title - Título del banner
- * @param excerpt - Extracto o descripción
- * @param linkText - Texto del link
- * @param linkUrl - URL del link
  * @param minHeight - Altura mínima del banner (default: 500px)
- * @param children - Contenido opcional personalizado
+ * @param showOverlay - Mostrar overlay oscuro sobre la imagen (default: false)
+ * @param children - Contenido del banner (BannerText, BannerBooking, etc.)
  * 
  * @example
  * ```tsx
- * <Banner
- *   backgroundImage="/images/banner.jpg"
- *   title="Disfrutá desde otra mirada"
- *   excerpt="Conocé el fin del mundo..."
- *   linkText="Descubrí más"
- *   linkUrl="/verano"
- * />
+ * <Banner backgroundImage="/images/banner.jpg">
+ *   <BannerText
+ *     title="Disfrutá desde otra mirada"
+ *     excerpt="Conocé el fin del mundo..."
+ *     linkText="Descubrí más"
+ *     linkUrl="/verano"
+ *   />
+ * </Banner>
  * ```
  */
 export const Banner: React.FC<BannerProps> = ({
   backgroundImage,
-  title,
-  excerpt,
-  linkText,
-  linkUrl,
   minHeight = 500,
+  showOverlay = false,
   children,
 }) => {
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -93,17 +81,9 @@ export const Banner: React.FC<BannerProps> = ({
       style={{ minHeight: `${minHeight}px` }}
     >
       <div className={styles.background} style={backgroundStyle} />
+      {showOverlay && <div className={styles.overlay} />}
       <div className={styles.content}>
-        {children ? (
-          children
-        ) : (
-          <BannerText
-            title={title}
-            excerpt={excerpt}
-            linkText={linkText}
-            linkUrl={linkUrl}
-          />
-        )}
+        {children}
       </div>
     </section>
   );

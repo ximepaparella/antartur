@@ -6,7 +6,7 @@ import { TourInfo } from "@/modules/content/components/TourInfo/TourInfo";
 import { TourGallery } from "@/modules/content/components/TourGallery/TourGallery";
 import { TourFeaturedInfo } from "@/modules/content/components/TourFeaturedInfo/TourFeaturedInfo";
 import { TourTimeline } from "@/modules/content/components/TourTimeline/TourTimeline";
-import { Banner } from "@/modules/content/components/Banner/Banner";
+import { Banner, BannerBooking } from "@/modules/content/components/Banner";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
@@ -114,21 +114,13 @@ export default async function TourPage({ params }: TourPageProps) {
           importantNote={fullTour.timeline.importantNote}
         />
 
-        {/* 7. Banner con booking module (children) */}
+        {/* 7. Banner con booking module */}
         <Banner
           backgroundImage={fullTour.hero.backgroundImage}
-          title=""
-          excerpt=""
-          linkText=""
-          linkUrl=""
+          showOverlay={true}
         >
-          <div id="booking" className={styles.bookingPlaceholder}>
-            <h2 className={styles.bookingTitle}>
-              ¡Hacé tu reserva!
-            </h2>
-            <p className={styles.bookingText}>
-              Módulo de reservas en desarrollo
-            </p>
+          <div id="booking">
+            <BannerBooking />
           </div>
         </Banner>
 
