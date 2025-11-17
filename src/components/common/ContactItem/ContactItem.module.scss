@@ -25,7 +25,7 @@
 }
 
 .text {
-  @include body-text($font-size-16, $line-height-normal);
-  color: currentColor;
+  @include body-text($font-size-14, $line-height-normal);
+  color: $gray-200;
 }
 

@@ -44,27 +44,35 @@ export const Footer: React.FC = () => {
           {/* Segunda columna: Datos de Contacto */}
           <div className={styles.secondColumn}>
             <FooterSection title={footerData.contacto.title}>
-              <address className={styles.address}>
-                <ContactItem
-                  icon="email"
-                  text={footerData.contacto.address.email.text}
-                  href={footerData.contacto.address.email.href}
-                  ariaLabel={footerData.contacto.address.email.ariaLabel}
-                />
-                <ContactItem
-                  icon="phone"
-                  text={footerData.contacto.address.phone.text}
-                  href={footerData.contacto.address.phone.href}
-                  ariaLabel={footerData.contacto.address.phone.ariaLabel}
-                />
-                <ContactItem
-                  icon="location"
-                  text={footerData.contacto.address.location.text}
-                  ariaLabel={footerData.contacto.address.location.ariaLabel}
-                />
-              </address>
-              <nav aria-label="Enlaces legales">
-                <ul className={styles.legalLinks} role="list">
+              <nav aria-label="Datos de contacto">
+                <ul className={styles.contactLinks} role="list">
+                  <li role="listitem">
+                    <ContactItem
+                      icon="email"
+                      text={footerData.contacto.address.email.text}
+                      href={footerData.contacto.address.email.href}
+                      ariaLabel={footerData.contacto.address.email.ariaLabel}
+                      className={styles.contactItem}
+                    />
+                  </li>
+                  <li role="listitem">
+                    <ContactItem
+                      icon="phone"
+                      text={footerData.contacto.address.phone.text}
+                      href={footerData.contacto.address.phone.href}
+                      ariaLabel={footerData.contacto.address.phone.ariaLabel}
+                      className={styles.contactItem}
+                    />
+                  </li>
+                  <li role="listitem">
+                    <ContactItem
+                      icon="location"
+                      text={footerData.contacto.address.location.text}
+                      href={footerData.contacto.address.location.href}
+                      ariaLabel={footerData.contacto.address.location.ariaLabel}
+                      className={styles.contactItem}
+                    />
+                  </li>
                   {footerData.contacto.legalLinks.map((link, index) => (
                     <li key={index} role="listitem">
                       <ContactItem
@@ -72,16 +80,20 @@ export const Footer: React.FC = () => {
                         text={link.text}
                         href={link.href}
                         ariaLabel={link.ariaLabel}
+                        className={styles.contactItem}
                       />
                     </li>
                   ))}
+                  <li role="listitem">
+                    <ContactItem
+                      icon="info"
+                      text={footerData.contacto.legajo.text}
+                      ariaLabel={footerData.contacto.legajo.ariaLabel}
+                      className={styles.contactItem}
+                    />
+                  </li>
                 </ul>
               </nav>
-              <ContactItem
-                icon="info"
-                text={footerData.contacto.legajo.text}
-                ariaLabel={footerData.contacto.legajo.ariaLabel}
-              />
             </FooterSection>
           </div>
 

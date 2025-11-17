@@ -31,7 +31,7 @@ export const ContactItem: React.FC<ContactItemProps> = ({
         className={styles.icon}
         ariaLabel={undefined}
       />
-      <span className={styles.text}>{text}</span>
+      <span className={`${styles.text}`}>{text}</span>
     </>
   );
 
