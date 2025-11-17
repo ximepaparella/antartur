@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
+import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
+import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
@@ -21,6 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default function InviernoPage() {
+  const winterTours = getToursByCategory("winter");
+
   return (
     <>
       <Hero variant="internal" pageKey="invierno" />
@@ -29,6 +33,7 @@ export default function InviernoPage() {
           title="TEMPORADA DE INVIERNO"
           paragraph="Nuestra temporada de invierno comienza el 21 de junio y se extiende hasta los primeros días de octubre."
         />
+        <ToursGrid tours={winterTours} category="winter" />
       </main>
     </>
   );

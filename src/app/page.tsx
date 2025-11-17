@@ -4,6 +4,8 @@ import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
 import { Banner } from "@/modules/content/components/Banner/Banner";
+import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
+import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
@@ -27,6 +29,12 @@ export const metadata: Metadata = {
 export default function Home() {
   const testimonials = testimonialsData.home;
 
+  // Tours de verano
+  const summerTours = getToursByCategory("summer");
+
+  // Tours de invierno
+  const winterTours = getToursByCategory("winter");
+
   return (
     <>
       <Hero variant="home" pageKey="home" />
@@ -35,10 +43,12 @@ export default function Home() {
           iconName="map-route"
           title="ELEGÍ TU AVENTURA"
         />
+        <ToursGrid tours={summerTours} category="summer" />
         <Heading
           title="EXCURSIONES DE INVIERNO"
           paragraph="En antartur tenemos excursiones para todas las temporadas del año, pudiendo así disfrutar de diversas aventuras según la época del año."
         />
+        <ToursGrid tours={winterTours} category="winter" />
       </main>
       <Banner
         backgroundImage="/images/banners/hero-home.jpg"

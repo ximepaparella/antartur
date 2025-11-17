@@ -1,0 +1,17 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.toursGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-16;
+  width: 100%;
+  margin: $spacing-64 0 $spacing-64 0;
+  padding: 0;
+  
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-16;
+  }
+}
+

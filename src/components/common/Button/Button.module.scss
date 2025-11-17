@@ -1,0 +1,75 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.button {
+  display: inline-block;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// VARIANTS
+// ============================================
+
+.buttonPrimary {
+  background-color: $primary-color;
+  color: $white;
+  border: 2px solid $primary-color;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+    border-color: darken($primary-color, 10%);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: $white;
+  border: 2px solid $white;
+  
+  &:hover:not(:disabled) {
+    background-color: rgba($white, 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+// ============================================
+// SIZES
+// ============================================
+
+.buttonSmall {
+  padding: $spacing-8 $spacing-16;
+  font-size: $font-size-14;
+}
+
+.buttonMedium {
+  padding: $spacing-12 $spacing-24;
+  font-size: $font-size-16;
+}
+
+.buttonLarge {
+  padding: $spacing-16 $spacing-32;
+  font-size: $font-size-18;
+}
+
