@@ -42,45 +42,51 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
 }) => {
   return (
     <section className={styles.quickInfo} id="quick-info">
-      <div className={styles.container}>
-        <div className={styles.priceColumn}>
-          <div className={styles.priceLabel}>Precio</div>
-          <div className={styles.priceValue}>{price}</div>
-        </div>
-        
-        <div className={styles.itemsColumn}>
-          {items.map((item) => (
-            <div key={item.id} className={styles.item}>
-              <Icon name={item.icon} size={24} className={styles.icon} />
-              <div className={styles.itemContent}>
-                {item.label && <span className={styles.itemLabel}>{item.label}</span>}
-                <span className={styles.itemValue}>{item.value}</span>
-              </div>
+      <div className={styles.wrapper}>
+        <div className={styles.container}>
+          <div className={styles.topSection}>
+            <div className={styles.priceColumn}>
+              <div className={styles.priceLabel}>Precio</div>
+              <div className={styles.priceValue}>{price}</div>
             </div>
-          ))}
-        </div>
-        
-        <div className={styles.ctaColumn}>
-          <Button variant="tertiary" href={ctaHref} size="large">
-            {ctaLabel}
-          </Button>
+            
+            <div className={styles.ctaColumn}>
+              <Button variant="tertiary" href={ctaHref} size="large">
+                {ctaLabel}
+              </Button>
+            </div>
+          </div>
+          
+          <ul className={styles.itemsColumn}>
+            {items.map((item) => (
+              <li key={item.id} className={styles.item}>
+                <Icon name={item.icon} size={24} className={styles.icon} />
+                <div className={styles.itemContent}>
+                  {item.label && <span className={styles.itemLabel}>{item.label}</span>}
+                  <span className={styles.itemValue}>{item.value}</span>
+                </div>
+              </li>
+            ))}
+            {restriction && (
+              <li className={`${styles.item} ${styles.itemFullWidth}`}>
+                <Icon name="info" size={24} className={styles.icon} />
+                <div className={styles.itemContent}>
+                  <span className={styles.itemValue}>{restriction}</span>
+                </div>
+              </li>
+            )}
+            {alternative && (
+              <li className={styles.item}>
+                <Icon name="map-route" size={24} className={styles.icon} />
+                <div className={`${styles.itemContent} ${styles.itemContentRow}`}>
+                  <span className={styles.itemValue}>{alternative.text}</span>
+                  <span className={styles.itemValue}>{alternative.price}</span>
+                </div>
+              </li>
+            )}
+          </ul>
         </div>
       </div>
-      
-      {restriction && (
-        <div className={styles.restriction}>
-          <Icon name="info" size={20} className={styles.restrictionIcon} />
-          <span className={styles.restrictionText}>{restriction}</span>
-        </div>
-      )}
-      
-      {alternative && (
-        <div className={styles.alternative}>
-          <Icon name="map-route" size={20} className={styles.alternativeIcon} />
-          <span className={styles.alternativeText}>{alternative.text}</span>
-          <span className={styles.alternativePrice}>{alternative.price}</span>
-        </div>
-      )}
     </section>
   );
 };
