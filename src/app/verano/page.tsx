@@ -31,12 +31,17 @@ export default function VeranoPage() {
       </main>
       <Banner
         backgroundImage="/images/banners/hero-verano.jpg"
-        variant="booking"
-        content={{
-          type: "booking",
-        }}
+        title=""
+        excerpt=""
+        linkText=""
+        linkUrl=""
         minHeight={600}
-      />
+      >
+        {/* Módulo de reservas - se implementará luego */}
+        <div style={{ padding: "2rem", background: "white", borderRadius: "8px", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)" }}>
+          <p>Módulo de reservas - en desarrollo</p>
+        </div>
+      </Banner>
       <Testimonials testimonials={testimonials} variant="dark" />
     </>
   );

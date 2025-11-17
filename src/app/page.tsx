@@ -28,15 +28,11 @@ export default function Home() {
         />
       </main>
       <Banner
-        backgroundImage="/images/banners/hero-verano.jpg"
-        variant="text"
-        content={{
-          type: "text",
-          title: "Disfrutá desde otra mirada.",
-          excerpt: "Conocé el fin del mundo en todas sus temporadas y descubrí maravillas únicas en sus paisajes.",
-          linkText: "Descubrí más",
-          linkUrl: "/verano",
-        }}
+        backgroundImage="/images/banners/hero-home.jpg"
+        title="Disfrutá desde otra mirada."
+        excerpt="Conocé el fin del mundo en todas sus temporadas y descubrí maravillas únicas en sus paisajes."
+        linkText="Descubrí más"
+        linkUrl="/verano"
       />
       <Testimonials testimonials={testimonials} variant="light" />
     </>

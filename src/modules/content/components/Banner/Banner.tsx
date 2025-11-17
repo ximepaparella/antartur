@@ -1,69 +1,59 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, ReactNode } from "react";
 import styles from "./Banner.module.scss";
 import { BannerText } from "./BannerText";
-import { BannerBooking } from "./BannerBooking";
-
-export type BannerVariant = "text" | "booking";
-
-export interface BannerTextContent {
-  type: "text";
-  title: string;
-  excerpt: string;
-  linkText: string;
-  linkUrl: string;
-}
-
-export interface BannerBookingContent {
-  type: "booking";
-}
-
-export type BannerContent = BannerTextContent | BannerBookingContent;
 
 interface BannerProps {
   /** URL de la imagen de fondo */
   backgroundImage: string;
-  /** Variante del banner: "text" o "booking" */
-  variant: BannerVariant;
-  /** Contenido del banner según la variante */
-  content: BannerContent;
+  /** Título del banner */
+  title: string;
+  /** Extracto o descripción */
+  excerpt: string;
+  /** Texto del link */
+  linkText: string;
+  /** URL del link */
+  linkUrl: string;
   /** Altura mínima del banner en píxeles (default: 500px) */
   minHeight?: number;
+  /** Children opcional para contenido personalizado (ej: módulo de reservas) */
+  children?: ReactNode;
 }
 
 /**
  * Componente Banner con efecto parallax
  * 
- * Soporta dos variantes:
- * - `text`: Muestra una card blanca con título, extracto y link
- * - `booking`: Muestra el módulo de reservas con pasos y calendario
+ * Muestra una card blanca con título, extracto y link.
+ * También puede recibir children para contenido personalizado (ej: módulo de reservas).
  * 
  * @param backgroundImage - URL de la imagen de fondo
- * @param variant - Tipo de banner: "text" o "booking"
- * @param content - Contenido según la variante
+ * @param title - Título del banner
+ * @param excerpt - Extracto o descripción
+ * @param linkText - Texto del link
+ * @param linkUrl - URL del link
  * @param minHeight - Altura mínima del banner (default: 500px)
+ * @param children - Contenido opcional personalizado
  * 
  * @example
  * ```tsx
  * <Banner
  *   backgroundImage="/images/banner.jpg"
- *   variant="text"
- *   content={{
- *     type: "text",
- *     title: "Título",
- *     excerpt: "Extracto del contenido",
- *     linkText: "Ver más",
- *     linkUrl: "/ruta"
- *   }}
+ *   title="Disfrutá desde otra mirada"
+ *   excerpt="Conocé el fin del mundo..."
+ *   linkText="Descubrí más"
+ *   linkUrl="/verano"
  * />
  * ```
  */
 export const Banner: React.FC<BannerProps> = ({
   backgroundImage,
-  variant,
-  content,
+  title,
+  excerpt,
+  linkText,
+  linkUrl,
   minHeight = 500,
+  children,
 }) => {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
@@ -75,8 +65,9 @@ export const Banner: React.FC<BannerProps> = ({
         const windowHeight = window.innerHeight;
         
         // Calcular el efecto parallax basado en la posición del elemento
+        // Reducimos el factor de parallax para que la imagen se mueva menos y cubra mejor
         if (rect.top < windowHeight && rect.bottom > 0) {
-          const parallaxOffset = (rect.top - windowHeight / 2) * 0.5;
+          const parallaxOffset = (rect.top - windowHeight / 2) * 0.3;
           setScrollY(parallaxOffset);
         }
       }
@@ -96,6 +87,7 @@ export const Banner: React.FC<BannerProps> = ({
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     transform: `translateY(${scrollY}px)`,
+    minHeight: "100%",
   };
 
   return (
@@ -106,19 +98,17 @@ export const Banner: React.FC<BannerProps> = ({
     >
       <div className={styles.background} style={backgroundStyle} />
       <div className={styles.content}>
-        {variant === "text" && content.type === "text" && (
+        {children ? (
+          children
+        ) : (
           <BannerText
-            title={content.title}
-            excerpt={content.excerpt}
-            linkText={content.linkText}
-            linkUrl={content.linkUrl}
+            title={title}
+            excerpt={excerpt}
+            linkText={linkText}
+            linkUrl={linkUrl}
           />
-        )}
-        {variant === "booking" && content.type === "booking" && (
-          <BannerBooking />
         )}
       </div>
     </section>
   );
 };
-
