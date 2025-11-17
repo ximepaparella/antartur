@@ -50,6 +50,7 @@ export type IconName =
   | "map-route"
   | "check"
   | "calendar"
+  | "calendar-days"
   | "users"
   | "credit-card"
   | "clock"

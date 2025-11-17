@@ -203,7 +203,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
 
   // Manejar submit
   const handleSubmit = useCallback((selectedPaymentMethod?: PaymentMethod) => {
-    if (!bookingData) return;
+    // Leer siempre la versión más reciente de la reserva pendiente
+    const pending = getPendingBooking();
+    const data = pending ?? bookingData;
+    
+    if (!data) return;
     
     if (!validateAllFields()) {
       return;
@@ -211,25 +215,30 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
 
     setIsSubmitting(true);
 
-    // Determinar tipo de orden
-    const orderType: "reserva" | "consulta" = 
-      bookingData.exceedsAvailability || hasRestrictionViolations ? "consulta" : "reserva";
+    // Usar datos más recientes de pendingBooking si están disponibles
+    const exceedsAvailability = pending?.exceedsAvailability ?? data.exceedsAvailability;
+    const adults = pending?.adults ?? data.adults;
+    const children = pending?.children ?? data.children;
 
-    // Crear orden
+    // Determinar tipo de orden usando los datos más recientes
+    const orderType: "reserva" | "consulta" = 
+      exceedsAvailability || hasRestrictionViolations ? "consulta" : "reserva";
+
+    // Crear orden con datos actualizados
     const order: Order = {
       orderId: generateOrderId(),
-      tourId: bookingData.tourId,
-      tourTitle: bookingData.tourTitle,
-      date: bookingData.date,
-      adults: bookingData.adults,
-      children: bookingData.children,
-      pricing: bookingData.pricing,
-      timeSlot: bookingData.timeSlot,
+      tourId: data.tourId,
+      tourTitle: data.tourTitle,
+      date: data.date,
+      adults,
+      children,
+      pricing: data.pricing,
+      timeSlot: data.timeSlot,
       passengers,
       billingInfo,
       paymentMethod: selectedPaymentMethod,
       orderType,
-      exceedsAvailability: bookingData.exceedsAvailability,
+      exceedsAvailability,
       createdAt: new Date().toISOString(),
     };
 
