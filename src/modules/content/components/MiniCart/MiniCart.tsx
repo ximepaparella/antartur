@@ -78,10 +78,17 @@ export const MiniCart: React.FC<MiniCartProps> = ({
     onPaymentMethodChange(method);
   };
 
+  // Determinar el estado del checkout
   const hasProblems = exceedsAvailability || hasRestrictionViolations;
   const ctaText = hasProblems ? "CONSULTAR DISPONIBILIDAD" : "RESERVAR";
+  
+  // Botón deshabilitado si hay restricciones violadas o errores de validación
   const isButtonDisabled = hasRestrictionViolations || hasValidationErrors;
-  const showPaymentMethods = !exceedsAvailability || hasRestrictionViolations;
+  
+  // Mostrar métodos de pago solo si no hay problemas (ni exceso de disponibilidad ni restricciones)
+  const showPaymentMethods = !exceedsAvailability && !hasRestrictionViolations;
+  
+  // Blur en métodos de pago si hay restricciones violadas
   const showPaymentBlur = hasRestrictionViolations;
 
   const getPaymentIcon = (method: PaymentMethod): "bank" | "wallet" | "credit-card" => {

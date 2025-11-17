@@ -30,6 +30,9 @@ export default function CheckoutPage() {
   const [hasRestrictionViolations, setHasRestrictionViolations] = useState(false);
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
   const [isUpdatingPassengers, setIsUpdatingPassengers] = useState(false);
+  
+  // Ref para acceder a CheckoutForm
+  const checkoutFormRef = React.useRef<CheckoutFormRef>(null);
 
   useEffect(() => {
     const pending = getPendingBooking();
@@ -80,6 +83,10 @@ export default function CheckoutPage() {
     setHasRestrictionViolations(hasViolations);
   }, []);
 
+  const handleValidationErrorsChange = useCallback((hasErrors: boolean) => {
+    setHasValidationErrors(hasErrors);
+  }, []);
+
   // Ref para almacenar los valores previos de pasajeros y evitar actualizaciones innecesarias
   const prevPassengersRef = useRef<{ adults: number; children: number } | null>(null);
   const bookingDataRef = useRef(bookingData);
@@ -112,25 +119,6 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  // Ref para acceder a CheckoutForm
-  const checkoutFormRef = React.useRef<CheckoutFormRef>(null);
-
-  // Sincronizar hasValidationErrors desde CheckoutForm ref
-  useEffect(() => {
-    const syncValidationErrors = () => {
-      if (checkoutFormRef.current) {
-        setHasValidationErrors(checkoutFormRef.current.hasValidationErrors);
-      }
-    };
-
-    // Sincronizar inicialmente y después de cada render
-    syncValidationErrors();
-
-    // Usar un intervalo corto para sincronizar cambios (ya que el ref no dispara re-renders)
-    const interval = setInterval(syncValidationErrors, 100);
-
-    return () => clearInterval(interval);
-  }, []);
 
   if (!bookingData) {
     return (
@@ -153,6 +141,7 @@ export default function CheckoutPage() {
               onCheckoutComplete={handleCheckoutComplete}
               onRestrictionViolationsChange={handleRestrictionViolationsChange}
               onPassengersChange={handlePassengersChange}
+              onValidationErrorsChange={handleValidationErrorsChange}
             />
           </div>
           <div className={styles.rightColumn}>

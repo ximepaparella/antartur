@@ -17,8 +17,8 @@ interface PassengerFormProps {
   passenger: Passenger;
   /** Callback cuando cambian los datos */
   onChange: (passenger: Passenger) => void;
-  /** Callback para validar un campo específico */
-  onValidateField?: (field: string, value: any) => void;
+  /** Callback para validar el pasajero completo */
+  onValidateField?: () => void;
   /** Si el tour tiene restricciones para embarazadas */
   hasPregnancyRestriction?: boolean;
   /** Si el tour tiene restricciones para problemas de columna/salud */
@@ -111,21 +111,33 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
   const birthDay = fechaParts[2] ? fechaParts[2].padStart(2, "0") : "";
 
   const handleDateChange = (type: "year" | "month" | "day", value: string) => {
-    const newYear = type === "year" ? value : birthYear;
-    const newMonth = type === "month" ? value : birthMonth;
-    const newDay = type === "day" ? value : birthDay;
+    // Usar el estado actual del pasajero para evitar problemas con closures
+    const currentFecha = passenger.fechaNacimiento || "";
+    const currentParts = currentFecha ? currentFecha.split("-") : [];
+    const currentYear = currentParts[0] || "";
+    const currentMonth = currentParts[1] ? currentParts[1].padStart(2, "0") : "";
+    const currentDay = currentParts[2] ? currentParts[2].padStart(2, "0") : "";
+    
+    const newYear = type === "year" ? value : currentYear;
+    const newMonth = type === "month" ? value : currentMonth;
+    const newDay = type === "day" ? value : currentDay;
     
     if (newYear && newMonth && newDay) {
       const dateStr = `${newYear}-${newMonth}-${newDay}`;
       handleChange("fechaNacimiento", dateStr);
       // Validar cuando se completa la fecha
-      onValidateField?.("fechaNacimiento", dateStr);
+      onValidateField?.();
     } else {
-      // Si la fecha está incompleta, validar para limpiar errores si el campo ya no está vacío
-      // pero solo validar si hay un valor parcial
+      // Si la fecha está incompleta, actualizar el pasajero con los valores parciales
+      // pero solo si hay al menos un valor
       if (newYear || newMonth || newDay) {
-        // Validar con el valor actual (puede estar incompleto)
-        onValidateField?.("fechaNacimiento", passenger.fechaNacimiento || "");
+        // Construir fecha parcial (puede estar incompleta)
+        const partialDate = `${newYear || ""}-${newMonth || ""}-${newDay || ""}`.replace(/^-+|-+$/g, "");
+        if (partialDate) {
+          handleChange("fechaNacimiento", partialDate);
+        }
+        // Validar para limpiar errores si corresponde
+        onValidateField?.();
       }
     }
   };
@@ -172,7 +184,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           required
           value={passenger.nombreCompleto}
           onChange={(e) => handleChange("nombreCompleto", e.target.value)}
-          onBlur={(e) => onValidateField?.("nombreCompleto", e.target.value)}
+          onBlur={() => onValidateField?.()}
           error={errors.nombreCompleto}
           className={styles.formGroup}
         />
@@ -188,21 +200,30 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
               name={`passenger-${passengerNumber}-day`}
               options={dayOptions}
               value={birthDay}
-              onChange={(e) => handleDateChange("day", e.target.value)}
+              onChange={(e) => {
+                handleDateChange("day", e.target.value);
+                onValidateField?.();
+              }}
               className={styles.dateSelect}
             />
             <Select
               name={`passenger-${passengerNumber}-month`}
               options={monthOptions}
               value={birthMonth}
-              onChange={(e) => handleDateChange("month", e.target.value)}
+              onChange={(e) => {
+                handleDateChange("month", e.target.value);
+                onValidateField?.();
+              }}
               className={styles.dateSelect}
             />
             <Select
               name={`passenger-${passengerNumber}-year`}
               options={yearOptions}
               value={birthYear}
-              onChange={(e) => handleDateChange("year", e.target.value)}
+              onChange={(e) => {
+                handleDateChange("year", e.target.value);
+                onValidateField?.();
+              }}
               className={styles.dateSelect}
             />
           </div>
@@ -216,7 +237,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           required
           value={passenger.documento}
           onChange={(e) => handleChange("documento", e.target.value)}
-          onBlur={(e) => onValidateField?.("documento", e.target.value)}
+          onBlur={() => onValidateField?.()}
               error={errors.documento}
               className={styles.formGroup}
             />
@@ -229,7 +250,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           required
           value={passenger.direccion}
           onChange={(e) => handleChange("direccion", e.target.value)}
-          onBlur={(e) => onValidateField?.("direccion", e.target.value)}
+          onBlur={() => onValidateField?.()}
               error={errors.direccion}
               className={styles.formGroup}
             />
@@ -243,7 +264,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           required
           value={passenger.telefono}
           onChange={(e) => handleChange("telefono", e.target.value)}
-          onBlur={(e) => onValidateField?.("telefono", e.target.value)}
+          onBlur={() => onValidateField?.()}
               error={errors.telefono}
               className={styles.formGroup}
             />
@@ -262,9 +283,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                 checked={passenger.tieneRestriccionesAlimentarias === true}
                 onChange={() => {
                   handleChange("tieneRestriccionesAlimentarias", true);
-                  onValidateField?.("restricciones", true);
+                  onValidateField?.();
                 }}
-                onBlur={() => onValidateField?.("restricciones", passenger.tieneRestriccionesAlimentarias)}
+                onBlur={() => onValidateField?.()}
               />
               <span>Sí</span>
             </label>
@@ -275,9 +296,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                 checked={passenger.tieneRestriccionesAlimentarias === false}
                 onChange={() => {
                   handleChange("tieneRestriccionesAlimentarias", false);
-                  onValidateField?.("restricciones", false);
+                  onValidateField?.();
                 }}
-                onBlur={() => onValidateField?.("restricciones", passenger.tieneRestriccionesAlimentarias)}
+                onBlur={() => onValidateField?.()}
               />
                 <span>No</span>
               </label>
@@ -335,7 +356,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                   name={`passenger-${passengerNumber}-alergias`}
                   value={passenger.restriccionesAlimentarias?.alergiasDetalle || ""}
                   onChange={(e) => handleAllergiesDetailChange(e.target.value)}
-                  onBlur={(e) => onValidateField?.("alergias", e.target.value)}
+                  onBlur={() => onValidateField?.()}
                   className={styles.formGroup}
                   style={{ marginTop: "8px" }}
                 />
@@ -360,9 +381,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                       checked={passenger.embarazada === true}
                       onChange={() => {
                         handleChange("embarazada", true);
-                        onValidateField?.("embarazada", true);
+                        onValidateField?.();
                       }}
-                      onBlur={() => onValidateField?.("embarazada", passenger.embarazada)}
+                      onBlur={() => onValidateField?.()}
                     />
                     <span>Sí</span>
                   </label>
@@ -373,9 +394,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                       checked={passenger.embarazada === false}
                       onChange={() => {
                         handleChange("embarazada", false);
-                        onValidateField?.("embarazada", false);
+                        onValidateField?.();
                       }}
-                      onBlur={() => onValidateField?.("embarazada", passenger.embarazada)}
+                      onBlur={() => onValidateField?.()}
                     />
                       <span>No</span>
                     </label>
@@ -401,9 +422,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                       checked={passenger.problemasColumnaSalud === true}
                       onChange={() => {
                         handleChange("problemasColumnaSalud", true);
-                        onValidateField?.("salud", true);
+                        onValidateField?.();
                       }}
-                      onBlur={() => onValidateField?.("salud", passenger.problemasColumnaSalud)}
+                      onBlur={() => onValidateField?.()}
                     />
                     <span>Sí</span>
                   </label>
@@ -414,9 +435,9 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                       checked={passenger.problemasColumnaSalud === false}
                       onChange={() => {
                         handleChange("problemasColumnaSalud", false);
-                        onValidateField?.("salud", false);
+                        onValidateField?.();
                       }}
-                      onBlur={() => onValidateField?.("salud", passenger.problemasColumnaSalud)}
+                      onBlur={() => onValidateField?.()}
                     />
                       <span>No</span>
                     </label>

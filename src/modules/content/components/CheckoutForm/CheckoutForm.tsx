@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useImperativeHandle, forwardRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useImperativeHandle, forwardRef, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/common/Input";
 import { Select } from "@/components/common/Select";
@@ -11,7 +11,8 @@ import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/common/Button/Button";
 import { PassengerForm } from "./PassengerForm";
 import type { Passenger, BillingInfo, Order, PaymentMethod } from "@/lib/types/order";
-import { getPendingBooking, generateOrderId, saveOrder, clearPendingBooking, updatePendingBookingPassengers } from "@/lib/utils/orderStorage";
+import { getPendingBooking, generateOrderId, saveOrder, clearPendingBooking } from "@/lib/utils/orderStorage";
+import { useCheckoutState } from "./hooks/useCheckoutState";
 import styles from "./CheckoutForm.module.scss";
 
 interface CheckoutFormProps {
@@ -25,6 +26,8 @@ interface CheckoutFormProps {
   onRestrictionViolationsChange?: (hasViolations: boolean) => void;
   /** Callback cuando cambia el número de pasajeros */
   onPassengersChange?: (adults: number, children: number) => void;
+  /** Callback cuando cambia el estado de errores de validación */
+  onValidationErrorsChange?: (hasErrors: boolean) => void;
 }
 
 export interface CheckoutFormRef {
@@ -42,6 +45,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   onCheckoutComplete,
   onRestrictionViolationsChange,
   onPassengersChange,
+  onValidationErrorsChange,
 }, ref) => {
   const router = useRouter();
   const [bookingData, setBookingData] = useState<{
@@ -55,8 +59,13 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     exceedsAvailability: boolean;
   } | null>(null);
 
-  const [passengers, setPassengers] = useState<Passenger[]>([]);
-  const [billingInfo, setBillingInfo] = useState<BillingInfo>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passengerToRemove, setPassengerToRemove] = useState<number | null>(null);
+  const [isClosingModal, setIsClosingModal] = useState(false);
+
+  // Inicializar pasajeros y billing info desde localStorage
+  const [initialPassengers, setInitialPassengers] = useState<Passenger[]>([]);
+  const [initialBillingInfo] = useState<BillingInfo>({
     nombreCompleto: "",
     apellidos: "",
     email: "",
@@ -70,11 +79,6 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     notasPedido: "",
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [passengerToRemove, setPassengerToRemove] = useState<number | null>(null);
-  const [isClosingModal, setIsClosingModal] = useState(false);
-
   // Cargar datos del localStorage al montar
   useEffect(() => {
     const pending = getPendingBooking();
@@ -82,11 +86,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       setBookingData(pending);
       
       // Inicializar pasajeros
-      const initialPassengers: Passenger[] = [];
+      const passengers: Passenger[] = [];
       
       // Crear pasajeros adultos
       for (let i = 0; i < pending.adults; i++) {
-        initialPassengers.push({
+        passengers.push({
           nombreCompleto: "",
           fechaNacimiento: "",
           documento: "",
@@ -101,7 +105,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       
       // Crear pasajeros niños
       for (let i = 0; i < pending.children; i++) {
-        initialPassengers.push({
+        passengers.push({
           nombreCompleto: "",
           fechaNacimiento: "",
           documento: "",
@@ -112,208 +116,56 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
         });
       }
       
-      setPassengers(initialPassengers);
+      setInitialPassengers(passengers);
     } else {
       // Si no hay datos, redirigir al inicio
       router.push("/");
     }
   }, [router]);
 
-  // Actualizar pasajero
-  const handlePassengerChange = (index: number, passenger: Passenger) => {
-    const updated = [...passengers];
-    updated[index] = passenger;
-    setPassengers(updated);
-  };
-
-  // Validar un campo específico de facturación
-  const validateBillingField = useCallback((field: keyof BillingInfo, value: string) => {
-    setErrors((prevErrors) => {
-      const newErrors = { ...prevErrors };
-      const errorKey = `billing.${field}`;
-      
-      // Limpiar error previo
-      delete newErrors[errorKey];
-      
-      // Validar campo
-      if (!value.trim()) {
-        newErrors[errorKey] = "* El campo es obligatorio";
-      } else if (field === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        newErrors[errorKey] = "* El email debe ser válido";
-      }
-      
-      return newErrors;
-    });
-  }, []);
-
-  // Validar un campo específico de pasajero (y revalidar todos los campos del pasajero para limpiar errores obsoletos)
-  const validatePassengerField = useCallback((passengerIndex: number, field: string, value: any) => {
-    setErrors((prevErrors) => {
-      const newErrors = { ...prevErrors };
-      const passenger = passengers[passengerIndex];
-      if (!passenger) return newErrors;
-      
-      // Limpiar todos los errores previos de este pasajero
-      Object.keys(newErrors).forEach((key) => {
-        if (key.startsWith(`passenger.${passengerIndex}.`)) {
-          delete newErrors[key];
-        }
-      });
-      
-      // Revalidar todos los campos del pasajero
-      if (!passenger.nombreCompleto.trim()) {
-        newErrors[`passenger.${passengerIndex}.nombreCompleto`] = "* El campo es obligatorio";
-      }
-      if (!passenger.fechaNacimiento) {
-        newErrors[`passenger.${passengerIndex}.fechaNacimiento`] = "* El campo es obligatorio";
-      }
-      if (!passenger.documento.trim()) {
-        newErrors[`passenger.${passengerIndex}.documento`] = "* El campo es obligatorio";
-      }
-      if (!passenger.direccion.trim()) {
-        newErrors[`passenger.${passengerIndex}.direccion`] = "* El campo es obligatorio";
-      }
-      if (!passenger.telefono.trim()) {
-        newErrors[`passenger.${passengerIndex}.telefono`] = "* El campo es obligatorio";
-      }
-      if (passenger.tieneRestriccionesAlimentarias === undefined) {
-        newErrors[`passenger.${passengerIndex}.restricciones`] = "* El campo es obligatorio";
-      }
-      if (passenger.tieneRestriccionesAlimentarias && passenger.restriccionesAlimentarias?.alergias && !passenger.restriccionesAlimentarias.alergiasDetalle?.trim()) {
-        newErrors[`passenger.${passengerIndex}.alergias`] = "* El campo es obligatorio";
-      }
-      
-      // Validaciones para adultos
-      if (passenger.esAdulto) {
-        if (hasPregnancyRestriction && passenger.embarazada === undefined) {
-          newErrors[`passenger.${passengerIndex}.embarazada`] = "* El campo es obligatorio";
-        }
-        if (hasHealthRestriction && passenger.problemasColumnaSalud === undefined) {
-          newErrors[`passenger.${passengerIndex}.salud`] = "* El campo es obligatorio";
-        }
-      }
-      
-      return newErrors;
-    });
-  }, [passengers, hasPregnancyRestriction, hasHealthRestriction]);
-
-  // Validar formulario completo
-  const validateForm = useCallback((): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    // Validar información de facturación
-    if (!billingInfo.nombreCompleto.trim()) {
-      newErrors["billing.nombreCompleto"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.apellidos.trim()) {
-      newErrors["billing.apellidos"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.email.trim()) {
-      newErrors["billing.email"] = "* El campo es obligatorio";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email)) {
-      newErrors["billing.email"] = "* El email debe ser válido";
-    }
-    if (!billingInfo.telefono.trim()) {
-      newErrors["billing.telefono"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.direccion.trim()) {
-      newErrors["billing.direccion"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.ciudad.trim()) {
-      newErrors["billing.ciudad"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.provincia.trim()) {
-      newErrors["billing.provincia"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.codigoPostal.trim()) {
-      newErrors["billing.codigoPostal"] = "* El campo es obligatorio";
-    }
-    if (!billingInfo.documento.trim()) {
-      newErrors["billing.documento"] = "* El campo es obligatorio";
-    }
-
-    // Validar pasajeros
-    passengers.forEach((passenger, index) => {
-      if (!passenger.nombreCompleto.trim()) {
-        newErrors[`passenger.${index}.nombreCompleto`] = "* El campo es obligatorio";
-      }
-      if (!passenger.fechaNacimiento) {
-        newErrors[`passenger.${index}.fechaNacimiento`] = "* El campo es obligatorio";
-      }
-      if (!passenger.documento.trim()) {
-        newErrors[`passenger.${index}.documento`] = "* El campo es obligatorio";
-      }
-      if (!passenger.direccion.trim()) {
-        newErrors[`passenger.${index}.direccion`] = "* El campo es obligatorio";
-      }
-      if (!passenger.telefono.trim()) {
-        newErrors[`passenger.${index}.telefono`] = "* El campo es obligatorio";
-      }
-      if (passenger.tieneRestriccionesAlimentarias === undefined) {
-        newErrors[`passenger.${index}.restricciones`] = "* El campo es obligatorio";
-      }
-      if (passenger.tieneRestriccionesAlimentarias && passenger.restriccionesAlimentarias?.alergias && !passenger.restriccionesAlimentarias.alergiasDetalle?.trim()) {
-        newErrors[`passenger.${index}.alergias`] = "* El campo es obligatorio";
-      }
-      
-      // Validaciones para adultos
-      if (passenger.esAdulto) {
-        if (hasPregnancyRestriction && passenger.embarazada === undefined) {
-          newErrors[`passenger.${index}.embarazada`] = "* El campo es obligatorio";
-        }
-        if (hasHealthRestriction && passenger.problemasColumnaSalud === undefined) {
-          newErrors[`passenger.${index}.salud`] = "* El campo es obligatorio";
-        }
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [billingInfo, passengers, hasPregnancyRestriction, hasHealthRestriction]);
-
-  // Verificar si hay restricciones que impidan la reserva
-  const hasRestrictionViolations = useMemo(() => {
-    if (!hasPregnancyRestriction && !hasHealthRestriction) return false;
-    
-    return passengers.some((passenger) => {
-      if (!passenger.esAdulto) return false;
-      if (hasPregnancyRestriction && passenger.embarazada === true) return true;
-      if (hasHealthRestriction && passenger.problemasColumnaSalud === true) return true;
-      return false;
-    });
-  }, [passengers, hasPregnancyRestriction, hasHealthRestriction]);
+  // Usar hook centralizado de estado
+  const {
+    passengers,
+    billingInfo,
+    errors,
+    hasValidationErrors,
+    hasRestrictionViolations,
+    isValid,
+    updateBillingInfo,
+    updatePassenger,
+    replacePassenger,
+    addPassenger,
+    removePassenger,
+    validateBilling,
+    validatePassenger,
+    validateAllFields,
+  } = useCheckoutState({
+    initialPassengers,
+    initialBillingInfo,
+    hasPregnancyRestriction,
+    hasHealthRestriction,
+    onPassengersChange,
+  });
 
   // Notificar cambios en violaciones de restricciones
-  React.useEffect(() => {
+  useEffect(() => {
     if (onRestrictionViolationsChange) {
       onRestrictionViolationsChange(hasRestrictionViolations);
     }
   }, [hasRestrictionViolations, onRestrictionViolationsChange]);
 
-  // Notificar cambios en número de pasajeros
-  const prevPassengersCountRef = React.useRef<{ adults: number; children: number } | null>(null);
-  
-  React.useEffect(() => {
-    if (onPassengersChange) {
-      const adults = passengers.filter((p) => p.esAdulto).length;
-      const children = passengers.filter((p) => !p.esAdulto).length;
-      
-      // Solo notificar si los valores realmente cambiaron
-      const prev = prevPassengersCountRef.current;
-      if (prev && prev.adults === adults && prev.children === children) {
-        return;
-      }
-      
-      prevPassengersCountRef.current = { adults, children };
-      onPassengersChange(adults, children);
+  // Notificar cambios en errores de validación
+  useEffect(() => {
+    if (onValidationErrorsChange) {
+      onValidationErrorsChange(hasValidationErrors);
     }
-  }, [passengers, onPassengersChange]);
+  }, [hasValidationErrors, onValidationErrorsChange]);
 
   // Manejar submit
-  const handleSubmit = React.useCallback((selectedPaymentMethod?: PaymentMethod) => {
+  const handleSubmit = useCallback((selectedPaymentMethod?: PaymentMethod) => {
     if (!bookingData) return;
     
-    if (!validateForm()) {
+    if (!validateAllFields()) {
       return;
     }
 
@@ -349,19 +201,14 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     onCheckoutComplete(order);
 
     setIsSubmitting(false);
-  }, [bookingData, passengers, billingInfo, hasRestrictionViolations, validateForm, onCheckoutComplete]);
-
-  // Verificar si hay errores de validación
-  const hasValidationErrors = useMemo(() => {
-    return Object.keys(errors).length > 0;
-  }, [errors]);
+  }, [bookingData, passengers, billingInfo, hasRestrictionViolations, validateAllFields, onCheckoutComplete]);
 
   // Ref para el mensaje de validación (para hacer focus)
-  const validationMessageRef = React.useRef<HTMLDivElement>(null);
-  const prevHasValidationErrorsRef = React.useRef<boolean>(false);
+  const validationMessageRef = useRef<HTMLDivElement>(null);
+  const prevHasValidationErrorsRef = useRef<boolean>(false);
 
   // Hacer focus en el mensaje de validación solo cuando aparezcan errores por primera vez
-  React.useEffect(() => {
+  useEffect(() => {
     // Solo hacer scroll si cambió de false a true (errores aparecieron)
     if (hasValidationErrors && !prevHasValidationErrorsRef.current && validationMessageRef.current) {
       validationMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -378,7 +225,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     hasValidationErrors,
   }), [hasRestrictionViolations, handleSubmit, hasValidationErrors]);
 
-  if (!bookingData) {
+  if (!bookingData || initialPassengers.length === 0) {
     return (
       <div className={styles.loading}>
         <p>Cargando información de la reserva...</p>
@@ -429,8 +276,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-nombre"
             required
             value={billingInfo.nombreCompleto}
-            onChange={(e) => setBillingInfo({ ...billingInfo, nombreCompleto: e.target.value })}
-            onBlur={(e) => validateBillingField("nombreCompleto", e.target.value)}
+            onChange={(e) => updateBillingInfo({ nombreCompleto: e.target.value })}
+            onBlur={(e) => validateBilling("nombreCompleto", e.target.value)}
             error={errors["billing.nombreCompleto"]}
             className={styles.formGroup}
           />
@@ -439,8 +286,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-apellidos"
             required
             value={billingInfo.apellidos}
-            onChange={(e) => setBillingInfo({ ...billingInfo, apellidos: e.target.value })}
-            onBlur={(e) => validateBillingField("apellidos", e.target.value)}
+            onChange={(e) => updateBillingInfo({ apellidos: e.target.value })}
+            onBlur={(e) => validateBilling("apellidos", e.target.value)}
             error={errors["billing.apellidos"]}
             className={styles.formGroup}
           />
@@ -453,8 +300,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             type="email"
             required
             value={billingInfo.email}
-            onChange={(e) => setBillingInfo({ ...billingInfo, email: e.target.value })}
-            onBlur={(e) => validateBillingField("email", e.target.value)}
+            onChange={(e) => updateBillingInfo({ email: e.target.value })}
+            onBlur={(e) => validateBilling("email", e.target.value)}
             error={errors["billing.email"]}
             className={styles.formGroup}
           />
@@ -464,8 +311,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             type="tel"
             required
             value={billingInfo.telefono}
-            onChange={(e) => setBillingInfo({ ...billingInfo, telefono: e.target.value })}
-            onBlur={(e) => validateBillingField("telefono", e.target.value)}
+            onChange={(e) => updateBillingInfo({ telefono: e.target.value })}
+            onBlur={(e) => validateBilling("telefono", e.target.value)}
             error={errors["billing.telefono"]}
             className={styles.formGroup}
           />
@@ -477,8 +324,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-direccion"
             required
             value={billingInfo.direccion}
-            onChange={(e) => setBillingInfo({ ...billingInfo, direccion: e.target.value })}
-            onBlur={(e) => validateBillingField("direccion", e.target.value)}
+            onChange={(e) => updateBillingInfo({ direccion: e.target.value })}
+            onBlur={(e) => validateBilling("direccion", e.target.value)}
             error={errors["billing.direccion"]}
             className={styles.formGroup}
           />
@@ -490,8 +337,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-ciudad"
             required
             value={billingInfo.ciudad}
-            onChange={(e) => setBillingInfo({ ...billingInfo, ciudad: e.target.value })}
-            onBlur={(e) => validateBillingField("ciudad", e.target.value)}
+            onChange={(e) => updateBillingInfo({ ciudad: e.target.value })}
+            onBlur={(e) => validateBilling("ciudad", e.target.value)}
             error={errors["billing.ciudad"]}
             className={styles.formGroup}
           />
@@ -502,10 +349,10 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             options={provinceOptions}
             value={billingInfo.provincia}
             onChange={(e) => {
-              setBillingInfo({ ...billingInfo, provincia: e.target.value });
-              validateBillingField("provincia", e.target.value);
+              updateBillingInfo({ provincia: e.target.value });
+              validateBilling("provincia", e.target.value);
             }}
-            onBlur={(e) => validateBillingField("provincia", e.target.value)}
+            onBlur={(e) => validateBilling("provincia", e.target.value)}
             error={errors["billing.provincia"]}
             className={styles.formGroup}
           />
@@ -517,8 +364,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-codigoPostal"
             required
             value={billingInfo.codigoPostal}
-            onChange={(e) => setBillingInfo({ ...billingInfo, codigoPostal: e.target.value })}
-            onBlur={(e) => validateBillingField("codigoPostal", e.target.value)}
+            onChange={(e) => updateBillingInfo({ codigoPostal: e.target.value })}
+            onBlur={(e) => validateBilling("codigoPostal", e.target.value)}
             error={errors["billing.codigoPostal"]}
             className={styles.formGroup}
           />
@@ -529,10 +376,10 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             options={countryOptions}
             value={billingInfo.pais}
             onChange={(e) => {
-              setBillingInfo({ ...billingInfo, pais: e.target.value });
-              validateBillingField("pais", e.target.value);
+              updateBillingInfo({ pais: e.target.value });
+              validateBilling("pais", e.target.value);
             }}
-            onBlur={(e) => validateBillingField("pais", e.target.value)}
+            onBlur={(e) => validateBilling("pais", e.target.value)}
             className={styles.formGroup}
           />
         </div>
@@ -543,8 +390,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             name="billing-documento"
             required
             value={billingInfo.documento}
-            onChange={(e) => setBillingInfo({ ...billingInfo, documento: e.target.value })}
-            onBlur={(e) => validateBillingField("documento", e.target.value)}
+            onChange={(e) => updateBillingInfo({ documento: e.target.value })}
+            onBlur={(e) => validateBilling("documento", e.target.value)}
             error={errors["billing.documento"]}
             className={styles.formGroup}
           />
@@ -577,8 +424,8 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
                 passengerNumber={index + 1}
                 isAdult={passenger.esAdulto}
                 passenger={passenger}
-                onChange={(updated) => handlePassengerChange(index, updated)}
-                onValidateField={(field, value) => validatePassengerField(index, field, value)}
+                onChange={(updated) => replacePassenger(index, updated)}
+                onValidateField={() => validatePassenger(index)}
                 hasPregnancyRestriction={hasPregnancyRestriction}
                 hasHealthRestriction={hasHealthRestriction}
                 errors={passengerErrors}
@@ -596,26 +443,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
           <Button
             variant="outline"
             size="small"
-            onClick={() => {
-              const updated = [
-                ...passengers,
-                {
-                  nombreCompleto: "",
-                  fechaNacimiento: "",
-                  documento: "",
-                  direccion: "",
-                  telefono: "",
-                  tieneRestriccionesAlimentarias: false,
-                  esAdulto: true,
-                  embarazada: undefined,
-                  problemasColumnaSalud: undefined,
-                },
-              ];
-              setPassengers(updated);
-              const adults = updated.filter((p) => p.esAdulto).length;
-              const children = updated.filter((p) => !p.esAdulto).length;
-              updatePendingBookingPassengers(adults, children);
-            }}
+            onClick={() => addPassenger(true)}
           >
             <Icon name="users" size={16} />
             Agregar adulto
@@ -623,24 +451,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
           <Button
             size="small"
             variant="outline"
-            onClick={() => {
-              const updated = [
-                ...passengers,
-                {
-                  nombreCompleto: "",
-                  fechaNacimiento: "",
-                  documento: "",
-                  direccion: "",
-                  telefono: "",
-                  tieneRestriccionesAlimentarias: false,
-                  esAdulto: false,
-                },
-              ];
-              setPassengers(updated);
-              const adults = updated.filter((p) => p.esAdulto).length;
-              const children = updated.filter((p) => !p.esAdulto).length;
-              updatePendingBookingPassengers(adults, children);
-            }}
+            onClick={() => addPassenger(false)}
           >
             <Icon name="users" size={16} />
             Agregar niño
@@ -659,7 +470,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
               name="notas-pedido"
               className={styles.textarea}
               value={billingInfo.notasPedido || ""}
-              onChange={(e) => setBillingInfo({ ...billingInfo, notasPedido: e.target.value })}
+              onChange={(e) => updateBillingInfo({ notasPedido: e.target.value })}
               placeholder="Notas sobre tu pedido, por ejemplo, notas especiales para la entrega."
               rows={5}
             />
@@ -690,38 +501,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             size="small"
             onClick={() => {
               if (passengerToRemove !== null) {
-                const updated = passengers.filter((_, i) => i !== passengerToRemove);
-                setPassengers(updated);
-                // Actualizar localStorage
-                const adults = updated.filter((p) => p.esAdulto).length;
-                const children = updated.filter((p) => !p.esAdulto).length;
-                updatePendingBookingPassengers(adults, children);
-                // Limpiar errores de este pasajero
-                const newErrors = { ...errors };
-                Object.keys(newErrors).forEach((key) => {
-                  if (key.startsWith(`passenger.${passengerToRemove}.`)) {
-                    delete newErrors[key];
-                  }
-                });
-                // Reindexar errores de pasajeros posteriores
-                const reindexedErrors: Record<string, string> = {};
-                Object.keys(newErrors).forEach((key) => {
-                  if (key.startsWith("passenger.")) {
-                    const match = key.match(/^passenger\.(\d+)\.(.+)$/);
-                    if (match) {
-                      const oldIndex = parseInt(match[1]);
-                      const field = match[2];
-                      if (oldIndex > passengerToRemove) {
-                        reindexedErrors[`passenger.${oldIndex - 1}.${field}`] = newErrors[key];
-                      } else if (oldIndex < passengerToRemove) {
-                        reindexedErrors[key] = newErrors[key];
-                      }
-                    }
-                  } else {
-                    reindexedErrors[key] = newErrors[key];
-                  }
-                });
-                setErrors(reindexedErrors);
+                removePassenger(passengerToRemove);
               }
               setIsClosingModal(true);
               setTimeout(() => {
@@ -752,4 +532,3 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
 });
 
 CheckoutForm.displayName = "CheckoutForm";
-
