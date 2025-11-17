@@ -1,0 +1,157 @@
+{
+  "trekking-glaciar-ojo-de-albino": {
+    "id": "trekking-glaciar-ojo-de-albino",
+    "featuredImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg",
+    "subtitle": "Aventura Extrema",
+    "title": "TREKKING GLACIAR OJO DE ALBINO",
+    "difficulty": "ALTA",
+    "price": "$ 233.000",
+    "category": "summer"
+  },
+  "lagos-off-road": {
+    "id": "lagos-off-road",
+    "featuredImage": "/images/tours/lagos-off-road/featured.jpg",
+    "subtitle": "Aventura 4x4",
+    "title": "LAGOS OFF ROAD",
+    "difficulty": "MEDIA",
+    "price": "$ 210.000",
+    "category": "summer"
+  },
+  "parque-trekking-canoas": {
+    "id": "parque-trekking-canoas",
+    "featuredImage": "/images/tours/parque-trekking-canoas/featured.jpg",
+    "subtitle": "Naturaleza",
+    "title": "PARQUE TREKKING & CANOAS",
+    "difficulty": "MEDIA",
+    "price": "$ 160.000",
+    "category": "summer"
+  },
+  "parque-aventura": {
+    "id": "parque-aventura",
+    "featuredImage": "/images/tours/parque-aventura/featured.jpg",
+    "subtitle": "Un parque a tu medida!!",
+    "title": "PARQUE AVENTURA",
+    "difficulty": "MEDIA",
+    "price": "$ 150.000",
+    "category": "summer"
+  },
+  "trekking-glaciar-vinciguerra": {
+    "id": "trekking-glaciar-vinciguerra",
+    "featuredImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg",
+    "subtitle": "Aventura Extrema",
+    "title": "TREKKING GLACIAR VINCIGUERRA",
+    "difficulty": "ALTA",
+    "price": "$ 200.000",
+    "category": "summer"
+  },
+  "trekking-laguna-esmeralda": {
+    "id": "trekking-laguna-esmeralda",
+    "featuredImage": "/images/tours/trekking-laguna-esmeralda/featured.jpg",
+    "subtitle": "Naturaleza",
+    "title": "TREKKING LAGUNA ESMERALDA",
+    "difficulty": "MEDIA",
+    "price": "$ 160.000",
+    "category": "summer"
+  },
+  "pinguinera-isla-martillo": {
+    "id": "pinguinera-isla-martillo",
+    "featuredImage": "/images/tours/pinguinera-isla-martillo/featured.jpg",
+    "subtitle": "Fauna",
+    "title": "PINGUINERA ISLA MARTILLO",
+    "difficulty": "BAJA",
+    "price": "$ 166.200",
+    "category": "summer"
+  },
+  "parque-nacional-clasico": {
+    "id": "parque-nacional-clasico",
+    "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
+    "subtitle": "El Parque del fin del mundo!!",
+    "title": "PARQUE NACIONAL CLÁSICO",
+    "difficulty": "BAJA",
+    "price": "$ 90.000",
+    "category": "summer"
+  },
+  "parque-nacional-clasico-winter": {
+    "id": "parque-nacional-clasico-winter",
+    "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
+    "subtitle": "El Parque del fin del mundo!!",
+    "title": "PARQUE NACIONAL CLÁSICO",
+    "difficulty": "BAJA",
+    "price": "$ 90.000",
+    "category": "winter"
+  },
+  "canal-beagle-catamaran": {
+    "id": "canal-beagle-catamaran",
+    "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
+    "subtitle": "Navegación",
+    "title": "CANAL BEAGLE EN CATAMARAN",
+    "difficulty": "BAJA",
+    "price": "$ 100.000",
+    "category": "summer"
+  },
+  "canal-beagle-catamaran-winter": {
+    "id": "canal-beagle-catamaran-winter",
+    "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
+    "subtitle": "Navegación",
+    "title": "CANAL BEAGLE EN CATAMARAN",
+    "difficulty": "BAJA",
+    "price": "$ 100.000",
+    "category": "winter"
+  },
+  "full-day-nieve": {
+    "id": "full-day-nieve",
+    "featuredImage": "/images/tours/full-day-nieve/featured.jpg",
+    "subtitle": "Aventura en la Nieve",
+    "title": "FULL DAY NIEVE",
+    "difficulty": "BAJA",
+    "category": "winter"
+  },
+  "experiencia-husky": {
+    "id": "experiencia-husky",
+    "featuredImage": "/images/tours/experiencia-husky/featured.jpg",
+    "subtitle": "Trineos con Perros",
+    "title": "EXPERIENCIA HUSKY",
+    "difficulty": "MEDIA",
+    "category": "winter"
+  },
+  "nieve-fuego": {
+    "id": "nieve-fuego",
+    "featuredImage": "/images/tours/nieve-fuego/featured.jpg",
+    "subtitle": "Aventura Nocturna",
+    "title": "NIEVE & FUEGO",
+    "difficulty": "BAJA",
+    "category": "winter"
+  },
+  "4x4-invernal": {
+    "id": "4x4-invernal",
+    "featuredImage": "/images/tours/4x4-invernal/featured.jpg",
+    "subtitle": "Aventura 4x4",
+    "title": "4X4 INVERNAL",
+    "difficulty": "BAJA",
+    "category": "winter"
+  },
+  "trekking-esmeralda-invernal": {
+    "id": "trekking-esmeralda-invernal",
+    "featuredImage": "/images/tours/trekking-esmeralda-invernal/featured.jpg",
+    "subtitle": "Trekking Invernal",
+    "title": "TREKKING ESMERALDA INVERNAL",
+    "difficulty": "MEDIA",
+    "category": "winter"
+  },
+  "aventura-blanca": {
+    "id": "aventura-blanca",
+    "featuredImage": "/images/tours/aventura-blanca/featured.jpg",
+    "subtitle": "Trineos con Perros",
+    "title": "AVENTURA BLANCA",
+    "difficulty": "BAJA",
+    "category": "winter"
+  },
+  "experiencia-antartica": {
+    "id": "experiencia-antartica",
+    "featuredImage": "/images/tours/experiencia-antartica/featured.jpg",
+    "subtitle": "Aventura Antártica",
+    "title": "EXPERIENCIA ANTÁRTICA",
+    "difficulty": "BAJA",
+    "category": "winter"
+  }
+}

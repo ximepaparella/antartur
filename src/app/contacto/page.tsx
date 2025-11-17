@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Contacto - Contáctanos | Antartur",

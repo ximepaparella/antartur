@@ -1,0 +1,135 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.tourCard {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.cardLink {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  z-index: 1;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($black, 0.4);
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-32;
+  z-index: 2;
+  text-align: center;
+}
+
+.subtitle {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $white;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  margin-bottom: $spacing-16;
+}
+
+.title {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-28;
+  font-weight: $font-weight-normal;
+  line-height: 120%;
+  text-transform: uppercase;
+  margin: 0 0 $spacing-16 0;
+  color: $white;
+  
+  @include desktop {
+    font-size: $font-size-32;
+  }
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $white;
+  margin-bottom: $spacing-24;
+}
+
+.difficulty {
+  display: block;
+}
+
+.price {
+  display: block;
+}
+
+.cta {
+  position: absolute;
+  bottom: $spacing-32;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.tourCard:hover {
+  .overlay {
+    background-color: rgba($black, 0.6);
+  }
+  
+  .subtitle {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .image {
+    transform: scale(1.05);
+  }
+}

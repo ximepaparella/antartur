@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
-import "@/styles/globals.scss";
+import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
+import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
 
 export const metadata: Metadata = {
   title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
 };
 
 export default function AntartidaPage() {
+  const winterTours = getToursByCategory("winter");
+
   return (
     <>
       <Hero variant="internal" pageKey="antartida" />
@@ -32,6 +35,7 @@ export default function AntartidaPage() {
             "La Antártida...Una tierra de hielo brillante, picos majestuosos y belleza deslumbrante, la Antártida es el continente Menos visitado en el fin del mundo. Explora la Península Antártica, la parte septentrional del Último continente, donde te deleitarás con uno de los Entornos Naturales Más pristinos e Inolvidables del mundo. Su Viaje Será resaltado por Pingüinos, focas Y ballenas Que acompañan al barco Durante su viaje a lo largo de la costa antártica. Sus Primeros Pasos en el continente seran inolvidables a medida que visitamos Impresionantes Lugares Históricos."
           ]}
         />
+        <ToursGrid tours={winterTours} category="winter" />
       </main>
     </>
   );
