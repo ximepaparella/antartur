@@ -1,0 +1,67 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.bannerText {
+  background-color: $white;
+  border-radius: 8px;
+  padding: $spacing-24;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  
+  @include desktop {
+    padding: $spacing-24;
+    max-width: 400px;
+  }
+}
+
+.title {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-light;
+  color: $gray-700;
+  line-height: $line-height-tight;
+  margin: 0 0 $spacing-16 0;
+  
+  @include desktop {
+    font-size: $font-size-24;
+    margin-bottom: $spacing-20;
+  }
+}
+
+.excerpt {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $gray-400;
+  line-height: $line-height-normal;
+  margin: 0 0 $spacing-24 0;
+  
+  @include desktop {
+    font-size: $font-size-16;
+    margin-bottom: $spacing-32;
+  }
+}
+
+.link {
+  display: inline-block;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $primary-color;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  @include desktop {
+    font-size: $font-size-18;
+  }
+  
+  &:hover {
+    color: darken($primary-color, 10%);
+    text-decoration: underline;
+  }
+  
+  &:active {
+    color: darken($primary-color, 15%);
+  }
+}
+

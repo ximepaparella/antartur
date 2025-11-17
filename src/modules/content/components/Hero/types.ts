@@ -6,7 +6,7 @@ export interface HeroContent {
   /** Título principal del hero */
   title: string;
   /** Subtítulo opcional */
-  subtitle: string;
+  subtitle?: string;
   /** URL de la imagen de fondo */
   backgroundImage: string;
   /** Posición de la imagen de fondo */
@@ -35,7 +35,7 @@ export function isValidHeroContent(data: unknown): data is HeroContent {
   return (
     typeof hero.title === "string" &&
     hero.title.length > 0 &&
-    typeof hero.subtitle === "string" &&
+    (hero.subtitle === undefined || typeof hero.subtitle === "string") &&
     typeof hero.backgroundImage === "string" &&
     typeof hero.backgroundPosition === "string" &&
     typeof hero.overlayOpacity === "number" &&
