@@ -10,6 +10,7 @@ interface ContactItemProps {
   target?: string;
   rel?: string;
   ariaLabel?: string;
+  className?: string;
 }
 
 export const ContactItem: React.FC<ContactItemProps> = ({
@@ -19,7 +20,9 @@ export const ContactItem: React.FC<ContactItemProps> = ({
   target,
   rel,
   ariaLabel,
+  className = "",
 }) => {
+  const itemClassName = `${styles.item} ${className}`.trim();
   const content = (
     <>
       <Icon
@@ -28,7 +31,7 @@ export const ContactItem: React.FC<ContactItemProps> = ({
         className={styles.icon}
         ariaLabel={undefined}
       />
-      <span className={styles.text}>{text}</span>
+      <span className={`${styles.text}`}>{text}</span>
     </>
   );
 
@@ -38,7 +41,7 @@ export const ContactItem: React.FC<ContactItemProps> = ({
         href={href}
         target={target}
         rel={rel}
-        className={styles.item}
+        className={itemClassName}
         aria-label={ariaLabel || text}
       >
         {content}
@@ -47,7 +50,7 @@ export const ContactItem: React.FC<ContactItemProps> = ({
   }
 
   return (
-    <div className={styles.item} aria-label={ariaLabel || text}>
+    <div className={itemClassName} aria-label={ariaLabel || text}>
       {content}
     </div>
   );

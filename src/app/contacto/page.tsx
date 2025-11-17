@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
+import { ContactForm } from "@/modules/content/components/ContactForm/ContactForm";
+import { ContactInfo } from "@/modules/content/components/ContactInfo/ContactInfo";
+import styles from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: "Contacto - Contáctanos | Antartur",
@@ -23,7 +26,14 @@ export default function ContactoPage() {
     <>
       <Hero variant="internal" pageKey="contacto" />
       <main className="mainContainer">
-        {/* Contenido de la página */}
+        <div className={styles.contactPage}>
+          <div className={styles.leftColumn}>
+            <ContactForm />
+          </div>
+          <div className={styles.rightColumn}>
+            <ContactInfo />
+          </div>
+        </div>
       </main>
     </>
   );
