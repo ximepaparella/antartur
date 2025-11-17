@@ -21,12 +21,12 @@
   font-family: $font-roboto;
   font-size: 20px;
   font-weight: 400;
-  color: #28372F;
+  color: $gray-700;
   margin-bottom: $spacing-16;
   padding: 0 0 5px 0;
   border-style: solid;
   border-width: 0 0 0.5px 0;
-  border-color: rgba(155, 155, 155, 0.68);
+  border-color: $border-divider;
 }
 
 .content {

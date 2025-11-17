@@ -1,0 +1,334 @@
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.checkoutForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.validationMessage {
+  width: 100%;
+  margin-bottom: $spacing-24;
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: $spacing-4;
+    border-radius: $spacing-4;
+  }
+}
+
+.section {
+  width: 100%;
+}
+
+.sectionTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  margin: 0 0 $spacing-8 0;
+  padding: 0 0 $spacing-8 0;
+  border-bottom: 0.5px solid $border-divider;
+}
+
+.sectionDescription {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  line-height: $line-height-relaxed;
+  color: $gray-400;
+  margin: 0 0 $spacing-24 0;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+  margin-bottom: $spacing-24;
+  
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-16;
+    
+    .formGroup {
+      flex: 1;
+    }
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.label {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+}
+
+.required {
+  color: $gray-400;
+}
+
+.textarea {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  padding: $spacing-8;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-4;
+  color: $gray-700;
+  background-color: $white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+  min-height: 120px;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+.passengersList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-top: $spacing-16;
+}
+
+.passengerForm {
+  border: 1px solid $gray-200;
+  border-radius: $spacing-8;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    border-color: $gray-300;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.passengerHeader {
+  width: 100%;
+  padding: $spacing-16 $spacing-20;
+  background-color: $gray-50;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: $gray-100;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
+}
+
+.passengerHeaderContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  flex: 1;
+  
+  &.passengerHeaderContentError {
+    border-left: $spacing-4 solid $error-color;
+    padding-left: $spacing-8;
+  }
+}
+
+.passengerHeaderError {
+  border-color: $error-color;
+  
+  &:hover {
+    background-color: rgba($error-color, 0.05);
+  }
+}
+
+.chevronIcon {
+  color: $gray-400;
+  transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.passengerTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-18;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.passengerContent {
+  padding: $spacing-24;
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.dateInputs {
+  display: flex;
+  gap: $spacing-8;
+  
+  .dateSelect {
+    flex: 1;
+  }
+  
+  // Ocultar mensajes de error individuales de los Selects dentro de dateInputs
+  // porque mostramos un mensaje único debajo
+  :global(.selectGroup) {
+    :global(.errorMessage) {
+      display: none;
+    }
+  }
+  
+  &.dateInputsError {
+    // Los selects mostrarán el estado visual de error (borde rojo)
+  }
+}
+
+.radioGroup {
+  display: flex;
+  gap: $spacing-24;
+  margin-top: $spacing-8;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  cursor: pointer;
+  
+  input[type="radio"] {
+    cursor: pointer;
+  }
+  
+  span {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $gray-700;
+  }
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-top: $spacing-8;
+}
+
+.checkboxOption {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  cursor: pointer;
+  
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+  
+  span {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $gray-700;
+  }
+}
+
+.warning {
+  padding: $spacing-16;
+  background-color: $warning-bg;
+  border: 1px solid $warning-border;
+  border-radius: $spacing-8;
+  margin-bottom: $spacing-24;
+  
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $warning-text;
+    margin: 0;
+  }
+}
+
+.loading {
+  padding: $spacing-32;
+  text-align: center;
+  
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-16;
+    color: $gray-700;
+  }
+}
+
+.errorMessage {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  color: $error-color;
+  margin-top: $spacing-4;
+  display: block;
+}
+
+.removeButtonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $spacing-16;
+}
+
+.passengersActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-top: $spacing-16;
+  padding-top: $spacing-16;
+  border-top: 1px solid $gray-200;
+  
+  @include desktop {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.addPassengerButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  padding: $spacing-12 $spacing-16;
+  background-color: $primary-color;
+  border: none;
+  border-radius: $spacing-4;
+  color: $white;
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
+}
+
+.confirmModalActions {
+  display: flex;
+  gap: $spacing-12;
+  justify-content: flex-end;
+}
+

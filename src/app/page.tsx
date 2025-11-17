@@ -3,7 +3,7 @@ import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
-import { Banner } from "@/modules/content/components/Banner/Banner";
+import { Banner, BannerText } from "@/modules/content/components/Banner";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
 
@@ -49,13 +49,14 @@ export default function Home() {
         />
         <ToursGrid tours={winterTours} category="winter" />
       </main>
-      <Banner
-        backgroundImage="/images/banners/hero-home.jpg"
-        title="Disfrutá desde otra mirada."
-        excerpt="Conocé el fin del mundo en todas sus temporadas y descubrí maravillas únicas en sus paisajes."
-        linkText="Descubrí más"
-        linkUrl="/verano"
-      />
+      <Banner backgroundImage="/images/banners/hero-home.jpg">
+        <BannerText
+          title="Disfrutá desde otra mirada."
+          excerpt="Conocé el fin del mundo en todas sus temporadas y descubrí maravillas únicas en sus paisajes."
+          linkText="Descubrí más"
+          linkUrl="/verano"
+        />
+      </Banner>
       <Testimonials testimonials={testimonials} variant="light" />
     </>
   );

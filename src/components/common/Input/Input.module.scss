@@ -1,0 +1,57 @@
+@use "@/styles/variables" as *;
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.label {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+}
+
+.required {
+  color: $gray-400;
+  margin-left: $spacing-4;
+}
+
+.input {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  padding: $spacing-8;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-4;
+  color: $gray-700;
+  background-color: $white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+  }
+
+  &::placeholder {
+    color: $gray-400;
+  }
+
+  &.error {
+    border-color: $error-color;
+  }
+
+  &:disabled {
+    background-color: $gray-100;
+    cursor: not-allowed;
+  }
+}
+
+.errorMessage {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  color: $error-color;
+}
+

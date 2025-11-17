@@ -1,0 +1,46 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.checkoutPage {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-48;
+  width: 100%;
+  margin-top: $spacing-32;
+  margin-bottom: $spacing-64;
+  
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-64;
+    align-items: flex-start;
+  }
+}
+
+.leftColumn {
+  flex: 1;
+  width: 100%;
+  
+  @include desktop {
+    flex: 1.5;
+  }
+}
+
+.rightColumn {
+  flex: 1;
+  width: 100%;
+  
+  @include desktop {
+    flex: 1;
+  }
+}
+
+.loading {
+  padding: $spacing-64;
+  text-align: center;
+  
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-18;
+    color: $gray-700;
+  }
+}

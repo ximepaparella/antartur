@@ -1,0 +1,83 @@
+@use "@/styles/variables" as *;
+
+.tooltip {
+  position: absolute;
+  background-color: $primary-color;
+  color: $white;
+  padding: $spacing-8 $spacing-12;
+  border-radius: $spacing-4;
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tooltip.top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: $spacing-4;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: $spacing-4 solid transparent;
+    border-top-color: $primary-color;
+  }
+}
+
+.tooltip.bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: $spacing-4;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: $spacing-4 solid transparent;
+    border-bottom-color: $primary-color;
+  }
+}
+
+.tooltip.left {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: $spacing-4;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: $spacing-4 solid transparent;
+    border-left-color: $primary-color;
+  }
+}
+
+.tooltip.right {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: $spacing-4;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: $spacing-4 solid transparent;
+    border-right-color: $primary-color;
+  }
+}
+

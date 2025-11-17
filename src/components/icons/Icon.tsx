@@ -23,6 +23,11 @@ import {
   Ship,
   MessageCircle,
   BookA,
+  ChevronLeft,
+  ChevronRight,
+  Building2,
+  Wallet,
+  ChevronUp,
 } from "lucide-react";
 
 /**
@@ -45,15 +50,22 @@ export type IconName =
   | "map-route"
   | "check"
   | "calendar"
+  | "calendar-days"
   | "users"
   | "credit-card"
   | "clock"
   | "difficulty"
+  | "alert-circle"
   | "family"
   | "lunch"
   | "off-road"
   | "kayak"
-  | "book-a";
+  | "book-a"
+  | "chevron-left"
+  | "chevron-right"
+  | "chevron-up"
+  | "bank"
+  | "wallet";
 
 export type IconProps = {
   /** Nombre del icono a mostrar */
@@ -91,11 +103,18 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   "credit-card": CreditCard,
   clock: Clock,
   difficulty: AlertCircle,
+  "alert-circle": AlertCircle,
   family: Users,
   lunch: UtensilsCrossed,
   "off-road": CarFront,
   kayak: Ship,
   "book-a": BookA,
+  "calendar-days": Calendar,
+  "chevron-left": ChevronLeft,
+  "chevron-right": ChevronRight,
+  "chevron-up": ChevronUp,
+  "bank": Building2,
+  "wallet": Wallet,
 };
 
 /**

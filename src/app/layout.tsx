@@ -9,7 +9,7 @@ const workSans = Work_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-work-sans",
+  variable: "--font-roboto",
 });
 
 const roboto = Roboto({

@@ -8,16 +8,16 @@
 
 .bookingTitle {
   font-family: $font-roboto;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #28372F;
-  margin-bottom: 1rem;
+  font-size: $font-size-24;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  margin-bottom: $spacing-16;
 }
 
 .bookingText {
   font-family: $font-roboto;
-  font-size: 1rem;
-  color: #28372F;
-  margin-bottom: 1.5rem;
+  font-size: $font-size-16;
+  color: $gray-700;
+  margin-bottom: $spacing-24;
 }
 

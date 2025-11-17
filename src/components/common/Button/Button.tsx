@@ -2,11 +2,11 @@ import React from "react";
 import Link from "next/link";
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary";
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline";
 export type ButtonSize = "small" | "medium" | "large";
 
 interface ButtonBaseProps {
-  /** Variante del botón: "primary", "secondary" o "tertiary" */
+  /** Variante del botón: "primary", "secondary", "tertiary" o "outline" */
   variant?: ButtonVariant;
   /** Tamaño del botón */
   size?: ButtonSize;
@@ -39,10 +39,11 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 /**
  * Componente Button genérico reutilizable
  * 
- * Soporta tres variantes:
+ * Soporta cuatro variantes:
  * - `primary`: Fondo con color primario y texto blanco
  * - `secondary`: Fondo transparente con borde blanco y texto blanco
  * - `tertiary`: Fondo con color terciario y texto blanco
+ * - `outline`: Fondo transparente con borde y texto en color primario
  * 
  * Puede renderizarse como botón (`<button>`) o como link (`<Link>` de Next.js).
  * 
@@ -61,6 +62,11 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
  * // Variante terciaria
  * <Button variant="tertiary" href="/booking">
  *   Reservar ahora
+ * </Button>
+ * 
+ * // Variante outline
+ * <Button variant="outline" onClick={handleCancel}>
+ *   Cancelar
  * </Button>
  * ```
  */

@@ -1,0 +1,252 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.miniCart {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+  width: 100%;
+}
+
+.orderSummary {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-20;
+}
+
+.orderItem {
+  padding: $spacing-16;
+  background-color: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.tourName {
+  font-family: $font-roboto;
+  font-size: $font-size-18;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.orderDate {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  color: $gray-400;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: $gray-400;
+  }
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-12 0;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid $gray-200;
+  }
+}
+
+.summaryLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  color: $gray-400;
+}
+
+.summaryValue {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+}
+
+.summaryLabelTotal {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+}
+
+.summaryValueTotal {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+}
+
+.paymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  
+  &.blurred {
+    filter: blur(3px);
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba($white, 0.3);
+      z-index: 1;
+    }
+  }
+}
+
+.paymentOption {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  cursor: pointer;
+  
+  &:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.radioWrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  padding: $spacing-12;
+  border: 2px solid $gray-200;
+  border-radius: $spacing-8;
+  transition: all 0.2s ease;
+  
+  .paymentOption:has(input:checked) & {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
+  }
+  
+  .paymentOption:has(input:disabled) & {
+    border-color: $gray-200;
+    background-color: $gray-100;
+    opacity: 0.6;
+  }
+  
+  &:hover:not(:has(input:disabled)) {
+    border-color: $gray-300;
+    background-color: $gray-50;
+  }
+}
+
+.radioInput {
+  cursor: pointer;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: $primary-color;
+}
+
+.paymentIcon {
+  color: $gray-400;
+  flex-shrink: 0;
+  
+  .paymentOption:has(input:checked) & {
+    color: $primary-color;
+  }
+}
+
+.radioLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  cursor: pointer;
+  flex: 1;
+  
+  .paymentOption:has(input:checked) & {
+    color: $primary-color;
+  }
+}
+
+.paymentInfo {
+  padding: $spacing-12;
+  background-color: $gray-100;
+  border-radius: $spacing-4;
+  margin-left: $spacing-24;
+
+  p {
+    font-family: $font-roboto;
+    font-size: $font-size-14;
+    color: $gray-400;
+    margin: 0;
+    line-height: $line-height-normal;
+  }
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: $spacing-16;
+}
+
+// Skeleton styles
+.skeletonLine {
+  background: linear-gradient(90deg, $gray-200 25%, $gray-100 50%, $gray-200 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: $spacing-4;
+}
+
+.skeletonTourInfo {
+  margin-bottom: $spacing-16;
+}
+
+.skeletonPaymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.skeletonPaymentOption {
+  height: 60px;
+  background: linear-gradient(90deg, $gray-200 25%, $gray-100 50%, $gray-200 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: $spacing-8;
+  border: 2px solid $gray-200;
+}
+
+.skeletonButton {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(90deg, $gray-200 25%, $gray-100 50%, $gray-200 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: $spacing-4;
+  margin-top: $spacing-16;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+

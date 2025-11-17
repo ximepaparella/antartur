@@ -177,6 +177,127 @@
       ],
       "importantNote": "El recorrido en canoa es sujeto a las condiciones climáticas y a consideración de los guías, en caso de no realizarse no es reembolsable y se reemplazara por cortas caminatas por los alrededores."
     },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 180000,
+        "priceChild": 120000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "4:30 pm"
+          }
+        }
+      ]
+    },
     "testimonials": [
       {
         "id": "t1",

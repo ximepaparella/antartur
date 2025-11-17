@@ -1,0 +1,133 @@
+@use "@/styles/variables" as *;
+@use "sass:color";
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $overlay-bg-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-16;
+  animation: fadeInOverlay 0.2s ease-out;
+  
+  &.modalOverlayClosing {
+    animation: fadeOutOverlay 0.2s ease-out;
+  }
+}
+
+.modalContent {
+  background-color: $white;
+  border-radius: $spacing-8;
+  box-shadow: 0 $spacing-4 $spacing-20 rgba($black, 0.15);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+  
+  &.modalContentClosing {
+    animation: modalSlideOut 0.3s ease-out;
+  }
+}
+
+.modalContentSmall {
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing-24;
+}
+
+.modalContentMedium {
+  width: 100%;
+  max-width: 600px;
+  padding: $spacing-32;
+}
+
+.modalContentLarge {
+  width: 100%;
+  max-width: 800px;
+  padding: $spacing-32;
+}
+
+.modalClose {
+  position: absolute;
+  top: $spacing-16;
+  right: $spacing-16;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray-400;
+  transition: color 0.2s ease;
+  z-index: 1;
+  
+  &:hover {
+    color: $gray-700;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    border-radius: $spacing-4;
+  }
+}
+
+.modalTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-24;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0 0 $spacing-24 0;
+  padding-right: $spacing-40;
+}
+
+.modalBody {
+  width: 100%;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutOverlay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
