@@ -30,6 +30,7 @@
   background-color: $primary-color;
   color: $white;
   border: 2px solid $primary-color;
+  font-weight: 400;
   
   &:hover:not(:disabled) {
     background-color: color.adjust($primary-color, $lightness: -10%);
