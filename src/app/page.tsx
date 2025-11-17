@@ -1,6 +1,7 @@
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
+import { Banner } from "@/modules/content/components/Banner/Banner";
 import "@/styles/globals.scss";
 
 export default function Home() {
@@ -26,6 +27,17 @@ export default function Home() {
           paragraph="En antartur tenemos excursiones para todas las temporadas del año, pudiendo así disfrutar de diversas aventuras según la época del año."
         />
       </main>
+      <Banner
+        backgroundImage="/images/banners/hero-verano.jpg"
+        variant="text"
+        content={{
+          type: "text",
+          title: "Disfrutá desde otra mirada.",
+          excerpt: "Conocé el fin del mundo en todas sus temporadas y descubrí maravillas únicas en sus paisajes.",
+          linkText: "Descubrí más",
+          linkUrl: "/verano",
+        }}
+      />
       <Testimonials testimonials={testimonials} variant="light" />
     </>
   );

@@ -9,7 +9,7 @@ $black: #000000;
 $gray-100: #f9f5f6;
 $gray-200: #d2d2d2;
 $gray-300: #f7f5f5;
-$gray-400: #d8bfc0;
+$gray-400: #54595f;
 $gray-500: #575a5f;
 $gray-600: #be9794;
 $gray-700: #28372f;
@@ -26,6 +26,7 @@ $tertiary-color: #6fa5cb; // Color para iconos en headings
 // Tipografía
 $font-primary: "ludicrousregular", sans-serif;
 $font-secondary: var(--font-work-sans, 'Work Sans'), sans-serif;
+$font-roboto: var(--font-roboto, 'Roboto'), sans-serif;
 
 // ============================================
 // ESPACIADO
