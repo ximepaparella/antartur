@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { RateLimiterMemory } from "rate-limiter-flexible";
+
+// Rate limiter: máximo 5 requests por IP cada 15 minutos
+const rateLimiter = new RateLimiterMemory({
+  points: 5, // Número de requests
+  duration: 900, // Período en segundos (15 minutos)
+});
 
 interface ContactFormData {
   nombreCompleto: string;
@@ -83,6 +90,21 @@ function createTransporter() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: obtener IP del cliente
+    const clientIp = 
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
+    try {
+      await rateLimiter.consume(clientIp);
+    } catch (rateLimiterError) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor, intentá nuevamente más tarde." },
+        { status: 429 }
+      );
+    }
+
     const body: ContactFormData = await request.json();
 
     // Validar campos requeridos
@@ -132,16 +154,35 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
     // Crear transporter
     const transporter = createTransporter();
 
+    // Obtener email destinatario de variable de entorno
+    const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL;
+
+    // El email destinatario es requerido (tanto en desarrollo como en producción)
+    if (!recipientEmail) {
+      console.error("CONTACT_RECIPIENT_EMAIL no está configurada");
+      // En desarrollo, permitimos continuar pero mostramos advertencia
+      if (process.env.NODE_ENV === "development") {
+        console.warn("⚠️  En desarrollo, el email no se enviará sin CONTACT_RECIPIENT_EMAIL configurado");
+      } else {
+        // En producción, fallar rápido
+        return NextResponse.json(
+          { error: "Error de configuración del servidor" },
+          { status: 500 }
+        );
+      }
+    }
+
     // Si no hay configuración de email (modo desarrollo), solo loguear
     if (!transporter) {
       console.log("=".repeat(60));
       console.log("📧 EMAIL DE CONTACTO (MODO DESARROLLO - NO ENVIADO)");
       console.log("=".repeat(60));
-      console.log(`Para: ximenapaparella@gmail.com`);
+      console.log(`Para: ${recipientEmail || "CONTACT_RECIPIENT_EMAIL no configurado"}`);
       console.log(`Asunto: Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`);
       console.log(`\n${emailContent}`);
       console.log("=".repeat(60));
       console.log("\n💡 Para enviar emails reales, configura las variables de entorno:");
+      console.log("   - CONTACT_RECIPIENT_EMAIL (email destinatario - REQUERIDO)");
       console.log("   - GMAIL_USER y GMAIL_APP_PASSWORD (para Gmail)");
       console.log("   - O SMTP_HOST, SMTP_USER, SMTP_PASSWORD (para SMTP)");
       console.log("=".repeat(60));
@@ -152,10 +193,19 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
       );
     }
 
+    // Si no hay email destinatario configurado, no podemos enviar
+    if (!recipientEmail) {
+      console.error("No se puede enviar email: CONTACT_RECIPIENT_EMAIL no está configurada");
+      return NextResponse.json(
+        { error: "Error de configuración: email destinatario no configurado" },
+        { status: 500 }
+      );
+    }
+
     // Enviar email real
     const mailOptions = {
       from: process.env.SMTP_FROM || process.env.GMAIL_USER || "noreply@antartur.tur.ar",
-      to: "ximenapaparella@gmail.com",
+      to: recipientEmail,
       subject: `Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`,
       text: emailContent,
       replyTo: body.email,

@@ -41,6 +41,9 @@ Crea o edita el archivo `.env.local` en la raíz del proyecto:
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=tu_site_key_aqui
 RECAPTCHA_SECRET_KEY=tu_secret_key_aqui
 
+# Email destinatario (requerido en producción)
+CONTACT_RECIPIENT_EMAIL=tu_email_destinatario@gmail.com
+
 # Email (Gmail - Opción 1)
 GMAIL_USER=tu_email@gmail.com
 GMAIL_APP_PASSWORD=tu_contraseña_de_aplicacion
@@ -81,7 +84,9 @@ Después de configurar todo:
 2. Ve a la página de contacto: `http://localhost:3000/contacto`
 3. Deberías ver el widget de reCAPTCHA en el formulario
 4. Completa y envía el formulario
-5. Verifica que recibas el email en `ximenapaparella@gmail.com`
+5. Verifica que recibas el email en la dirección configurada en `CONTACT_RECIPIENT_EMAIL` (o en la consola del servidor si estás en modo desarrollo)
+
+**Nota**: El email destinatario se configura mediante la variable de entorno `CONTACT_RECIPIENT_EMAIL`. En desarrollo, si no está configurada, se usa un valor por defecto y el email se loguea en la consola. En producción, esta variable es requerida.
 
 ## Solución de problemas
 
@@ -108,5 +113,11 @@ Cuando despliegues a producción:
 
 1. Agrega tu dominio de producción a Google reCAPTCHA
 2. Actualiza las variables de entorno en tu plataforma de hosting (Vercel, Netlify, etc.)
-3. Asegúrate de que `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` y `RECAPTCHA_SECRET_KEY` estén configuradas en producción
+3. **Variables requeridas en producción:**
+   - `CONTACT_RECIPIENT_EMAIL` - Email destinatario (requerido)
+   - `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` - Clave pública de reCAPTCHA (recomendado)
+   - `RECAPTCHA_SECRET_KEY` - Clave secreta de reCAPTCHA (recomendado)
+   - Configuración de email (Gmail o SMTP) - Requerido para enviar emails
+
+4. **Seguridad**: El endpoint incluye rate limiting (5 requests por IP cada 15 minutos) para prevenir abuso
 

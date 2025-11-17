@@ -37,12 +37,16 @@ Si quieres que los emails se envíen realmente, tienes **2 opciones**:
 Crea un archivo `.env.local` en la raíz del proyecto (si no existe):
 
 ```env
+# Email destinatario (requerido en producción)
+CONTACT_RECIPIENT_EMAIL=tu_email_destinatario@gmail.com
+
 # Gmail Configuration
 GMAIL_USER=tu_email@gmail.com
 GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
 ```
 
 **⚠️ IMPORTANTE:**
+- `CONTACT_RECIPIENT_EMAIL` es **requerido en producción**. En desarrollo, si no está configurado, se usa un valor por defecto.
 - Usa la contraseña de aplicación de 16 caracteres (no tu contraseña normal de Gmail)
 - Si la contraseña tiene espacios, puedes dejarlos o quitarlos
 - El archivo `.env.local` ya está en `.gitignore`, así que no se subirá al repositorio
@@ -70,6 +74,9 @@ Obtén las credenciales de tu proveedor SMTP:
 En `.env.local`:
 
 ```env
+# Email destinatario (requerido en producción)
+CONTACT_RECIPIENT_EMAIL=tu_email_destinatario@gmail.com
+
 # SMTP Configuration
 SMTP_HOST=smtp.tu-servidor.com
 SMTP_PORT=587
@@ -77,6 +84,9 @@ SMTP_USER=tu_usuario_smtp
 SMTP_PASSWORD=tu_contraseña_smtp
 SMTP_FROM=noreply@antartur.tur.ar
 ```
+
+**⚠️ IMPORTANTE:**
+- `CONTACT_RECIPIENT_EMAIL` es **requerido en producción**. En desarrollo, si no está configurado, se usa un valor por defecto.
 
 #### Paso 3: Reiniciar el servidor
 ```bash
@@ -126,10 +136,21 @@ El código verifica en este orden:
 **Para desarrollo local:**
 - ✅ No necesitas configurar nada
 - ✅ El formulario funciona y loguea los emails en la consola
+- ✅ `CONTACT_RECIPIENT_EMAIL` es opcional (usa valor por defecto)
 
 **Para producción:**
+- ⚠️ **REQUERIDO**: `CONTACT_RECIPIENT_EMAIL` debe estar configurado
 - Opción A: Configura Gmail con contraseña de aplicación
 - Opción B: Configura un servidor SMTP profesional
+
+## 🔒 Seguridad y Rate Limiting
+
+El endpoint incluye protección contra abuso:
+- **Rate Limiting**: Máximo 5 requests por IP cada 15 minutos
+- **reCAPTCHA**: Se recomienda habilitar en producción (ver `RECAPTCHA_SETUP.md`)
+- **Validación**: Todos los campos requeridos son validados
+
+Si recibes demasiadas solicitudes, recibirás un error 429. Esto protege contra spam y abuso.
 
 ---
 
