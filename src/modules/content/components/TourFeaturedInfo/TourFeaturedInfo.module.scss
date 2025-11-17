@@ -2,17 +2,26 @@
 @use "@/styles/mixins" as *;
 
 .featuredInfo {
-  padding: $spacing-48 $main-margin-mobile;
+  padding-top: $spacing-48;
+  padding-bottom: $spacing-48;
   background-color: $white;
   
   @include desktop {
-    padding: $spacing-64 $main-margin-desktop;
+    padding-top: $spacing-64;
+    padding-bottom: $spacing-64;
   }
 }
 
 .container {
   max-width: $max-width-main;
   margin: 0 auto;
+  padding-left: $main-margin-mobile;
+  padding-right: $main-margin-mobile;
+  
+  @include desktop {
+    padding-left: $main-margin-desktop;
+    padding-right: $main-margin-desktop;
+  }
 }
 
 .grid {
@@ -22,44 +31,35 @@
   
   @include tablet {
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-40;
+    gap: $spacing-32;
   }
   
   @include desktop {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-48;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-32;
   }
 }
 
 .item {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $spacing-24;
-  border-radius: 8px;
-  background-color: $gray-300;
-  transition: transform 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-4px);
-  }
+  align-items: flex-start;
+  text-align: left;
 }
 
 .iconWrapper {
-  margin-bottom: $spacing-16;
-  color: $tertiary-color;
+  margin-bottom: $spacing-8;
 }
 
 .icon {
-  color: $tertiary-color;
+  color: $gray-400;
 }
 
 .title {
   font-family: $font-roboto;
   font-size: $font-size-20;
   font-weight: $font-weight-medium;
-  color: $gray-800;
+  color: $gray-700;
   margin: 0 0 $spacing-12 0;
 }
 
@@ -67,7 +67,7 @@
   font-family: $font-roboto;
   font-size: $font-size-16;
   font-weight: $font-weight-normal;
-  color: $gray-700;
+  color: $gray-400;
   line-height: $line-height-normal;
   margin: 0;
 }
