@@ -11,7 +11,7 @@ import {
   FileText,
   Info,
   ChevronDown,
-  Map,
+  Map as MapIcon,
   Check,
   Calendar,
   Users,
@@ -64,7 +64,7 @@ export type IconProps = {
   size?: number;
   /** Label para accesibilidad (alternativa a title) */
   ariaLabel?: string;
-} & Omit<SVGProps<SVGSVGElement>, "name" | "width" | "height">;
+} & Omit<SVGProps<SVGSVGElement>, "name" | "width" | "height" | "title">;
 
 /**
  * Mapa de nombres de iconos a componentes de Lucide
@@ -82,7 +82,7 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   close: X,
   bag: ShoppingBag,
   "chevron-down": ChevronDown,
-  "map-route": Map,
+  "map-route": MapIcon,
   check: Check,
   calendar: Calendar,
   users: Users,
@@ -132,9 +132,8 @@ export const Icon: FC<IconProps> = ({
       height={size}
       strokeWidth={1.5}
       aria-hidden={hasAriaLabel ? undefined : true}
-      role={hasAriaLabel ? "img" : "presentation"}
+      role={hasAriaLabel ? "img" : undefined}
       aria-label={ariaLabel || title}
-      title={title}
       {...rest}
     />
   );
