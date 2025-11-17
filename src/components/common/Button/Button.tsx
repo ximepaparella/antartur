@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "tertiary";
 export type ButtonSize = "small" | "medium" | "large";
 
 interface ButtonBaseProps {

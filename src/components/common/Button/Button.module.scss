@@ -56,6 +56,22 @@
   }
 }
 
+.buttonTertiary {
+  background-color: $tertiary-color;
+  color: $white;
+  border: 2px solid $tertiary-color;
+  font-weight: 400;
+  
+  &:hover:not(:disabled) {
+    background-color: color.adjust($tertiary-color, $lightness: -10%);
+    border-color: color.adjust($tertiary-color, $lightness: -10%);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 // ============================================
 // SIZES
 // ============================================

@@ -1,0 +1,74 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.featuredInfo {
+  padding: $spacing-48 $main-margin-mobile;
+  background-color: $white;
+  
+  @include desktop {
+    padding: $spacing-64 $main-margin-desktop;
+  }
+}
+
+.container {
+  max-width: $max-width-main;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-32;
+  
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-40;
+  }
+  
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-48;
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-24;
+  border-radius: 8px;
+  background-color: $gray-300;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.iconWrapper {
+  margin-bottom: $spacing-16;
+  color: $tertiary-color;
+}
+
+.icon {
+  color: $tertiary-color;
+}
+
+.title {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-medium;
+  color: $gray-800;
+  margin: 0 0 $spacing-12 0;
+}
+
+.description {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  line-height: $line-height-normal;
+  margin: 0;
+}
+

@@ -1,0 +1,49 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.tourInfo {
+  padding: $spacing-48 $main-margin-mobile;
+  
+  @include desktop {
+    padding: $spacing-64 $main-margin-desktop;
+  }
+}
+
+.container {
+  max-width: $max-width-main;
+  margin: 0 auto;
+}
+
+.title {
+  font-family: $font-primary;
+  font-size: $font-size-32;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  text-transform: uppercase;
+  margin: 0 0 $spacing-32 0;
+  text-align: center;
+  
+  @include desktop {
+    font-size: $font-size-40;
+    margin-bottom: $spacing-48;
+  }
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.paragraph {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $gray-400;
+  line-height: $line-height-relaxed;
+  margin: 0 0 $spacing-24 0;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
