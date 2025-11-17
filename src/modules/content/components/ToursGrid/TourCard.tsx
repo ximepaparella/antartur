@@ -29,15 +29,18 @@ interface TourCardProps {
 /**
  * Valida si un precio es válido para mostrar
  * Retorna false si el precio está vacío, es 0, o no existe
+ * También detecta strings que solo contienen ceros (ej: "0.00", "000")
  */
-function isValidPrice(price?: string): boolean {
+export function isValidPrice(price?: string): boolean {
   if (!price) return false;
   
   // Remover espacios y caracteres comunes de formato
   const cleanPrice = price.trim().replace(/[\$\.\s-]/g, "");
   
-  // Verificar si es 0 o está vacío después de limpiar
-  if (cleanPrice === "" || cleanPrice === "0") return false;
+  // Verificar si está vacío, es "0", o solo contiene ceros
+  if (cleanPrice === "" || cleanPrice === "0" || /^0+$/.test(cleanPrice)) {
+    return false;
+  }
   
   return true;
 }
@@ -71,28 +74,35 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   const showPrice = isValidPrice(tour.price);
 
   return (
-    <Link href={`/tours/${tour.id}`} className={styles.tourCard}>
-      <div className={styles.imageWrapper}>
-        <Image
-          src={tour.featuredImage}
-          alt={tour.title}
-          fill
-          className={styles.image}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        <div className={styles.overlay} />
-        <div className={styles.content}>
-          <div className={styles.subtitle}>{tour.subtitle}</div>
-          <h3 className={styles.title}>{tour.title}</h3>
-          <div className={styles.details}>
-            <span className={styles.difficulty}>Dificultad: {tour.difficulty}</span>
-            {showPrice && <span className={styles.price}>{tour.price}</span>}
+    <div className={styles.tourCard}>
+      <Link href={`/tours/${tour.id}`} className={styles.cardLink}>
+        <div className={styles.imageWrapper}>
+          <Image
+            src={tour.featuredImage}
+            alt={tour.title}
+            fill
+            className={styles.image}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          <div className={styles.overlay} />
+          <div className={styles.content}>
+            <div className={styles.subtitle}>{tour.subtitle}</div>
+            <h3 className={styles.title}>{tour.title}</h3>
+            <div className={styles.details}>
+              <span className={styles.difficulty}>Dificultad: {tour.difficulty}</span>
+              {showPrice && <span className={styles.price}>{tour.price}</span>}
+            </div>
           </div>
-          <Button variant="secondary" size="medium" className={styles.cta}>
-            RESERVAR
-          </Button>
         </div>
-      </div>
-    </Link>
+      </Link>
+      <Button 
+        variant="secondary" 
+        size="medium" 
+        className={styles.cta}
+        href={`/tours/${tour.id}`}
+      >
+        RESERVAR
+      </Button>
+    </div>
   );
 };

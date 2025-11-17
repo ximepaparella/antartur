@@ -6,7 +6,6 @@ import testimonialsData from "@/modules/content/components/Testimonials/testimon
 import { Banner } from "@/modules/content/components/Banner/Banner";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Antartur - Experiencia & Aventura en Tierra del Fuego",

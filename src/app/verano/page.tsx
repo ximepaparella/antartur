@@ -6,7 +6,6 @@ import testimonialsData from "@/modules/content/components/Testimonials/testimon
 import { Banner } from "@/modules/content/components/Banner/Banner";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Verano - Excursiones de Verano en Tierra del Fuego | Antartur",
@@ -39,20 +38,6 @@ export default function VeranoPage() {
         />
         <ToursGrid tours={summerTours} category="summer" />
       </main>
-      <Banner
-        backgroundImage="/images/banners/hero-verano.jpg"
-        title=""
-        excerpt=""
-        linkText=""
-        linkUrl=""
-        minHeight={600}
-      >
-        {/* Módulo de reservas - se implementará luego */}
-        <div style={{ padding: "2rem", background: "white", borderRadius: "8px", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)" }}>
-          <p>Módulo de reservas - en desarrollo</p>
-        </div>
-      </Banner>
-      <Testimonials testimonials={testimonials} variant="dark" />
     </>
   );
 }

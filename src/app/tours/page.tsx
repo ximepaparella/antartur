@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { Heading } from "@/components/common/Heading/Heading";
 import { getAllTours } from "@/modules/content/components/ToursGrid/toursData";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Tours - Excursiones y Aventuras | Antartur",

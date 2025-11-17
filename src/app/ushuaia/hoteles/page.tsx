@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Hoteles en Ushuaia - Alojamientos | Antartur",

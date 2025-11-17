@@ -3,7 +3,6 @@ import { Hero } from "@/modules/content/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
-import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
   title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",

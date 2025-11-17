@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/common/Button/Button";
 import { getTourById } from "@/modules/content/components/ToursGrid/toursData";
-import "@/styles/globals.scss";
+import { isValidPrice } from "@/modules/content/components/ToursGrid/TourCard";
 
 interface TourPageProps {
   params: Promise<{ id: string }>;
@@ -19,9 +19,14 @@ export async function generateMetadata({ params }: TourPageProps): Promise<Metad
     };
   }
 
+  const priceStr = isValidPrice(tour.price) ? tour.price : "—";
+  const description = isValidPrice(tour.price)
+    ? `${tour.subtitle} - ${tour.title}. Dificultad: ${tour.difficulty}. Precio: ${tour.price}`
+    : `${tour.subtitle} - ${tour.title}. Dificultad: ${tour.difficulty}`;
+
   return {
     title: `${tour.title} | Antartur`,
-    description: `${tour.subtitle} - ${tour.title}. Dificultad: ${tour.difficulty}. Precio: ${tour.price}`,
+    description,
     openGraph: {
       title: `${tour.title} | Antartur`,
       description: `${tour.subtitle} - ${tour.title}`,
@@ -74,9 +79,11 @@ export default async function TourPage({ params }: TourPageProps) {
             <div>
               <strong>Dificultad:</strong> {tour.difficulty}
             </div>
-            <div>
-              <strong>Precio:</strong> {tour.price}
-            </div>
+            {isValidPrice(tour.price) && (
+              <div>
+                <strong>Precio:</strong> {tour.price}
+              </div>
+            )}
           </div>
           <Button variant="primary" size="large" href="/carrito">
             RESERVAR AHORA

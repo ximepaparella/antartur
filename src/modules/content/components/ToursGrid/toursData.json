@@ -72,7 +72,7 @@
     "category": "summer"
   },
   "parque-nacional-clasico-winter": {
-    "id": "parque-nacional-clasico",
+    "id": "parque-nacional-clasico-winter",
     "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
     "subtitle": "El Parque del fin del mundo!!",
     "title": "PARQUE NACIONAL CLÁSICO",
@@ -90,7 +90,7 @@
     "category": "summer"
   },
   "canal-beagle-catamaran-winter": {
-    "id": "canal-beagle-catamaran",
+    "id": "canal-beagle-catamaran-winter",
     "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
     "subtitle": "Navegación",
     "title": "CANAL BEAGLE EN CATAMARAN",
@@ -104,7 +104,6 @@
     "subtitle": "Aventura en la Nieve",
     "title": "FULL DAY NIEVE",
     "difficulty": "BAJA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "experiencia-husky": {
@@ -113,7 +112,6 @@
     "subtitle": "Trineos con Perros",
     "title": "EXPERIENCIA HUSKY",
     "difficulty": "MEDIA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "nieve-fuego": {
@@ -122,7 +120,6 @@
     "subtitle": "Aventura Nocturna",
     "title": "NIEVE & FUEGO",
     "difficulty": "BAJA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "4x4-invernal": {
@@ -131,7 +128,6 @@
     "subtitle": "Aventura 4x4",
     "title": "4X4 INVERNAL",
     "difficulty": "BAJA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "trekking-esmeralda-invernal": {
@@ -140,7 +136,6 @@
     "subtitle": "Trekking Invernal",
     "title": "TREKKING ESMERALDA INVERNAL",
     "difficulty": "MEDIA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "aventura-blanca": {
@@ -149,7 +144,6 @@
     "subtitle": "Trineos con Perros",
     "title": "AVENTURA BLANCA",
     "difficulty": "BAJA",
-    "price": "$ 0.-",
     "category": "winter"
   },
   "experiencia-antartica": {
@@ -158,7 +152,6 @@
     "subtitle": "Aventura Antártica",
     "title": "EXPERIENCIA ANTÁRTICA",
     "difficulty": "BAJA",
-    "price": "$ 0.-",
     "category": "winter"
   }
 }

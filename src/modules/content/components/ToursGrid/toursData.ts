@@ -23,9 +23,19 @@ export const toursData: ToursData = toursDataJson as ToursData;
 
 /**
  * Obtiene un tour por su ID
+ * También busca por el ID base si no encuentra una coincidencia exacta
+ * (útil para tours duplicados como "parque-nacional-clasico-winter" que apuntan a "parque-nacional-clasico")
  */
 export function getTourById(id: string): TourCardData | undefined {
-  return toursData[id];
+  // Primero intenta encontrar una coincidencia exacta
+  if (toursData[id]) {
+    return toursData[id];
+  }
+  
+  // Si no encuentra, busca tours que tengan el mismo ID base
+  // (para manejar casos como "parque-nacional-clasico-winter" -> "parque-nacional-clasico")
+  const tour = Object.values(toursData).find((t) => t.id === id);
+  return tour;
 }
 
 /**

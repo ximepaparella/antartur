@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as *;
 
@@ -31,8 +32,8 @@
   border: 2px solid $primary-color;
   
   &:hover:not(:disabled) {
-    background-color: darken($primary-color, 10%);
-    border-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
+    border-color: color.adjust($primary-color, $lightness: -10%);
   }
   
   &:active:not(:disabled) {
