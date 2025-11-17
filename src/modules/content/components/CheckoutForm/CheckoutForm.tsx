@@ -514,6 +514,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
               validateBilling("pais", e.target.value);
             }}
             onBlur={(e) => validateBilling("pais", e.target.value)}
+            error={errors["billing.pais"]}
             className={styles.formGroup}
           />
         </div>

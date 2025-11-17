@@ -37,6 +37,7 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const generatedId = useId();
   const inputId = id || `input-${props.name || generatedId}`;
+  const errorId = `${inputId}-error`;
 
   return (
     <div className={`${styles.inputGroup} ${className}`.trim()}>
@@ -49,9 +50,17 @@ export const Input: React.FC<InputProps> = ({
       <input
         id={inputId}
         className={`${styles.input} ${error ? styles.error : ""}`.trim()}
+        required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
+        aria-required={required}
         {...props}
       />
-      {error && <span className={styles.errorMessage}>{error}</span>}
+      {error && (
+        <span id={errorId} role="alert" className={styles.errorMessage}>
+          {error}
+        </span>
+      )}
     </div>
   );
 };

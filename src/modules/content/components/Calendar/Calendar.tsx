@@ -8,6 +8,7 @@ import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
+import type { Pricing } from "@/lib/types/order";
 import styles from "./Calendar.module.scss";
 
 interface AvailabilityDate {
@@ -17,12 +18,6 @@ interface AvailabilityDate {
     start: string; // HH:mm
     end: string; // HH:mm
   };
-}
-
-interface Pricing {
-  currency: "ARS" | "USD";
-  priceAdult: number;
-  priceChild: number;
 }
 
 interface CalendarProps {

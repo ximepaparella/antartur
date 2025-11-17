@@ -53,6 +53,7 @@ export function validateBillingInfo(billingInfo: BillingInfo): ValidationResult 
     "ciudad",
     "provincia",
     "codigoPostal",
+    "pais",
     "documento",
   ];
   
