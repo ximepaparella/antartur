@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Hero } from "@/modules/content/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/content/components/CheckoutForm";
 import { MiniCart } from "@/modules/content/components/MiniCart";
+import { MiniCartSkeleton } from "@/modules/content/components/MiniCart/MiniCartSkeleton";
 import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
 import { getPendingBooking } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod } from "@/lib/types/order";
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [hasRestrictionViolations, setHasRestrictionViolations] = useState(false);
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
+  const [isUpdatingPassengers, setIsUpdatingPassengers] = useState(false);
 
   useEffect(() => {
     const pending = getPendingBooking();
@@ -74,12 +76,61 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleRestrictionViolationsChange = (hasViolations: boolean) => {
+  const handleRestrictionViolationsChange = useCallback((hasViolations: boolean) => {
     setHasRestrictionViolations(hasViolations);
-  };
+  }, []);
+
+  // Ref para almacenar los valores previos de pasajeros y evitar actualizaciones innecesarias
+  const prevPassengersRef = useRef<{ adults: number; children: number } | null>(null);
+  const bookingDataRef = useRef(bookingData);
+  
+  // Mantener bookingDataRef actualizado
+  useEffect(() => {
+    bookingDataRef.current = bookingData;
+  }, [bookingData]);
+
+  const handlePassengersChange = useCallback((adults: number, children: number) => {
+    // Solo actualizar si los valores realmente cambiaron
+    const prev = prevPassengersRef.current;
+    if (prev && prev.adults === adults && prev.children === children) {
+      return;
+    }
+    
+    prevPassengersRef.current = { adults, children };
+    
+    if (bookingDataRef.current) {
+      setIsUpdatingPassengers(true);
+      // Recargar datos actualizados desde localStorage
+      const updated = getPendingBooking();
+      if (updated) {
+        setBookingData(updated);
+      }
+      // Simular un pequeño delay para mostrar el skeleton
+      setTimeout(() => {
+        setIsUpdatingPassengers(false);
+      }, 300);
+    }
+  }, []);
 
   // Ref para acceder a CheckoutForm
   const checkoutFormRef = React.useRef<CheckoutFormRef>(null);
+
+  // Sincronizar hasValidationErrors desde CheckoutForm ref
+  useEffect(() => {
+    const syncValidationErrors = () => {
+      if (checkoutFormRef.current) {
+        setHasValidationErrors(checkoutFormRef.current.hasValidationErrors);
+      }
+    };
+
+    // Sincronizar inicialmente y después de cada render
+    syncValidationErrors();
+
+    // Usar un intervalo corto para sincronizar cambios (ya que el ref no dispara re-renders)
+    const interval = setInterval(syncValidationErrors, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   if (!bookingData) {
     return (
@@ -101,22 +152,27 @@ export default function CheckoutPage() {
               hasHealthRestriction={hasHealthRestriction}
               onCheckoutComplete={handleCheckoutComplete}
               onRestrictionViolationsChange={handleRestrictionViolationsChange}
+              onPassengersChange={handlePassengersChange}
             />
           </div>
           <div className={styles.rightColumn}>
-            <MiniCart
-              tourTitle={bookingData.tourTitle}
-              date={bookingData.date}
-              timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
-              adults={bookingData.adults}
-              childrenCount={bookingData.children}
-              pricing={bookingData.pricing}
-              exceedsAvailability={bookingData.exceedsAvailability}
-              hasRestrictionViolations={hasRestrictionViolations}
-              hasValidationErrors={hasValidationErrors}
-              onPaymentMethodChange={handlePaymentMethodChange}
-              onSubmit={handleSubmitFromCart}
-            />
+            {isUpdatingPassengers ? (
+              <MiniCartSkeleton />
+            ) : (
+              <MiniCart
+                tourTitle={bookingData.tourTitle}
+                date={bookingData.date}
+                timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
+                adults={bookingData.adults}
+                childrenCount={bookingData.children}
+                pricing={bookingData.pricing}
+                exceedsAvailability={bookingData.exceedsAvailability}
+                hasRestrictionViolations={hasRestrictionViolations}
+                hasValidationErrors={hasValidationErrors}
+                onPaymentMethodChange={handlePaymentMethodChange}
+                onSubmit={handleSubmitFromCart}
+              />
+            )}
           </div>
         </div>
       </main>

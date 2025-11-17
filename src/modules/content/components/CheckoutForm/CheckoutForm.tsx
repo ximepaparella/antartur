@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useImperativeHandle, forwardRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useEffect, useMemo, useCallback, useImperativeHandle, forwardRef } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/common/Input";
 import { Select } from "@/components/common/Select";
 import { Card } from "@/components/common/Card";
@@ -23,6 +23,8 @@ interface CheckoutFormProps {
   onCheckoutComplete: (order: Order) => void;
   /** Callback cuando cambia el estado de violaciones de restricciones */
   onRestrictionViolationsChange?: (hasViolations: boolean) => void;
+  /** Callback cuando cambia el número de pasajeros */
+  onPassengersChange?: (adults: number, children: number) => void;
 }
 
 export interface CheckoutFormRef {
@@ -39,9 +41,9 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   hasHealthRestriction = false,
   onCheckoutComplete,
   onRestrictionViolationsChange,
+  onPassengersChange,
 }, ref) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
@@ -124,8 +126,79 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     setPassengers(updated);
   };
 
-  // Validar formulario
-  const validateForm = (): boolean => {
+  // Validar un campo específico de facturación
+  const validateBillingField = useCallback((field: keyof BillingInfo, value: string) => {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      const errorKey = `billing.${field}`;
+      
+      // Limpiar error previo
+      delete newErrors[errorKey];
+      
+      // Validar campo
+      if (!value.trim()) {
+        newErrors[errorKey] = "* El campo es obligatorio";
+      } else if (field === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrors[errorKey] = "* El email debe ser válido";
+      }
+      
+      return newErrors;
+    });
+  }, []);
+
+  // Validar un campo específico de pasajero (y revalidar todos los campos del pasajero para limpiar errores obsoletos)
+  const validatePassengerField = useCallback((passengerIndex: number, field: string, value: any) => {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      const passenger = passengers[passengerIndex];
+      if (!passenger) return newErrors;
+      
+      // Limpiar todos los errores previos de este pasajero
+      Object.keys(newErrors).forEach((key) => {
+        if (key.startsWith(`passenger.${passengerIndex}.`)) {
+          delete newErrors[key];
+        }
+      });
+      
+      // Revalidar todos los campos del pasajero
+      if (!passenger.nombreCompleto.trim()) {
+        newErrors[`passenger.${passengerIndex}.nombreCompleto`] = "* El campo es obligatorio";
+      }
+      if (!passenger.fechaNacimiento) {
+        newErrors[`passenger.${passengerIndex}.fechaNacimiento`] = "* El campo es obligatorio";
+      }
+      if (!passenger.documento.trim()) {
+        newErrors[`passenger.${passengerIndex}.documento`] = "* El campo es obligatorio";
+      }
+      if (!passenger.direccion.trim()) {
+        newErrors[`passenger.${passengerIndex}.direccion`] = "* El campo es obligatorio";
+      }
+      if (!passenger.telefono.trim()) {
+        newErrors[`passenger.${passengerIndex}.telefono`] = "* El campo es obligatorio";
+      }
+      if (passenger.tieneRestriccionesAlimentarias === undefined) {
+        newErrors[`passenger.${passengerIndex}.restricciones`] = "* El campo es obligatorio";
+      }
+      if (passenger.tieneRestriccionesAlimentarias && passenger.restriccionesAlimentarias?.alergias && !passenger.restriccionesAlimentarias.alergiasDetalle?.trim()) {
+        newErrors[`passenger.${passengerIndex}.alergias`] = "* El campo es obligatorio";
+      }
+      
+      // Validaciones para adultos
+      if (passenger.esAdulto) {
+        if (hasPregnancyRestriction && passenger.embarazada === undefined) {
+          newErrors[`passenger.${passengerIndex}.embarazada`] = "* El campo es obligatorio";
+        }
+        if (hasHealthRestriction && passenger.problemasColumnaSalud === undefined) {
+          newErrors[`passenger.${passengerIndex}.salud`] = "* El campo es obligatorio";
+        }
+      }
+      
+      return newErrors;
+    });
+  }, [passengers, hasPregnancyRestriction, hasHealthRestriction]);
+
+  // Validar formulario completo
+  const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
 
     // Validar información de facturación
@@ -196,7 +269,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [billingInfo, passengers, hasPregnancyRestriction, hasHealthRestriction]);
 
   // Verificar si hay restricciones que impidan la reserva
   const hasRestrictionViolations = useMemo(() => {
@@ -216,6 +289,25 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       onRestrictionViolationsChange(hasRestrictionViolations);
     }
   }, [hasRestrictionViolations, onRestrictionViolationsChange]);
+
+  // Notificar cambios en número de pasajeros
+  const prevPassengersCountRef = React.useRef<{ adults: number; children: number } | null>(null);
+  
+  React.useEffect(() => {
+    if (onPassengersChange) {
+      const adults = passengers.filter((p) => p.esAdulto).length;
+      const children = passengers.filter((p) => !p.esAdulto).length;
+      
+      // Solo notificar si los valores realmente cambiaron
+      const prev = prevPassengersCountRef.current;
+      if (prev && prev.adults === adults && prev.children === children) {
+        return;
+      }
+      
+      prevPassengersCountRef.current = { adults, children };
+      onPassengersChange(adults, children);
+    }
+  }, [passengers, onPassengersChange]);
 
   // Manejar submit
   const handleSubmit = React.useCallback((selectedPaymentMethod?: PaymentMethod) => {
@@ -264,6 +356,21 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     return Object.keys(errors).length > 0;
   }, [errors]);
 
+  // Ref para el mensaje de validación (para hacer focus)
+  const validationMessageRef = React.useRef<HTMLDivElement>(null);
+  const prevHasValidationErrorsRef = React.useRef<boolean>(false);
+
+  // Hacer focus en el mensaje de validación solo cuando aparezcan errores por primera vez
+  React.useEffect(() => {
+    // Solo hacer scroll si cambió de false a true (errores aparecieron)
+    if (hasValidationErrors && !prevHasValidationErrorsRef.current && validationMessageRef.current) {
+      validationMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      validationMessageRef.current.focus();
+    }
+    // Actualizar el ref con el valor actual
+    prevHasValidationErrorsRef.current = hasValidationErrors;
+  }, [hasValidationErrors]);
+
   // Exponer función de submit y estado mediante ref
   useImperativeHandle(ref, () => ({
     submit: handleSubmit,
@@ -299,6 +406,21 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
 
   return (
     <div className={styles.checkoutForm}>
+      {/* Mensaje de validación general */}
+      {hasValidationErrors && (
+        <div
+          ref={validationMessageRef}
+          tabIndex={-1}
+          className={styles.validationMessage}
+        >
+          <Message variant="alert">
+            <p>
+              Por favor, completa todos los campos requeridos antes de continuar.
+            </p>
+          </Message>
+        </div>
+      )}
+
       {/* Información de facturación */}
       <Card title="Detalles de facturación" className={styles.section}>
         <div className={styles.formRow}>
@@ -308,6 +430,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.nombreCompleto}
             onChange={(e) => setBillingInfo({ ...billingInfo, nombreCompleto: e.target.value })}
+            onBlur={(e) => validateBillingField("nombreCompleto", e.target.value)}
             error={errors["billing.nombreCompleto"]}
             className={styles.formGroup}
           />
@@ -317,6 +440,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.apellidos}
             onChange={(e) => setBillingInfo({ ...billingInfo, apellidos: e.target.value })}
+            onBlur={(e) => validateBillingField("apellidos", e.target.value)}
             error={errors["billing.apellidos"]}
             className={styles.formGroup}
           />
@@ -330,6 +454,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.email}
             onChange={(e) => setBillingInfo({ ...billingInfo, email: e.target.value })}
+            onBlur={(e) => validateBillingField("email", e.target.value)}
             error={errors["billing.email"]}
             className={styles.formGroup}
           />
@@ -340,6 +465,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.telefono}
             onChange={(e) => setBillingInfo({ ...billingInfo, telefono: e.target.value })}
+            onBlur={(e) => validateBillingField("telefono", e.target.value)}
             error={errors["billing.telefono"]}
             className={styles.formGroup}
           />
@@ -352,6 +478,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.direccion}
             onChange={(e) => setBillingInfo({ ...billingInfo, direccion: e.target.value })}
+            onBlur={(e) => validateBillingField("direccion", e.target.value)}
             error={errors["billing.direccion"]}
             className={styles.formGroup}
           />
@@ -364,6 +491,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.ciudad}
             onChange={(e) => setBillingInfo({ ...billingInfo, ciudad: e.target.value })}
+            onBlur={(e) => validateBillingField("ciudad", e.target.value)}
             error={errors["billing.ciudad"]}
             className={styles.formGroup}
           />
@@ -373,7 +501,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             options={provinceOptions}
             value={billingInfo.provincia}
-            onChange={(e) => setBillingInfo({ ...billingInfo, provincia: e.target.value })}
+            onChange={(e) => {
+              setBillingInfo({ ...billingInfo, provincia: e.target.value });
+              validateBillingField("provincia", e.target.value);
+            }}
+            onBlur={(e) => validateBillingField("provincia", e.target.value)}
             error={errors["billing.provincia"]}
             className={styles.formGroup}
           />
@@ -386,6 +518,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.codigoPostal}
             onChange={(e) => setBillingInfo({ ...billingInfo, codigoPostal: e.target.value })}
+            onBlur={(e) => validateBillingField("codigoPostal", e.target.value)}
             error={errors["billing.codigoPostal"]}
             className={styles.formGroup}
           />
@@ -395,7 +528,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             options={countryOptions}
             value={billingInfo.pais}
-            onChange={(e) => setBillingInfo({ ...billingInfo, pais: e.target.value })}
+            onChange={(e) => {
+              setBillingInfo({ ...billingInfo, pais: e.target.value });
+              validateBillingField("pais", e.target.value);
+            }}
+            onBlur={(e) => validateBillingField("pais", e.target.value)}
             className={styles.formGroup}
           />
         </div>
@@ -407,6 +544,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             required
             value={billingInfo.documento}
             onChange={(e) => setBillingInfo({ ...billingInfo, documento: e.target.value })}
+            onBlur={(e) => validateBillingField("documento", e.target.value)}
             error={errors["billing.documento"]}
             className={styles.formGroup}
           />
@@ -440,6 +578,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
                 isAdult={passenger.esAdulto}
                 passenger={passenger}
                 onChange={(updated) => handlePassengerChange(index, updated)}
+                onValidateField={(field, value) => validatePassengerField(index, field, value)}
                 hasPregnancyRestriction={hasPregnancyRestriction}
                 hasHealthRestriction={hasHealthRestriction}
                 errors={passengerErrors}
@@ -458,7 +597,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             variant="outline"
             size="small"
             onClick={() => {
-              setPassengers([
+              const updated = [
                 ...passengers,
                 {
                   nombreCompleto: "",
@@ -471,7 +610,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
                   embarazada: undefined,
                   problemasColumnaSalud: undefined,
                 },
-              ]);
+              ];
+              setPassengers(updated);
+              const adults = updated.filter((p) => p.esAdulto).length;
+              const children = updated.filter((p) => !p.esAdulto).length;
+              updatePendingBookingPassengers(adults, children);
             }}
           >
             <Icon name="users" size={16} />
@@ -481,7 +624,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
             size="small"
             variant="outline"
             onClick={() => {
-              setPassengers([
+              const updated = [
                 ...passengers,
                 {
                   nombreCompleto: "",
@@ -492,7 +635,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
                   tieneRestriccionesAlimentarias: false,
                   esAdulto: false,
                 },
-              ]);
+              ];
+              setPassengers(updated);
+              const adults = updated.filter((p) => p.esAdulto).length;
+              const children = updated.filter((p) => !p.esAdulto).length;
+              updatePendingBookingPassengers(adults, children);
             }}
           >
             <Icon name="users" size={16} />

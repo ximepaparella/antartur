@@ -9,6 +9,17 @@
   gap: $spacing-24;
 }
 
+.validationMessage {
+  width: 100%;
+  margin-bottom: $spacing-24;
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: $spacing-4;
+    border-radius: $spacing-4;
+  }
+}
+
 .section {
   width: 100%;
 }

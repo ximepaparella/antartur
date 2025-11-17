@@ -174,14 +174,8 @@ export const Calendar: React.FC<CalendarProps> = ({
       console.error("Error al guardar datos de reserva:", error);
     }
 
-    const params = new URLSearchParams({
-      tourId,
-      date: selectedDate,
-      adults: adults.toString(),
-      children: children.toString(),
-    });
-
-    router.push(`/checkout?${params.toString()}`);
+    // Redirigir a checkout (todos los datos están en localStorage)
+    router.push("/checkout");
   };
 
   // Generar días del calendario

@@ -3,6 +3,7 @@
  */
 
 import type { Order } from "../types/order";
+import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
 const ORDER_KEY_PREFIX = "order_";
@@ -28,16 +29,62 @@ export function savePendingBooking(bookingData: {
 }
 
 /**
+ * Calcula si excede la disponibilidad basado en la fecha y número de pasajeros
+ */
+function calculateExceedsAvailability(
+  tourId: string,
+  date: string,
+  timeSlot: { start: string; end: string },
+  adults: number,
+  children: number
+): boolean {
+  try {
+    const tour = getFullTourById(tourId);
+    
+    if (!tour?.booking?.availability) {
+      return false;
+    }
+    
+    // Buscar la disponibilidad para la fecha y timeSlot específicos
+    const availability = tour.booking.availability.find(
+      (avail) => avail.date === date && 
+                 avail.timeSlot.start === timeSlot.start && 
+                 avail.timeSlot.end === timeSlot.end
+    );
+    
+    if (!availability) {
+      return false;
+    }
+    
+    return adults + children > availability.available;
+  } catch (error) {
+    console.error("Error al calcular disponibilidad:", error);
+    return false;
+  }
+}
+
+/**
  * Actualiza la cantidad de adultos y niños en la reserva pendiente
+ * También recalcula si excede la disponibilidad
  */
 export function updatePendingBookingPassengers(adults: number, children: number): void {
   try {
     const data = getPendingBooking();
     if (data) {
+      // Recalcular exceedsAvailability basado en la nueva cantidad de pasajeros
+      const exceedsAvailability = calculateExceedsAvailability(
+        data.tourId,
+        data.date,
+        data.timeSlot,
+        adults,
+        children
+      );
+      
       savePendingBooking({
         ...data,
         adults,
         children,
+        exceedsAvailability,
       });
     }
   } catch (error) {
@@ -101,7 +148,7 @@ export function getOrder(orderId: string): Order | null {
  * Genera un ID único para la orden
  */
 export function generateOrderId(): string {
-  return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
 /**

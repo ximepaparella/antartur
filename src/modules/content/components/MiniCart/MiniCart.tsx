@@ -80,7 +80,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
   const hasProblems = exceedsAvailability || hasRestrictionViolations;
   const ctaText = hasProblems ? "CONSULTAR DISPONIBILIDAD" : "RESERVAR";
-  const isButtonDisabled = hasRestrictionViolations;
+  const isButtonDisabled = hasRestrictionViolations || hasValidationErrors;
   const showPaymentMethods = !exceedsAvailability || hasRestrictionViolations;
   const showPaymentBlur = hasRestrictionViolations;
 
@@ -99,18 +99,18 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
   const handleSubmit = () => {
     if (!isButtonDisabled) {
-      // Si hay exceso de disponibilidad sin restricciones, pasar null (skip payment)
+      // Si hay exceso de disponibilidad sin restricciones, pasar undefined (skip payment)
       // El tipo PaymentMethod permite undefined según order.ts
-      const paymentMethod = exceedsAvailability && !hasRestrictionViolations 
+      const paymentMethod: PaymentMethod | undefined = exceedsAvailability && !hasRestrictionViolations 
         ? undefined 
         : selectedPayment;
-      onSubmit(paymentMethod as PaymentMethod);
+      onSubmit(paymentMethod);
     }
   };
 
   return (
     <div className={styles.miniCart}>
-      <Card title="Tu pedido">
+      <Card title="Resumen de la reserva">
         <div className={styles.orderSummary}>
         <TourInfo
           title={tourTitle}
