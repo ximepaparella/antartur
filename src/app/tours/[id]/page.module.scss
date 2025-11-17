@@ -1,0 +1,23 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.bookingPlaceholder {
+  padding: 2rem;
+  text-align: center;
+}
+
+.bookingTitle {
+  font-family: $font-roboto;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #28372F;
+  margin-bottom: 1rem;
+}
+
+.bookingText {
+  font-family: $font-roboto;
+  font-size: 1rem;
+  color: #28372F;
+  margin-bottom: 1.5rem;
+}
+

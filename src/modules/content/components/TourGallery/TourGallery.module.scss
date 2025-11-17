@@ -1,0 +1,115 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.gallery {
+  width: 100%;
+  padding: 0;
+  background-color: $gray-300;
+  overflow: hidden;
+}
+
+.carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+}
+
+.navButton {
+  position: absolute;
+  background: none;
+  border: none;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  padding: 0;
+  
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $white;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  &:first-of-type {
+    left: $spacing-16;
+  }
+  
+  &:last-of-type {
+    right: $spacing-16;
+  }
+  
+  @include mobile {
+    width: 40px;
+    height: 40px;
+    
+    &:first-of-type {
+      left: $spacing-8;
+    }
+    
+    &:last-of-type {
+      right: $spacing-8;
+    }
+  }
+}
+
+.arrowIcon {
+  width: 32px;
+  height: 32px;
+  color: $white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  
+  @include mobile {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.slidesContainer {
+  width: 100%;
+  overflow: hidden;
+}
+
+.slides {
+  display: flex;
+  width: 100%;
+  gap: 0;
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+.slide {
+  position: relative;
+  flex-shrink: 0;
+  height: 300px;
+  overflow: hidden;
+  
+  @include desktop {
+    height: 400px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  // Prevenir layout shift - altura ya está definida en .slide
+  // Mejorar carga progresiva
+  background-color: $gray-300;
+}

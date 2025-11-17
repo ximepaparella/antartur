@@ -68,6 +68,25 @@
 }
 
 // ============================================
+// HERO TOUR (Páginas de tours individuales)
+// ============================================
+
+.heroTour {
+  min-height: 650px;
+  margin-top: 0;
+  padding-top: $header-height;
+  box-sizing: border-box;
+}
+
+.ctaButton {
+  margin-top: $spacing-24;
+  
+  @include desktop {
+    margin-top: $spacing-32;
+  }
+}
+
+// ============================================
 // TYPOGRAPHY
 // ============================================
 

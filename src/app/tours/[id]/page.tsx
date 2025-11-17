@@ -1,9 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import { Button } from "@/components/common/Button/Button";
+import { Hero } from "@/modules/content/components/Hero/Hero";
+import { TourQuickInfo } from "@/modules/content/components/TourQuickInfo/TourQuickInfo";
+import { TourInfo } from "@/modules/content/components/TourInfo/TourInfo";
+import { TourGallery } from "@/modules/content/components/TourGallery/TourGallery";
+import { TourFeaturedInfo } from "@/modules/content/components/TourFeaturedInfo/TourFeaturedInfo";
+import { TourTimeline } from "@/modules/content/components/TourTimeline/TourTimeline";
+import { Banner } from "@/modules/content/components/Banner/Banner";
+import { Testimonials } from "@/components/common/Testimonials/Testimonials";
+import { Heading } from "@/components/common/Heading/Heading";
+import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
 import { getTourById } from "@/modules/content/components/ToursGrid/toursData";
-import { isValidPrice } from "@/modules/content/components/ToursGrid/TourCard";
+import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
+import { getAllTours } from "@/modules/content/components/ToursGrid/toursData";
+import type { Testimonial as TestimonialType } from "@/modules/content/components/Testimonials/types";
+import styles from "./page.module.scss";
 
 interface TourPageProps {
   params: Promise<{ id: string }>;
@@ -11,85 +22,155 @@ interface TourPageProps {
 
 export async function generateMetadata({ params }: TourPageProps): Promise<Metadata> {
   const { id } = await params;
+  const fullTour = getFullTourById(id);
   const tour = getTourById(id);
 
-  if (!tour) {
+  if (!fullTour && !tour) {
     return {
       title: "Tour no encontrado | Antartur",
     };
   }
 
-  const priceStr = isValidPrice(tour.price) ? tour.price : "—";
-  const description = isValidPrice(tour.price)
-    ? `${tour.subtitle} - ${tour.title}. Dificultad: ${tour.difficulty}. Precio: ${tour.price}`
-    : `${tour.subtitle} - ${tour.title}. Dificultad: ${tour.difficulty}`;
+  // Usar datos completos si están disponibles, sino usar datos básicos
+  const seo = fullTour?.seo;
+  const title = seo?.metaTitle || `${tour?.title || "Tour"} | Antartur`;
+  const description = seo?.metaDescription || tour?.subtitle || "";
 
   return {
-    title: `${tour.title} | Antartur`,
+    title,
     description,
     openGraph: {
-      title: `${tour.title} | Antartur`,
-      description: `${tour.subtitle} - ${tour.title}`,
+      title,
+      description,
       type: "website",
       locale: "es_AR",
+      images: seo?.ogImage ? [{ url: seo.ogImage }] : undefined,
+    },
+    alternates: {
+      canonical: seo?.canonicalUrl,
     },
   };
 }
 
 export default async function TourPage({ params }: TourPageProps) {
   const { id } = await params;
+  const fullTour = getFullTourById(id);
   const tour = getTourById(id);
 
+  // Si no hay datos completos, usar datos básicos como fallback
+  if (!fullTour && !tour) {
+    notFound();
+  }
+
+  // Si hay datos completos, usar esos; sino usar datos básicos
+  if (fullTour) {
+    // Los testimonios ya están en el formato correcto
+    const testimonials: TestimonialType[] = fullTour.testimonials || [];
+
+    // Obtener todos los tours para el grid
+    const allTours = getAllTours();
+    const relatedCategory = fullTour.card.category;
+
+    return (
+      <>
+        {/* 1. Hero */}
+        <Hero
+          variant="tour"
+          title={fullTour.hero.headline}
+          backgroundImage={fullTour.hero.backgroundImage}
+          ctaText={fullTour.quickInfo.ctaLabel || "RESERVAR"}
+          ctaHref={fullTour.quickInfo.ctaHref || "#booking"}
+        />
+
+        {/* 2. QuickInfo */}
+        <TourQuickInfo
+          price={fullTour.quickInfo.price}
+          items={fullTour.quickInfo.items}
+          restriction={fullTour.quickInfo.restriction}
+          alternative={fullTour.quickInfo.alternative}
+          ctaLabel={fullTour.quickInfo.ctaLabel}
+          ctaHref={fullTour.quickInfo.ctaHref}
+        />
+
+        {/* 3. TourInfo */}
+        <TourInfo
+          title="AVENTURA Y PAISAJES ÚNICOS"
+          paragraphs={fullTour.description.long}
+        />
+
+        {/* 4. TourGallery */}
+        {fullTour.gallery && fullTour.gallery.length > 0 && (
+          <TourGallery images={fullTour.gallery} />
+        )}
+
+        {/* 5. FeaturedInfo */}
+        {fullTour.featuredInfo && fullTour.featuredInfo.length > 0 && (
+          <TourFeaturedInfo items={fullTour.featuredInfo} />
+        )}
+
+        {/* 6. Timeline */}
+        <TourTimeline
+          items={fullTour.timeline.items}
+          importantNote={fullTour.timeline.importantNote}
+        />
+
+        {/* 7. Banner con booking module (children) */}
+        <Banner
+          backgroundImage={fullTour.hero.backgroundImage}
+          title=""
+          excerpt=""
+          linkText=""
+          linkUrl=""
+        >
+          <div id="booking" className={styles.bookingPlaceholder}>
+            <h2 className={styles.bookingTitle}>
+              ¡Hacé tu reserva!
+            </h2>
+            <p className={styles.bookingText}>
+              Módulo de reservas en desarrollo
+            </p>
+          </div>
+        </Banner>
+
+        {/* 8. Testimonials */}
+        {testimonials.length > 0 && (
+          <Testimonials testimonials={testimonials} variant="dark" />
+        )}
+
+        {/* 9. Heading + ToursGrid */}
+        <Heading
+          title="MÁS AVENTURAS"
+          paragraph="Conocé todas las aventuras que te esperan con Antartur Turismo."
+        />
+        <div className="mainContainer">
+          <ToursGrid tours={allTours} category={relatedCategory} />
+        </div>
+      </>
+    );
+  }
+
+  // Fallback: usar datos básicos si no hay datos completos
+  // En este punto, tour debe existir porque ya validamos arriba
   if (!tour) {
     notFound();
   }
 
   return (
     <>
-      <main className="mainContainer">
-        <div style={{ marginTop: "2rem", marginBottom: "2rem" }}>
-          <Image
-            src={tour.featuredImage}
-            alt={tour.title}
-            width={1200}
-            height={600}
-            style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-          />
-        </div>
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-          <h1 style={{ 
-            fontFamily: "var(--font-roboto), sans-serif",
-            fontSize: "2rem",
-            fontWeight: 400,
-            textTransform: "uppercase",
-            color: "var(--gray-800)",
-            marginBottom: "1rem"
-          }}>
-            {tour.title}
-          </h1>
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            marginBottom: "2rem",
-            padding: "1.5rem",
-            backgroundColor: "var(--gray-100)",
-            borderRadius: "8px"
-          }}>
-            <div>
-              <strong>Dificultad:</strong> {tour.difficulty}
-            </div>
-            {isValidPrice(tour.price) && (
-              <div>
-                <strong>Precio:</strong> {tour.price}
-              </div>
-            )}
-          </div>
-          <Button variant="primary" size="large" href="/carrito">
-            RESERVAR AHORA
-          </Button>
-        </div>
-      </main>
+      <Hero
+        variant="tour"
+        title={tour.title}
+        backgroundImage={tour.featuredImage}
+        ctaText="RESERVAR"
+        ctaHref="#booking"
+      />
+      <div className="mainContainer" style={{ padding: "2rem 0" }}>
+        <h1>{tour.title}</h1>
+        <p>{tour.subtitle}</p>
+        <p>Dificultad: {tour.difficulty}</p>
+        {tour.price && <p>Precio: {tour.price}</p>}
+        <p>Esta página está en desarrollo. Los datos completos del tour estarán disponibles pronto.</p>
+      </div>
     </>
   );
 }

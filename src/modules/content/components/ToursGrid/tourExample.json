@@ -1,0 +1,197 @@
+{
+  "lagos-off-road": {
+    "card": {
+      "id": "lagos-off-road",
+      "featuredImage": "/images/tours/lagos-off-road/featured.jpg",
+      "subtitle": "Experiencia 4x4, paseo en canoas y mucha diversión.",
+      "title": "LAGOS OFF ROAD",
+      "difficulty": "Baja",
+      "price": "$ 180.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "LAGOS OFF ROAD",
+      "subheadline": "Aventura y paisajes únicos",
+      "backgroundImage": "/images/tours/lagos-off-road/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 180.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "7 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo y bebida",
+          "icon": "lunch"
+        },
+        {
+          "id": "off-road",
+          "label": "",
+          "value": "Off Road",
+          "icon": "off-road"
+        },
+        {
+          "id": "kayak",
+          "label": "",
+          "value": "Canotaje (hasta 9/4/26)",
+          "icon": "kayak"
+        }
+      ],
+      "restriction": "Excursión no apta para mujeres embarazadas, personas Mayores o con dolencias físicas",
+      "alternative": {
+        "text": "Lagos Off Road con canoas",
+        "price": "$210.000"
+      },
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Aventura y paisajes únicos",
+      "long": [
+        "Salida desde el hotel por la mañana rumbo a los Lagos por la ruta 3 que recorre parte de la cordillera fueguina y nos permite acceder al paso Garibaldi, punto panorámico desde donde podemos ver nuestros objetivos, los lagos Escondido y Fagnano. Comenzamos el descenso y nos desviamos de la ruta por antiguas huellas de leñadores. Las camionetas 4x4 nos permiten llegar a lugares donde el acceso sería imposible de otra manera, bosques, barro, piedras, etc… El lago Fagnano nos sorprende con sus dimensiones y su increíble paisaje.",
+        "La aventura continua con el ajetreado vadeo del Lago Fagnano para alcanzar una ruta interna que nos conduce al lago Escondido, de menores dimensiones pero rodeado de un marco natural incomparable.",
+        "En caso de contratar la opcion con canoas y luego de una charla introductoria de nuestros guías boteros, preparamos las canoas, y a remar. La vista desde el agua nos sorprende. Luego de un canotaje de 45 minutos regresamos al punto donde quedaron las camionetas para comenzar el retorno al Refugio Nunatak en el valle Tierra Mayor, donde mientras preparan el amuerzo tendremos tiempo de realizar una caminata por los alrededores. Luego del almuerzo regresamos a Ushuaia."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y todas sus actividades."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "users",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/lagos-off-road/gallery/1.jpg",
+        "alt": "Vista panorámica de los lagos"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/lagos-off-road/gallery/2.jpg",
+        "alt": "Canotaje en el lago Escondido"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/lagos-off-road/gallery/3.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/lagos-off-road/gallery/4.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/lagos-off-road/gallery/5.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/lagos-off-road/gallery/6.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/lagos-off-road/gallery/7.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/lagos-off-road/gallery/8.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/lagos-off-road/gallery/9.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/lagos-off-road/gallery/10.jpg",
+        "alt": "Vehículos 4x4 en el camino"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salimos desde tu hotel",
+          "description": "Salida desde el hotel por la mañana rumbo a los Lagos, tomamos la ruta nacional N°3 que recorre parte de la cordillera fueguina."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:45 AM",
+          "title": "Cruce Andes Fueguinos",
+          "description": "Accedemos al paso garibaldi, punto más alto de la ruta 3 con inmejorable vistas de los lagos Escondido y Fagnano"
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:15",
+          "title": "Canotaje en lago Escondido",
+          "description": "Luego de una charla introductoria de nuestros guías boteros, preparamos las canoas, y a remar. La vista desde el agua nos sorprende."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:15",
+          "title": "Ruta 119 - Hacia el Lago Fuera de Ruta",
+          "description": "Nos desviamos por la ruta Provincial 119, que nos permitira acceder a antiguas huellas de leñadores. Las camionetas 4×4 nos permiten llegar a lugares donde el acceso sería imposible de otra manera, bosques, barro, piedras, la aventura continua…"
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:15 PM",
+          "title": "Lago Fagnano",
+          "description": "y llegamos al lago, nos sorprenden sus dimensiones, parada obligada ante semejante paisaje.. luego continuamos orillando el lago hasta acceder nuevamente a la ruta 3 y regreso al valle Tierra Mayor."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "14:00 PM",
+          "title": "Almuerzo en Nunatak",
+          "description": "El Refugio Nunatak, enclavado en el valle Tierra Mayor, sera nuestro lugar de almuerzo, mientras preparan el almuerzo tendremos tiempo de realizar una caminata por los alrededores y visitar un criadero de perros huskies."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "15:45 PM",
+          "title": "Regreso al Hotel",
+          "description": "Emprendemos el regreso luego de una intensa jornada!!!"
+        }
+      ],
+      "importantNote": "El recorrido en canoa es sujeto a las condiciones climáticas y a consideración de los guías, en caso de no realizarse no es reembolsable y se reemplazara por cortas caminatas por los alrededores."
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profesional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e un excelente almuerzo en la cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Lagos Off Road | Antartur Turismo Aventura",
+      "metaDescription": "Excursión 4x4 completa que recorre los lagos Escondido y Fagnano, con opción de canotaje y almuerzo en refugio. Apto para familias.",
+      "canonicalUrl": "https://antartur.tur.ar/tours/lagos-off-road",
+      "ogImage": "/images/tours/lagos-off-road/featured.jpg"
+    }
+  }
+}
+

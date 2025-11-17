@@ -1,0 +1,177 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.timeline {
+  padding: $spacing-48 $main-margin-mobile;
+  background-color: $gray-300;
+  
+  @include desktop {
+    padding: $spacing-64 $main-margin-desktop;
+  }
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.title {
+  font-family: $font-primary;
+  font-size: $font-size-32;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 $spacing-32 0;
+  
+  @include desktop {
+    font-size: $font-size-40;
+    margin-bottom: $spacing-48;
+  }
+}
+
+.importantNote {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  line-height: $line-height-normal;
+  margin: 0 0 $spacing-32 0;
+  padding: $spacing-16;
+  border-radius: 4px;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.timelineList {
+  position: relative;
+  padding-left: $spacing-32;
+  
+  @include desktop {
+    padding-left: $spacing-48;
+  }
+  
+  // Línea vertical del timeline
+  &::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: rgba(35, 35, 35, 0.25);
+    
+    @include desktop {
+      left: 15px;
+    }
+  }
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: $spacing-32;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.timelineMarker {
+  position: absolute;
+  left: -$spacing-24;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: $gray-300;
+  border: 2px solid rgba(35, 35, 35, 0.25);
+  z-index: 1;
+  
+  @include desktop {
+    left: -$spacing-48;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.timelineContent {
+  padding-left: $spacing-16;
+  
+  @include desktop {
+    padding-left: $spacing-16;
+  }
+}
+
+.timeTitleRow {
+  display: flex;
+  align-items: center;
+  padding-left: 42px;
+  font-size: $font-size-20;
+  cursor: pointer;
+  color: $gray-700;
+  font-family: $font-roboto;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding-right: 0;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.timeLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+}
+
+.itemTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-20;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  margin: 0;
+}
+
+.descriptionWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.descriptionWrapper > * {
+  min-height: 0;
+}
+
+.descriptionWrapper.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.descriptionWrapper.expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.itemDescription {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  font-weight: $font-weight-normal;
+  color: $gray-400;
+  padding: $spacing-8 0 $spacing-8 $spacing-32;
+  margin: $spacing-8 0 0 $spacing-8;
+  line-height: $line-height-normal;
+}
