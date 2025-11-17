@@ -25,9 +25,11 @@
     margin-bottom: $spacing-20;
   }
   
-  // Asegurar que el icono herede el color
+  // Asegurar que el icono herede el color (Lucide usa stroke, no fill)
   svg {
-    fill: currentColor;
+    fill: none;
+    stroke: currentColor;
+    color: currentColor;
   }
 }
 

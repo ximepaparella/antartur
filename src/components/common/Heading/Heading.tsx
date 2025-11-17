@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Heading.module.scss";
-import { Icon, IconName } from "@/components/common/Icon/Icon";
+import { Icon, IconName } from "@/components/icons/Icon";
 
 interface HeadingProps {
   /** Título principal (h2) */

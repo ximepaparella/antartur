@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/icons/Icon";
 import type { FeaturedInfoItem } from "@/modules/content/components/ToursGrid/tourTypes";
 import styles from "./TourFeaturedInfo.module.scss";
 

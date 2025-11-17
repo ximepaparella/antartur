@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Icon } from "../Icon/Icon";
+import { Icon } from "@/components/icons/Icon";
 import styles from "./WhatsAppButton.module.scss";
 
 interface WhatsAppButtonProps {

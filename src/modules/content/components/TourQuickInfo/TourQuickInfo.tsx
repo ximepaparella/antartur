@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/common/Button/Button";
-import { Icon, IconName } from "@/components/common/Icon/Icon";
+import { Icon, IconName } from "@/components/icons/Icon";
 import styles from "./TourQuickInfo.module.scss";
 
 export interface QuickInfoItem {

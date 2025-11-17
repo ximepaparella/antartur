@@ -113,6 +113,11 @@
   &:hover {
     color: $primary-color !important;
   }
+  
+  // Asegurar que el texto también tenga el color correcto
+  :global(.text) {
+    color: $gray-200 !important;
+  }
 }
 
 .badges {
