@@ -113,21 +113,6 @@
         "id": "g7",
         "src": "/images/tours/lagos-off-road/gallery/7.jpg",
         "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g8",
-        "src": "/images/tours/lagos-off-road/gallery/8.jpg",
-        "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g9",
-        "src": "/images/tours/lagos-off-road/gallery/9.jpg",
-        "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g10",
-        "src": "/images/tours/lagos-off-road/gallery/10.jpg",
-        "alt": "Vehículos 4x4 en el camino"
       }
     ],
     "timeline": {
@@ -312,6 +297,1144 @@
       "metaDescription": "Excursión 4x4 completa que recorre los lagos Escondido y Fagnano, con opción de canotaje y almuerzo en refugio. Apto para familias.",
       "canonicalUrl": "https://antartur.tur.ar/tours/lagos-off-road",
       "ogImage": "/images/tours/lagos-off-road/featured.jpg"
+    }
+  },
+  "trekking-glaciar-ojo-de-albino": {
+    "card": {
+      "id": "trekking-glaciar-ojo-de-albino",
+      "featuredImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg",
+      "subtitle": "Un trekking para exigentes...",
+      "title": "TREKKING GLACIAR OJO DE ALBINO",
+      "difficulty": "Alta",
+      "price": "$ 295.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING GLACIAR OJO DE ALBINO",
+      "subheadline": "Un trekking para exigentes...",
+      "backgroundImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg"
+    },
+    "quickInfo": {
+      "price": "$ 295.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Alta",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "9 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking de alta exigencia",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Excursión de alta exigencia, no apta para mujeres embarazadas, personas mayores o con dolencias físicas.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Un trekking para exigentes hacia el Glaciar Ojo del Albino, combinando Laguna Esmeralda, ascenso exigente y vistas incomparables.",
+      "long": [
+        "Esta excursión incluye el trekking a Laguna Esmeralda agregando el ascenso a lo largo del principal afluente de la laguna, que tiene su naciente en el Glaciar Ojo del Albino. El glaciar nos sorprende con un espectáculo de hielo y montañas. Arribamos al mirador del valle donde almorzamos disfrutando de incomparables vistas desde 900 msnm.",
+        "Continuamos la travesía, con paradas en puntos panorámicos de impactante belleza. Dificultad: muy exigente - 20 kms trekking y 800 mts de desnivel aproximadamente."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/1.jpg",
+        "alt": "Trekking hacia el Glaciar Ojo de Albino"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/2.jpg",
+        "alt": "Grupo de trekking en zona boscosa camino al glaciar"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/3.jpg",
+        "alt": "Vista panorámica del valle y montañas nevadas"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/4.jpg",
+        "alt": "Camino de montaña rumbo al Glaciar Ojo de Albino"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/5.jpg",
+        "alt": "Glaciar Ojo del Albino y su entorno"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/6.jpg",
+        "alt": "Sendero de trekking con vistas a la laguna"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/7.jpg",
+        "alt": "Trekking en la zona alta del valle"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/8.jpg",
+        "alt": "Panorámica del glaciar y montañas circundantes"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:00 AM",
+          "title": "Traslado a Nunatak",
+          "description": "Se buscará a los pasajeros por sus hoteles o alojamientos y se los trasladará en exclusivos transfers hasta Nunatak, en el valle Tierra Mayor, donde comenzará la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Refugio Nunatak e inicio del trekking",
+          "description": "Luego de repartir los box lunch y bastones de trekking se inicia la caminata rumbo a Laguna Esmeralda."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "11:00 AM",
+          "title": "Laguna Esmeralda",
+          "description": "Arribamos a Laguna Esmeralda, parada en punto panorámico con hermosas vistas de la laguna y del glaciar al fondo."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "12:30 PM",
+          "title": "Límite de bosque",
+          "description": "Dejamos atrás el bosque andino y comenzamos el ascenso hacia el glaciar."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "2:30 PM",
+          "title": "Glaciar Ojo del Albino",
+          "description": "Arribamos al glaciar. Tiempo para disfrutar de un paisaje de indescriptible belleza, puntos panorámicos y almuerzo en altura."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "3:30 PM",
+          "title": "Regreso al refugio",
+          "description": "Emprendemos el regreso al refugio Nunatak siguiendo el mismo valle, con nuevas vistas del entorno."
+        }
+      ],
+      "importantNote": "Itinerario a modo informativo, puede variar considerablemente de acuerdo al grupo y a las condiciones climáticas."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 295000,
+        "priceChild": 295000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 7,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 6,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hice las excursiones a Glaciares Vinciguerra y Ojo del Albino. Bellísimos. Vale la pena el esfuerzo de las largas caminatas para deslumbrarse con el paisaje que nos espera al llegar. La vianda, súper completa. Los chicos, divinos. Lo volvería a hacer, sin duda.",
+        "author": "Vanesa P.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Glaciar Ojo de Albino | Antartur Turismo Aventura",
+      "metaDescription": "Trekking de alta exigencia hacia el Glaciar Ojo del Albino, combinando Laguna Esmeralda, ascenso exigente y vistas incomparables en Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-glaciar-ojo-de-albino",
+      "ogImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg"
+    }
+  },
+  "parque-trekking-canoas": {
+    "card": {
+      "id": "parque-trekking-canoas",
+      "featuredImage": "/images/tours/parque-trekking-canoas/featured.jpg",
+      "subtitle": "Trekking, canoas y mucha aventura.",
+      "title": "Parque Trekking & Canoas",
+      "difficulty": "Media",
+      "price": "$ 180.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "Parque Trekking & Canoas",
+      "subheadline": "Una experiencia para disfrutar...",
+      "backgroundImage": "/images/tours/parque-trekking-canoas/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 180.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Media",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo y bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "canoas",
+          "label": "",
+          "value": "Canoas",
+          "icon": "kayak"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        }
+      ],
+      "restriction": "El orden de las actividades puede variar según condiciones climáticas y tamaño del grupo, a consideración del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una experiencia para disfrutar en el Parque Nacional Tierra del Fuego, combinando trekking costero y canoas en el Canal Beagle.",
+      "long": [
+        "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego, más precisamente a Ensenada Zaratiegui, donde podremos disfrutar de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas.",
+        "Desde allí emprendemos una caminata por la Senda Costera, siete kilómetros de recorrido nos permitirán conocer la variada flora y avifauna del Canal Beagle y el bosque fueguino, como así también vestigios de antiguos asentamientos Yámanas, nativos del lugar. Luego de 3 horas de caminata accedemos al Lago Roca, donde tomamos un reparador almuerzo caliente.",
+        "Luego de almorzar, comenzamos el paseo en botes inflables por el río Lapataia; este río nos acerca a nuestro objetivo, la bahía Lapataia en el Canal Beagle, precisamente donde culmina la Ruta Panamericana y la Ruta Nacional Nº 3. Desde allí comenzamos el regreso a Ushuaia en minibús. Almuerzo: picada, cazuela de pollo, frutas, alfajores y bebidas (vino, gaseosa, agua mineral, té). Proveemos botas de goma, chaleco salvavidas y traje impermeable. No incluye accesos al Parque Nacional Tierra del Fuego."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias.",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y todas sus actividades."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-trekking-canoas/gallery/1.jpg",
+        "alt": "Remada en canoas en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-trekking-canoas/gallery/2.jpg",
+        "alt": "Trekking por el bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-trekking-canoas/gallery/3.jpg",
+        "alt": "Canoas navegando el río Lapataia"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-trekking-canoas/gallery/4.jpg",
+        "alt": "Refugio o domo en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/parque-trekking-canoas/gallery/5.jpg",
+        "alt": "Remada en canoas con paisaje de montaña"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/parque-trekking-canoas/gallery/6.jpg",
+        "alt": "Sendero de trekking en el Parque Nacional"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/parque-trekking-canoas/gallery/7.jpg",
+        "alt": "Interior del domo preparado para el almuerzo"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/parque-trekking-canoas/gallery/8.jpg",
+        "alt": "Exterior del domo en el Parque Nacional"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/parque-trekking-canoas/gallery/9.jpg",
+        "alt": "Brindis al finalizar la excursión en bahía Lapataia"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/parque-trekking-canoas/gallery/10.jpg",
+        "alt": "Grupo disfrutando del paisaje en el Parque Nacional"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Ensenada Zaratiegui",
+          "description": "Disfrutamos de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Trekking por la Senda Costera",
+          "description": "Emprendemos una caminata de 7 km por la Senda Costera, conociendo la flora y avifauna del Canal Beagle, el bosque fueguino y vestigios de antiguos asentamientos Yámanas."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "1:00 PM",
+          "title": "Almuerzo en el Lago Roca",
+          "description": "Luego de unas 3 horas de caminata, accedemos al Lago Roca y disfrutamos de un reparador almuerzo caliente."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "3:00 PM",
+          "title": "Botes inflables en el río Lapataia",
+          "description": "Comenzamos el paseo en botes inflables por el río Lapataia, que nos lleva hasta la bahía Lapataia en el Canal Beagle, donde culmina la Ruta Panamericana y la Ruta Nacional Nº 3."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "5:00 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Desde bahía Lapataia emprendemos el regreso a Ushuaia en minibús."
+        }
+      ],
+      "importantNote": "El orden de las actividades y los recorridos puede variar según las condiciones climáticas y de la nieve, y de acuerdo al tamaño del grupo, a consideración del guía y sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 180000,
+        "priceChild": 150000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Trekking & Canoas | Antartur Turismo Aventura",
+      "metaDescription": "Trekking, canoas y mucha aventura en el Parque Nacional Tierra del Fuego: caminata por la Senda Costera, almuerzo caliente y navegación en botes inflables por el río Lapataia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-trekking-canoas",
+      "ogImage": "/images/tours/parque-trekking-canoas/featured.jpg"
+    }
+  },
+  "parque-aventura": {
+    "card": {
+      "id": "parque-aventura",
+      "featuredImage": "/images/tours/parque-aventura/featured.jpg",
+      "subtitle": "Un parque a tu medida!!",
+      "title": "PARQUE AVENTURA",
+      "difficulty": "Media",
+      "price": "$ 150.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PARQUE AVENTURA",
+      "subheadline": "Una experiencia para disfrutar...",
+      "backgroundImage": "/images/tours/parque-aventura/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 150.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Media",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo y bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        }
+      ],
+      "restriction": "No incluye accesos al Parque Nacional Tierra del Fuego.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una experiencia para disfrutar en el Parque Nacional Tierra del Fuego, con pequeñas caminatas, vistas increíbles y almuerzo a orillas del río Lapataia.",
+      "long": [
+        "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego, la primer parada será en Ensenada Zaratiegui, donde podremos disfrutar de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas. La próxima parada nos acerca al lago Roca, bellísimo lago compartido con Chile, finalmente llegamos a la bahía Lapataia en el Canal Beagle, precisamente donde culmina la Ruta Panamericana y Ruta Nacional Nº 3.",
+        "A lo largo del recorrido realizaremos pequeñas caminatas que nos permitirán conocer la variada flora y avifauna del Canal Beagle y el bosque fueguino, como así también vestigios de antiguos asentamientos Yámanas, nativos del lugar. Terminamos con un reparador almuerzo caliente, y desde allí comenzamos el regreso a Ushuaia en minibús. Almuerzo: brochette de quesos, cazuela de cordero, applecrumble de manzana con salsa de frutos del bosque, alfajores y bebidas (vino, gaseosa, agua mineral, té). No incluye accesos al Parque Nacional Tierra del Fuego."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias.",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y todas sus actividades."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-aventura/gallery/1.jpg",
+        "alt": "Trekking en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-aventura/gallery/2.jpg",
+        "alt": "Sendero entre el bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-aventura/gallery/3.jpg",
+        "alt": "Paisaje de montaña y lago en el Parque Nacional"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-aventura/gallery/4.jpg",
+        "alt": "Interior del domo preparado para el almuerzo"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/parque-aventura/gallery/5.jpg",
+        "alt": "Exterior del domo junto al río Lapataia"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/parque-aventura/gallery/6.jpg",
+        "alt": "Grupo disfrutando de las vistas en bahía Lapataia"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Ensenada Zaratiegui",
+          "description": "Primera parada en Ensenada Zaratiegui para disfrutar de las vistas del Canal Beagle y las islas Redonda, Hoste y Navarino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Lago Acigami",
+          "description": "Contemplamos el majestuoso paisaje caminando por las orillas del lago Acigami."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Hacia bahía Lapataia",
+          "description": "Continuamos nuestro recorrido descubriendo flora y fauna a nuestro paso hasta llegar a bahía Lapataia, el fin de la Ruta 3."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Almuerzo",
+          "description": "Enclavado en un paisaje increíble, disfrutamos de un rico almuerzo a orillas del río Lapataia."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:15 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Comenzamos el regreso a Ushuaia en minibús."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "2:00 PM",
+          "title": "Llegada al Hotel",
+          "description": "De nuevo en el hotel luego de una hermosa jornada en el Parque Nacional."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, dependiendo de las condiciones climáticas y del tamaño del grupo, a consideración del guía, sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 150000,
+        "priceChild": 150000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Aventura | Antartur Turismo Aventura",
+      "metaDescription": "Excursión Parque Aventura en el Parque Nacional Tierra del Fuego: pequeñas caminatas, vistas del Canal Beagle, Lago Acigami, bahía Lapataia y almuerzo caliente a orillas del río Lapataia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-aventura",
+      "ogImage": "/images/tours/parque-aventura/featured.jpg"
+    }
+  },
+  "trekking-glaciar-vinciguerra": {
+    "card": {
+      "id": "trekking-glaciar-vinciguerra",
+      "featuredImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg",
+      "subtitle": "Una experiencia para grandes aventureros",
+      "title": "TREKKING GLACIAR VINCIGUERRA",
+      "difficulty": "Alta",
+      "price": "$ 200.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING GLACIAR VINCIGUERRA",
+      "subheadline": "Trekking para grandes aventureros hacia la Laguna de los Témpanos y el glaciar.",
+      "backgroundImage": "/images/tours/trekking-glaciar-vinciguerra/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 200.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Exigente",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking de alta exigencia",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Es un trekking de alta exigencia, apto solo para personas con buen estado físico. 13 kms de trekking y 650 mts de desnivel.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Un trekking exigente hacia la Laguna de los Témpanos y el Glaciar Vinciguerra, ideal para grandes aventureros.",
+      "long": [
+        "Comenzamos la caminata en el valle de Andorra, donde después de cruzar antiquísimas turberas nos adentramos en el bosque fueguino. A medida que ganamos altura, el paisaje va cambiando hasta llegar a orillas de la Laguna de los Témpanos, con imponentes vistas del Glaciar Vinciguerra.",
+        "Luego de explorar los alrededores y tocar el hielo, disfrutaremos del box lunch en un entorno único y emprendemos la caminata de regreso por el mismo valle. Es un trekking de alta exigencia, con aproximadamente 13 km de recorrido y 650 metros de desnivel. Proveemos bastón de trekking y crampones."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "fit-people",
+        "icon": "users",
+        "title": "Apto para personas con buen estado físico",
+        "description": "Trekking de alta exigencia física: 13 km de caminata y 650 m de desnivel, recomendado para aventureros con buena condición física."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/1.jpg",
+        "alt": "Trekking en el valle de Andorra rumbo al Glaciar Vinciguerra"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/2.jpg",
+        "alt": "Sendero entre turberas y bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/3.jpg",
+        "alt": "Vista de la Laguna de los Témpanos frente al glaciar"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/4.jpg",
+        "alt": "Grupo de trekking avanzando por terreno de montaña"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/5.jpg",
+        "alt": "Glaciar Vinciguerra y sus formaciones de hielo"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Se buscará a los pasajeros por sus hoteles o alojamientos y se los trasladará en exclusivos transfers hasta el valle de Andorra."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Valle de Andorra",
+          "description": "Comenzamos la caminata en el valle de Andorra, cruzando antiguas turberas y adentrándonos en el bosque fueguino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "1:30 PM",
+          "title": "Laguna de los Témpanos",
+          "description": "Vamos tomando altura hasta llegar a orillas de la Laguna de los Témpanos, donde tendremos imponentes vistas del Glaciar Vinciguerra."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "2:30 PM",
+          "title": "Almuerzo junto al glaciar",
+          "description": "Luego de explorar los alrededores y tocar el hielo, disfrutaremos del box lunch en un entorno único de montaña y hielo."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "4:00 PM",
+          "title": "Regreso al Hotel",
+          "description": "Emprendemos la caminata de regreso por el mismo valle y luego el traslado a los hoteles en Ushuaia."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, dependiendo de las condiciones climáticas y de la nieve, y del tamaño del grupo, a consideración del guía y sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 200000,
+        "priceChild": 200000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 8,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 8,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 7,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 6,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hice el trekking al Glaciar Vinciguerra y la Laguna de los Témpanos. El esfuerzo vale totalmente la pena: paisajes increíbles y una experiencia inolvidable.",
+        "author": "Vanesa P.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Glaciar Vinciguerra | Antartur Turismo Aventura",
+      "metaDescription": "Trekking de alta exigencia hacia la Laguna de los Témpanos y el Glaciar Vinciguerra, con vistas imponentes, box lunch y guía bilingüe desde Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-glaciar-vinciguerra",
+      "ogImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg"
     }
   }
 }
