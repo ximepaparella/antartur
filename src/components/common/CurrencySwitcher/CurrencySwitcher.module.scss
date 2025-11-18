@@ -1,0 +1,41 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.currencySwitcher {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  color: currentColor;
+}
+
+.currencyButton {
+  background: transparent;
+  border: none;
+  color: currentColor;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: $spacing-4 $spacing-8;
+  transition: opacity 0.2s ease;
+  opacity: 0.6;
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+    outline: none;
+  }
+
+  &.active {
+    opacity: 1;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.separator {
+  opacity: 0.4;
+  font-size: 14px;
+}
+

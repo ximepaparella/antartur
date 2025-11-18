@@ -1,6 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Icon, IconName } from "@/components/icons/Icon";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
+import type { Pricing } from "@/lib/types/order";
 import styles from "./TourQuickInfo.module.scss";
 
 export interface QuickInfoItem {
@@ -11,8 +16,10 @@ export interface QuickInfoItem {
 }
 
 interface TourQuickInfoProps {
-  /** Precio del tour */
+  /** Precio del tour (string legacy para compatibilidad) */
   price: string;
+  /** Pricing completo con precios en ARS y USD */
+  pricing?: Pricing;
   /** Items de información rápida (duración, dificultad, etc.) */
   items: QuickInfoItem[];
   /** Restricción o advertencia opcional */
@@ -21,6 +28,7 @@ interface TourQuickInfoProps {
   alternative?: {
     text: string;
     price: string;
+    priceUSD?: number;
   };
   /** Texto del CTA de reserva */
   ctaLabel: string;
@@ -34,12 +42,56 @@ interface TourQuickInfoProps {
  */
 export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   price,
+  pricing,
   items,
   restriction,
   alternative,
   ctaLabel,
   ctaHref,
 }) => {
+  const { currency } = useCurrency();
+  const [displayPrice, setDisplayPrice] = useState(price);
+
+  // Función para actualizar el precio
+  const updatePrice = useCallback(() => {
+    if (pricing) {
+      const prices = getPriceByCurrency(pricing, currency);
+      // Mostrar precio de adulto como precio principal
+      setDisplayPrice(formatPrice(prices.priceAdult, currency));
+    } else {
+      // Fallback al precio legacy si no hay pricing
+      // Solo mostrar si la moneda es ARS (el precio legacy está en ARS)
+      if (currency === "ARS") {
+        setDisplayPrice(price);
+      } else {
+        // Si no hay pricing completo y se cambia a USD, ocultar el precio
+        setDisplayPrice("");
+      }
+    }
+  }, [currency, pricing, price]);
+
+  useEffect(() => {
+    updatePrice();
+  }, [updatePrice]);
+
+  // Escuchar cambios de moneda desde el evento personalizado
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      updatePrice();
+    };
+
+    window.addEventListener("currencyChanged", handleCurrencyChange);
+    return () => {
+      window.removeEventListener("currencyChanged", handleCurrencyChange);
+    };
+  }, [updatePrice]);
+
+  const alternativePrice = alternative
+    ? alternative.priceUSD && currency === "USD"
+      ? formatPrice(alternative.priceUSD, currency)
+      : alternative.price
+    : undefined;
+
   return (
     <section className={styles.quickInfo} id="quick-info">
       <div className={styles.wrapper}>
@@ -47,7 +99,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
           <div className={styles.topSection}>
             <div className={styles.priceColumn}>
               <div className={styles.priceLabel}>Precio</div>
-              <div className={styles.priceValue}>{price}</div>
+              <div className={styles.priceValue}>{displayPrice}</div>
             </div>
             
             <div className={styles.ctaColumn}>
@@ -80,7 +132,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
                 <Icon name="map-route" size={24} className={styles.icon} />
                 <div className={`${styles.itemContent} ${styles.itemContentRow}`}>
                   <span className={styles.itemValue}>{alternative.text}</span>
-                  <span className={styles.itemValue}>{alternative.price}</span>
+                  <span className={styles.itemValue}>{alternativePrice || alternative.price}</span>
                 </div>
               </li>
             )}

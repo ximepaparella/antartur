@@ -7,20 +7,23 @@ import { CheckoutForm, type CheckoutFormRef } from "@/modules/content/components
 import { MiniCart } from "@/modules/content/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/content/components/MiniCart/MiniCartSkeleton";
 import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
-import { getPendingBooking } from "@/lib/utils/orderStorage";
-import type { Order, PaymentMethod } from "@/lib/types/order";
+import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { getPriceByCurrency } from "@/lib/utils/priceFormat";
+import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
 import { PaymentModal } from "@/modules/content/components/PaymentModal/PaymentModal";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { currency } = useCurrency();
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
     date: string;
     adults: number;
     children: number;
-    pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+    pricing: Pricing;
     timeSlot: { start: string; end: string };
     exceedsAvailability: boolean;
   } | null>(null);
@@ -43,6 +46,29 @@ export default function CheckoutPage() {
       router.push("/");
     }
   }, [router]);
+
+  // Actualizar precios cuando cambia la moneda
+  useEffect(() => {
+    if (bookingData) {
+      const tour = getFullTourById(bookingData.tourId);
+      if (tour?.booking?.pricing) {
+        const prices = getPriceByCurrency(tour.booking.pricing, currency);
+        const updatedPricing: Pricing = {
+          ...tour.booking.pricing,
+          currency,
+          priceAdult: prices.priceAdult,
+          priceChild: prices.priceChild,
+        };
+        const updatedBooking = {
+          ...bookingData,
+          pricing: updatedPricing,
+        };
+        setBookingData(updatedBooking);
+        // Actualizar localStorage también
+        savePendingBooking(updatedBooking);
+      }
+    }
+  }, [currency, bookingData?.tourId]);
 
   // Obtener restricciones del tour
   const tour = bookingData ? getFullTourById(bookingData.tourId) : null;

@@ -8,6 +8,8 @@ import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
 import type { Pricing, TimeSlot } from "@/lib/types/order";
 import styles from "./Calendar.module.scss";
 
@@ -56,6 +58,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   pricing,
 }) => {
   const router = useRouter();
+  const { currency } = useCurrency();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlotWithAvailability | null>(null);
@@ -191,6 +194,15 @@ export const Calendar: React.FC<CalendarProps> = ({
   const handleBooking = () => {
     if (!selectedDate || !selectedTimeSlot) return;
 
+    // Obtener precios según la moneda seleccionada
+    const prices = getPriceByCurrency(pricing, currency);
+    const currentPricing: Pricing = {
+      ...pricing,
+      currency,
+      priceAdult: prices.priceAdult,
+      priceChild: prices.priceChild,
+    };
+
     // Crear objeto de reserva inicial
     const bookingData = {
       tourId,
@@ -198,7 +210,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       date: selectedDate,
       adults,
       children,
-      pricing,
+      pricing: currentPricing,
       timeSlot: {
         start: selectedTimeSlot.start,
         end: selectedTimeSlot.end,
@@ -415,14 +427,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
   exceedsAvailability,
   isClosing = false,
 }) => {
-  const subtotal = adults * pricing.priceAdult + childrenCount * pricing.priceChild;
-
-  const formatPrice = (amount: number): string => {
-    if (pricing.currency === "ARS") {
-      return `$${amount.toLocaleString("es-AR")}`;
-    }
-    return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
-  };
+  const { currency } = useCurrency();
+  const prices = getPriceByCurrency(pricing, currency);
+  const subtotal = adults * prices.priceAdult + childrenCount * prices.priceChild;
 
   return (
     <Modal
@@ -492,7 +499,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       <div className={styles.subtotalSection}>
         <p className={styles.subtotalLabel}>Subtotal:</p>
-        <p className={styles.subtotalAmount}>{formatPrice(subtotal)}</p>
+        <p className={styles.subtotalAmount}>{formatPrice(subtotal, currency)}</p>
       </div>
 
       <div className={styles.modalActions}>

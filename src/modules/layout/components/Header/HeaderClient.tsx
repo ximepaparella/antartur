@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@/components/icons/Icon";
+import { CurrencySwitcher } from "@/components/common/CurrencySwitcher/CurrencySwitcher";
 import headerData from "./headerdata.json";
 import styles from "./Header.module.scss";
 
@@ -196,14 +197,10 @@ export const HeaderClient: React.FC = () => {
           </ul>
         </nav>
 
-        {/* Cart Icon */}
-        <Link
-          href={headerData.cart.href}
-          className={styles.cartIcon}
-          aria-label={headerData.cart.ariaLabel}
-        >
-          <Icon name="bag" size={24} />
-        </Link>
+        {/* Currency Switcher */}
+        <div className={styles.currencySwitcherWrapper}>
+          <CurrencySwitcher />
+        </div>
 
         {/* Mobile Menu Toggle */}
         <button

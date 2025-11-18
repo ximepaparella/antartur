@@ -6,6 +6,8 @@ export interface Pricing {
   currency: "ARS" | "USD";
   priceAdult: number;
   priceChild: number;
+  priceAdultUSD?: number;
+  priceChildUSD?: number;
 }
 
 export interface TimeSlot {

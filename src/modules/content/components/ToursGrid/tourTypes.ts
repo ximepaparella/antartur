@@ -115,6 +115,8 @@ export interface Tour {
       currency: "ARS" | "USD";
       priceAdult: number;
       priceChild: number;
+      priceAdultUSD?: number;
+      priceChildUSD?: number;
     };
     availability: Array<{
       date: string; // YYYY-MM-DD

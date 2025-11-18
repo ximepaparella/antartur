@@ -5,7 +5,10 @@
     "subtitle": "Aventura Extrema",
     "title": "TREKKING GLACIAR OJO DE ALBINO",
     "difficulty": "ALTA",
-    "price": "$ 233.000",
+    "price": {
+      "ARS": 295000,
+      "USD": 295
+    },
     "category": "summer"
   },
   "lagos-off-road": {
@@ -14,7 +17,10 @@
     "subtitle": "Aventura 4x4",
     "title": "LAGOS OFF ROAD",
     "difficulty": "MEDIA",
-    "price": "$ 210.000",
+    "price": {
+      "ARS": 180000,
+      "USD": 180
+    },
     "category": "summer"
   },
   "parque-trekking-canoas": {
@@ -23,7 +29,10 @@
     "subtitle": "Naturaleza",
     "title": "PARQUE TREKKING & CANOAS",
     "difficulty": "MEDIA",
-    "price": "$ 160.000",
+    "price": {
+      "ARS": 180000,
+      "USD": 180
+    },
     "category": "summer"
   },
   "parque-aventura": {
@@ -32,7 +41,10 @@
     "subtitle": "Un parque a tu medida!!",
     "title": "PARQUE AVENTURA",
     "difficulty": "MEDIA",
-    "price": "$ 150.000",
+    "price": {
+      "ARS": 150000,
+      "USD": 150
+    },
     "category": "summer"
   },
   "trekking-glaciar-vinciguerra": {
@@ -41,7 +53,10 @@
     "subtitle": "Aventura Extrema",
     "title": "TREKKING GLACIAR VINCIGUERRA",
     "difficulty": "ALTA",
-    "price": "$ 200.000",
+    "price": {
+      "ARS": 200000,
+      "USD": 200
+    },
     "category": "summer"
   },
   "trekking-laguna-esmeralda": {
@@ -50,7 +65,10 @@
     "subtitle": "Naturaleza",
     "title": "TREKKING LAGUNA ESMERALDA",
     "difficulty": "MEDIA",
-    "price": "$ 160.000",
+    "price": {
+      "ARS": 160000,
+      "USD": 160
+    },
     "category": "summer"
   },
   "pinguinera-isla-martillo": {
@@ -59,7 +77,10 @@
     "subtitle": "Fauna",
     "title": "PINGUINERA ISLA MARTILLO",
     "difficulty": "BAJA",
-    "price": "$ 166.200",
+    "price": {
+      "ARS": 165000,
+      "USD": 165
+    },
     "category": "summer"
   },
   "parque-nacional-clasico": {
@@ -68,7 +89,10 @@
     "subtitle": "El Parque del fin del mundo!!",
     "title": "PARQUE NACIONAL CLÁSICO",
     "difficulty": "BAJA",
-    "price": "$ 90.000",
+    "price": {
+      "ARS": 90000,
+      "USD": 90
+    },
     "category": "summer"
   },
   "parque-nacional-clasico-winter": {
@@ -77,7 +101,10 @@
     "subtitle": "El Parque del fin del mundo!!",
     "title": "PARQUE NACIONAL CLÁSICO",
     "difficulty": "BAJA",
-    "price": "$ 90.000",
+    "price": {
+      "ARS": 90000,
+      "USD": 90
+    },
     "category": "winter"
   },
   "canal-beagle-catamaran": {
@@ -86,7 +113,10 @@
     "subtitle": "Navegación",
     "title": "CANAL BEAGLE EN CATAMARAN",
     "difficulty": "BAJA",
-    "price": "$ 100.000",
+    "price": {
+      "ARS": 100000,
+      "USD": 100
+    },
     "category": "summer"
   },
   "canal-beagle-catamaran-winter": {
@@ -95,7 +125,10 @@
     "subtitle": "Navegación",
     "title": "CANAL BEAGLE EN CATAMARAN",
     "difficulty": "BAJA",
-    "price": "$ 100.000",
+    "price": {
+      "ARS": 100000,
+      "USD": 100
+    },
     "category": "winter"
   },
   "full-day-nieve": {
@@ -104,7 +137,11 @@
     "subtitle": "Aventura en la Nieve",
     "title": "FULL DAY NIEVE",
     "difficulty": "BAJA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 260000,
+      "USD": 260
+    }
   },
   "experiencia-husky": {
     "id": "experiencia-husky",
@@ -112,7 +149,11 @@
     "subtitle": "Trineos con Perros",
     "title": "EXPERIENCIA HUSKY",
     "difficulty": "MEDIA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 230000,
+      "USD": 230
+    }
   },
   "nieve-fuego": {
     "id": "nieve-fuego",
@@ -120,7 +161,11 @@
     "subtitle": "Aventura Nocturna",
     "title": "NIEVE & FUEGO",
     "difficulty": "BAJA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 250000,
+      "USD": 250
+    }
   },
   "4x4-invernal": {
     "id": "4x4-invernal",
@@ -128,7 +173,11 @@
     "subtitle": "Aventura 4x4",
     "title": "4X4 INVERNAL",
     "difficulty": "BAJA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 160000,
+      "USD": 160
+    }
   },
   "trekking-esmeralda-invernal": {
     "id": "trekking-esmeralda-invernal",
@@ -136,7 +185,11 @@
     "subtitle": "Trekking Invernal",
     "title": "TREKKING ESMERALDA INVERNAL",
     "difficulty": "MEDIA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 160000,
+      "USD": 160
+    }
   },
   "aventura-blanca": {
     "id": "aventura-blanca",
@@ -144,7 +197,11 @@
     "subtitle": "Trineos con Perros",
     "title": "AVENTURA BLANCA",
     "difficulty": "BAJA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 230000,
+      "USD": 230
+    }
   },
   "experiencia-antartica": {
     "id": "experiencia-antartica",
@@ -152,6 +209,10 @@
     "subtitle": "Aventura Antártica",
     "title": "EXPERIENCIA ANTÁRTICA",
     "difficulty": "BAJA",
-    "category": "winter"
+    "category": "winter",
+    "price": {
+      "ARS": 270000,
+      "USD": 270
+    }
   }
 }

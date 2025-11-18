@@ -11,8 +11,8 @@ export interface TourCardData {
   title: string;
   /** Nivel de dificultad */
   difficulty: string;
-  /** Precio del tour (opcional, se oculta si está vacío, es 0 o no existe) */
-  price?: string;
+  /** Precio del tour (opcional, puede ser string legacy o objeto con ARS y USD) */
+  price?: string | { ARS: number; USD: number };
   /** Categoría del tour: "winter" o "summer" */
   category: "winter" | "summer";
 }

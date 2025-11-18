@@ -3,6 +3,7 @@ import { Work_Sans, Roboto } from "next/font/google";
 import { Header } from "@/modules/layout/components/Header/Header";
 import { Footer } from "@/modules/layout/components/Footer/Footer";
 import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoundaryClient";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import "@/styles/globals.scss";
 
 const workSans = Work_Sans({
@@ -63,9 +64,11 @@ export default function RootLayout({
     <html lang="es" className={`${workSans.variable} ${roboto.variable}`}>
       <body>
         <ErrorBoundaryClient>
-          <Header />
-          {children}
-          <Footer />
+          <CurrencyProvider>
+            <Header />
+            {children}
+            <Footer />
+          </CurrencyProvider>
         </ErrorBoundaryClient>
       </body>
     </html>

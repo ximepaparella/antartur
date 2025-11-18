@@ -166,7 +166,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 180000,
-        "priceChild": 120000
+        "priceChild": 120000,
+        "priceAdultUSD": 180,
+        "priceChildUSD": 120
       },
       "availability": [
         {
@@ -448,7 +450,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 295000,
-        "priceChild": 295000
+        "priceChild": 295000,
+        "priceAdultUSD": 295,
+        "priceChildUSD": 295
       },
       "availability": [
         {
@@ -753,7 +757,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 180000,
-        "priceChild": 150000
+        "priceChild": 150000,
+        "priceAdultUSD": 180,
+        "priceChildUSD": 150
       },
       "availability": [
         {
@@ -1037,7 +1043,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 150000,
-        "priceChild": 150000
+        "priceChild": 150000,
+        "priceAdultUSD": 150,
+        "priceChildUSD": 150
       },
       "availability": [
         {
@@ -1304,7 +1312,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 200000,
-        "priceChild": 200000
+        "priceChild": 200000,
+        "priceAdultUSD": 200,
+        "priceChildUSD": 200
       },
       "availability": [
         {
@@ -1567,7 +1577,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 160000,
-        "priceChild": 140000
+        "priceChild": 140000,
+        "priceAdultUSD": 160,
+        "priceChildUSD": 140
       },
       "availability": [
         {
@@ -1860,7 +1872,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 165000,
-        "priceChild": 140000
+        "priceChild": 140000,
+        "priceAdultUSD": 165,
+        "priceChildUSD": 140
       },
       "availability": [
         {
@@ -2139,7 +2153,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 90000,
-        "priceChild": 70000
+        "priceChild": 70000,
+        "priceAdultUSD": 90,
+        "priceChildUSD": 70
       },
       "availability": [
         {
@@ -2414,7 +2430,9 @@
     "pricing": {
       "currency": "ARS",
       "priceAdult": 100000,
-      "priceChild": 80000
+      "priceChild": 80000,
+      "priceAdultUSD": 100,
+      "priceChildUSD": 80
     },
     "availability": [
       {
@@ -2564,7 +2582,7 @@
       "id": "t1",
       "text": "Hermosa navegación por el Canal Beagle. Vimos lobos marinos, muchas aves y el faro Les Eclaireurs de cerca. Súper recomendable para conocer Ushuaia desde el mar.",
       "author": "Carolina M.",
-      "avatar": "/images/testimonials/canal-beagle-catamaran-1.jpg",
+      "avatar": "/images/testimonials/author-2.jpg",
       "country": "Argentina"
     }
   ],
@@ -2797,7 +2815,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 260000,
-        "priceChild": 180000
+        "priceChild": 180000,
+        "priceAdultUSD": 260,
+        "priceChildUSD": 180
       },
       "availability": [
         {
@@ -3093,7 +3113,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 230000,
-        "priceChild": 170000
+        "priceChild": 170000,
+        "priceAdultUSD": 230,
+        "priceChildUSD": 170
       },
       "availability": [
         {
@@ -3215,7 +3237,7 @@
         "id": "t1",
         "text": "Mi primer excursión con Antartur fue increíble, excelentes profesionales tienen como guías, te explican, aclaran y comparten experiencias únicas que hacen de cada lugar totalmente único. Muchas gracias.",
         "author": "Yesica Pare",
-        "avatar": "/images/testimonials/experiencia-husky-1.jpg",
+        "avatar": "/images/testimonials/author-2.jpg",
         "country": "Argentina"
       }
     ],
@@ -3433,7 +3455,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 250000,
-        "priceChild": 180000
+        "priceChild": 180000,
+        "priceAdultUSD": 250,
+        "priceChildUSD": 180
       },
       "availability": [
         {
@@ -3555,7 +3579,7 @@
         "id": "t1",
         "text": "Excelente experiencia al llegar a Ushuaia, muy interactiva, cordial y una velada perfecta en la nieve.",
         "author": "Marcela M",
-        "avatar": "/images/testimonials/nieve-fuego-1.jpg",
+        "avatar": "/images/testimonials/author-1.jpg",
         "country": "Argentina"
       }
     ],
@@ -3717,7 +3741,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 160000,
-        "priceChild": 96000
+        "priceChild": 96000,
+        "priceAdultUSD": 160,
+        "priceChildUSD": 96
       },
       "availability": [
         {
@@ -3839,7 +3865,7 @@
         "id": "t1",
         "text": "Hice con mi mujer la excursión 4x4 por el bosque andino patagónico y nos encantó. Además, nuestro guía, Azariel, fue muy amable, agradable y dinámico, explicó todo con mucho detalle y de manera muy interesante. Por último, cocinó un asado estupendo. Repetiríamos seguro. ¡Top!",
         "author": "Ángel Olavarría Bernal",
-        "avatar": "/images/testimonials/4x4-invernal-1.jpg",
+        "avatar": "/images/testimonials/author-2.jpg",
         "country": "Argentina"
       }
     ],
@@ -3955,6 +3981,26 @@
         "id": "g6",
         "src": "/images/tours/trekking-esmeralda-invernal/gallery/6.jpg",
         "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/7.jpg",
+        "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/8.jpg",
+        "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/9.jpg",
+        "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/10.jpg",
+        "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
       }
     ],
     "timeline": {
@@ -3990,7 +4036,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 160000,
-        "priceChild": 96000
+        "priceChild": 96000,
+        "priceAdultUSD": 160,
+        "priceChildUSD": 96
       },
       "availability": [
         {
@@ -4112,7 +4160,7 @@
         "id": "t1",
         "text": "Hermosa experiencia de trekking invernal. El paisaje de Laguna Esmeralda congelada es impresionante y los guías de Antartur acompañan en todo momento.",
         "author": "Lucía P.",
-        "avatar": "/images/testimonials/trekking-esmeralda-invernal-1.jpg",
+        "avatar": "/images/testimonials/author-1.jpg",
         "country": "Argentina"
       }
     ],
@@ -4245,6 +4293,16 @@
         "id": "g8",
         "src": "/images/tours/experiencia-antartica/gallery/8.jpg",
         "alt": "Paisaje nevado del valle Tierra Mayor durante la experiencia"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/experiencia-antartica/gallery/9.jpg",
+        "alt": "Paisaje nevado del valle Tierra Mayor durante la experiencia"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/experiencia-antartica/gallery/10.jpg",
+        "alt": "Paisaje nevado del valle Tierra Mayor durante la experiencia"
       }
     ],
     "timeline": {
@@ -4292,7 +4350,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 270000,
-        "priceChild": 190000
+        "priceChild": 190000,
+        "priceAdultUSD": 270,
+        "priceChildUSD": 190
       },
       "availability": [
         {
@@ -4414,7 +4474,7 @@
         "id": "t1",
         "text": "Una experiencia distinta a todo lo que habíamos hecho en Ushuaia. La travesía en vehículos a oruga y la experiencia inmersiva en el módulo antártico son imperdibles.",
         "author": "Gustavo J",
-        "avatar": "/images/testimonials/experiencia-antartica-1.jpg",
+        "avatar": "/images/testimonials/author-2.jpg",
         "country": "Argentina"
       }
     ],
@@ -4593,7 +4653,9 @@
       "pricing": {
         "currency": "ARS",
         "priceAdult": 230000,
-        "priceChild": 160000
+        "priceChild": 160000,
+        "priceAdultUSD": 230,
+        "priceChildUSD": 160
       },
       "availability": [
         {
@@ -4715,7 +4777,7 @@
         "id": "t1",
         "text": "Una excursión hermosa para hacer en familia. Los chicos disfrutaron muchísimo del paseo en trineo y de los huskies, y el recorrido en moto de nieve fue increíble.",
         "author": "Carolina R.",
-        "avatar": "/images/testimonials/aventura-blanca-1.jpg",
+        "avatar": "/images/testimonials/author-2.jpg",
         "country": "Argentina"
       }
     ],

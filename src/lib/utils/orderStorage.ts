@@ -2,7 +2,7 @@
  * Utilidades para manejar el almacenamiento de órdenes en localStorage
  */
 
-import type { Order } from "../types/order";
+import type { Order, Pricing } from "../types/order";
 import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
@@ -17,7 +17,7 @@ export function savePendingBooking(bookingData: {
   date: string;
   adults: number;
   children: number;
-  pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+  pricing: Pricing;
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 }): void {
@@ -101,7 +101,7 @@ export function getPendingBooking(): {
   date: string;
   adults: number;
   children: number;
-  pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+  pricing: Pricing;
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 } | null {

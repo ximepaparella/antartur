@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Card } from "@/components/common/Card";
 import { Icon } from "@/components/icons/Icon";
 import { Message } from "@/components/common/Message";
 import { TourInfo } from "@/components/common/TourInfo";
-import type { PaymentMethod } from "@/lib/types/order";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
+import type { PaymentMethod, Pricing } from "@/lib/types/order";
 import styles from "./MiniCart.module.scss";
 
 interface MiniCartProps {
@@ -15,11 +17,7 @@ interface MiniCartProps {
   timeSlot: string;
   adults: number;
   childrenCount: number;
-  pricing: {
-    currency: "ARS" | "USD";
-    priceAdult: number;
-    priceChild: number;
-  };
+  pricing: Pricing;
   exceedsAvailability: boolean;
   hasRestrictionViolations?: boolean;
   hasValidationErrors?: boolean;
@@ -43,26 +41,38 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   onPaymentMethodChange,
   onSubmit,
 }) => {
+  const { currency } = useCurrency();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("transferencia");
+  const [currentPricing, setCurrentPricing] = useState(pricing);
+
+  // Actualizar precios cuando cambia la moneda
+  useEffect(() => {
+    const prices = getPriceByCurrency(pricing, currency);
+    setCurrentPricing({
+      ...pricing,
+      currency,
+      priceAdult: prices.priceAdult,
+      priceChild: prices.priceChild,
+    });
+    // Resetear método de pago si cambia la moneda (para mostrar los métodos correctos)
+    if (currency === "USD") {
+      setSelectedPayment("paypal");
+    } else {
+      setSelectedPayment("transferencia");
+    }
+  }, [currency, pricing]);
 
   const subtotalAdults = useMemo(() => {
-    return adults * pricing.priceAdult;
-  }, [adults, pricing.priceAdult]);
+    return adults * currentPricing.priceAdult;
+  }, [adults, currentPricing.priceAdult]);
 
   const subtotalChildren = useMemo(() => {
-    return childrenCount * pricing.priceChild;
-  }, [childrenCount, pricing.priceChild]);
+    return childrenCount * currentPricing.priceChild;
+  }, [childrenCount, currentPricing.priceChild]);
 
   const total = useMemo(() => {
     return subtotalAdults + subtotalChildren;
   }, [subtotalAdults, subtotalChildren]);
-
-  const formatPrice = (amount: number): string => {
-    if (pricing.currency === "ARS") {
-      return `$${amount.toLocaleString("es-AR")}`;
-    }
-    return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
-  };
 
   const formatDate = (dateStr: string): string => {
     // Parsear como fecha local para evitar problemas de timezone
@@ -92,6 +102,12 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   
   // Blur en métodos de pago si hay restricciones violadas
   const showPaymentBlur = hasRestrictionViolations;
+
+  // Métodos de pago disponibles según la moneda
+  const availablePaymentMethods: PaymentMethod[] = 
+    currency === "USD" 
+      ? ["paypal"] 
+      : ["transferencia", "payway"];
 
   const getPaymentIcon = (method: PaymentMethod): "bank" | "wallet" | "credit-card" => {
     switch (method) {
@@ -134,7 +150,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
               Adultos: {adults}
             </span>
             <span className={styles.summaryValue}>
-              {formatPrice(subtotalAdults)}
+              {formatPrice(subtotalAdults, currency)}
             </span>
           </div>
         )}
@@ -145,7 +161,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
               Niños: {childrenCount}
             </span>
             <span className={styles.summaryValue}>
-              {formatPrice(subtotalChildren)}
+              {formatPrice(subtotalChildren, currency)}
             </span>
           </div>
         )}
@@ -154,12 +170,12 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
         <div className={styles.summaryRow}>
           <span className={styles.summaryLabel}>Subtotal:</span>
-          <span className={styles.summaryValue}>{formatPrice(total)}</span>
+          <span className={styles.summaryValue}>{formatPrice(total, currency)}</span>
         </div>
 
           <div className={styles.summaryRow}>
             <span className={styles.summaryLabelTotal}>Total:</span>
-            <span className={styles.summaryValueTotal}>{formatPrice(total)}</span>
+            <span className={styles.summaryValueTotal}>{formatPrice(total, currency)}</span>
           </div>
         </div>
       </Card>
@@ -167,74 +183,80 @@ export const MiniCart: React.FC<MiniCartProps> = ({
       <Card title="Método de pago">
         {showPaymentMethods && (
           <div className={`${styles.paymentOptions} ${showPaymentBlur ? styles.blurred : ""}`}>
-            <label className={styles.paymentOption}>
-              <div className={styles.radioWrapper}>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="transferencia"
-                  checked={selectedPayment === "transferencia"}
-                  onChange={() => handlePaymentChange("transferencia")}
-                  className={styles.radioInput}
-                  disabled={showPaymentBlur}
-                />
-                <Icon name="bank" size={20} className={styles.paymentIcon} />
-                <span className={styles.radioLabel}>Transferencia bancaria directa</span>
-              </div>
-              {selectedPayment === "transferencia" && !showPaymentBlur && (
-                <div className={styles.paymentInfo}>
-                  <p>
-                    Realiza tu pago directamente en nuestra cuenta bancaria. Por favor, usa el número del pedido como referencia de pago. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
-                  </p>
+            {availablePaymentMethods.includes("transferencia") && (
+              <label className={styles.paymentOption}>
+                <div className={styles.radioWrapper}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="transferencia"
+                    checked={selectedPayment === "transferencia"}
+                    onChange={() => handlePaymentChange("transferencia")}
+                    className={styles.radioInput}
+                    disabled={showPaymentBlur}
+                  />
+                  <Icon name="bank" size={20} className={styles.paymentIcon} />
+                  <span className={styles.radioLabel}>Transferencia bancaria directa</span>
                 </div>
-              )}
-            </label>
+                {selectedPayment === "transferencia" && !showPaymentBlur && (
+                  <div className={styles.paymentInfo}>
+                    <p>
+                      Realiza tu pago directamente en nuestra cuenta bancaria. Por favor, usa el número del pedido como referencia de pago. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
+                    </p>
+                  </div>
+                )}
+              </label>
+            )}
 
-            <label className={styles.paymentOption}>
-              <div className={styles.radioWrapper}>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="paypal"
-                  checked={selectedPayment === "paypal"}
-                  onChange={() => handlePaymentChange("paypal")}
-                  className={styles.radioInput}
-                  disabled={showPaymentBlur}
-                />
-                <Icon name="wallet" size={20} className={styles.paymentIcon} />
-                <span className={styles.radioLabel}>PayPal</span>
-              </div>
-              {selectedPayment === "paypal" && !showPaymentBlur && (
-                <div className={styles.paymentInfo}>
-                  <p>
-                    Pagar con PayPal; podés pagar con tu tarjeta de crédito si no tenés una cuenta de PayPal.
-                  </p>
+            {availablePaymentMethods.includes("paypal") && (
+              <label className={styles.paymentOption}>
+                <div className={styles.radioWrapper}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="paypal"
+                    checked={selectedPayment === "paypal"}
+                    onChange={() => handlePaymentChange("paypal")}
+                    className={styles.radioInput}
+                    disabled={showPaymentBlur}
+                  />
+                  <Icon name="wallet" size={20} className={styles.paymentIcon} />
+                  <span className={styles.radioLabel}>PayPal</span>
                 </div>
-              )}
-            </label>
+                {selectedPayment === "paypal" && !showPaymentBlur && (
+                  <div className={styles.paymentInfo}>
+                    <p>
+                      Pagar con PayPal; podés pagar con tu tarjeta de crédito si no tenés una cuenta de PayPal.
+                    </p>
+                  </div>
+                )}
+              </label>
+            )}
 
-            <label className={styles.paymentOption}>
-              <div className={styles.radioWrapper}>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="payway"
-                  checked={selectedPayment === "payway"}
-                  onChange={() => handlePaymentChange("payway")}
-                  className={styles.radioInput}
-                  disabled={showPaymentBlur}
-                />
-                <Icon name="credit-card" size={20} className={styles.paymentIcon} />
-                <span className={styles.radioLabel}>Payway Payment</span>
-              </div>
-              {selectedPayment === "payway" && !showPaymentBlur && (
-                <div className={styles.paymentInfo}>
-                  <p>
-                    Pago seguro a través de Payway.
-                  </p>
+            {availablePaymentMethods.includes("payway") && (
+              <label className={styles.paymentOption}>
+                <div className={styles.radioWrapper}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="payway"
+                    checked={selectedPayment === "payway"}
+                    onChange={() => handlePaymentChange("payway")}
+                    className={styles.radioInput}
+                    disabled={showPaymentBlur}
+                  />
+                  <Icon name="credit-card" size={20} className={styles.paymentIcon} />
+                  <span className={styles.radioLabel}>Payway Payment</span>
                 </div>
-              )}
-            </label>
+                {selectedPayment === "payway" && !showPaymentBlur && (
+                  <div className={styles.paymentInfo}>
+                    <p>
+                      Pago seguro a través de Payway.
+                    </p>
+                  </div>
+                )}
+              </label>
+            )}
           </div>
         )}
 

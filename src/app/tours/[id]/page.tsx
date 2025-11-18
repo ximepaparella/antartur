@@ -85,6 +85,7 @@ export default async function TourPage({ params }: TourPageProps) {
         {/* 2. QuickInfo */}
         <TourQuickInfo
           price={fullTour.quickInfo.price}
+          pricing={fullTour.booking?.pricing}
           items={fullTour.quickInfo.items}
           restriction={fullTour.quickInfo.restriction}
           alternative={fullTour.quickInfo.alternative}
@@ -165,7 +166,11 @@ export default async function TourPage({ params }: TourPageProps) {
         <h1>{tour.title}</h1>
         <p>{tour.subtitle}</p>
         <p>Dificultad: {tour.difficulty}</p>
-        {tour.price && <p>Precio: {tour.price}</p>}
+        {tour.price && (
+          <p>
+            Precio: {typeof tour.price === "string" ? tour.price : `ARS: $${tour.price.ARS.toLocaleString("es-AR")} / USD: $${tour.price.USD}`}
+          </p>
+        )}
         <p>Esta página está en desarrollo. Los datos completos del tour estarán disponibles pronto.</p>
       </div>
     </>
