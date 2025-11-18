@@ -72,7 +72,7 @@
     "category": "summer"
   },
   "parque-nacional-clasico-winter": {
-    "id": "parque-nacional-clasico-winter",
+    "id": "parque-nacional-clasico",
     "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
     "subtitle": "El Parque del fin del mundo!!",
     "title": "PARQUE NACIONAL CLÁSICO",
@@ -90,7 +90,7 @@
     "category": "summer"
   },
   "canal-beagle-catamaran-winter": {
-    "id": "canal-beagle-catamaran-winter",
+    "id": "canal-beagle-catamaran",
     "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
     "subtitle": "Navegación",
     "title": "CANAL BEAGLE EN CATAMARAN",

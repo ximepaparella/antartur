@@ -8,12 +8,11 @@ import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
-import type { Pricing } from "@/lib/types/order";
+import type { Pricing, TimeSlot } from "@/lib/types/order";
 import styles from "./Calendar.module.scss";
 
-interface TimeSlot {
-  start: string; // HH:mm
-  end: string; // HH:mm
+// Extensión del TimeSlot compartido para incluir disponibilidad (uso interno del componente)
+interface TimeSlotWithAvailability extends TimeSlot {
   available: number;
 }
 
@@ -29,7 +28,7 @@ interface AvailabilityDate {
 // Estructura agrupada por fecha con múltiples horarios
 interface GroupedAvailability {
   date: string;
-  timeSlots: TimeSlot[];
+  timeSlots: TimeSlotWithAvailability[];
   totalAvailable: number; // Máximo disponible entre todos los horarios (para mostrar en tooltip)
 }
 
@@ -59,7 +58,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlotWithAvailability | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
   const [adults, setAdults] = useState(1);
@@ -378,7 +377,6 @@ export const Calendar: React.FC<CalendarProps> = ({
           tourTitle={tourTitle}
           date={formatDisplayDate(selectedDate)}
           timeSlot={`${selectedTimeSlot.start} – ${selectedTimeSlot.end}`}
-          available={selectedTimeSlot.available}
           pricing={pricing}
           adults={adults}
           childrenCount={children}
@@ -404,7 +402,6 @@ interface BookingModalProps {
   tourTitle: string;
   date: string;
   timeSlot: string;
-  available: number;
   pricing: Pricing;
   adults: number;
   childrenCount: number;
@@ -420,7 +417,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
   tourTitle,
   date,
   timeSlot,
-  available,
   pricing,
   adults,
   childrenCount,
