@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon, IconName } from "@/components/icons/Icon";
 import { Calendar } from "@/modules/content/components/Calendar";
+import type { Pricing } from "@/lib/types/order";
 import styles from "./BannerBooking.module.scss";
 
 interface BookingStep {
@@ -16,12 +17,6 @@ interface AvailabilityDate {
     start: string;
     end: string;
   };
-}
-
-interface Pricing {
-  currency: "ARS" | "USD";
-  priceAdult: number;
-  priceChild: number;
 }
 
 interface BannerBookingProps {

@@ -8,6 +8,8 @@ export const CurrencySwitcher: React.FC = () => {
   const { currency, setCurrency } = useCurrency();
 
   const handleCurrencyChange = (newCurrency: "ARS" | "USD") => {
+    console.log("[CurrencySwitcher] User clicked:", newCurrency);
+    console.log("[CurrencySwitcher] Current currency:", currency);
     setCurrency(newCurrency);
   };
 

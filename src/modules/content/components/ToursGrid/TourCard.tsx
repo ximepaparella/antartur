@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { useCurrency, type Currency } from "@/contexts/CurrencyContext";
 import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
 import { getFullTourById } from "./tourFullData";
 import styles from "./TourCard.module.scss";
@@ -81,18 +81,26 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
 
   // Función para actualizar el precio
   const updatePrice = React.useCallback(() => {
+    console.log("[TourCard] updatePrice - Currency:", currency);
+    console.log("[TourCard] updatePrice - Tour ID:", tour.id);
+    console.log("[TourCard] updatePrice - Tour price:", tour.price);
+    
     // Intentar obtener precio desde datos completos del tour usando el ID del tour
     // (puede ser diferente del key del objeto, especialmente para tours winter)
     const fullTour = getFullTourById(tour.id);
     if (fullTour?.booking?.pricing) {
       const pricing = fullTour.booking.pricing;
+      console.log("[TourCard] Full tour pricing:", pricing);
       // Usar getPriceByCurrency para obtener los precios correctos según la moneda
       const prices = getPriceByCurrency(pricing, currency);
-      setDisplayPrice(formatPrice(prices.priceAdult, currency));
+      const formatted = formatPrice(prices.priceAdult, currency);
+      console.log("[TourCard] Formatted price:", formatted);
+      setDisplayPrice(formatted);
     } else if (tour.price) {
       // Si price es un objeto con ARS y USD
       if (typeof tour.price === "object" && "ARS" in tour.price && "USD" in tour.price) {
         const priceValue = currency === "USD" ? tour.price.USD : tour.price.ARS;
+        console.log("[TourCard] Using price object, value:", priceValue);
         setDisplayPrice(formatPrice(priceValue, currency));
       } else if (typeof tour.price === "string") {
         // Fallback al precio legacy si no hay pricing completo
@@ -113,15 +121,36 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
 
   // Escuchar cambios de moneda desde el evento personalizado
   useEffect(() => {
-    const handleCurrencyChange = () => {
-      updatePrice();
+    const handleCurrencyChange = (event: CustomEvent<Currency>) => {
+      // Usar el valor del evento directamente en lugar del hook (que aún no se ha actualizado)
+      const newCurrency = event.detail;
+      console.log("[TourCard] Event received, new currency:", newCurrency);
+      
+      // Actualizar precio usando el valor del evento
+      const fullTour = getFullTourById(tour.id);
+      if (fullTour?.booking?.pricing) {
+        const pricing = fullTour.booking.pricing;
+        const prices = getPriceByCurrency(pricing, newCurrency);
+        setDisplayPrice(formatPrice(prices.priceAdult, newCurrency));
+      } else if (tour.price) {
+        if (typeof tour.price === "object" && "ARS" in tour.price && "USD" in tour.price) {
+          const priceValue = newCurrency === "USD" ? tour.price.USD : tour.price.ARS;
+          setDisplayPrice(formatPrice(priceValue, newCurrency));
+        } else if (typeof tour.price === "string") {
+          if (newCurrency === "ARS") {
+            setDisplayPrice(tour.price);
+          } else {
+            setDisplayPrice(undefined);
+          }
+        }
+      }
     };
 
-    window.addEventListener("currencyChanged", handleCurrencyChange);
+    window.addEventListener("currencyChanged", handleCurrencyChange as EventListener);
     return () => {
-      window.removeEventListener("currencyChanged", handleCurrencyChange);
+      window.removeEventListener("currencyChanged", handleCurrencyChange as EventListener);
     };
-  }, [updatePrice]);
+  }, [tour.id, tour.price]);
 
   const showPrice = isValidPrice(displayPrice);
 

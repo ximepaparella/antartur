@@ -50,15 +50,22 @@ export default function CheckoutPage() {
   // Actualizar precios cuando cambia la moneda
   useEffect(() => {
     if (bookingData) {
+      console.log("[Checkout] Currency changed:", currency);
+      console.log("[Checkout] Current bookingData.pricing:", bookingData.pricing);
+      console.log("[Checkout] TourId:", bookingData.tourId);
+      
       const tour = getFullTourById(bookingData.tourId);
       if (tour?.booking?.pricing) {
-        const prices = getPriceByCurrency(tour.booking.pricing, currency);
+        console.log("[Checkout] Tour pricing:", tour.booking.pricing);
+        // IMPORTANTE: Siempre usar el pricing completo del tour como fuente de verdad
+        // priceAdult y priceChild deben SIEMPRE ser valores en ARS (nunca modificarlos)
+        // Los valores USD están en priceAdultUSD y priceChildUSD
         const updatedPricing: Pricing = {
-          ...tour.booking.pricing,
-          currency,
-          priceAdult: prices.priceAdult,
-          priceChild: prices.priceChild,
+          ...tour.booking.pricing, // Mantener TODOS los valores originales (ARS y USD)
+          currency, // Solo actualizar metadata de moneda actual
+          // NO modificar priceAdult ni priceChild - deben permanecer como ARS
         };
+        console.log("[Checkout] Updated pricing:", updatedPricing);
         const updatedBooking = {
           ...bookingData,
           pricing: updatedPricing,
@@ -66,6 +73,8 @@ export default function CheckoutPage() {
         setBookingData(updatedBooking);
         // Actualizar localStorage también
         savePendingBooking(updatedBooking);
+      } else {
+        console.log("[Checkout] No tour or pricing found");
       }
     }
   }, [currency, bookingData?.tourId]);
@@ -181,6 +190,7 @@ export default function CheckoutPage() {
                 adults={bookingData.adults}
                 childrenCount={bookingData.children}
                 pricing={bookingData.pricing}
+                tourId={bookingData.tourId}
                 exceedsAvailability={bookingData.exceedsAvailability}
                 hasRestrictionViolations={hasRestrictionViolations}
                 hasValidationErrors={hasValidationErrors}

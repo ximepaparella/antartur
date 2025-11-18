@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Icon, IconName } from "@/components/icons/Icon";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { useCurrency, type Currency } from "@/contexts/CurrencyContext";
 import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
 import type { Pricing } from "@/lib/types/order";
 import styles from "./TourQuickInfo.module.scss";
@@ -54,10 +54,17 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
 
   // Función para actualizar el precio
   const updatePrice = useCallback(() => {
+    console.log("[TourQuickInfo] updatePrice - Currency:", currency);
+    console.log("[TourQuickInfo] updatePrice - Pricing:", pricing);
+    console.log("[TourQuickInfo] updatePrice - Price (legacy):", price);
+    
     if (pricing) {
       const prices = getPriceByCurrency(pricing, currency);
+      console.log("[TourQuickInfo] Prices after conversion:", prices);
       // Mostrar precio de adulto como precio principal
-      setDisplayPrice(formatPrice(prices.priceAdult, currency));
+      const formatted = formatPrice(prices.priceAdult, currency);
+      console.log("[TourQuickInfo] Formatted price:", formatted);
+      setDisplayPrice(formatted);
     } else {
       // Fallback al precio legacy si no hay pricing
       // Solo mostrar si la moneda es ARS (el precio legacy está en ARS)
@@ -76,15 +83,29 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
 
   // Escuchar cambios de moneda desde el evento personalizado
   useEffect(() => {
-    const handleCurrencyChange = () => {
-      updatePrice();
+    const handleCurrencyChange = (event: CustomEvent<Currency>) => {
+      // Usar el valor del evento directamente en lugar del hook (que aún no se ha actualizado)
+      const newCurrency = event.detail;
+      console.log("[TourQuickInfo] Event received, new currency:", newCurrency);
+      
+      // Actualizar precio usando el valor del evento
+      if (pricing) {
+        const prices = getPriceByCurrency(pricing, newCurrency);
+        setDisplayPrice(formatPrice(prices.priceAdult, newCurrency));
+      } else {
+        if (newCurrency === "ARS") {
+          setDisplayPrice(price);
+        } else {
+          setDisplayPrice("");
+        }
+      }
     };
 
-    window.addEventListener("currencyChanged", handleCurrencyChange);
+    window.addEventListener("currencyChanged", handleCurrencyChange as EventListener);
     return () => {
-      window.removeEventListener("currencyChanged", handleCurrencyChange);
+      window.removeEventListener("currencyChanged", handleCurrencyChange as EventListener);
     };
-  }, [updatePrice]);
+  }, [pricing, price]);
 
   const alternativePrice = alternative
     ? alternative.priceUSD && currency === "USD"

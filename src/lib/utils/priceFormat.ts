@@ -17,6 +17,12 @@ export function formatPrice(amount: number, currency: Currency): string {
 
 /**
  * Obtiene el precio según la moneda seleccionada
+ * 
+ * IMPORTANTE: Esta función asume que:
+ * - priceAdult y priceChild son SIEMPRE valores en ARS (nunca deben modificarse)
+ * - priceAdultUSD y priceChildUSD son valores en USD (opcionales)
+ * 
+ * Si priceAdultUSD/priceChildUSD no están disponibles, se usan los valores ARS.
  */
 export function getPriceByCurrency(
   pricing: {
@@ -30,12 +36,21 @@ export function getPriceByCurrency(
   priceAdult: number;
   priceChild: number;
 } {
-  if (currency === "USD" && pricing.priceAdultUSD !== undefined && pricing.priceChildUSD !== undefined) {
-    return {
-      priceAdult: pricing.priceAdultUSD,
-      priceChild: pricing.priceChildUSD,
-    };
+  // Si la moneda es USD y tenemos valores USD disponibles, usarlos
+  if (currency === "USD") {
+    if (pricing.priceAdultUSD !== undefined && pricing.priceChildUSD !== undefined) {
+      return {
+        priceAdult: pricing.priceAdultUSD,
+        priceChild: pricing.priceChildUSD,
+      };
+    }
+    // Si no hay valores USD pero el precio ARS es muy pequeño (probablemente ya está en USD),
+    // intentar detectar esto y advertir, pero usar los valores disponibles
+    // Esto es un fallback para casos edge
+    console.warn("[getPriceByCurrency] USD requested but priceAdultUSD/priceChildUSD not available, using ARS values");
   }
+  
+  // Para ARS o cuando no hay valores USD disponibles, usar priceAdult/priceChild (que deben ser ARS)
   return {
     priceAdult: pricing.priceAdult,
     priceChild: pricing.priceChild,

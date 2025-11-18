@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./ToursGrid.module.scss";
 import { TourCard, type TourCardData } from "./TourCard";
 
@@ -29,20 +27,6 @@ interface ToursGridProps {
  * ```
  */
 export const ToursGrid: React.FC<ToursGridProps> = ({ tours, category }) => {
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  // Escuchar cambios de moneda para re-hidratar precios
-  useEffect(() => {
-    const handleCurrencyChange = () => {
-      setRefreshKey((prev) => prev + 1);
-    };
-
-    window.addEventListener("currencyChanged", handleCurrencyChange);
-    return () => {
-      window.removeEventListener("currencyChanged", handleCurrencyChange);
-    };
-  }, []);
-
   // Filtrar tours por categoría si se proporciona
   const filteredTours = category
     ? tours.filter((tour) => tour.category === category)
@@ -55,7 +39,7 @@ export const ToursGrid: React.FC<ToursGridProps> = ({ tours, category }) => {
   return (
     <section className={styles.toursGrid}>
       {filteredTours.map((tour) => (
-        <TourCard key={`${tour.id}-${refreshKey}`} tour={tour} />
+        <TourCard key={tour.id} tour={tour} />
       ))}
     </section>
   );

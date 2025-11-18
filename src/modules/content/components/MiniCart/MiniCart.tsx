@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Card } from "@/components/common/Card";
 import { Icon } from "@/components/icons/Icon";
 import { Message } from "@/components/common/Message";
 import { TourInfo } from "@/components/common/TourInfo";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { useCurrency, type Currency } from "@/contexts/CurrencyContext";
 import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
+import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
 import type { PaymentMethod, Pricing } from "@/lib/types/order";
 import styles from "./MiniCart.module.scss";
 
@@ -18,6 +19,7 @@ interface MiniCartProps {
   adults: number;
   childrenCount: number;
   pricing: Pricing;
+  tourId?: string; // ID del tour para obtener pricing completo si es necesario
   exceedsAvailability: boolean;
   hasRestrictionViolations?: boolean;
   hasValidationErrors?: boolean;
@@ -35,6 +37,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   adults,
   childrenCount,
   pricing,
+  tourId,
   exceedsAvailability,
   hasRestrictionViolations = false,
   hasValidationErrors = false,
@@ -43,32 +46,75 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 }) => {
   const { currency } = useCurrency();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("transferencia");
-  const [currentPricing, setCurrentPricing] = useState(pricing);
+  
+  // Función helper para obtener el pricing completo y actualizado
+  const getFullPricing = useCallback((currentCurrency: Currency): Pricing => {
+    // Siempre intentar obtener pricing completo del tour si tenemos tourId
+    let fullPricing = pricing;
+    if (tourId) {
+      const tour = getFullTourById(tourId);
+      if (tour?.booking?.pricing) {
+        fullPricing = tour.booking.pricing;
+      }
+    }
+    
+    // IMPORTANTE: priceAdult y priceChild deben SIEMPRE ser valores en ARS
+    // No los modificamos nunca - solo actualizamos el campo currency para metadata
+    // Los valores USD están en priceAdultUSD y priceChildUSD
+    return {
+      ...fullPricing, // Mantener TODOS los valores originales (ARS y USD)
+      currency: currentCurrency, // Solo actualizar metadata de moneda actual
+      // NO modificar priceAdult ni priceChild - deben permanecer como ARS
+    };
+  }, [pricing, tourId]);
 
-  // Actualizar precios cuando cambia la moneda
+  const [currentPricing, setCurrentPricing] = useState<Pricing>(() => getFullPricing(currency));
+
+  // Actualizar precios cuando cambia la moneda desde el contexto
   useEffect(() => {
-    const prices = getPriceByCurrency(pricing, currency);
-    setCurrentPricing({
-      ...pricing,
-      currency,
-      priceAdult: prices.priceAdult,
-      priceChild: prices.priceChild,
-    });
-    // Resetear método de pago si cambia la moneda (para mostrar los métodos correctos)
+    const newPricing = getFullPricing(currency);
+    setCurrentPricing(newPricing);
+    
+    // Resetear método de pago si cambia la moneda
     if (currency === "USD") {
       setSelectedPayment("paypal");
     } else {
       setSelectedPayment("transferencia");
     }
-  }, [currency, pricing]);
+  }, [currency, getFullPricing]);
+
+  // Escuchar cambios de moneda desde el evento personalizado (para actualización inmediata)
+  useEffect(() => {
+    const handleCurrencyChange = (event: CustomEvent<Currency>) => {
+      const newCurrency = event.detail;
+      const newPricing = getFullPricing(newCurrency);
+      setCurrentPricing(newPricing);
+      
+      if (newCurrency === "USD") {
+        setSelectedPayment("paypal");
+      } else {
+        setSelectedPayment("transferencia");
+      }
+    };
+
+    window.addEventListener("currencyChanged", handleCurrencyChange as EventListener);
+    return () => {
+      window.removeEventListener("currencyChanged", handleCurrencyChange as EventListener);
+    };
+  }, [getFullPricing]);
+
+  // Obtener precios según la moneda actual para cálculos y display
+  const displayPrices = useMemo(() => {
+    return getPriceByCurrency(currentPricing, currency);
+  }, [currentPricing, currency]);
 
   const subtotalAdults = useMemo(() => {
-    return adults * currentPricing.priceAdult;
-  }, [adults, currentPricing.priceAdult]);
+    return adults * displayPrices.priceAdult;
+  }, [adults, displayPrices.priceAdult]);
 
   const subtotalChildren = useMemo(() => {
-    return childrenCount * currentPricing.priceChild;
-  }, [childrenCount, currentPricing.priceChild]);
+    return childrenCount * displayPrices.priceChild;
+  }, [childrenCount, displayPrices.priceChild]);
 
   const total = useMemo(() => {
     return subtotalAdults + subtotalChildren;

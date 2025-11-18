@@ -168,7 +168,19 @@ export default async function TourPage({ params }: TourPageProps) {
         <p>Dificultad: {tour.difficulty}</p>
         {tour.price && (
           <p>
-            Precio: {typeof tour.price === "string" ? tour.price : `ARS: $${tour.price.ARS.toLocaleString("es-AR")} / USD: $${tour.price.USD}`}
+            Precio:{" "}
+            {typeof tour.price === "string" ? (
+              tour.price
+            ) : (
+              typeof tour.price === "object" &&
+              tour.price !== null &&
+              typeof tour.price.ARS === "number" &&
+              typeof tour.price.USD === "number" ? (
+                `ARS: $${tour.price.ARS.toLocaleString("es-AR")} / USD: $${tour.price.USD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              ) : (
+                "Precio no disponible"
+              )
+            )}
           </p>
         )}
         <p>Esta página está en desarrollo. Los datos completos del tour estarán disponibles pronto.</p>

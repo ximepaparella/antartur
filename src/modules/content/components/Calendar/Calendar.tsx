@@ -179,10 +179,11 @@ export const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
-  // Calcular subtotal
+  // Calcular subtotal usando precios según la moneda seleccionada
   const subtotal = useMemo(() => {
-    return adults * pricing.priceAdult + children * pricing.priceChild;
-  }, [adults, children, pricing]);
+    const prices = getPriceByCurrency(pricing, currency);
+    return adults * prices.priceAdult + children * prices.priceChild;
+  }, [adults, children, pricing, currency]);
 
   // Verificar si excede disponibilidad
   const exceedsAvailability = useMemo(() => {
@@ -194,14 +195,18 @@ export const Calendar: React.FC<CalendarProps> = ({
   const handleBooking = () => {
     if (!selectedDate || !selectedTimeSlot) return;
 
-    // Obtener precios según la moneda seleccionada
-    const prices = getPriceByCurrency(pricing, currency);
+    console.log("[Calendar] handleBooking - Currency:", currency);
+    console.log("[Calendar] handleBooking - Pricing:", pricing);
+    
+    // IMPORTANTE: priceAdult y priceChild deben SIEMPRE ser valores en ARS
+    // No los modificamos nunca - solo actualizamos el campo currency para metadata
+    // Los valores USD están en priceAdultUSD y priceChildUSD
     const currentPricing: Pricing = {
-      ...pricing,
-      currency,
-      priceAdult: prices.priceAdult,
-      priceChild: prices.priceChild,
+      ...pricing, // Mantener TODOS los valores originales (ARS y USD)
+      currency, // Solo actualizar metadata de moneda actual
+      // NO modificar priceAdult ni priceChild - deben permanecer como ARS
     };
+    console.log("[Calendar] handleBooking - Current pricing to save:", currentPricing);
 
     // Crear objeto de reserva inicial
     const bookingData = {
