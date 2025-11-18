@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Icon } from "@/components/icons/Icon";
 import { Button } from "@/components/common/Button/Button";
 import { Modal } from "@/components/common/Modal";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
 import type { Order, PaymentMethod } from "@/lib/types/order";
 import styles from "./PaymentModal.module.scss";
 
@@ -28,15 +30,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onPaymentComplete,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const { currency } = useCurrency();
 
-  const formatPrice = (amount: number): string => {
-    if (order.pricing.currency === "ARS") {
-      return `$${amount.toLocaleString("es-AR")}`;
-    }
-    return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
-  };
-
-  const total = order.adults * order.pricing.priceAdult + order.children * order.pricing.priceChild;
+  // Obtener precios según la moneda seleccionada
+  const prices = getPriceByCurrency(order.pricing, currency);
+  const total = order.adults * prices.priceAdult + order.children * prices.priceChild;
 
   const getPaymentMethodLabel = (method: PaymentMethod): string => {
     switch (method) {
@@ -69,7 +67,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     >
       <div className={styles.orderInfo}>
         <p className={styles.orderNumber}>Orden: {order.orderId}</p>
-        <p className={styles.orderTotal}>Total: {formatPrice(total)}</p>
+        <p className={styles.orderTotal}>Total: {formatPrice(total, currency)}</p>
         <p className={styles.paymentMethod}>Método: {getPaymentMethodLabel(paymentMethod)}</p>
       </div>
 
