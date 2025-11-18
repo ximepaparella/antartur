@@ -4122,6 +4122,308 @@
       "canonicalUrl": "https://antartur.tur.ar/tour/trekking-esmeralda-invernal",
       "ogImage": "/images/tours/trekking-esmeralda-invernal/featured.jpg"
     }
+  },
+  "experiencia-antartica": {
+    "card": {
+      "id": "experiencia-antartica",
+      "featuredImage": "/images/tours/experiencia-antartica/featured.jpg",
+      "subtitle": "Desafío polar en vehículos a oruga, motos de nieve y módulo antártico inmersivo.",
+      "title": "EXPERIENCIA ANTÁRTICA",
+      "difficulty": "Media",
+      "price": "$ 270.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "EXPERIENCIA ANTÁRTICA",
+      "subheadline": "Desafío polar en el fin del mundo.",
+      "backgroundImage": "/images/tours/experiencia-antartica/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 270.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "snack",
+          "label": "",
+          "value": "Bebida caliente con snack",
+          "icon": "lunch"
+        },
+        {
+          "id": "snowcat",
+          "label": "",
+          "value": "Travesía en vehículo a oruga (4 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Recorrido en moto de nieve (6 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "vr-module",
+          "label": "",
+          "value": "Experiencia inmersiva en Módulo Antártico RV",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Se podrá invertir el orden de las actividades o realizarlas en forma individual (no combinadas), según condiciones de nieve, clima y tamaño del grupo, a criterio del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Desafío polar con vehículos a oruga, motos de nieve y experiencia inmersiva en un módulo antártico.",
+      "long": [
+        "La experiencia comienza con el traslado desde tu hotel en nuestros exclusivos transfers hacia Husky Park Ushuaia, en el valle Tierra Mayor. Allí, al pie del monumento a los exploradores, el guía introduce el mundo de la exploración antártica y las heroicas travesías en el continente blanco.",
+        "Durante la visita al parque conocerás a los huskies, su entrenamiento y la historia que une a estos perros con las expediciones polares, para luego ingresar a la muestra de exploradores antárticos.",
+        "Luego comienza la travesía en vehículos a oruga, avanzando en columna y recreando técnicas de detección y cruce de grietas hasta llegar al Módulo Antártico. En el módulo vivirás una experiencia inmersiva que combina recursos sensoriales, visuales y narrativos, mientras recuperás energía con una bebida caliente y galletas antárticas.",
+        "La aventura continúa con un recorrido de 6 km en motos de nieve, a modo patrulla, hasta regresar nuevamente a Husky Park. Finalmente, emprendemos el regreso a tu hotel luego de haber vivido una verdadera experiencia antártica en el fin del mundo."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de distintas edades podrán disfrutar del paseo y de todas las actividades de nieve."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guias bilingües especializados acompañan cada etapa de la experiencia antártica."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/experiencia-antartica/gallery/1.jpg",
+        "alt": "Vehículos a oruga avanzando sobre la nieve en Husky Park"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/experiencia-antartica/gallery/2.jpg",
+        "alt": "Motos de nieve en fila durante la travesía antártica"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/experiencia-antartica/gallery/3.jpg",
+        "alt": "Módulo Antártico iluminado en medio del paisaje nevado"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/experiencia-antartica/gallery/4.jpg",
+        "alt": "Interior del módulo con experiencia inmersiva antártica"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/experiencia-antartica/gallery/5.jpg",
+        "alt": "Monumento a los exploradores en Husky Park"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/experiencia-antartica/gallery/6.jpg",
+        "alt": "Huskies descansando junto a los vehículos a oruga"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/experiencia-antartica/gallery/7.jpg",
+        "alt": "Grupo de pasajeros recibiendo instrucciones antes de la travesía"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/experiencia-antartica/gallery/8.jpg",
+        "alt": "Paisaje nevado del valle Tierra Mayor durante la experiencia"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park",
+          "description": "Te buscamos por tu hotel o alojamiento y te trasladamos en nuestros transfers hasta Husky Park Ushuaia, en el valle Tierra Mayor, donde comienza la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Visita al Husky Park",
+          "description": "Recorrido guiado por el parque: monumento a los exploradores, historias de las travesías polares, visita a los huskies y a la muestra de exploradores antárticos."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Travesía en vehículos a oruga (4 km)",
+          "description": "Avanzamos en columna de dos vehículos a oruga, recreando técnicas de detección y cruce de grietas hasta llegar al Módulo Antártico."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Módulo Antártico",
+          "description": "Experiencia inmersiva que combina elementos sensoriales, visuales y narrativos. Disfrutás de bebida caliente y galletas antárticas antes de continuar la travesía."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Travesía en motos de nieve (6 km)",
+          "description": "El guía brinda las instrucciones de manejo y salimos en patrulla en motos de nieve, completando un recorrido de 6 km hasta regresar a Husky Park."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Finalizada la experiencia, emprendemos el regreso a tu hotel luego de un verdadero desafío polar."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades o realizar el paseo en forma individual (no combinada), según las condiciones de nieve, del clima y el tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 270000,
+        "priceChild": 190000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Una experiencia distinta a todo lo que habíamos hecho en Ushuaia. La travesía en vehículos a oruga y la experiencia inmersiva en el módulo antártico son imperdibles.",
+        "author": "Gustavo J",
+        "avatar": "/images/testimonials/experiencia-antartica-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Experiencia Antártica | Antartur Turismo Aventura",
+      "metaDescription": "Desafío polar en Ushuaia con travesía en vehículos a oruga, recorrido en motos de nieve y experiencia inmersiva en Módulo Antártico RV en Husky Park Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/experiencia-antartica",
+      "ogImage": "/images/tours/experiencia-antartica/featured.jpg"
+    }
   }
 }
 

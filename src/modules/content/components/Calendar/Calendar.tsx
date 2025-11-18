@@ -106,7 +106,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     availability.forEach((item) => {
       // Solo guardar si no existe ya esta fecha (para mantener compatibilidad)
       if (!map.has(item.date)) {
-        map.set(item.date, item);
+      map.set(item.date, item);
       }
     });
     return map;
