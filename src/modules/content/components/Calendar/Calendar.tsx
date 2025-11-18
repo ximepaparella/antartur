@@ -100,18 +100,6 @@ export const Calendar: React.FC<CalendarProps> = ({
     return map;
   }, [availability]);
 
-  // Mapa simple para compatibilidad (toma el primer horario si hay múltiples)
-  const availabilityMap = useMemo(() => {
-    const map = new Map<string, AvailabilityDate>();
-    availability.forEach((item) => {
-      // Solo guardar si no existe ya esta fecha (para mantener compatibilidad)
-      if (!map.has(item.date)) {
-      map.set(item.date, item);
-      }
-    });
-    return map;
-  }, [availability]);
-
   // Obtener días del mes
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   // Convertir de Sunday-first (0-6) a Monday-first (0-6) donde Monday=0, Sunday=6
