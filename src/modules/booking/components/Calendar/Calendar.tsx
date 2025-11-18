@@ -8,8 +8,7 @@ import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
-import { useCurrency } from "@/contexts/CurrencyContext";
-import { formatPrice, getPriceByCurrency } from "@/lib/utils/priceFormat";
+import { formatPrice } from "@/lib/utils/priceFormat";
 import type { Pricing, TimeSlot } from "@/lib/types/order";
 import styles from "./Calendar.module.scss";
 
@@ -58,7 +57,6 @@ export const Calendar: React.FC<CalendarProps> = ({
   pricing,
 }) => {
   const router = useRouter();
-  const { currency } = useCurrency();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlotWithAvailability | null>(null);
@@ -179,11 +177,10 @@ export const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
-  // Calcular subtotal usando precios según la moneda seleccionada
+  // Calcular subtotal
   const subtotal = useMemo(() => {
-    const prices = getPriceByCurrency(pricing, currency);
-    return adults * prices.priceAdult + children * prices.priceChild;
-  }, [adults, children, pricing, currency]);
+    return adults * pricing.priceAdult + children * pricing.priceChild;
+  }, [adults, children, pricing]);
 
   // Verificar si excede disponibilidad
   const exceedsAvailability = useMemo(() => {
@@ -195,19 +192,6 @@ export const Calendar: React.FC<CalendarProps> = ({
   const handleBooking = () => {
     if (!selectedDate || !selectedTimeSlot) return;
 
-    console.log("[Calendar] handleBooking - Currency:", currency);
-    console.log("[Calendar] handleBooking - Pricing:", pricing);
-    
-    // IMPORTANTE: priceAdult y priceChild deben SIEMPRE ser valores en ARS
-    // No los modificamos nunca - solo actualizamos el campo currency para metadata
-    // Los valores USD están en priceAdultUSD y priceChildUSD
-    const currentPricing: Pricing = {
-      ...pricing, // Mantener TODOS los valores originales (ARS y USD)
-      currency, // Solo actualizar metadata de moneda actual
-      // NO modificar priceAdult ni priceChild - deben permanecer como ARS
-    };
-    console.log("[Calendar] handleBooking - Current pricing to save:", currentPricing);
-
     // Crear objeto de reserva inicial
     const bookingData = {
       tourId,
@@ -215,7 +199,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       date: selectedDate,
       adults,
       children,
-      pricing: currentPricing,
+      pricing,
       timeSlot: {
         start: selectedTimeSlot.start,
         end: selectedTimeSlot.end,
@@ -432,9 +416,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   exceedsAvailability,
   isClosing = false,
 }) => {
-  const { currency } = useCurrency();
-  const prices = getPriceByCurrency(pricing, currency);
-  const subtotal = adults * prices.priceAdult + childrenCount * prices.priceChild;
+  const subtotal = adults * pricing.priceAdult + childrenCount * pricing.priceChild;
 
   return (
     <Modal
@@ -504,7 +486,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       <div className={styles.subtotalSection}>
         <p className={styles.subtotalLabel}>Subtotal:</p>
-        <p className={styles.subtotalAmount}>{formatPrice(subtotal, currency)}</p>
+        <p className={styles.subtotalAmount}>{formatPrice(subtotal)}</p>
       </div>
 
       <div className={styles.modalActions}>

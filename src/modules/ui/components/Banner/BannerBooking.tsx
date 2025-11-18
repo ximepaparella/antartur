@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon, IconName } from "@/components/icons/Icon";
-import { Calendar } from "@/modules/content/components/Calendar";
+import { Calendar } from "@/modules/booking/components/Calendar";
 import styles from "./BannerBooking.module.scss";
 
 interface BookingStep {
@@ -19,7 +19,6 @@ interface AvailabilityDate {
 }
 
 interface Pricing {
-  currency: "ARS" | "USD";
   priceAdult: number;
   priceChild: number;
 }

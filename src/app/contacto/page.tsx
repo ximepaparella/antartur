@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { ContactForm } from "@/modules/content/components/ContactForm/ContactForm";
-import { ContactInfo } from "@/modules/content/components/ContactInfo/ContactInfo";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { ContactForm } from "@/modules/ui/components/ContactForm/ContactForm";
+import { ContactInfo } from "@/modules/ui/components/ContactInfo/ContactInfo";
 import styles from "./page.module.scss";
 
 export const metadata: Metadata = {

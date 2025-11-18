@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { TourQuickInfo } from "@/modules/content/components/TourQuickInfo/TourQuickInfo";
-import { TourInfo } from "@/modules/content/components/TourInfo/TourInfo";
-import { TourGallery } from "@/modules/content/components/TourGallery/TourGallery";
-import { TourFeaturedInfo } from "@/modules/content/components/TourFeaturedInfo/TourFeaturedInfo";
-import { TourTimeline } from "@/modules/content/components/TourTimeline/TourTimeline";
-import { Banner, BannerBooking } from "@/modules/content/components/Banner";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { TourQuickInfo } from "@/modules/tours/components/TourQuickInfo/TourQuickInfo";
+import { TourInfo } from "@/modules/tours/components/TourInfo/TourInfo";
+import { TourGallery } from "@/modules/tours/components/TourGallery/TourGallery";
+import { TourFeaturedInfo } from "@/modules/tours/components/TourFeaturedInfo/TourFeaturedInfo";
+import { TourTimeline } from "@/modules/tours/components/TourTimeline/TourTimeline";
+import { Banner, BannerBooking } from "@/modules/ui/components/Banner";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import { Heading } from "@/components/common/Heading/Heading";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getTourById } from "@/modules/content/components/ToursGrid/toursData";
-import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
-import { getAllTours } from "@/modules/content/components/ToursGrid/toursData";
-import type { Testimonial as TestimonialType } from "@/modules/content/components/Testimonials/types";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getTourById } from "@/modules/tours/components/ToursGrid/toursData";
+import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getAllTours } from "@/modules/tours/components/ToursGrid/toursData";
+import type { Testimonial as TestimonialType } from "@/modules/ui/components/Testimonials/types";
 import styles from "./page.module.scss";
 
 interface TourPageProps {

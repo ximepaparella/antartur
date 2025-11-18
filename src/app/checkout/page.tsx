@@ -2,21 +2,18 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { CheckoutForm, type CheckoutFormRef } from "@/modules/content/components/CheckoutForm";
-import { MiniCart } from "@/modules/content/components/MiniCart";
-import { MiniCartSkeleton } from "@/modules/content/components/MiniCart/MiniCartSkeleton";
-import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
+import { MiniCart } from "@/modules/booking/components/MiniCart";
+import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
+import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
-import { useCurrency } from "@/contexts/CurrencyContext";
-import { getPriceByCurrency } from "@/lib/utils/priceFormat";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
-import { PaymentModal } from "@/modules/content/components/PaymentModal/PaymentModal";
+import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { currency } = useCurrency();
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
@@ -47,37 +44,6 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
-  // Actualizar precios cuando cambia la moneda
-  useEffect(() => {
-    if (bookingData) {
-      console.log("[Checkout] Currency changed:", currency);
-      console.log("[Checkout] Current bookingData.pricing:", bookingData.pricing);
-      console.log("[Checkout] TourId:", bookingData.tourId);
-      
-      const tour = getFullTourById(bookingData.tourId);
-      if (tour?.booking?.pricing) {
-        console.log("[Checkout] Tour pricing:", tour.booking.pricing);
-        // IMPORTANTE: Siempre usar el pricing completo del tour como fuente de verdad
-        // priceAdult y priceChild deben SIEMPRE ser valores en ARS (nunca modificarlos)
-        // Los valores USD están en priceAdultUSD y priceChildUSD
-        const updatedPricing: Pricing = {
-          ...tour.booking.pricing, // Mantener TODOS los valores originales (ARS y USD)
-          currency, // Solo actualizar metadata de moneda actual
-          // NO modificar priceAdult ni priceChild - deben permanecer como ARS
-        };
-        console.log("[Checkout] Updated pricing:", updatedPricing);
-        const updatedBooking = {
-          ...bookingData,
-          pricing: updatedPricing,
-        };
-        setBookingData(updatedBooking);
-        // Actualizar localStorage también
-        savePendingBooking(updatedBooking);
-      } else {
-        console.log("[Checkout] No tour or pricing found");
-      }
-    }
-  }, [currency, bookingData?.tourId]);
 
   // Obtener restricciones del tour
   const tour = bookingData ? getFullTourById(bookingData.tourId) : null;

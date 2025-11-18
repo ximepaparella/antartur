@@ -112,7 +112,6 @@ export interface Tour {
   // Booking (opcional)
   booking?: {
     pricing: {
-      currency: "ARS" | "USD";
       priceAdult: number;
       priceChild: number;
     };

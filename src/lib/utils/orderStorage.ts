@@ -3,7 +3,7 @@
  */
 
 import type { Order } from "../types/order";
-import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
+import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
 const ORDER_KEY_PREFIX = "order_";
@@ -17,7 +17,7 @@ export function savePendingBooking(bookingData: {
   date: string;
   adults: number;
   children: number;
-  pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+  pricing: { priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 }): void {
@@ -101,7 +101,7 @@ export function getPendingBooking(): {
   date: string;
   adults: number;
   children: number;
-  pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+  pricing: { priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 } | null {

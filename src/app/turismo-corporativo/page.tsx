@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 
 export const metadata: Metadata = {

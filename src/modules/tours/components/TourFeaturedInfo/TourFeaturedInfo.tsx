@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon } from "@/components/icons/Icon";
-import type { FeaturedInfoItem } from "@/modules/content/components/ToursGrid/tourTypes";
+import type { FeaturedInfoItem } from "@/modules/tours/types/tourTypes";
 import styles from "./TourFeaturedInfo.module.scss";
 
 // Re-exportar el tipo para conveniencia

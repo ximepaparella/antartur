@@ -1,0 +1,41 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Empty tables - structure to be defined later
+// These are placeholder tables to establish connection
+
+model Tour {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Structure to be defined later
+  // Will add: title, description, pricing, etc.
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Structure to be defined later
+  // Will add: tourId, passengers, dates, etc.
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Structure to be defined later
+  // Will add: email, password, role, etc.
+}
+

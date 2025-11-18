@@ -1,5 +1,5 @@
 import tourExampleJson from "./tourExample.json";
-import type { Tour } from "./tourTypes";
+import type { Tour } from "@/modules/tours/types/tourTypes";
 
 export type TourFullData = Record<string, Tour>;
 

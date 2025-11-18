@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
-import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
-import { Banner } from "@/modules/content/components/Banner/Banner";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
+import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
+import { Banner } from "@/modules/ui/components/Banner/Banner";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getToursByCategory } from "@/modules/tours/components/ToursGrid/toursData";
 
 export const metadata: Metadata = {
   title: "Verano - Excursiones de Verano en Tierra del Fuego | Antartur",

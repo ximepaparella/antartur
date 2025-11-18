@@ -2,7 +2,7 @@
  * Hook para manejar el estado centralizado del checkout
  */
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import type { BillingInfo, Passenger } from "@/lib/types/order";
 import {
   validateAll,
@@ -36,6 +36,7 @@ export function useCheckoutState({
   const [passengers, setPassengers] = useState<Passenger[]>(initialPassengers);
   const [billingInfo, setBillingInfo] = useState<BillingInfo>(initialBillingInfo);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const isInitialMount = useRef(true);
 
   // Sincronizar pasajeros cuando cambien los iniciales
   useEffect(() => {
@@ -43,6 +44,21 @@ export function useCheckoutState({
       setPassengers(initialPassengers);
     }
   }, [initialPassengers, passengers.length]);
+
+  // Notificar cambios en pasajeros después del render (evita setState durante render)
+  useEffect(() => {
+    // No notificar en el mount inicial
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (onPassengersChange) {
+      const adults = passengers.filter((p) => p.esAdulto).length;
+      const children = passengers.filter((p) => !p.esAdulto).length;
+      onPassengersChange(adults, children);
+    }
+  }, [passengers, onPassengersChange]);
 
   const restrictions = useMemo(
     () => ({
@@ -226,15 +242,12 @@ export function useCheckoutState({
         const children = updated.filter((p) => !p.esAdulto).length;
         updatePendingBookingPassengers(adults, children);
         
-        // Notificar cambio
-        if (onPassengersChange) {
-          onPassengersChange(adults, children);
-        }
+        // La notificación se hará en useEffect para evitar setState durante render
         
         return updated;
       });
     },
-    [onPassengersChange]
+    []
   );
 
   // Eliminar pasajero
@@ -248,10 +261,7 @@ export function useCheckoutState({
         const children = updated.filter((p) => !p.esAdulto).length;
         updatePendingBookingPassengers(adults, children);
         
-        // Notificar cambio
-        if (onPassengersChange) {
-          onPassengersChange(adults, children);
-        }
+        // La notificación se hará en useEffect para evitar setState durante render
         
         return updated;
       });
@@ -285,7 +295,7 @@ export function useCheckoutState({
         return newErrors;
       });
     },
-    [onPassengersChange]
+    []
   );
 
   // Estados derivados

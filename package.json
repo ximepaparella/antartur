@@ -10,6 +10,7 @@
     "lighthouse": "lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html"
   },
   "dependencies": {
+    "@prisma/client": "^5.7.0",
     "@types/nodemailer": "^7.0.3",
     "lucide-react": "^0.468.0",
     "next": "^15.0.3",
@@ -25,6 +26,7 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.0.3",
+    "prisma": "^5.7.0",
     "sass": "^1.80.4",
     "typescript": "^5.6.3"
   }

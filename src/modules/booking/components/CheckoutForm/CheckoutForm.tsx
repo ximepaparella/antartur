@@ -54,7 +54,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     date: string;
     adults: number;
     children: number;
-    pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+    pricing: { priceAdult: number; priceChild: number };
     timeSlot: { start: string; end: string };
     exceedsAvailability: boolean;
   } | null>(null);

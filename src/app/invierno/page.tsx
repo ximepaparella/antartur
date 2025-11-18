@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getToursByCategory } from "@/modules/tours/components/ToursGrid/toursData";
 
 export const metadata: Metadata = {
   title: "Invierno - Excursiones de Invierno en Tierra del Fuego | Antartur",
