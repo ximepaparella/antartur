@@ -4424,6 +4424,307 @@
       "canonicalUrl": "https://antartur.tur.ar/tour/experiencia-antartica",
       "ogImage": "/images/tours/experiencia-antartica/featured.jpg"
     }
+  },
+  "aventura-blanca": {
+    "card": {
+      "id": "aventura-blanca",
+      "featuredImage": "/images/tours/aventura-blanca/featured.jpg",
+      "subtitle": "Aventura en trineo Husky y motos de nieve en Husky Park Ushuaia.",
+      "title": "AVENTURA BLANCA",
+      "difficulty": "Baja",
+      "price": "$ 230.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "AVENTURA BLANCA",
+      "subheadline": "Aventura en trineo y motos de nieve...",
+      "backgroundImage": "/images/tours/aventura-blanca/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 230.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja / Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "sled-ride",
+          "label": "",
+          "value": "Paseo en trineo Husky (1,2 km)",
+          "icon": "family"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Recorrido en moto de nieve (5 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "husky-hug",
+          "label": "",
+          "value": "Abrazo Husky e interacción con los perros",
+          "icon": "family"
+        },
+        {
+          "id": "chocolate",
+          "label": "",
+          "value": "Chocolate caliente al final de la excursión",
+          "icon": "lunch"
+        }
+      ],
+      "restriction": "El orden de las actividades y los recorridos puede modificarse según condiciones de nieve, clima y tamaño del grupo, a criterio del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Aventura en trineo Husky y motos de nieve, con visita al parque y chocolate caliente en el valle Tierra Mayor.",
+      "long": [
+        "Partida desde tu hotel con destino al valle Tierra Mayor, donde se encuentra Husky Park Ushuaia. Al llegar, realizamos una visita guiada por el parque para conocer la historia, el cuidado y el entrenamiento de los perros de trineo, y la muestra dedicada a los exploradores de la nieve.",
+        "Luego llega el momento más esperado: nos ubicamos en los trineos y, al grito de \"¡siga, siga!\", comienza el paseo. Recorremos caminos nevados, atravesamos bosque de lengas y llegamos a la gran planicie blanca, con tiempo para disfrutar del paisaje y tomar fotografías.",
+        "El regreso se realiza en moto de nieve. Tras una breve instrucción, nos colocamos los cascos y salimos en caravana siguiendo al guía, completando un recorrido de ensueño entre bosques y planicies nevadas. También viviremos la experiencia Abrazo Husky, para interactuar y sacarnos fotos con los perros, y al finalizar recuperamos calorías con un chocolate caliente antes de regresar a Ushuaia."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de distintas edades podrán disfrutar de este paseo y todas sus actividades en la nieve."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guías bilingües especializados acompañan la visita al parque y las actividades en trineo y motos de nieve."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/aventura-blanca/gallery/1.jpg",
+        "alt": "Trineo tirado por perros huskies avanzando por el valle nevado"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/aventura-blanca/gallery/2.jpg",
+        "alt": "Pasajeros en moto de nieve recorriendo el bosque nevado"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/aventura-blanca/gallery/3.jpg",
+        "alt": "Huskies en acción durante el paseo en trineo"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/aventura-blanca/gallery/4.jpg",
+        "alt": "Grupo de pasajeros interactuando con los perros en el Abrazo Husky"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/aventura-blanca/gallery/5.jpg",
+        "alt": "Vista de la gran planicie nevada en el valle Tierra Mayor"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/aventura-blanca/gallery/6.jpg",
+        "alt": "Taza de chocolate caliente dentro del refugio"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/aventura-blanca/gallery/7.jpg",
+        "alt": "Moto de nieve avanzando por un sendero entre árboles nevados"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/aventura-blanca/gallery/8.jpg",
+        "alt": "Panorámica del valle Tierra Mayor durante la excursión"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park Ushuaia",
+          "description": "Te buscamos por tu hotel o alojamiento y te trasladamos en nuestros transfers hasta Husky Park, en el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Visita guiada al parque",
+          "description": "Recorrido por el parque para conocer la historia, el cuidado y el entrenamiento de los perros, la muestra de exploradores y la vida en la nieve."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Paseo en trineo Husky",
+          "description": "Iniciamos la travesía en trineos tirados por huskies, atravesando el valle y el bosque por antiguos caminos de leñadores hasta la gran planicie nevada."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Paseo en moto de nieve",
+          "description": "Tras la instrucción del guía, nos equipamos con cascos y realizamos un recorrido de aproximadamente 5 km en moto de nieve entre bosques y planicies."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Abrazo Husky y chocolate caliente",
+          "description": "Tiempo para abrazar y sacarse fotos con los huskies, y luego recuperar calorías con un chocolate caliente en el refugio."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Emprendemos el regreso a Ushuaia después de una mañana completa de aventura en la nieve."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, o realizar el paseo en forma individual (no combinada), dependiendo de las condiciones de la nieve, del clima y del tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 230000,
+        "priceChild": 160000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Una excursión hermosa para hacer en familia. Los chicos disfrutaron muchísimo del paseo en trineo y de los huskies, y el recorrido en moto de nieve fue increíble.",
+        "author": "Carolina R.",
+        "avatar": "/images/testimonials/aventura-blanca-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Aventura Blanca | Antartur Turismo Aventura",
+      "metaDescription": "Excursión de 5 horas en Husky Park Ushuaia con visita guiada, paseo en trineo tirado por huskies, recorrido en moto de nieve, Abrazo Husky y chocolate caliente.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/aventura-blanca",
+      "ogImage": "/images/tours/aventura-blanca/featured.jpg"
+    }
   }
 }
 
