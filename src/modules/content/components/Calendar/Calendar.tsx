@@ -8,8 +8,13 @@ import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
-import type { Pricing } from "@/lib/types/order";
+import type { Pricing, TimeSlot } from "@/lib/types/order";
 import styles from "./Calendar.module.scss";
+
+// Extensión del TimeSlot compartido para incluir disponibilidad (uso interno del componente)
+interface TimeSlotWithAvailability extends TimeSlot {
+  available: number;
+}
 
 interface AvailabilityDate {
   date: string; // YYYY-MM-DD
@@ -18,6 +23,13 @@ interface AvailabilityDate {
     start: string; // HH:mm
     end: string; // HH:mm
   };
+}
+
+// Estructura agrupada por fecha con múltiples horarios
+interface GroupedAvailability {
+  date: string;
+  timeSlots: TimeSlotWithAvailability[];
+  totalAvailable: number; // Máximo disponible entre todos los horarios (para mostrar en tooltip)
 }
 
 interface CalendarProps {
@@ -46,6 +58,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlotWithAvailability | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
   const [adults, setAdults] = useState(1);
@@ -55,12 +68,35 @@ export const Calendar: React.FC<CalendarProps> = ({
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
-  // Crear mapa de disponibilidad por fecha
-  const availabilityMap = useMemo(() => {
-    const map = new Map<string, AvailabilityDate>();
+  // Agrupar disponibilidades por fecha (soporta múltiples horarios por fecha)
+  const groupedAvailabilityMap = useMemo(() => {
+    const map = new Map<string, GroupedAvailability>();
+    
     availability.forEach((item) => {
-      map.set(item.date, item);
+      const existing = map.get(item.date);
+      
+      if (existing) {
+        // Ya existe esta fecha, agregar el nuevo horario
+        existing.timeSlots.push({
+          start: item.timeSlot.start,
+          end: item.timeSlot.end,
+          available: item.available,
+        });
+        existing.totalAvailable = Math.max(existing.totalAvailable, item.available);
+      } else {
+        // Primera vez que vemos esta fecha
+        map.set(item.date, {
+          date: item.date,
+          timeSlots: [{
+            start: item.timeSlot.start,
+            end: item.timeSlot.end,
+            available: item.available,
+          }],
+          totalAvailable: item.available,
+        });
+      }
     });
+    
     return map;
   }, [availability]);
 
@@ -93,7 +129,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     if (date < today) return false;
 
     const dateStr = formatDate(date);
-    return availabilityMap.has(dateStr);
+    return groupedAvailabilityMap.has(dateStr);
   };
 
   // Verificar si una fecha está deshabilitada
@@ -130,7 +166,14 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const dateStr = formatDate(date);
     setSelectedDate(dateStr);
-    // No abrir modal automáticamente, solo seleccionar fecha
+    
+    // Si hay múltiples horarios, seleccionar el primero por defecto
+    const grouped = groupedAvailabilityMap.get(dateStr);
+    if (grouped && grouped.timeSlots.length > 0) {
+      setSelectedTimeSlot(grouped.timeSlots[0]);
+    } else {
+      setSelectedTimeSlot(null);
+    }
   };
 
   // Calcular subtotal
@@ -140,18 +183,13 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   // Verificar si excede disponibilidad
   const exceedsAvailability = useMemo(() => {
-    if (!selectedDate) return false;
-    const avail = availabilityMap.get(selectedDate);
-    if (!avail) return false;
-    return adults + children > avail.available;
-  }, [selectedDate, adults, children, availabilityMap]);
+    if (!selectedDate || !selectedTimeSlot) return false;
+    return adults + children > selectedTimeSlot.available;
+  }, [selectedDate, selectedTimeSlot, adults, children]);
 
   // Manejar reserva
   const handleBooking = () => {
-    if (!selectedDate) return;
-    
-    const selectedAvailability = availabilityMap.get(selectedDate);
-    if (!selectedAvailability) return;
+    if (!selectedDate || !selectedTimeSlot) return;
 
     // Crear objeto de reserva inicial
     const bookingData = {
@@ -161,8 +199,11 @@ export const Calendar: React.FC<CalendarProps> = ({
       adults,
       children,
       pricing,
-      timeSlot: selectedAvailability.timeSlot,
-      exceedsAvailability: adults + children > selectedAvailability.available,
+      timeSlot: {
+        start: selectedTimeSlot.start,
+        end: selectedTimeSlot.end,
+      },
+      exceedsAvailability: adults + children > selectedTimeSlot.available,
     };
 
     // Guardar en localStorage
@@ -198,7 +239,8 @@ export const Calendar: React.FC<CalendarProps> = ({
     calendarDays.push({ date, isCurrentMonth: false });
   }
 
-  const selectedAvailability = selectedDate ? availabilityMap.get(selectedDate) : null;
+  const selectedGrouped = selectedDate ? groupedAvailabilityMap.get(selectedDate) : null;
+  const hasMultipleTimeSlots = selectedGrouped ? selectedGrouped.timeSlots.length > 1 : false;
 
   return (
     <>
@@ -239,7 +281,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             const isDisabled = isDateDisabled(date);
             const isAvailable = isDateAvailable(date);
             const isSelected = selectedDate === dateStr;
-            const avail = availabilityMap.get(dateStr);
+            const grouped = groupedAvailabilityMap.get(dateStr);
+            const totalAvailable = grouped?.totalAvailable || 0;
             const isHovered = hoveredDate === dateStr;
 
             return (
@@ -255,9 +298,9 @@ export const Calendar: React.FC<CalendarProps> = ({
                 onMouseLeave={() => setHoveredDate(null)}
               >
                 <span className={styles.dayNumber}>{date.getDate()}</span>
-                {isHovered && avail && (
+                {isHovered && grouped && (
                   <Tooltip position="top">
-                    {avail.available} Disponibles
+                    {totalAvailable} Disponibles{grouped.timeSlots.length > 1 ? ` (${grouped.timeSlots.length} horarios)` : ""}
                   </Tooltip>
                 )}
               </div>
@@ -265,15 +308,51 @@ export const Calendar: React.FC<CalendarProps> = ({
           })}
         </div>
 
-        {selectedDate && selectedAvailability && (
+        {selectedDate && selectedGrouped && selectedTimeSlot && (
           <div className={styles.selectedDateInfo}>
             <p className={styles.selectedDateText}>
-              {formatDisplayDate(selectedDate)} a{" "}
-              {selectedAvailability.timeSlot.start} – {selectedAvailability.timeSlot.end}
+              {formatDisplayDate(selectedDate)}
             </p>
+            
+            <div className={styles.timeSlotsSelection}>
+              {hasMultipleTimeSlots && (
+                <p className={styles.timeSlotsLabel}>Seleccioná el horario:</p>
+              )}
+              <div className={styles.timeSlotsRadioGroup}>
+                {selectedGrouped.timeSlots.map((slot, index) => (
+                  <label
+                    key={`${slot.start}-${slot.end}`}
+                    className={`${styles.timeSlotRadio} ${
+                      selectedTimeSlot.start === slot.start && selectedTimeSlot.end === slot.end
+                        ? styles.timeSlotRadioSelected
+                        : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`timeSlot-${selectedDate}`}
+                      value={`${slot.start}-${slot.end}`}
+                      checked={
+                        selectedTimeSlot.start === slot.start && selectedTimeSlot.end === slot.end
+                      }
+                      onChange={() => setSelectedTimeSlot(slot)}
+                      className={styles.radioInput}
+                    />
+                    <span className={styles.radioLabel}>
+                      {slot.start} – {slot.end}
+                      <span className={styles.radioAvailable}>
+                        ({slot.available} disponibles)
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            
             <Button
               variant="tertiary"
               onClick={() => setShowModal(true)}
+              disabled={!selectedTimeSlot}
             >
               Reservar
             </Button>
@@ -281,12 +360,11 @@ export const Calendar: React.FC<CalendarProps> = ({
         )}
       </div>
 
-      {showModal && selectedDate && selectedAvailability && (
+      {showModal && selectedDate && selectedTimeSlot && (
         <BookingModal
           tourTitle={tourTitle}
           date={formatDisplayDate(selectedDate)}
-          timeSlot={`${selectedAvailability.timeSlot.start} – ${selectedAvailability.timeSlot.end}`}
-          available={selectedAvailability.available}
+          timeSlot={`${selectedTimeSlot.start} – ${selectedTimeSlot.end}`}
           pricing={pricing}
           adults={adults}
           childrenCount={children}
@@ -312,7 +390,6 @@ interface BookingModalProps {
   tourTitle: string;
   date: string;
   timeSlot: string;
-  available: number;
   pricing: Pricing;
   adults: number;
   childrenCount: number;
@@ -328,7 +405,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
   tourTitle,
   date,
   timeSlot,
-  available,
   pricing,
   adults,
   childrenCount,

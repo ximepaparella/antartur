@@ -113,21 +113,6 @@
         "id": "g7",
         "src": "/images/tours/lagos-off-road/gallery/7.jpg",
         "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g8",
-        "src": "/images/tours/lagos-off-road/gallery/8.jpg",
-        "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g9",
-        "src": "/images/tours/lagos-off-road/gallery/9.jpg",
-        "alt": "Vehículos 4x4 en el camino"
-      },
-      {
-        "id": "g10",
-        "src": "/images/tours/lagos-off-road/gallery/10.jpg",
-        "alt": "Vehículos 4x4 en el camino"
       }
     ],
     "timeline": {
@@ -312,6 +297,4433 @@
       "metaDescription": "Excursión 4x4 completa que recorre los lagos Escondido y Fagnano, con opción de canotaje y almuerzo en refugio. Apto para familias.",
       "canonicalUrl": "https://antartur.tur.ar/tours/lagos-off-road",
       "ogImage": "/images/tours/lagos-off-road/featured.jpg"
+    }
+  },
+  "trekking-glaciar-ojo-de-albino": {
+    "card": {
+      "id": "trekking-glaciar-ojo-de-albino",
+      "featuredImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg",
+      "subtitle": "Un trekking para exigentes...",
+      "title": "TREKKING GLACIAR OJO DE ALBINO",
+      "difficulty": "Alta",
+      "price": "$ 295.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING GLACIAR OJO DE ALBINO",
+      "subheadline": "Un trekking para exigentes...",
+      "backgroundImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg"
+    },
+    "quickInfo": {
+      "price": "$ 295.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Alta",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "9 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking de alta exigencia",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Excursión de alta exigencia, no apta para mujeres embarazadas, personas mayores o con dolencias físicas.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Un trekking para exigentes hacia el Glaciar Ojo del Albino, combinando Laguna Esmeralda, ascenso exigente y vistas incomparables.",
+      "long": [
+        "Esta excursión incluye el trekking a Laguna Esmeralda agregando el ascenso a lo largo del principal afluente de la laguna, que tiene su naciente en el Glaciar Ojo del Albino. El glaciar nos sorprende con un espectáculo de hielo y montañas. Arribamos al mirador del valle donde almorzamos disfrutando de incomparables vistas desde 900 msnm.",
+        "Continuamos la travesía, con paradas en puntos panorámicos de impactante belleza. Dificultad: muy exigente - 20 kms trekking y 800 mts de desnivel aproximadamente."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/1.jpg",
+        "alt": "Trekking hacia el Glaciar Ojo de Albino"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/2.jpg",
+        "alt": "Grupo de trekking en zona boscosa camino al glaciar"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/3.jpg",
+        "alt": "Vista panorámica del valle y montañas nevadas"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/4.jpg",
+        "alt": "Camino de montaña rumbo al Glaciar Ojo de Albino"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/5.jpg",
+        "alt": "Glaciar Ojo del Albino y su entorno"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/6.jpg",
+        "alt": "Sendero de trekking con vistas a la laguna"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/7.jpg",
+        "alt": "Trekking en la zona alta del valle"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/trekking-glaciar-ojo-de-albino/gallery/8.jpg",
+        "alt": "Panorámica del glaciar y montañas circundantes"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:00 AM",
+          "title": "Traslado a Nunatak",
+          "description": "Se buscará a los pasajeros por sus hoteles o alojamientos y se los trasladará en exclusivos transfers hasta Nunatak, en el valle Tierra Mayor, donde comenzará la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Refugio Nunatak e inicio del trekking",
+          "description": "Luego de repartir los box lunch y bastones de trekking se inicia la caminata rumbo a Laguna Esmeralda."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "11:00 AM",
+          "title": "Laguna Esmeralda",
+          "description": "Arribamos a Laguna Esmeralda, parada en punto panorámico con hermosas vistas de la laguna y del glaciar al fondo."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "12:30 PM",
+          "title": "Límite de bosque",
+          "description": "Dejamos atrás el bosque andino y comenzamos el ascenso hacia el glaciar."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "2:30 PM",
+          "title": "Glaciar Ojo del Albino",
+          "description": "Arribamos al glaciar. Tiempo para disfrutar de un paisaje de indescriptible belleza, puntos panorámicos y almuerzo en altura."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "3:30 PM",
+          "title": "Regreso al refugio",
+          "description": "Emprendemos el regreso al refugio Nunatak siguiendo el mismo valle, con nuevas vistas del entorno."
+        }
+      ],
+      "importantNote": "Itinerario a modo informativo, puede variar considerablemente de acuerdo al grupo y a las condiciones climáticas."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 295000,
+        "priceChild": 295000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 7,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 6,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "6:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hice las excursiones a Glaciares Vinciguerra y Ojo del Albino. Bellísimos. Vale la pena el esfuerzo de las largas caminatas para deslumbrarse con el paisaje que nos espera al llegar. La vianda, súper completa. Los chicos, divinos. Lo volvería a hacer, sin duda.",
+        "author": "Vanesa P.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Glaciar Ojo de Albino | Antartur Turismo Aventura",
+      "metaDescription": "Trekking de alta exigencia hacia el Glaciar Ojo del Albino, combinando Laguna Esmeralda, ascenso exigente y vistas incomparables en Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-glaciar-ojo-de-albino",
+      "ogImage": "/images/tours/trekking-glaciar-ojo-de-albino/featured.jpeg"
+    }
+  },
+  "parque-trekking-canoas": {
+    "card": {
+      "id": "parque-trekking-canoas",
+      "featuredImage": "/images/tours/parque-trekking-canoas/featured.jpg",
+      "subtitle": "Trekking, canoas y mucha aventura.",
+      "title": "Parque Trekking & Canoas",
+      "difficulty": "Media",
+      "price": "$ 180.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "Parque Trekking & Canoas",
+      "subheadline": "Una experiencia para disfrutar...",
+      "backgroundImage": "/images/tours/parque-trekking-canoas/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 180.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Media",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo y bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "canoas",
+          "label": "",
+          "value": "Canoas",
+          "icon": "kayak"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        }
+      ],
+      "restriction": "El orden de las actividades puede variar según condiciones climáticas y tamaño del grupo, a consideración del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una experiencia para disfrutar en el Parque Nacional Tierra del Fuego, combinando trekking costero y canoas en el Canal Beagle.",
+      "long": [
+        "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego, más precisamente a Ensenada Zaratiegui, donde podremos disfrutar de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas.",
+        "Desde allí emprendemos una caminata por la Senda Costera, siete kilómetros de recorrido nos permitirán conocer la variada flora y avifauna del Canal Beagle y el bosque fueguino, como así también vestigios de antiguos asentamientos Yámanas, nativos del lugar. Luego de 3 horas de caminata accedemos al Lago Roca, donde tomamos un reparador almuerzo caliente.",
+        "Luego de almorzar, comenzamos el paseo en botes inflables por el río Lapataia; este río nos acerca a nuestro objetivo, la bahía Lapataia en el Canal Beagle, precisamente donde culmina la Ruta Panamericana y la Ruta Nacional Nº 3. Desde allí comenzamos el regreso a Ushuaia en minibús. Almuerzo: picada, cazuela de pollo, frutas, alfajores y bebidas (vino, gaseosa, agua mineral, té). Proveemos botas de goma, chaleco salvavidas y traje impermeable. No incluye accesos al Parque Nacional Tierra del Fuego."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias.",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y todas sus actividades."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-trekking-canoas/gallery/1.jpg",
+        "alt": "Remada en canoas en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-trekking-canoas/gallery/2.jpg",
+        "alt": "Trekking por el bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-trekking-canoas/gallery/3.jpg",
+        "alt": "Canoas navegando el río Lapataia"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-trekking-canoas/gallery/4.jpg",
+        "alt": "Refugio o domo en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/parque-trekking-canoas/gallery/5.jpg",
+        "alt": "Remada en canoas con paisaje de montaña"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/parque-trekking-canoas/gallery/6.jpg",
+        "alt": "Sendero de trekking en el Parque Nacional"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/parque-trekking-canoas/gallery/7.jpg",
+        "alt": "Interior del domo preparado para el almuerzo"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/parque-trekking-canoas/gallery/8.jpg",
+        "alt": "Exterior del domo en el Parque Nacional"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/parque-trekking-canoas/gallery/9.jpg",
+        "alt": "Brindis al finalizar la excursión en bahía Lapataia"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/parque-trekking-canoas/gallery/10.jpg",
+        "alt": "Grupo disfrutando del paisaje en el Parque Nacional"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Ensenada Zaratiegui",
+          "description": "Disfrutamos de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Trekking por la Senda Costera",
+          "description": "Emprendemos una caminata de 7 km por la Senda Costera, conociendo la flora y avifauna del Canal Beagle, el bosque fueguino y vestigios de antiguos asentamientos Yámanas."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "1:00 PM",
+          "title": "Almuerzo en el Lago Roca",
+          "description": "Luego de unas 3 horas de caminata, accedemos al Lago Roca y disfrutamos de un reparador almuerzo caliente."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "3:00 PM",
+          "title": "Botes inflables en el río Lapataia",
+          "description": "Comenzamos el paseo en botes inflables por el río Lapataia, que nos lleva hasta la bahía Lapataia en el Canal Beagle, donde culmina la Ruta Panamericana y la Ruta Nacional Nº 3."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "5:00 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Desde bahía Lapataia emprendemos el regreso a Ushuaia en minibús."
+        }
+      ],
+      "importantNote": "El orden de las actividades y los recorridos puede variar según las condiciones climáticas y de la nieve, y de acuerdo al tamaño del grupo, a consideración del guía y sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 180000,
+        "priceChild": 150000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:45 am",
+            "end": "5:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Trekking & Canoas | Antartur Turismo Aventura",
+      "metaDescription": "Trekking, canoas y mucha aventura en el Parque Nacional Tierra del Fuego: caminata por la Senda Costera, almuerzo caliente y navegación en botes inflables por el río Lapataia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-trekking-canoas",
+      "ogImage": "/images/tours/parque-trekking-canoas/featured.jpg"
+    }
+  },
+  "parque-aventura": {
+    "card": {
+      "id": "parque-aventura",
+      "featuredImage": "/images/tours/parque-aventura/featured.jpg",
+      "subtitle": "Un parque a tu medida!!",
+      "title": "PARQUE AVENTURA",
+      "difficulty": "Media",
+      "price": "$ 150.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PARQUE AVENTURA",
+      "subheadline": "Una experiencia para disfrutar...",
+      "backgroundImage": "/images/tours/parque-aventura/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 150.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Media",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo y bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        }
+      ],
+      "restriction": "No incluye accesos al Parque Nacional Tierra del Fuego.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una experiencia para disfrutar en el Parque Nacional Tierra del Fuego, con pequeñas caminatas, vistas increíbles y almuerzo a orillas del río Lapataia.",
+      "long": [
+        "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego, la primer parada será en Ensenada Zaratiegui, donde podremos disfrutar de hermosas vistas del Canal Beagle, con las islas Redonda, Hoste y Navarino como protagonistas. La próxima parada nos acerca al lago Roca, bellísimo lago compartido con Chile, finalmente llegamos a la bahía Lapataia en el Canal Beagle, precisamente donde culmina la Ruta Panamericana y Ruta Nacional Nº 3.",
+        "A lo largo del recorrido realizaremos pequeñas caminatas que nos permitirán conocer la variada flora y avifauna del Canal Beagle y el bosque fueguino, como así también vestigios de antiguos asentamientos Yámanas, nativos del lugar. Terminamos con un reparador almuerzo caliente, y desde allí comenzamos el regreso a Ushuaia en minibús. Almuerzo: brochette de quesos, cazuela de cordero, applecrumble de manzana con salsa de frutos del bosque, alfajores y bebidas (vino, gaseosa, agua mineral, té). No incluye accesos al Parque Nacional Tierra del Fuego."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias.",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y todas sus actividades."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-aventura/gallery/1.jpg",
+        "alt": "Trekking en el Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-aventura/gallery/2.jpg",
+        "alt": "Sendero entre el bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-aventura/gallery/3.jpg",
+        "alt": "Paisaje de montaña y lago en el Parque Nacional"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-aventura/gallery/4.jpg",
+        "alt": "Interior del domo preparado para el almuerzo"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/parque-aventura/gallery/5.jpg",
+        "alt": "Exterior del domo junto al río Lapataia"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/parque-aventura/gallery/6.jpg",
+        "alt": "Grupo disfrutando de las vistas en bahía Lapataia"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Salida desde el hotel en minibús rumbo al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Ensenada Zaratiegui",
+          "description": "Primera parada en Ensenada Zaratiegui para disfrutar de las vistas del Canal Beagle y las islas Redonda, Hoste y Navarino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Lago Acigami",
+          "description": "Contemplamos el majestuoso paisaje caminando por las orillas del lago Acigami."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Hacia bahía Lapataia",
+          "description": "Continuamos nuestro recorrido descubriendo flora y fauna a nuestro paso hasta llegar a bahía Lapataia, el fin de la Ruta 3."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Almuerzo",
+          "description": "Enclavado en un paisaje increíble, disfrutamos de un rico almuerzo a orillas del río Lapataia."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:15 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Comenzamos el regreso a Ushuaia en minibús."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "2:00 PM",
+          "title": "Llegada al Hotel",
+          "description": "De nuevo en el hotel luego de una hermosa jornada en el Parque Nacional."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, dependiendo de las condiciones climáticas y del tamaño del grupo, a consideración del guía, sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 150000,
+        "priceChild": 150000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "2:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Aventura | Antartur Turismo Aventura",
+      "metaDescription": "Excursión Parque Aventura en el Parque Nacional Tierra del Fuego: pequeñas caminatas, vistas del Canal Beagle, Lago Acigami, bahía Lapataia y almuerzo caliente a orillas del río Lapataia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-aventura",
+      "ogImage": "/images/tours/parque-aventura/featured.jpg"
+    }
+  },
+  "trekking-glaciar-vinciguerra": {
+    "card": {
+      "id": "trekking-glaciar-vinciguerra",
+      "featuredImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg",
+      "subtitle": "Una experiencia para grandes aventureros",
+      "title": "TREKKING GLACIAR VINCIGUERRA",
+      "difficulty": "Alta",
+      "price": "$ 200.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING GLACIAR VINCIGUERRA",
+      "subheadline": "Trekking para grandes aventureros hacia la Laguna de los Témpanos y el glaciar.",
+      "backgroundImage": "/images/tours/trekking-glaciar-vinciguerra/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 200.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Exigente",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking de alta exigencia",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Es un trekking de alta exigencia, apto solo para personas con buen estado físico. 13 kms de trekking y 650 mts de desnivel.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Un trekking exigente hacia la Laguna de los Témpanos y el Glaciar Vinciguerra, ideal para grandes aventureros.",
+      "long": [
+        "Comenzamos la caminata en el valle de Andorra, donde después de cruzar antiquísimas turberas nos adentramos en el bosque fueguino. A medida que ganamos altura, el paisaje va cambiando hasta llegar a orillas de la Laguna de los Témpanos, con imponentes vistas del Glaciar Vinciguerra.",
+        "Luego de explorar los alrededores y tocar el hielo, disfrutaremos del box lunch en un entorno único y emprendemos la caminata de regreso por el mismo valle. Es un trekking de alta exigencia, con aproximadamente 13 km de recorrido y 650 metros de desnivel. Proveemos bastón de trekking y crampones."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "fit-people",
+        "icon": "users",
+        "title": "Apto para personas con buen estado físico",
+        "description": "Trekking de alta exigencia física: 13 km de caminata y 650 m de desnivel, recomendado para aventureros con buena condición física."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/1.jpg",
+        "alt": "Trekking en el valle de Andorra rumbo al Glaciar Vinciguerra"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/2.jpg",
+        "alt": "Sendero entre turberas y bosque fueguino"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/3.jpg",
+        "alt": "Vista de la Laguna de los Témpanos frente al glaciar"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/4.jpg",
+        "alt": "Grupo de trekking avanzando por terreno de montaña"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/trekking-glaciar-vinciguerra/gallery/5.jpg",
+        "alt": "Glaciar Vinciguerra y sus formaciones de hielo"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Se buscará a los pasajeros por sus hoteles o alojamientos y se los trasladará en exclusivos transfers hasta el valle de Andorra."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Valle de Andorra",
+          "description": "Comenzamos la caminata en el valle de Andorra, cruzando antiguas turberas y adentrándonos en el bosque fueguino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "1:30 PM",
+          "title": "Laguna de los Témpanos",
+          "description": "Vamos tomando altura hasta llegar a orillas de la Laguna de los Témpanos, donde tendremos imponentes vistas del Glaciar Vinciguerra."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "2:30 PM",
+          "title": "Almuerzo junto al glaciar",
+          "description": "Luego de explorar los alrededores y tocar el hielo, disfrutaremos del box lunch en un entorno único de montaña y hielo."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "4:00 PM",
+          "title": "Regreso al Hotel",
+          "description": "Emprendemos la caminata de regreso por el mismo valle y luego el traslado a los hoteles en Ushuaia."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, dependiendo de las condiciones climáticas y de la nieve, y del tamaño del grupo, a consideración del guía y sin derecho a reclamo alguno por parte de los pasajeros."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 200000,
+        "priceChild": 200000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 8,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 8,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 7,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 6,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 10,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "6:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hice el trekking al Glaciar Vinciguerra y la Laguna de los Témpanos. El esfuerzo vale totalmente la pena: paisajes increíbles y una experiencia inolvidable.",
+        "author": "Vanesa P.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Glaciar Vinciguerra | Antartur Turismo Aventura",
+      "metaDescription": "Trekking de alta exigencia hacia la Laguna de los Témpanos y el Glaciar Vinciguerra, con vistas imponentes, box lunch y guía bilingüe desde Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-glaciar-vinciguerra",
+      "ogImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg"
+    }
+  },
+  "trekking-laguna-esmeralda": {
+    "card": {
+      "id": "trekking-laguna-esmeralda",
+      "featuredImage": "/images/tours/trekking-laguna-esmeralda/featured.jpg",
+      "subtitle": "Lugar de ensueño!",
+      "title": "TREKKING LAGUNA ESMERALDA",
+      "difficulty": "Media",
+      "price": "$ 160.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING LAGUNA ESMERALDA",
+      "subheadline": "Una caminata sin igual...",
+      "backgroundImage": "/images/tours/trekking-laguna-esmeralda/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 160.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "7 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        },
+        {
+          "id": "equipment",
+          "label": "",
+          "value": "Incluye bastones de trekking",
+          "icon": "check"
+        }
+      ],
+      "restriction": "No está permitido para embarazadas, personas con problemas cardíacos, respiratorios o circulatorios, problemas de rodilla o columna.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una caminata sin igual hasta la Laguna Esmeralda, atravesando turberas, arroyos y bosques fueguinos.",
+      "long": [
+        "Partida desde el hotel en minibús por vía terrestre (20 kms) hasta el valle Tierra Mayor. Desde el refugio Nunatak iniciamos la caminata durante la cual atravesamos túrbales, arroyos y centenarios bosques de Lengas y Coihues. La posibilidad de avistar zorros, cóndores y castores está siempre latente.",
+        "La Laguna Esmeralda se encuentra en el corazón de la Reserva Natural y Paisajística Tierra del Fuego. El color de sus aguas y su ubicación geográfica en plena cordillera fueguina nos invita a detenernos, descansar en sus orillas mientras almorzamos. Finalmente emprendemos el regreso al refugio por un camino diferente al de ida y posteriormente regresamos al hotel."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "not-allowed",
+        "icon": "alert-circle",
+        "title": "Restricciones físicas",
+        "description": "No está permitido para embarazadas, personas con problemas cardíacos, respiratorios o circulatorios, problemas de rodilla o columna."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/1.jpg",
+        "alt": "Vista de la Laguna Esmeralda rodeada de montañas"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/2.jpg",
+        "alt": "Sendero de trekking atravesando turberas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/3.jpg",
+        "alt": "Bosque de Lengas y Coihues en el camino a la laguna"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Partida desde el hotel en minibús por vía terrestre (20 kms) hasta el Refugio Nunatak, ubicado en el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "10:00 AM",
+          "title": "Refugio Nunatak e inicio del trekking",
+          "description": "Desde el refugio Nunatak y luego de equiparnos con bastones de trekking iniciamos la caminata, atravesando turbales, arroyos y bosques de Lengas y Coihues."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "12:30 PM",
+          "title": "Laguna Esmeralda",
+          "description": "Arribamos a la Laguna Esmeralda, en el corazón de la Reserva Natural y Paisajística Tierra del Fuego. Tiempo para descansar en sus orillas y almorzar."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "2:00 PM",
+          "title": "Regreso al Refugio",
+          "description": "Emprendemos el regreso al refugio por un camino diferente al de ida, disfrutando nuevas vistas del entorno."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "3:30 PM",
+          "title": "Regreso al Hotel",
+          "description": "Traslado en minibús de regreso a los hoteles en Ushuaia."
+        }
+      ],
+      "importantNote": "Itinerario a modo informativo, puede variar de acuerdo a las condiciones climáticas y al grupo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 160000,
+        "priceChild": 140000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 14,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Laguna Esmeralda | Antartur Turismo Aventura",
+      "metaDescription": "Trekking a la Laguna Esmeralda desde Ushuaia: caminata moderada de 7 horas atravesando turberas, arroyos y bosques fueguinos hasta una laguna de ensueño en plena cordillera.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-laguna-esmeralda-verano",
+      "ogImage": "/images/tours/trekking-laguna-esmeralda/featured.jpg"
+    }
+  },
+  "pinguinera-isla-martillo": {
+    "card": {
+      "id": "pinguinera-isla-martillo",
+      "featuredImage": "/images/tours/pinguinera-isla-martillo/featured.jpg",
+      "subtitle": "Experiencia imperdible!",
+      "title": "PINGUINERA ISLA MARTILLO",
+      "difficulty": "Baja",
+      "price": "$ 165.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PINGUINERA ISLA MARTILLO",
+      "subheadline": "Navegación por el Canal Beagle hasta la pingüinera...",
+      "backgroundImage": "/images/tours/pinguinera-isla-martillo/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 165.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "6 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "navigation",
+          "label": "",
+          "value": "Navegación",
+          "icon": "kayak"
+        },
+        {
+          "id": "season",
+          "label": "",
+          "value": "Operativa hasta el 02/04/24",
+          "icon": "calendar"
+        }
+      ],
+      "restriction": "Salida sujeta a condiciones climáticas y operativa hasta el 02/04/24.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Navegación por el Canal Beagle hacia Isla Martillo para avistar pingüinos magallánicos y fauna marina del fin del mundo.",
+      "long": [
+        "Embarcamos en el muelle de Ushuaia para navegar por el Canal Beagle hacia Isla de los Pájaros, Isla de los Lobos y el icónico Faro Les Eclaireurs, disfrutando de las mejores vistas panorámicas de la ciudad y las montañas que la rodean.",
+        "Continuamos la navegación hasta Isla Martillo, donde se encuentra una colonia de pingüinos magallánicos. Durante el recorrido también avistaremos lobos marinos y una colonia de cormoranes imperiales, entre otras aves, viviendo una experiencia única de naturaleza en el extremo sur del continente."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      },
+      {
+        "id": "port-tax",
+        "icon": "check",
+        "title": "Incluye tasa de puerto",
+        "description": "La tarifa indicada incluye la tasa de puerto para el embarque en Ushuaia."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/1.jpg",
+        "alt": "Pingüinos magallánicos en la costa de Isla Martillo"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/2.jpg",
+        "alt": "Catamarán navegando el Canal Beagle"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/3.jpg",
+        "alt": "Colonia de pingüinos en la pingüinera Isla Martillo"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/4.jpg",
+        "alt": "Vista cercana de pingüinos sobre la costa rocosa"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/5.jpg",
+        "alt": "Paisaje del Canal Beagle con montañas nevadas de fondo"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/6.jpg",
+        "alt": "Isla de los Lobos con lobos marinos descansando en las rocas"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/7.jpg",
+        "alt": "Faro Les Eclaireurs en medio del Canal Beagle"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/8.jpg",
+        "alt": "Vista panorámica de Ushuaia desde el agua"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/9.jpg",
+        "alt": "Vista panorámica de Ushuaia desde el agua"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "08:00 AM / 14:00 PM",
+          "title": "Embarque en Ushuaia",
+          "description": "Embarque en el muelle turístico de Ushuaia en los horarios AM o PM para iniciar la navegación por el Canal Beagle."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "",
+          "title": "Isla de los Pájaros",
+          "description": "Navegamos hacia la Isla de los Pájaros, donde observamos diferentes aves marinas típicas del Canal Beagle."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "",
+          "title": "Isla de los Lobos",
+          "description": "Continuamos hacia la Isla de los Lobos, hogar de colonias de lobos marinos, que podremos observar en su hábitat natural."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "",
+          "title": "Faro Les Eclaireurs",
+          "description": "Pasamos frente al famoso Faro Les Eclaireurs, uno de los íconos del Canal Beagle, rodeado por cormoranes imperiales y otras aves."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "",
+          "title": "Isla Martillo – Pingüinera",
+          "description": "Llegamos a Isla Martillo, donde encontramos una colonia de pingüinos magallánicos y una pequeña colonia de pingüinos papúa, avistándolos desde la embarcación."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "14:30 PM / 20:30 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Regresamos a Ushuaia disfrutando de vistas panorámicas de la ciudad y la cordillera que la rodea."
+        }
+      ],
+      "importantNote": "Itinerario y horarios sujetos a condiciones climáticas, operativa portuaria y organización de la naviera."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 165000,
+        "priceChild": 140000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 35,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 32,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 30,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 28,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio! A navegação até a Pinguinera Isla Martillo foi maravilhosa, vimos muitos pingüins e a paisagem do Canal Beagle é inesquecível.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Pinguinera Isla Martillo | Antartur Turismo Aventura",
+      "metaDescription": "Navegación por el Canal Beagle hacia la Pinguinera Isla Martillo desde Ushuaia. Avistaje de pingüinos magallánicos, lobos marinos, cormoranes y vistas únicas del fin del mundo.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/pinguinera/",
+      "ogImage": "/images/tours/pinguinera-isla-martillo/featured.jpg"
+    }
+  },
+  "parque-nacional-clasico": {
+    "card": {
+      "id": "parque-nacional-clasico",
+      "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
+      "subtitle": "El Parque del fin del mundo!!",
+      "title": "PARQUE NACIONAL CLÁSICO",
+      "difficulty": "Baja",
+      "price": "$ 90.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PARQUE NACIONAL CLÁSICO",
+      "subheadline": "El Parque del fin del mundo… montañas, mar y bosque en una sola excursión.",
+      "backgroundImage": "/images/tours/parque-nacional-clasico/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 90.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "6 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "transport",
+          "label": "",
+          "value": "En Bus",
+          "icon": "off-road"
+        },
+        {
+          "id": "train",
+          "label": "",
+          "value": "Opcional Tren del Fin del Mundo",
+          "icon": "map-route"
+        }
+      ],
+      "restriction": "No incluye acceso al Parque Nacional Tierra del Fuego. El Tren del Fin del Mundo es un servicio opcional con costo adicional.",
+      "alternative": {
+        "text": "Tren del Fin del Mundo (opcional)",
+        "price": "$ 60.000"
+      },
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "El Parque Nacional del Fin del Mundo, único en Argentina por albergar montañas, mar y bosque a pocos kilómetros de Ushuaia.",
+      "long": [
+        "El Parque Nacional Tierra del Fuego se encuentra ubicado a solo 12 kilómetros de la ciudad de Ushuaia. Es único en Argentina por albergar montañas, mar y bosque en un mismo entorno. La excursión comienza recorriendo parte de la Ruta Nacional N°3, atravesando el valle del río Pipo y el faldeo del Monte Susana hasta llegar a la estación del Ferrocarril Austral Fueguino, uno de los sectores donde trabajaban los reclusos del antiguo presidio de Ushuaia.",
+        "Luego de una breve visita a las instalaciones, quienes lo deseen podrán realizar el recorrido de aproximadamente una hora en el Tren del Fin del Mundo, mientras el resto del grupo continúa en bus con el guía para ingresar al Parque Nacional. Después de reencontrarnos, seguimos visitando los puntos más atractivos del Parque Nacional Tierra del Fuego, con paradas en miradores y sectores panorámicos.",
+        "Dentro del parque visitaremos el Lago Roca (o Acigami) y la bahía Lapataia, donde finaliza la Ruta Nacional N°3, parte de la mítica Ruta Panamericana. En cada sitio realizaremos cortas caminatas para apreciar las distintas especies del bosque nativo y la fauna preservada dentro del Parque Nacional más austral de Argentina."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Excursión de baja dificultad, ideal para todas las edades, con traslados en bus y pequeñas caminatas."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guías especializados y bilingües que acompañan durante todo el recorrido por el Parque Nacional."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-nacional-clasico/gallery/1.jpg",
+        "alt": "Cartel de ingreso al Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-nacional-clasico/gallery/2.jpg",
+        "alt": "Vista panorámica del Lago Roca rodeado de montañas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-nacional-clasico/gallery/3.jpg",
+        "alt": "Bahía Lapataia y el cartel del fin de la Ruta 3"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-nacional-clasico/gallery/4.jpg",
+        "alt": "Sendero entre el bosque nativo dentro del parque"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el hotel",
+          "description": "Salida desde los hoteles de Ushuaia en bus, tomando la Ruta Nacional N°3 en dirección al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Valle del río Pipo y Monte Susana",
+          "description": "Recorremos el valle del río Pipo y el faldeo del Monte Susana hasta llegar a la estación del Ferrocarril Austral Fueguino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Estación Tren del Fin del Mundo",
+          "description": "Visita a las instalaciones del Tren del Fin del Mundo. Quienes lo deseen pueden tomar el tren opcional, mientras el resto del grupo continúa en bus junto al guía hacia el parque."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:30 AM",
+          "title": "Ingreso al Parque Nacional",
+          "description": "Reencuentro con el grupo dentro del Parque Nacional y recorrido por distintos miradores y puntos panorámicos."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:30 PM",
+          "title": "Lago Roca / Lago Acigami",
+          "description": "Visita al Lago Roca (Acigami), compartido con Chile, con tiempo para cortas caminatas y fotografías del entorno montañoso."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Bahía Lapataia",
+          "description": "Llegada a bahía Lapataia, el final de la Ruta Nacional N°3 y de la Ruta Panamericana. Tiempo libre para caminar, sacar fotos y disfrutar del paisaje."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "3:00 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Regreso en bus a los hoteles de Ushuaia luego de una jornada descubriendo el Parque Nacional del Fin del Mundo."
+        }
+      ],
+      "importantNote": "El orden de las paradas puede variar según las condiciones climáticas, el tránsito y la organización del grupo, a criterio del guía."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 90000,
+        "priceChild": 70000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 26,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 24,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 22,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "El Parque Nacional Tierra del Fuego es increíble. La combinación de bosque, montaña y mar en un solo paseo es única. La organización de la excursión fue excelente.",
+        "author": "María L.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Nacional Clásico | Antartur Turismo Aventura",
+      "metaDescription": "Excursión Parque Nacional Clásico al Parque Nacional Tierra del Fuego: recorrido en bus, opción Tren del Fin del Mundo, Lago Roca, bahía Lapataia y cortas caminatas en el Parque del Fin del Mundo.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-nacional-clasico",
+      "ogImage": "/images/tours/parque-nacional-clasico/featured.jpg"
+    }
+  },
+ "canal-beagle-catamaran": {
+  "card": {
+    "id": "canal-beagle-catamaran",
+    "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
+    "subtitle": "Ushuaia desde el Canal Beagle...",
+    "title": "CANAL BEAGLE EN CATAMARAN",
+    "difficulty": "Baja",
+    "price": "$ 100.000",
+    "category": "summer"
+  },
+  "hero": {
+    "headline": "CANAL BEAGLE EN CATAMARAN",
+    "subheadline": "A descubrir el Canal Beagle… vistas únicas de Ushuaia, fauna marina y el faro Les Eclaireurs.",
+    "backgroundImage": "/images/tours/canal-beagle-catamaran/hero.jpg"
+  },
+  "quickInfo": {
+    "price": "$ 100.000",
+    "items": [
+      {
+        "id": "difficulty",
+        "label": "Dificultad",
+        "value": "Baja",
+        "icon": "difficulty"
+      },
+      {
+        "id": "duration",
+        "label": "",
+        "value": "3 horas",
+        "icon": "clock"
+      },
+      {
+        "id": "navigation",
+        "label": "",
+        "value": "Navegación en catamarán",
+        "icon": "boat"
+      },
+      {
+        "id": "landing",
+        "label": "",
+        "value": "Desembarco en isla (según clima)",
+        "icon": "walk"
+      },
+      {
+        "id": "port-tax",
+        "label": "",
+        "value": "Incluye tasa de puerto",
+        "icon": "ticket"
+      }
+    ],
+    "restriction": "Salidas diarias 8:30–12:30 y 15:30–18:30 hs. Desembarco en isla sujeto a condiciones meteorológicas.",
+    "ctaLabel": "RESERVAR",
+    "ctaHref": "#booking"
+  },
+  "description": {
+    "short": "Navegación en catamarán por el Canal Beagle con vistas panorámicas de Ushuaia, fauna marina y el emblemático faro Les Eclaireurs.",
+    "long": [
+      "La excursión comienza en el puerto de Ushuaia, en pleno centro de la ciudad. Navegaremos primero por la Bahía Ushuaia, desde donde se obtiene una vista panorámica de la ciudad, las montañas y los valles. Se destacan el edificio del antiguo presidio (hoy Museo Marítimo), el Museo del Fin del Mundo, el sector industrial y los montes Olivia y Cinco Hermanos.",
+      "Pocos minutos más tarde nos encontraremos navegando por las aguas del Canal Beagle hacia nuestro primer objetivo: las islas Bridges. En este archipiélago observaremos colonias de cormoranes imperiales y lobos marinos de un pelo, además de otras aves como cormoranes roqueros, gaviotas australes, gaviotines sudamericanos, petreles gigantes del sur, albatros ceja negra, skuas y cauquenes caranca.",
+      "Si las condiciones climáticas lo permiten, tendremos la posibilidad de desembarcar en la Isla Mary Ann para realizar una sencilla caminata, apreciar la flora característica de la zona y obtener increíbles vistas panorámicas de la ciudad de Ushuaia y la cordillera de los Andes.",
+      "Continuaremos navegando hacia el archipiélago Les Eclaireurs, a unos 17 km al sudeste de Ushuaia, donde se encuentra el faro homónimo, símbolo distintivo de la Ciudad del Fin del Mundo. Allí, junto a colonias de aves y lobos marinos, se observan algunos restos del naufragio del crucero Monte Cervantes (1930). Luego de este encuentro, la embarcación inicia el regreso aproximándose a la costa norte del Canal Beagle, pasando frente a la antigua Estancia Túnel, la Reserva Natural y Cultural Playa Larga y el sector este de la ciudad."
+    ]
+  },
+  "featuredInfo": [
+    {
+      "id": "bilingual-guide",
+      "icon": "book-a",
+      "title": "Guía en Inglés y Español",
+      "description": "Guías bilingües especializados acompañan durante toda la navegación por el Canal Beagle."
+    },
+    {
+      "id": "nature",
+      "icon": "binoculars",
+      "title": "Fauna y paisajes únicos",
+      "description": "Avistaje de lobos marinos, cormoranes, aves marinas y vistas panorámicas de Ushuaia y la cordillera fueguina."
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g1",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/1.jpg",
+      "alt": "Catamarán navegando el Canal Beagle frente a Ushuaia"
+    },
+    {
+      "id": "g2",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/2.jpg",
+      "alt": "Lobos marinos descansando en las rocas de las islas del Canal Beagle"
+    },
+    {
+      "id": "g3",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/3.jpg",
+      "alt": "Faro Les Eclaireurs en medio del Canal Beagle"
+    },
+    {
+      "id": "g4",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/4.jpg",
+      "alt": "Vista panorámica de Ushuaia desde la embarcación"
+    },
+    {
+      "id": "g5",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/5.jpg",
+      "alt": "Pasajeros disfrutando de la navegación en el catamarán"
+    }
+  ],
+  "timeline": {
+    "items": [
+      {
+        "id": "step-1",
+        "timeLabel": "8:30 AM / 3:30 PM",
+        "title": "Embarque en el puerto de Ushuaia",
+        "description": "Embarque en el muelle turístico de Ushuaia y salida por la Bahía Ushuaia con vistas panorámicas de la ciudad, el antiguo presidio, el Museo del Fin del Mundo y los montes Olivia y Cinco Hermanos."
+      },
+      {
+        "id": "step-2",
+        "timeLabel": "",
+        "title": "Navegación por el Canal Beagle",
+        "description": "Ingreso al Canal Beagle rumbo a las islas Bridges, con avistaje de cormoranes imperiales, lobos marinos y diversas aves marinas típicas de la región."
+      },
+      {
+        "id": "step-3",
+        "timeLabel": "",
+        "title": "Desembarco en isla (según clima)",
+        "description": "Si las condiciones climáticas lo permiten, desembarco en la Isla Mary Ann para una sencilla caminata, observación de flora local y vistas panorámicas de Ushuaia y la cordillera."
+      },
+      {
+        "id": "step-4",
+        "timeLabel": "",
+        "title": "Faro Les Eclaireurs",
+        "description": "Continuamos navegando hacia el archipiélago Les Eclaireurs para conocer el faro homónimo, símbolo de la Ciudad del Fin del Mundo, y observar colonias de aves y restos del naufragio del Monte Cervantes."
+      },
+      {
+        "id": "step-5",
+        "timeLabel": "12:30 PM / 6:30 PM",
+        "title": "Regreso a Ushuaia",
+        "description": "Regreso aproximándonos a la costa norte del Canal Beagle, pasando frente a Estancia Túnel, la Reserva Natural y Cultural Playa Larga y el sector este de la ciudad, para finalmente arribar al puerto de Ushuaia."
+      }
+    ],
+    "importantNote": "El desembarco en isla y el desarrollo del itinerario están sujetos a condiciones meteorológicas y decisiones del capitán, sin derecho a reclamo por parte de los pasajeros."
+  },
+  "booking": {
+    "pricing": {
+      "currency": "ARS",
+      "priceAdult": 100000,
+      "priceChild": 80000
+    },
+    "availability": [
+      {
+        "date": "2025-11-17",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-17",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-18",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-18",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-19",
+        "available": 55,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-19",
+        "available": 55,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-20",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-20",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-21",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-21",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-22",
+        "available": 48,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-22",
+        "available": 48,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-23",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-23",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-24",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-24",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-25",
+        "available": 45,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-25",
+        "available": 45,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-26",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-26",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-27",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-27",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-28",
+        "available": 40,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-28",
+        "available": 40,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-29",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-29",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-30",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-30",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      }
+    ]
+  },
+  "testimonials": [
+    {
+      "id": "t1",
+      "text": "Hermosa navegación por el Canal Beagle. Vimos lobos marinos, muchas aves y el faro Les Eclaireurs de cerca. Súper recomendable para conocer Ushuaia desde el mar.",
+      "author": "Carolina M.",
+      "avatar": "/images/testimonials/canal-beagle-catamaran-1.jpg",
+      "country": "Argentina"
+    }
+  ],
+  "seo": {
+    "metaTitle": "Canal Beagle en Catamarán | Antartur Turismo Aventura",
+    "metaDescription": "Navegación en catamarán por el Canal Beagle desde Ushuaia: vistas de la ciudad, avistaje de fauna marina, desembarco en isla (según clima) y visita al faro Les Eclaireurs.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/canal-beagle-catamaran",
+      "ogImage": "/images/tours/canal-beagle-catamaran/featured.jpg"
+    }
+  },
+  "full-day-nieve": {
+    "card": {
+      "id": "full-day-nieve",
+      "featuredImage": "/images/tours/full-day-nieve/featured.jpg",
+      "subtitle": "La opción más completa para disfrutar la nieve fueguina.",
+      "title": "FULL DAY NIEVE",
+      "difficulty": "Baja",
+      "price": "$ 260.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "FULL DAY NIEVE",
+      "subheadline": "La opción más completa para disfrutar la nieve fueguina",
+      "backgroundImage": "/images/tours/full-day-nieve/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 260.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Almuerzo incluido",
+          "icon": "lunch"
+        },
+        {
+          "id": "snowshoes",
+          "label": "",
+          "value": "Caminata con raquetas de nieve",
+          "icon": "location"
+        },
+        {
+          "id": "sleds",
+          "label": "",
+          "value": "Trineos deslizadores",
+          "icon": "location"
+        },
+        {
+          "id": "husky-sled",
+          "label": "",
+          "value": "Trineo tirado por Huskies",
+          "icon": "family"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Paseo en moto de nieve",
+          "icon": "off-road"
+        },
+        {
+          "id": "snowcat",
+          "label": "",
+          "value": "Vehículo oruga 4x4",
+          "icon": "off-road"
+        }
+      ],
+      "restriction": "Excursión recomendada para todas las edades. Consultanos si tenés dudas sobre tu condición física.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "La opción más completa para disfrutar la nieve fueguina.",
+      "long": [
+        "Partimos desde tu alojamiento rumbo al valle Tierra Mayor, donde comienza la aventura en el Husky Park. Luego de la bienvenida de los guías, te equipás con raquetas de nieve para recorrer el valle y el bosque fueguino, accediendo a increíbles puntos panorámicos de la cordillera.",
+        "La diversión continúa con los trineos deslizadores, ideales para grandes y chicos, antes de hacer una pausa para almorzar en el domo La Base, en un ambiente cálido y confortable.",
+        "Por la tarde, el grupo se organiza para vivir tres experiencias inolvidables: paseo en trineo tirado por huskies, travesía en vehículo oruga entre paisajes nevados y aventura en moto de nieve. El cierre perfecto llega con el \"momento Husky\", un espacio para interactuar y sacarte fotos con los perros antes de emprender el regreso a tu hotel."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de todas las edades podrán disfrutar de este paseo y sus actividades en la nieve."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con guías bilingües especializados para acompañarte durante toda la experiencia."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/full-day-nieve/gallery/1.jpg",
+        "alt": "Pasajeros caminando con raquetas de nieve en el valle Tierra Mayor"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/full-day-nieve/gallery/2.jpg",
+        "alt": "Trineo tirado por perros huskies en la nieve"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/full-day-nieve/gallery/3.jpg",
+        "alt": "Moto de nieve avanzando entre paisajes nevados"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/full-day-nieve/gallery/4.jpg",
+        "alt": "Vehículo oruga 4x4 cruzando la planicie nevada"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/full-day-nieve/gallery/5.jpg",
+        "alt": "Trineos deslizadores bajando por las pendientes de nieve"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/full-day-nieve/gallery/6.jpg",
+        "alt": "Grupo de pasajeros disfrutando del almuerzo en el domo La Base"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/full-day-nieve/gallery/7.jpg",
+        "alt": "Niños jugando con los huskies en la nieve"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/full-day-nieve/gallery/8.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/full-day-nieve/gallery/9.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/full-day-nieve/gallery/10.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g11",
+        "src": "/images/tours/full-day-nieve/gallery/11.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g12",
+        "src": "/images/tours/full-day-nieve/gallery/12.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g13",
+        "src": "/images/tours/full-day-nieve/gallery/13.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g14",
+        "src": "/images/tours/full-day-nieve/gallery/14.jpg",
+        "alt": "Vista panorámica del valle Tierra Mayor nevado"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park",
+          "description": "Búsqueda por los hoteles y alojamientos y traslado en transfers exclusivos hasta Nunatak, en el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Bienvenida al Husky Park",
+          "description": "Recepción por parte de los guías e introducción al parque y a las actividades del día."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Caminata con raquetas de nieve",
+          "description": "Caminata con raquetas por el valle y el bosque fueguino, accediendo a miradores con vistas de la cordillera."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "12:00 PM",
+          "title": "Trineos deslizadores",
+          "description": "Momento de pura diversión en las pendientes con trineos deslizadores, para grandes y chicos."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:30 PM",
+          "title": "Almuerzo en el Domo La Base",
+          "description": "Pausa para almorzar en el domo calefaccionado, antes de continuar con las actividades de la tarde."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "13:30 PM",
+          "title": "Trineo Huskies, Orugas 4x4 y Motos de nieve",
+          "description": "En grupos, se realizan las tres experiencias: moto de nieve, vehículo oruga y trineo tirado por huskies."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "16:00 PM",
+          "title": "Momento Husky",
+          "description": "Encuentro con los huskies para interactuar, sacar fotos y disfrutar con los perros del parque."
+        },
+        {
+          "id": "step-8",
+          "timeLabel": "16:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Traslado de regreso a los hoteles y alojamientos luego de un día completo de aventura en la nieve."
+        }
+      ],
+      "importantNote": "El itinerario es orientativo. El orden de las actividades puede modificarse según las condiciones de nieve, clima y el tamaño del grupo, a criterio del guía."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 260000,
+        "priceChild": 180000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Full Day Nieve | Antartur Turismo Aventura",
+      "metaDescription": "La opción más completa para disfrutar la nieve fueguina: raquetas de nieve, trineos, huskies, motos de nieve y vehículo oruga en el valle Tierra Mayor.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/full-day-nieve",
+      "ogImage": "/images/tours/full-day-nieve/featured.jpg"
+    }
+  },
+  "experiencia-husky": {
+    "card": {
+      "id": "experiencia-husky",
+      "featuredImage": "/images/tours/experiencia-husky/featured.jpg",
+      "subtitle": "Conducí tu propio trineo de perros.",
+      "title": "EXPERIENCIA HUSKY",
+      "difficulty": "Media",
+      "price": "$ 230.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "EXPERIENCIA HUSKY",
+      "subheadline": "Disfrutá en plena naturaleza la sensación de formar un binomio perfecto hombre–perro.",
+      "backgroundImage": "/images/tours/experiencia-husky/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 230.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Moderada / Exigente",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "6 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "snack",
+          "label": "",
+          "value": "Chocolate caliente con torta",
+          "icon": "lunch"
+        },
+        {
+          "id": "mushing",
+          "label": "",
+          "value": "Instrucción de Mushing",
+          "icon": "book-a"
+        },
+        {
+          "id": "sledding",
+          "label": "",
+          "value": "Recorrido en trineo (7 km)",
+          "icon": "family"
+        }
+      ],
+      "restriction": "Se requiere buen estado de salud, gusto por los perros y espíritu de trabajo en equipo. Actividad comparable al esquí de fondo.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Viví la experiencia de conducir tu propio trineo de perros en el valle Tierra Mayor, rodeado de nieve y silencio blanco.",
+      "long": [
+        "Partida desde el hotel rumbo al valle Tierra Mayor, donde comienza la aventura. Nuestro Musher instructor nos da la bienvenida brindándonos una charla introductoria al mundo de los perros de trineo y visitando el criadero/parque Husky.",
+        "Luego iniciamos la instrucción de conducción de trineo, conociendo las técnicas de armado y manejo del mismo. Colocamos los arneses a los perros, los enganchamos al trineo y, al grito de ¡SIGA!, comienza nuestra experiencia.",
+        "A medida que avanzamos, la caravana de trineos se adentra en el valle nevado para culminar en el refugio del hachero, donde reponemos calorías con un chocolate caliente con torta. Tras el descanso, mushers y perros continúan la travesía atravesando bosque, ríos congelados y disfrutando del mágico silencio blanco."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Ideal para quienes buscan una experiencia diferente en la nieve, compartida entre grandes y chicos."
+      },
+      {
+        "id": "physical-condition",
+        "icon": "alert-circle",
+        "title": "Requiere buen estado físico",
+        "description": "Actividad comparable al esquí de fondo. Recomendado para pasajeros con razonable forma física y sin problemas de salud."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guías especializados y bilingües acompañan y asisten durante toda la experiencia con los huskies."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/experiencia-husky/gallery/1.jpg",
+        "alt": "Musher guiando un trineo de perros en el valle nevado"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/experiencia-husky/gallery/2.jpg",
+        "alt": "Caravana de trineos avanzando entre el bosque nevado"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/experiencia-husky/gallery/3.jpg",
+        "alt": "Perros huskies preparados con arneses para el recorrido"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/experiencia-husky/gallery/4.jpg",
+        "alt": "Refugio del hachero en medio del paisaje blanco"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/experiencia-husky/gallery/5.jpg",
+        "alt": "Pasajeros disfrutando del chocolate caliente con torta"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/experiencia-husky/gallery/6.jpg",
+        "alt": "Pasajeros disfrutando del chocolate caliente con torta"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/experiencia-husky/gallery/7.jpg",
+        "alt": "Pasajeros disfrutando del chocolate caliente con torta"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park",
+          "description": "Búsqueda por los hoteles o alojamientos y traslado en transfers hasta Husky Park en el valle Tierra Mayor, donde comenzará la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Visita guiada e instrucción",
+          "description": "Bienvenida de nuestro Musher instructor, charla introductoria al mundo de los perros de trineo, visita al criadero y explicación de armado y manejo del trineo."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "11:00 AM",
+          "title": "Recorrido en trineo (7 km)",
+          "description": "Colocamos los arneses a los perros, los enganchamos al trineo y comenzamos el recorrido de 7 km. La caravana se adentra en el valle nevado hasta llegar al refugio del hachero."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "12:30 PM",
+          "title": "Refrigerio en el Domo La Base",
+          "description": "Reponemos calorías con un chocolate caliente con torta de manzana en un ambiente cálido y confortable."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "1:00 PM",
+          "title": "Abrazo Husky",
+          "description": "El momento más esperado: interacción con los perros, fotos y tiempo para disfrutar con los huskies."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Regreso desde Tierra Mayor a los hoteles, dando por finalizada la aventura."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos según las condiciones de nieve, clima y tamaño del grupo, a criterio del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 230000,
+        "priceChild": 170000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Mi primer excursión con Antartur fue increíble, excelentes profesionales tienen como guías, te explican, aclaran y comparten experiencias únicas que hacen de cada lugar totalmente único. Muchas gracias.",
+        "author": "Yesica Pare",
+        "avatar": "/images/testimonials/experiencia-husky-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Experiencia Husky | Antartur Turismo Aventura",
+      "metaDescription": "Conducí tu propio trineo de perros en Ushuaia. Charla de mushing, recorrido de 7 km en trineo, chocolate caliente con torta y encuentro con huskies en el valle Tierra Mayor.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/experiencia-husky",
+      "ogImage": "/images/tours/experiencia-husky/featured.jpg"
+    }
+  },
+  "nieve-fuego": {
+    "card": {
+      "id": "nieve-fuego",
+      "featuredImage": "/images/tours/nieve-fuego/featured.jpg",
+      "subtitle": "Aventura bajo las estrellas, cena y guitarreada en la nieve.",
+      "title": "NIEVE & FUEGO",
+      "difficulty": "Baja",
+      "price": "$ 250.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "NIEVE & FUEGO",
+      "subheadline": "Aventura bajo las estrellas, cena y guitarreada en la nieve.",
+      "backgroundImage": "/images/tours/nieve-fuego/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 250.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "dinner",
+          "label": "",
+          "value": "Cena en fogón con bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Moto de nieve",
+          "icon": "off-road"
+        },
+        {
+          "id": "husky-sled",
+          "label": "",
+          "value": "Paseo en trineo Husky",
+          "icon": "family"
+        },
+        {
+          "id": "snowshoes",
+          "label": "",
+          "value": "Caminata con raquetas",
+          "icon": "location"
+        }
+      ],
+      "restriction": "El orden de las actividades puede modificarse según condiciones de nieve, clima y tamaño del grupo, a criterio del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Aventura nocturna en la nieve con trineo Husky, moto de nieve, raquetas y cena en fogón.",
+      "long": [
+        "Comenzamos al atardecer con el traslado desde tu alojamiento hacia Husky Park, en el valle Tierra Mayor. Al llegar, el guía da la bienvenida en el Domo La Base y explica cómo será la experiencia nocturna en la nieve.",
+        "Según la organización del grupo, vas a vivir diferentes actividades: paseo en trineo tirado por huskies, recorrido en moto de nieve y caminata con raquetas por la nieve, siempre guiados y con tiempo para entrar en calor dentro del domo.",
+        "La noche culmina con una cena en fogón dentro del tepee, donde el cocinero sirve brochettes, guiso cocinado al fuego, vinos, vino caliente y el típico \"café del hachero\", acompañado de guitarreada antes de regresar al hotel."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de diferentes edades pueden disfrutar de las actividades nocturnas en la nieve."
+      },
+      {
+        "id": "night-experience",
+        "icon": "clock",
+        "title": "Experiencia nocturna",
+        "description": "Viví la nieve bajo las estrellas, combinando aventura y una cena cálida en fogón."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guías especializados",
+        "description": "Guías con experiencia en actividades invernales te acompañan durante todo el recorrido."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/nieve-fuego/gallery/1.jpg",
+        "alt": "Trineo tirado por perros en la noche fueguina"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/nieve-fuego/gallery/2.jpg",
+        "alt": "Grupo de pasajeros en moto de nieve bajo las estrellas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/nieve-fuego/gallery/3.jpg",
+        "alt": "Pasajeros caminando con raquetas en la nieve nocturna"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/nieve-fuego/gallery/4.jpg",
+        "alt": "Tepee iluminado para la cena en fogón"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/nieve-fuego/gallery/5.jpg",
+        "alt": "Interior del fogón con la mesa servida"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/nieve-fuego/gallery/6.jpg",
+        "alt": "Paisaje nevado alrededor de Husky Park al anochecer"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/nieve-fuego/gallery/7.jpg",
+        "alt": "Huskies preparados con arneses antes del recorrido"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/nieve-fuego/gallery/9.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g10",
+        "src": "/images/tours/nieve-fuego/gallery/10.jpg",
+        "alt": "Vista nocturna del valle Tierra Mayor nevado"
+      },
+      {
+        "id": "g11",
+        "src": "/images/tours/nieve-fuego/gallery/11.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g12",
+        "src": "/images/tours/nieve-fuego/gallery/12.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g13",
+        "src": "/images/tours/nieve-fuego/gallery/13.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g14",
+        "src": "/images/tours/nieve-fuego/gallery/14.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g15",
+        "src": "/images/tours/nieve-fuego/gallery/15.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+        {
+        "id": "g16",
+        "src": "/images/tours/nieve-fuego/gallery/16.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g17",
+        "src": "/images/tours/nieve-fuego/gallery/17.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      },
+      {
+        "id": "g18",
+        "src": "/images/tours/nieve-fuego/gallery/18.jpg",
+        "alt": "Pasajeros disfrutando de la guitarreada en el fogón"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "6:30 PM",
+          "title": "Traslado a Nunatak / Husky Park",
+          "description": "Te buscamos por tu hotel o alojamiento y te trasladamos en nuestros transfers hasta Husky Park, en el valle Tierra Mayor, donde comienza la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "7:30 PM",
+          "title": "Inicio de actividades en la nieve",
+          "description": "El guía da la bienvenida en el Domo La Base y organiza el orden de las actividades: trineo de huskies, moto de nieve y caminata con raquetas."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "9:00 PM",
+          "title": "Cena en fogón",
+          "description": "Caminamos hasta el tepee guiados por farolitos. Disfrutás de brochettes, guiso al fuego, vinos, vino caliente y el tradicional café del hachero, con guitarreada."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 PM",
+          "title": "Regreso al hotel",
+          "description": "Finalizada la cena, emprendemos el regreso a tu hotel luego de una noche única entre nieve y fuego."
+        }
+      ],
+      "importantNote": "El orden de las actividades y los recorridos puede modificarse según las condiciones de nieve, clima y el tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 250000,
+        "priceChild": 180000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "6:30 pm",
+            "end": "11:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Excelente experiencia al llegar a Ushuaia, muy interactiva, cordial y una velada perfecta en la nieve.",
+        "author": "Marcela M",
+        "avatar": "/images/testimonials/nieve-fuego-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Nieve & Fuego | Antartur Turismo Aventura",
+      "metaDescription": "Aventura nocturna en Ushuaia con trineo Husky, moto de nieve, caminata con raquetas y cena en fogón con guitarreada en el valle Tierra Mayor.",
+      "canonicalUrl": "https://antartur.tur.ar/tours/nieve-fuego",
+      "ogImage": "/images/tours/nieve-fuego/featured.jpg"
+    }
+  },
+  "4x4-invernal": {
+    "card": {
+      "id": "4x4-invernal",
+      "featuredImage": "/images/tours/4x4-invernal/featured.jpg",
+      "subtitle": "Visitá el Lago Fagnano en una aventura 4x4.",
+      "title": "TRAVESÍA LAGOS 4X4 INVERNAL",
+      "difficulty": "Baja",
+      "price": "$ 160.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "TRAVESÍA LAGOS 4X4 INVERNAL",
+      "subheadline": "Una travesía todo terreno.",
+      "backgroundImage": "/images/tours/4x4-invernal/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 160.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "8 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Asado y bebidas",
+          "icon": "lunch"
+        },
+        {
+          "id": "off-road",
+          "label": "",
+          "value": "Aventura 4x4",
+          "icon": "off-road"
+        },
+        {
+          "id": "viewpoints",
+          "label": "",
+          "value": "Puntos panorámicos",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Excursión no apta para mujeres embarazadas, personas mayores o con dolencias físicas (especialmente problemas de columna).",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una travesía todo terreno para descubrir los lagos Escondido y Fagnano en 4x4.",
+      "long": [
+        "Partida desde el hotel por la ruta nacional N° 3 rumbo a los lagos Escondido y Fagnano. En el camino cruzamos la cordillera fueguina por el Paso Garibaldi, con vistas panorámicas únicas.",
+        "Accedemos al Lago Fagnano por una vieja huella de hacheros y recorremos la costa del lago con paradas en miradores estratégicos para disfrutar del paisaje y tomar fotografías.",
+        "El almuerzo se realiza en el refugio Nunatak, donde, mientras se prepara el asado, los pasajeros pueden caminar por los alrededores o divertirse en las pistas de trineos deslizadores (actividad opcional). Luego habrá tiempo para contratar actividades opcionales como moto de nieve y trineos tirados por huskies, antes de emprender el regreso a Ushuaia."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "not-for-pregnant",
+        "icon": "alert-circle",
+        "title": "No apto para embarazadas",
+        "description": "Excursión no recomendada para personas con problemas de columna, dolencias físicas importantes o mujeres embarazadas."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con guías bilingües especializados para acompañarte durante toda la travesía."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/4x4-invernal/gallery/1.jpg",
+        "alt": "Camioneta 4x4 recorriendo la costa del Lago Fagnano en invierno"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/4x4-invernal/gallery/2.jpg",
+        "alt": "Vista panorámica del Lago Fagnano y las montañas nevadas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/4x4-invernal/gallery/3.jpg",
+        "alt": "Camionetas atravesando una huella de bosque nevado"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/4x4-invernal/gallery/4.jpg",
+        "alt": "Refugio Nunatak rodeado de nieve"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/4x4-invernal/gallery/5.jpg",
+        "alt": "Asado servido dentro del refugio Nunatak"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/4x4-invernal/gallery/6.jpg",
+        "alt": "Pasajeros disfrutando de las pistas de trineos deslizadores"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/4x4-invernal/gallery/7.jpg",
+        "alt": "Camionetas 4x4 avanzando entre bosque y nieve"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Salida desde el hotel",
+          "description": "Partida desde tu hotel por la ruta nacional N° 3 rumbo a los lagos Escondido y Fagnano."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "10:30 AM",
+          "title": "Lago Fagnano y Paso Garibaldi",
+          "description": "Cruzamos la cordillera fueguina por el Paso Garibaldi y accedemos al Lago Fagnano por una vieja huella de hacheros, recorriendo la costa con paradas panorámicas."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "12:30 PM",
+          "title": "Almuerzo en refugio Nunatak",
+          "description": "Almuerzo con asado en el refugio Nunatak. Mientras se prepara, podés caminar por los alrededores o disfrutar de las pistas de trineos deslizadores (opcional)."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "2:30 PM",
+          "title": "Actividades opcionales",
+          "description": "Tiempo libre para contratar actividades opcionales como moto de nieve y trineos tirados por huskies, sujeto a disponibilidad."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "4:00 PM",
+          "title": "Regreso al hotel",
+          "description": "Emprendemos el regreso a Ushuaia luego de una jornada completa de aventura 4x4."
+        }
+      ],
+      "importantNote": "El orden de las actividades y recorridos puede modificarse según las condiciones de la nieve, del clima y el tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 160000,
+        "priceChild": 96000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hice con mi mujer la excursión 4x4 por el bosque andino patagónico y nos encantó. Además, nuestro guía, Azariel, fue muy amable, agradable y dinámico, explicó todo con mucho detalle y de manera muy interesante. Por último, cocinó un asado estupendo. Repetiríamos seguro. ¡Top!",
+        "author": "Ángel Olavarría Bernal",
+        "avatar": "/images/testimonials/4x4-invernal-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Travesía Lagos 4x4 Invernal | Antartur Turismo Aventura",
+      "metaDescription": "Una travesía todo terreno para descubrir los lagos Escondido y Fagnano en invierno: aventura 4x4, puntos panorámicos, asado en refugio Nunatak y actividades opcionales en la nieve.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/travesia-lagos-4x4-invernal",
+      "ogImage": "/images/tours/4x4-invernal/featured.jpg"
+    }
+  },
+  "trekking-esmeralda-invernal": {
+    "card": {
+      "id": "trekking-esmeralda-invernal",
+      "featuredImage": "/images/tours/trekking-esmeralda-invernal/featured.jpg",
+      "subtitle": "Una caminata sin igual hacia Laguna Esmeralda en su versión invernal.",
+      "title": "TREKKING ESMERALDA INVERNAL",
+      "difficulty": "Media",
+      "price": "$ 160.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "TREKKING ESMERALDA INVERNAL",
+      "subheadline": "Una caminata sin igual",
+      "backgroundImage": "/images/tours/trekking-esmeralda-invernal/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 160.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Media (Moderada)",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "7 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch incluido",
+          "icon": "lunch"
+        },
+        {
+          "id": "equipment",
+          "label": "",
+          "value": "Crampones o raquetas y bastón de trekking",
+          "icon": "check"
+        },
+        {
+          "id": "clothes",
+          "label": "",
+          "value": "Indumentaria para nieve obligatoria",
+          "icon": "alert-circle"
+        }
+      ],
+      "restriction": "Requiere buen estado físico. Indicada para mayores de 10 años. No apta para embarazadas, personas con problemas cardíacos, respiratorios, circulatorios, de rodilla o columna, ni personas con sobrepeso.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Un trekking invernal único hacia la Laguna Esmeralda, atravesando valles, bosques y arroyos congelados.",
+      "long": [
+        "Partida desde el hotel en minibús por vía terrestre (20 km) hasta el valle Tierra Mayor. Desde el refugio Nunatak y luego de equiparnos con crampones o raquetas de nieve iniciamos la caminata, atravesando grandes valles cubiertos de nieve, arroyos congelados y centenarios bosques de lengas y coihues.",
+        "La Laguna Esmeralda se encuentra en el corazón de la Reserva Natural y Paisajística Tierra del Fuego. Su ubicación en plena cordillera fueguina invita a detenerse, descansar en sus orillas y disfrutar del box lunch provisto por la excursión.",
+        "Finalmente emprendemos el regreso al refugio por un camino diferente al de ida, completando así una experiencia invernal inolvidable antes de retornar al hotel."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "included-equipment",
+        "icon": "check",
+        "title": "Equipo incluido",
+        "description": "Proveemos crampones o raquetas de nieve, bastón de trekking y box lunch (sándwich, alfajor, barrita de cereal y agua)."
+      },
+      {
+        "id": "physical-condition",
+        "icon": "alert-circle",
+        "title": "Requiere buen estado físico",
+        "description": "Terreno con desniveles, sectores inclinados, barro, piedras, nieve y hielo. No apto para embarazadas ni personas con problemas cardíacos, respiratorios, circulatorios o de columna."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/1.jpg",
+        "alt": "Paisaje nevado camino a Laguna Esmeralda en invierno"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/2.jpg",
+        "alt": "Grupo de trekking atravesando valles nevados"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/3.jpg",
+        "alt": "Bosque de lengas y coihues cubierto de nieve"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/4.jpg",
+        "alt": "Laguna Esmeralda parcialmente congelada en invierno"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/5.jpg",
+        "alt": "Sendero con huellas en la nieve hacia la laguna"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/trekking-esmeralda-invernal/gallery/6.jpg",
+        "alt": "Trekking con raquetas de nieve en valle Tierra Mayor"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Salida desde el hotel",
+          "description": "Partida desde el hotel en minibús por vía terrestre (20 km) hasta el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "10:00 AM",
+          "title": "Inicio del trekking",
+          "description": "Desde el refugio Nunatak, luego de equiparnos con crampones o raquetas de nieve y bastón de trekking, iniciamos la caminata atravesando valles nevados, arroyos congelados y bosques de lengas y coihues."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "1:30 PM",
+          "title": "Llegada a Laguna Esmeralda",
+          "description": "Llegamos a la Laguna Esmeralda, enclavada en la Reserva Natural y Paisajística Tierra del Fuego. Tiempo para descansar en sus orillas y disfrutar del box lunch."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "",
+          "title": "Regreso al refugio y al hotel",
+          "description": "Emprendemos el regreso al refugio por un camino diferente al de ida y posteriormente retornamos al hotel."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, dependiendo de las condiciones de la nieve y del clima, y del tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 160000,
+        "priceChild": 96000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 14,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 10,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 8,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "4:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Hermosa experiencia de trekking invernal. El paisaje de Laguna Esmeralda congelada es impresionante y los guías de Antartur acompañan en todo momento.",
+        "author": "Lucía P.",
+        "avatar": "/images/testimonials/trekking-esmeralda-invernal-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Esmeralda Invernal | Antartur Turismo Aventura",
+      "metaDescription": "Trekking invernal de 7 horas hacia la Laguna Esmeralda desde el valle Tierra Mayor. Incluye equipo (crampones o raquetas, bastón) y box lunch. Requiere buen estado físico.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-esmeralda-invernal",
+      "ogImage": "/images/tours/trekking-esmeralda-invernal/featured.jpg"
+    }
+  },
+  "experiencia-antartica": {
+    "card": {
+      "id": "experiencia-antartica",
+      "featuredImage": "/images/tours/experiencia-antartica/featured.jpg",
+      "subtitle": "Desafío polar en vehículos a oruga, motos de nieve y módulo antártico inmersivo.",
+      "title": "EXPERIENCIA ANTÁRTICA",
+      "difficulty": "Media",
+      "price": "$ 270.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "EXPERIENCIA ANTÁRTICA",
+      "subheadline": "Desafío polar en el fin del mundo.",
+      "backgroundImage": "/images/tours/experiencia-antartica/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 270.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "snack",
+          "label": "",
+          "value": "Bebida caliente con snack",
+          "icon": "lunch"
+        },
+        {
+          "id": "snowcat",
+          "label": "",
+          "value": "Travesía en vehículo a oruga (4 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Recorrido en moto de nieve (6 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "vr-module",
+          "label": "",
+          "value": "Experiencia inmersiva en Módulo Antártico RV",
+          "icon": "location"
+        }
+      ],
+      "restriction": "Se podrá invertir el orden de las actividades o realizarlas en forma individual (no combinadas), según condiciones de nieve, clima y tamaño del grupo, a criterio del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Desafío polar con vehículos a oruga, motos de nieve y experiencia inmersiva en un módulo antártico.",
+      "long": [
+        "La experiencia comienza con el traslado desde tu hotel en nuestros exclusivos transfers hacia Husky Park Ushuaia, en el valle Tierra Mayor. Allí, al pie del monumento a los exploradores, el guía introduce el mundo de la exploración antártica y las heroicas travesías en el continente blanco.",
+        "Durante la visita al parque conocerás a los huskies, su entrenamiento y la historia que une a estos perros con las expediciones polares, para luego ingresar a la muestra de exploradores antárticos.",
+        "Luego comienza la travesía en vehículos a oruga, avanzando en columna y recreando técnicas de detección y cruce de grietas hasta llegar al Módulo Antártico. En el módulo vivirás una experiencia inmersiva que combina recursos sensoriales, visuales y narrativos, mientras recuperás energía con una bebida caliente y galletas antárticas.",
+        "La aventura continúa con un recorrido de 6 km en motos de nieve, a modo patrulla, hasta regresar nuevamente a Husky Park. Finalmente, emprendemos el regreso a tu hotel luego de haber vivido una verdadera experiencia antártica en el fin del mundo."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de distintas edades podrán disfrutar del paseo y de todas las actividades de nieve."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guias bilingües especializados acompañan cada etapa de la experiencia antártica."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/experiencia-antartica/gallery/1.jpg",
+        "alt": "Vehículos a oruga avanzando sobre la nieve en Husky Park"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/experiencia-antartica/gallery/2.jpg",
+        "alt": "Motos de nieve en fila durante la travesía antártica"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/experiencia-antartica/gallery/3.jpg",
+        "alt": "Módulo Antártico iluminado en medio del paisaje nevado"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/experiencia-antartica/gallery/4.jpg",
+        "alt": "Interior del módulo con experiencia inmersiva antártica"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/experiencia-antartica/gallery/5.jpg",
+        "alt": "Monumento a los exploradores en Husky Park"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/experiencia-antartica/gallery/6.jpg",
+        "alt": "Huskies descansando junto a los vehículos a oruga"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/experiencia-antartica/gallery/7.jpg",
+        "alt": "Grupo de pasajeros recibiendo instrucciones antes de la travesía"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/experiencia-antartica/gallery/8.jpg",
+        "alt": "Paisaje nevado del valle Tierra Mayor durante la experiencia"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park",
+          "description": "Te buscamos por tu hotel o alojamiento y te trasladamos en nuestros transfers hasta Husky Park Ushuaia, en el valle Tierra Mayor, donde comienza la aventura."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Visita al Husky Park",
+          "description": "Recorrido guiado por el parque: monumento a los exploradores, historias de las travesías polares, visita a los huskies y a la muestra de exploradores antárticos."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Travesía en vehículos a oruga (4 km)",
+          "description": "Avanzamos en columna de dos vehículos a oruga, recreando técnicas de detección y cruce de grietas hasta llegar al Módulo Antártico."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Módulo Antártico",
+          "description": "Experiencia inmersiva que combina elementos sensoriales, visuales y narrativos. Disfrutás de bebida caliente y galletas antárticas antes de continuar la travesía."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Travesía en motos de nieve (6 km)",
+          "description": "El guía brinda las instrucciones de manejo y salimos en patrulla en motos de nieve, completando un recorrido de 6 km hasta regresar a Husky Park."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Finalizada la experiencia, emprendemos el regreso a tu hotel luego de un verdadero desafío polar."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades o realizar el paseo en forma individual (no combinada), según las condiciones de nieve, del clima y el tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 270000,
+        "priceChild": 190000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Una experiencia distinta a todo lo que habíamos hecho en Ushuaia. La travesía en vehículos a oruga y la experiencia inmersiva en el módulo antártico son imperdibles.",
+        "author": "Gustavo J",
+        "avatar": "/images/testimonials/experiencia-antartica-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Experiencia Antártica | Antartur Turismo Aventura",
+      "metaDescription": "Desafío polar en Ushuaia con travesía en vehículos a oruga, recorrido en motos de nieve y experiencia inmersiva en Módulo Antártico RV en Husky Park Ushuaia.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/experiencia-antartica",
+      "ogImage": "/images/tours/experiencia-antartica/featured.jpg"
+    }
+  },
+  "aventura-blanca": {
+    "card": {
+      "id": "aventura-blanca",
+      "featuredImage": "/images/tours/aventura-blanca/featured.jpg",
+      "subtitle": "Aventura en trineo Husky y motos de nieve en Husky Park Ushuaia.",
+      "title": "AVENTURA BLANCA",
+      "difficulty": "Baja",
+      "price": "$ 230.000",
+      "category": "winter"
+    },
+    "hero": {
+      "headline": "AVENTURA BLANCA",
+      "subheadline": "Aventura en trineo y motos de nieve...",
+      "backgroundImage": "/images/tours/aventura-blanca/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 230.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja / Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "5 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "sled-ride",
+          "label": "",
+          "value": "Paseo en trineo Husky (1,2 km)",
+          "icon": "family"
+        },
+        {
+          "id": "snowmobile",
+          "label": "",
+          "value": "Recorrido en moto de nieve (5 km)",
+          "icon": "off-road"
+        },
+        {
+          "id": "husky-hug",
+          "label": "",
+          "value": "Abrazo Husky e interacción con los perros",
+          "icon": "family"
+        },
+        {
+          "id": "chocolate",
+          "label": "",
+          "value": "Chocolate caliente al final de la excursión",
+          "icon": "lunch"
+        }
+      ],
+      "restriction": "El orden de las actividades y los recorridos puede modificarse según condiciones de nieve, clima y tamaño del grupo, a criterio del guía.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Aventura en trineo Husky y motos de nieve, con visita al parque y chocolate caliente en el valle Tierra Mayor.",
+      "long": [
+        "Partida desde tu hotel con destino al valle Tierra Mayor, donde se encuentra Husky Park Ushuaia. Al llegar, realizamos una visita guiada por el parque para conocer la historia, el cuidado y el entrenamiento de los perros de trineo, y la muestra dedicada a los exploradores de la nieve.",
+        "Luego llega el momento más esperado: nos ubicamos en los trineos y, al grito de \"¡siga, siga!\", comienza el paseo. Recorremos caminos nevados, atravesamos bosque de lengas y llegamos a la gran planicie blanca, con tiempo para disfrutar del paisaje y tomar fotografías.",
+        "El regreso se realiza en moto de nieve. Tras una breve instrucción, nos colocamos los cascos y salimos en caravana siguiendo al guía, completando un recorrido de ensueño entre bosques y planicies nevadas. También viviremos la experiencia Abrazo Husky, para interactuar y sacarnos fotos con los perros, y al finalizar recuperamos calorías con un chocolate caliente antes de regresar a Ushuaia."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Pasajeros de distintas edades podrán disfrutar de este paseo y todas sus actividades en la nieve."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guías bilingües especializados acompañan la visita al parque y las actividades en trineo y motos de nieve."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/aventura-blanca/gallery/1.jpg",
+        "alt": "Trineo tirado por perros huskies avanzando por el valle nevado"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/aventura-blanca/gallery/2.jpg",
+        "alt": "Pasajeros en moto de nieve recorriendo el bosque nevado"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/aventura-blanca/gallery/3.jpg",
+        "alt": "Huskies en acción durante el paseo en trineo"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/aventura-blanca/gallery/4.jpg",
+        "alt": "Grupo de pasajeros interactuando con los perros en el Abrazo Husky"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/aventura-blanca/gallery/5.jpg",
+        "alt": "Vista de la gran planicie nevada en el valle Tierra Mayor"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/aventura-blanca/gallery/6.jpg",
+        "alt": "Taza de chocolate caliente dentro del refugio"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/aventura-blanca/gallery/7.jpg",
+        "alt": "Moto de nieve avanzando por un sendero entre árboles nevados"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/aventura-blanca/gallery/8.jpg",
+        "alt": "Panorámica del valle Tierra Mayor durante la excursión"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "8:30 AM",
+          "title": "Traslado a Husky Park Ushuaia",
+          "description": "Te buscamos por tu hotel o alojamiento y te trasladamos en nuestros transfers hasta Husky Park, en el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:00 AM",
+          "title": "Visita guiada al parque",
+          "description": "Recorrido por el parque para conocer la historia, el cuidado y el entrenamiento de los perros, la muestra de exploradores y la vida en la nieve."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Paseo en trineo Husky",
+          "description": "Iniciamos la travesía en trineos tirados por huskies, atravesando el valle y el bosque por antiguos caminos de leñadores hasta la gran planicie nevada."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:00 AM",
+          "title": "Paseo en moto de nieve",
+          "description": "Tras la instrucción del guía, nos equipamos con cascos y realizamos un recorrido de aproximadamente 5 km en moto de nieve entre bosques y planicies."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:00 PM",
+          "title": "Abrazo Husky y chocolate caliente",
+          "description": "Tiempo para abrazar y sacarse fotos con los huskies, y luego recuperar calorías con un chocolate caliente en el refugio."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Regreso al hotel",
+          "description": "Emprendemos el regreso a Ushuaia después de una mañana completa de aventura en la nieve."
+        }
+      ],
+      "importantNote": "Se podrá invertir el orden de las actividades y los recorridos, o realizar el paseo en forma individual (no combinada), dependiendo de las condiciones de la nieve, del clima y del tamaño del grupo, a consideración del guía, sin derecho a reclamo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 230000,
+        "priceChild": 160000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 16,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 18,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 15,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "8:30 am",
+            "end": "1:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Una excursión hermosa para hacer en familia. Los chicos disfrutaron muchísimo del paseo en trineo y de los huskies, y el recorrido en moto de nieve fue increíble.",
+        "author": "Carolina R.",
+        "avatar": "/images/testimonials/aventura-blanca-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Aventura Blanca | Antartur Turismo Aventura",
+      "metaDescription": "Excursión de 5 horas en Husky Park Ushuaia con visita guiada, paseo en trineo tirado por huskies, recorrido en moto de nieve, Abrazo Husky y chocolate caliente.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/aventura-blanca",
+      "ogImage": "/images/tours/aventura-blanca/featured.jpg"
     }
   }
 }

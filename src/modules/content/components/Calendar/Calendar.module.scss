@@ -156,20 +156,79 @@
 .selectedDateText {
   font-family: $font-roboto;
   font-size: $font-size-16;
+  font-weight: $font-weight-medium;
   color: $gray-700;
-  margin: 0;
+  margin: 0 0 $spacing-8 0;
   animation: fadeIn 0.4s ease-out 0.1s both;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
+.timeSlotsSelection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  width: 100%;
+}
+
+.timeSlotsLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.timeSlotsRadioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.timeSlotRadio {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  padding: $spacing-12;
+  border: 2px solid $gray-200;
+  border-radius: $spacing-8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: $white;
+
+  &:hover {
+    border-color: $primary-color;
+    background-color: $tertiary-color;
   }
-  100% {
-    opacity: 1;
+
+  &.timeSlotRadioSelected {
+    border-color: $primary-color;
+    background-color: $tertiary-color;
   }
 }
 
+.radioInput {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: $primary-color;
+  flex-shrink: 0;
+  }
+
+.radioLabel {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  color: $gray-700;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  flex: 1;
+}
+
+.radioAvailable {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  color: $gray-500;
+  font-weight: $font-weight-normal;
+}
 
 // Modal styles
 // Estilos de modal movidos al componente Modal genérico

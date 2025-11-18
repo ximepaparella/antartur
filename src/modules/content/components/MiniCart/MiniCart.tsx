@@ -65,7 +65,9 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   };
 
   const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
+    // Parsear como fecha local para evitar problemas de timezone
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
     const months = [
       "enero", "febrero", "marzo", "abril", "mayo", "junio",
       "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
