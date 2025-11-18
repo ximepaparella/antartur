@@ -1436,6 +1436,1144 @@
       "canonicalUrl": "https://antartur.tur.ar/tour/trekking-glaciar-vinciguerra",
       "ogImage": "/images/tours/trekking-glaciar-vinciguerra/featured.jpg"
     }
+  },
+  "trekking-laguna-esmeralda": {
+    "card": {
+      "id": "trekking-laguna-esmeralda",
+      "featuredImage": "/images/tours/trekking-laguna-esmeralda/featured.jpg",
+      "subtitle": "Lugar de ensueño!",
+      "title": "TREKKING LAGUNA ESMERALDA",
+      "difficulty": "Media",
+      "price": "$ 160.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "TREKKING LAGUNA ESMERALDA",
+      "subheadline": "Una caminata sin igual...",
+      "backgroundImage": "/images/tours/trekking-laguna-esmeralda/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 160.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Moderada",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "7 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "lunch",
+          "label": "",
+          "value": "Box Lunch",
+          "icon": "lunch"
+        },
+        {
+          "id": "trekking",
+          "label": "",
+          "value": "Trekking",
+          "icon": "location"
+        },
+        {
+          "id": "equipment",
+          "label": "",
+          "value": "Incluye bastones de trekking",
+          "icon": "check"
+        }
+      ],
+      "restriction": "No está permitido para embarazadas, personas con problemas cardíacos, respiratorios o circulatorios, problemas de rodilla o columna.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Una caminata sin igual hasta la Laguna Esmeralda, atravesando turberas, arroyos y bosques fueguinos.",
+      "long": [
+        "Partida desde el hotel en minibús por vía terrestre (20 kms) hasta el valle Tierra Mayor. Desde el refugio Nunatak iniciamos la caminata durante la cual atravesamos túrbales, arroyos y centenarios bosques de Lengas y Coihues. La posibilidad de avistar zorros, cóndores y castores está siempre latente.",
+        "La Laguna Esmeralda se encuentra en el corazón de la Reserva Natural y Paisajística Tierra del Fuego. El color de sus aguas y su ubicación geográfica en plena cordillera fueguina nos invita a detenernos, descansar en sus orillas mientras almorzamos. Finalmente emprendemos el regreso al refugio por un camino diferente al de ida y posteriormente regresamos al hotel."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "not-allowed",
+        "icon": "alert-circle",
+        "title": "Restricciones físicas",
+        "description": "No está permitido para embarazadas, personas con problemas cardíacos, respiratorios o circulatorios, problemas de rodilla o columna."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/1.jpg",
+        "alt": "Vista de la Laguna Esmeralda rodeada de montañas"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/2.jpg",
+        "alt": "Sendero de trekking atravesando turberas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/trekking-laguna-esmeralda/gallery/3.jpg",
+        "alt": "Bosque de Lengas y Coihues en el camino a la laguna"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el Hotel",
+          "description": "Partida desde el hotel en minibús por vía terrestre (20 kms) hasta el Refugio Nunatak, ubicado en el valle Tierra Mayor."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "10:00 AM",
+          "title": "Refugio Nunatak e inicio del trekking",
+          "description": "Desde el refugio Nunatak y luego de equiparnos con bastones de trekking iniciamos la caminata, atravesando turbales, arroyos y bosques de Lengas y Coihues."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "12:30 PM",
+          "title": "Laguna Esmeralda",
+          "description": "Arribamos a la Laguna Esmeralda, en el corazón de la Reserva Natural y Paisajística Tierra del Fuego. Tiempo para descansar en sus orillas y almorzar."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "2:00 PM",
+          "title": "Regreso al Refugio",
+          "description": "Emprendemos el regreso al refugio por un camino diferente al de ida, disfrutando nuevas vistas del entorno."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "3:30 PM",
+          "title": "Regreso al Hotel",
+          "description": "Traslado en minibús de regreso a los hoteles en Ushuaia."
+        }
+      ],
+      "importantNote": "Itinerario a modo informativo, puede variar de acuerdo a las condiciones climáticas y al grupo."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 160000,
+        "priceChild": 140000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 18,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 16,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 14,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 12,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio 4x4. O profissional Cristian conduziu um dia inteiro entre trilha, canoagem, explicações da fauna e flora e um excelente almoço na cabana. Super-recomendo.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Trekking Laguna Esmeralda | Antartur Turismo Aventura",
+      "metaDescription": "Trekking a la Laguna Esmeralda desde Ushuaia: caminata moderada de 7 horas atravesando turberas, arroyos y bosques fueguinos hasta una laguna de ensueño en plena cordillera.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/trekking-laguna-esmeralda-verano",
+      "ogImage": "/images/tours/trekking-laguna-esmeralda/featured.jpg"
+    }
+  },
+  "pinguinera-isla-martillo": {
+    "card": {
+      "id": "pinguinera-isla-martillo",
+      "featuredImage": "/images/tours/pinguinera-isla-martillo/featured.jpg",
+      "subtitle": "Experiencia imperdible!",
+      "title": "PINGUINERA ISLA MARTILLO",
+      "difficulty": "Baja",
+      "price": "$ 165.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PINGUINERA ISLA MARTILLO",
+      "subheadline": "Navegación por el Canal Beagle hasta la pingüinera...",
+      "backgroundImage": "/images/tours/pinguinera-isla-martillo/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 165.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "6 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "navigation",
+          "label": "",
+          "value": "Navegación",
+          "icon": "kayak"
+        },
+        {
+          "id": "season",
+          "label": "",
+          "value": "Operativa hasta el 02/04/24",
+          "icon": "calendar"
+        }
+      ],
+      "restriction": "Salida sujeta a condiciones climáticas y operativa hasta el 02/04/24.",
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "Navegación por el Canal Beagle hacia Isla Martillo para avistar pingüinos magallánicos y fauna marina del fin del mundo.",
+      "long": [
+        "Embarcamos en el muelle de Ushuaia para navegar por el Canal Beagle hacia Isla de los Pájaros, Isla de los Lobos y el icónico Faro Les Eclaireurs, disfrutando de las mejores vistas panorámicas de la ciudad y las montañas que la rodean.",
+        "Continuamos la navegación hasta Isla Martillo, donde se encuentra una colonia de pingüinos magallánicos. Durante el recorrido también avistaremos lobos marinos y una colonia de cormoranes imperiales, entre otras aves, viviendo una experiencia única de naturaleza en el extremo sur del continente."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Contamos con el mejor equipo de guías bilingües para brindar nuestras experiencias a todo el público."
+      },
+      {
+        "id": "port-tax",
+        "icon": "check",
+        "title": "Incluye tasa de puerto",
+        "description": "La tarifa indicada incluye la tasa de puerto para el embarque en Ushuaia."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/1.jpg",
+        "alt": "Pingüinos magallánicos en la costa de Isla Martillo"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/2.jpg",
+        "alt": "Catamarán navegando el Canal Beagle"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/3.jpg",
+        "alt": "Colonia de pingüinos en la pingüinera Isla Martillo"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/4.jpg",
+        "alt": "Vista cercana de pingüinos sobre la costa rocosa"
+      },
+      {
+        "id": "g5",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/5.jpg",
+        "alt": "Paisaje del Canal Beagle con montañas nevadas de fondo"
+      },
+      {
+        "id": "g6",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/6.jpg",
+        "alt": "Isla de los Lobos con lobos marinos descansando en las rocas"
+      },
+      {
+        "id": "g7",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/7.jpg",
+        "alt": "Faro Les Eclaireurs en medio del Canal Beagle"
+      },
+      {
+        "id": "g8",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/8.jpg",
+        "alt": "Vista panorámica de Ushuaia desde el agua"
+      },
+      {
+        "id": "g9",
+        "src": "/images/tours/pinguinera-isla-martillo/gallery/9.jpg",
+        "alt": "Vista panorámica de Ushuaia desde el agua"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "08:00 AM / 14:00 PM",
+          "title": "Embarque en Ushuaia",
+          "description": "Embarque en el muelle turístico de Ushuaia en los horarios AM o PM para iniciar la navegación por el Canal Beagle."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "",
+          "title": "Isla de los Pájaros",
+          "description": "Navegamos hacia la Isla de los Pájaros, donde observamos diferentes aves marinas típicas del Canal Beagle."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "",
+          "title": "Isla de los Lobos",
+          "description": "Continuamos hacia la Isla de los Lobos, hogar de colonias de lobos marinos, que podremos observar en su hábitat natural."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "",
+          "title": "Faro Les Eclaireurs",
+          "description": "Pasamos frente al famoso Faro Les Eclaireurs, uno de los íconos del Canal Beagle, rodeado por cormoranes imperiales y otras aves."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "",
+          "title": "Isla Martillo – Pingüinera",
+          "description": "Llegamos a Isla Martillo, donde encontramos una colonia de pingüinos magallánicos y una pequeña colonia de pingüinos papúa, avistándolos desde la embarcación."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "14:30 PM / 20:30 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Regresamos a Ushuaia disfrutando de vistas panorámicas de la ciudad y la cordillera que la rodea."
+        }
+      ],
+      "importantNote": "Itinerario y horarios sujetos a condiciones climáticas, operativa portuaria y organización de la naviera."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 165000,
+        "priceChild": 140000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 35,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 32,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 30,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 28,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 40,
+          "timeSlot": {
+            "start": "8:00 am",
+            "end": "2:30 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "Inesquecível passeio! A navegação até a Pinguinera Isla Martillo foi maravilhosa, vimos muitos pingüins e a paisagem do Canal Beagle é inesquecível.",
+        "author": "Adriana S. Magalhães",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Brasil"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Pinguinera Isla Martillo | Antartur Turismo Aventura",
+      "metaDescription": "Navegación por el Canal Beagle hacia la Pinguinera Isla Martillo desde Ushuaia. Avistaje de pingüinos magallánicos, lobos marinos, cormoranes y vistas únicas del fin del mundo.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/pinguinera/",
+      "ogImage": "/images/tours/pinguinera-isla-martillo/featured.jpg"
+    }
+  },
+  "parque-nacional-clasico": {
+    "card": {
+      "id": "parque-nacional-clasico",
+      "featuredImage": "/images/tours/parque-nacional-clasico/featured.jpg",
+      "subtitle": "El Parque del fin del mundo!!",
+      "title": "PARQUE NACIONAL CLÁSICO",
+      "difficulty": "Baja",
+      "price": "$ 90.000",
+      "category": "summer"
+    },
+    "hero": {
+      "headline": "PARQUE NACIONAL CLÁSICO",
+      "subheadline": "El Parque del fin del mundo… montañas, mar y bosque en una sola excursión.",
+      "backgroundImage": "/images/tours/parque-nacional-clasico/hero.jpg"
+    },
+    "quickInfo": {
+      "price": "$ 90.000",
+      "items": [
+        {
+          "id": "difficulty",
+          "label": "Dificultad",
+          "value": "Baja",
+          "icon": "difficulty"
+        },
+        {
+          "id": "duration",
+          "label": "",
+          "value": "6 horas",
+          "icon": "clock"
+        },
+        {
+          "id": "transport",
+          "label": "",
+          "value": "En Bus",
+          "icon": "off-road"
+        },
+        {
+          "id": "train",
+          "label": "",
+          "value": "Opcional Tren del Fin del Mundo",
+          "icon": "map-route"
+        }
+      ],
+      "restriction": "No incluye acceso al Parque Nacional Tierra del Fuego. El Tren del Fin del Mundo es un servicio opcional con costo adicional.",
+      "alternative": {
+        "text": "Tren del Fin del Mundo (opcional)",
+        "price": "$ 60.000"
+      },
+      "ctaLabel": "RESERVAR",
+      "ctaHref": "#booking"
+    },
+    "description": {
+      "short": "El Parque Nacional del Fin del Mundo, único en Argentina por albergar montañas, mar y bosque a pocos kilómetros de Ushuaia.",
+      "long": [
+        "El Parque Nacional Tierra del Fuego se encuentra ubicado a solo 12 kilómetros de la ciudad de Ushuaia. Es único en Argentina por albergar montañas, mar y bosque en un mismo entorno. La excursión comienza recorriendo parte de la Ruta Nacional N°3, atravesando el valle del río Pipo y el faldeo del Monte Susana hasta llegar a la estación del Ferrocarril Austral Fueguino, uno de los sectores donde trabajaban los reclusos del antiguo presidio de Ushuaia.",
+        "Luego de una breve visita a las instalaciones, quienes lo deseen podrán realizar el recorrido de aproximadamente una hora en el Tren del Fin del Mundo, mientras el resto del grupo continúa en bus con el guía para ingresar al Parque Nacional. Después de reencontrarnos, seguimos visitando los puntos más atractivos del Parque Nacional Tierra del Fuego, con paradas en miradores y sectores panorámicos.",
+        "Dentro del parque visitaremos el Lago Roca (o Acigami) y la bahía Lapataia, donde finaliza la Ruta Nacional N°3, parte de la mítica Ruta Panamericana. En cada sitio realizaremos cortas caminatas para apreciar las distintas especies del bosque nativo y la fauna preservada dentro del Parque Nacional más austral de Argentina."
+      ]
+    },
+    "featuredInfo": [
+      {
+        "id": "family-friendly",
+        "icon": "family",
+        "title": "Apto para familias",
+        "description": "Excursión de baja dificultad, ideal para todas las edades, con traslados en bus y pequeñas caminatas."
+      },
+      {
+        "id": "bilingual-guide",
+        "icon": "book-a",
+        "title": "Guía en Inglés y Español",
+        "description": "Guías especializados y bilingües que acompañan durante todo el recorrido por el Parque Nacional."
+      }
+    ],
+    "gallery": [
+      {
+        "id": "g1",
+        "src": "/images/tours/parque-nacional-clasico/gallery/1.jpg",
+        "alt": "Cartel de ingreso al Parque Nacional Tierra del Fuego"
+      },
+      {
+        "id": "g2",
+        "src": "/images/tours/parque-nacional-clasico/gallery/2.jpg",
+        "alt": "Vista panorámica del Lago Roca rodeado de montañas"
+      },
+      {
+        "id": "g3",
+        "src": "/images/tours/parque-nacional-clasico/gallery/3.jpg",
+        "alt": "Bahía Lapataia y el cartel del fin de la Ruta 3"
+      },
+      {
+        "id": "g4",
+        "src": "/images/tours/parque-nacional-clasico/gallery/4.jpg",
+        "alt": "Sendero entre el bosque nativo dentro del parque"
+      }
+    ],
+    "timeline": {
+      "items": [
+        {
+          "id": "step-1",
+          "timeLabel": "9:00 AM",
+          "title": "Salida desde el hotel",
+          "description": "Salida desde los hoteles de Ushuaia en bus, tomando la Ruta Nacional N°3 en dirección al Parque Nacional Tierra del Fuego."
+        },
+        {
+          "id": "step-2",
+          "timeLabel": "9:30 AM",
+          "title": "Valle del río Pipo y Monte Susana",
+          "description": "Recorremos el valle del río Pipo y el faldeo del Monte Susana hasta llegar a la estación del Ferrocarril Austral Fueguino."
+        },
+        {
+          "id": "step-3",
+          "timeLabel": "10:00 AM",
+          "title": "Estación Tren del Fin del Mundo",
+          "description": "Visita a las instalaciones del Tren del Fin del Mundo. Quienes lo deseen pueden tomar el tren opcional, mientras el resto del grupo continúa en bus junto al guía hacia el parque."
+        },
+        {
+          "id": "step-4",
+          "timeLabel": "11:30 AM",
+          "title": "Ingreso al Parque Nacional",
+          "description": "Reencuentro con el grupo dentro del Parque Nacional y recorrido por distintos miradores y puntos panorámicos."
+        },
+        {
+          "id": "step-5",
+          "timeLabel": "12:30 PM",
+          "title": "Lago Roca / Lago Acigami",
+          "description": "Visita al Lago Roca (Acigami), compartido con Chile, con tiempo para cortas caminatas y fotografías del entorno montañoso."
+        },
+        {
+          "id": "step-6",
+          "timeLabel": "1:30 PM",
+          "title": "Bahía Lapataia",
+          "description": "Llegada a bahía Lapataia, el final de la Ruta Nacional N°3 y de la Ruta Panamericana. Tiempo libre para caminar, sacar fotos y disfrutar del paisaje."
+        },
+        {
+          "id": "step-7",
+          "timeLabel": "3:00 PM",
+          "title": "Regreso a Ushuaia",
+          "description": "Regreso en bus a los hoteles de Ushuaia luego de una jornada descubriendo el Parque Nacional del Fin del Mundo."
+        }
+      ],
+      "importantNote": "El orden de las paradas puede variar según las condiciones climáticas, el tránsito y la organización del grupo, a criterio del guía."
+    },
+    "booking": {
+      "pricing": {
+        "currency": "ARS",
+        "priceAdult": 90000,
+        "priceChild": 70000
+      },
+      "availability": [
+        {
+          "date": "2025-11-17",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-18",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-19",
+          "available": 26,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-21",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-22",
+          "available": 24,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-23",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-24",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-25",
+          "available": 22,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-26",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-27",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-28",
+          "available": 20,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-29",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        },
+        {
+          "date": "2025-11-30",
+          "available": 30,
+          "timeSlot": {
+            "start": "9:00 am",
+            "end": "3:00 pm"
+          }
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "t1",
+        "text": "El Parque Nacional Tierra del Fuego es increíble. La combinación de bosque, montaña y mar en un solo paseo es única. La organización de la excursión fue excelente.",
+        "author": "María L.",
+        "avatar": "/images/testimonials/author-1.jpg",
+        "country": "Argentina"
+      }
+    ],
+    "seo": {
+      "metaTitle": "Parque Nacional Clásico | Antartur Turismo Aventura",
+      "metaDescription": "Excursión Parque Nacional Clásico al Parque Nacional Tierra del Fuego: recorrido en bus, opción Tren del Fin del Mundo, Lago Roca, bahía Lapataia y cortas caminatas en el Parque del Fin del Mundo.",
+      "canonicalUrl": "https://antartur.tur.ar/tour/parque-nacional-clasico",
+      "ogImage": "/images/tours/parque-nacional-clasico/featured.jpg"
+    }
+  },
+ "canal-beagle-catamaran": {
+  "card": {
+    "id": "canal-beagle-catamaran",
+    "featuredImage": "/images/tours/canal-beagle-catamaran/featured.jpg",
+    "subtitle": "Ushuaia desde el Canal Beagle...",
+    "title": "CANAL BEAGLE EN CATAMARAN",
+    "difficulty": "Baja",
+    "price": "$ 100.000",
+    "category": "summer"
+  },
+  "hero": {
+    "headline": "CANAL BEAGLE EN CATAMARAN",
+    "subheadline": "A descubrir el Canal Beagle… vistas únicas de Ushuaia, fauna marina y el faro Les Eclaireurs.",
+    "backgroundImage": "/images/tours/canal-beagle-catamaran/hero.jpg"
+  },
+  "quickInfo": {
+    "price": "$ 100.000",
+    "items": [
+      {
+        "id": "difficulty",
+        "label": "Dificultad",
+        "value": "Baja",
+        "icon": "difficulty"
+      },
+      {
+        "id": "duration",
+        "label": "",
+        "value": "3 horas",
+        "icon": "clock"
+      },
+      {
+        "id": "navigation",
+        "label": "",
+        "value": "Navegación en catamarán",
+        "icon": "boat"
+      },
+      {
+        "id": "landing",
+        "label": "",
+        "value": "Desembarco en isla (según clima)",
+        "icon": "walk"
+      },
+      {
+        "id": "port-tax",
+        "label": "",
+        "value": "Incluye tasa de puerto",
+        "icon": "ticket"
+      }
+    ],
+    "restriction": "Salidas diarias 8:30–12:30 y 15:30–18:30 hs. Desembarco en isla sujeto a condiciones meteorológicas.",
+    "ctaLabel": "RESERVAR",
+    "ctaHref": "#booking"
+  },
+  "description": {
+    "short": "Navegación en catamarán por el Canal Beagle con vistas panorámicas de Ushuaia, fauna marina y el emblemático faro Les Eclaireurs.",
+    "long": [
+      "La excursión comienza en el puerto de Ushuaia, en pleno centro de la ciudad. Navegaremos primero por la Bahía Ushuaia, desde donde se obtiene una vista panorámica de la ciudad, las montañas y los valles. Se destacan el edificio del antiguo presidio (hoy Museo Marítimo), el Museo del Fin del Mundo, el sector industrial y los montes Olivia y Cinco Hermanos.",
+      "Pocos minutos más tarde nos encontraremos navegando por las aguas del Canal Beagle hacia nuestro primer objetivo: las islas Bridges. En este archipiélago observaremos colonias de cormoranes imperiales y lobos marinos de un pelo, además de otras aves como cormoranes roqueros, gaviotas australes, gaviotines sudamericanos, petreles gigantes del sur, albatros ceja negra, skuas y cauquenes caranca.",
+      "Si las condiciones climáticas lo permiten, tendremos la posibilidad de desembarcar en la Isla Mary Ann para realizar una sencilla caminata, apreciar la flora característica de la zona y obtener increíbles vistas panorámicas de la ciudad de Ushuaia y la cordillera de los Andes.",
+      "Continuaremos navegando hacia el archipiélago Les Eclaireurs, a unos 17 km al sudeste de Ushuaia, donde se encuentra el faro homónimo, símbolo distintivo de la Ciudad del Fin del Mundo. Allí, junto a colonias de aves y lobos marinos, se observan algunos restos del naufragio del crucero Monte Cervantes (1930). Luego de este encuentro, la embarcación inicia el regreso aproximándose a la costa norte del Canal Beagle, pasando frente a la antigua Estancia Túnel, la Reserva Natural y Cultural Playa Larga y el sector este de la ciudad."
+    ]
+  },
+  "featuredInfo": [
+    {
+      "id": "bilingual-guide",
+      "icon": "book-a",
+      "title": "Guía en Inglés y Español",
+      "description": "Guías bilingües especializados acompañan durante toda la navegación por el Canal Beagle."
+    },
+    {
+      "id": "nature",
+      "icon": "binoculars",
+      "title": "Fauna y paisajes únicos",
+      "description": "Avistaje de lobos marinos, cormoranes, aves marinas y vistas panorámicas de Ushuaia y la cordillera fueguina."
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g1",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/1.jpg",
+      "alt": "Catamarán navegando el Canal Beagle frente a Ushuaia"
+    },
+    {
+      "id": "g2",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/2.jpg",
+      "alt": "Lobos marinos descansando en las rocas de las islas del Canal Beagle"
+    },
+    {
+      "id": "g3",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/3.jpg",
+      "alt": "Faro Les Eclaireurs en medio del Canal Beagle"
+    },
+    {
+      "id": "g4",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/4.jpg",
+      "alt": "Vista panorámica de Ushuaia desde la embarcación"
+    },
+    {
+      "id": "g5",
+      "src": "/images/tours/canal-beagle-catamaran/gallery/5.jpg",
+      "alt": "Pasajeros disfrutando de la navegación en el catamarán"
+    }
+  ],
+  "timeline": {
+    "items": [
+      {
+        "id": "step-1",
+        "timeLabel": "8:30 AM / 3:30 PM",
+        "title": "Embarque en el puerto de Ushuaia",
+        "description": "Embarque en el muelle turístico de Ushuaia y salida por la Bahía Ushuaia con vistas panorámicas de la ciudad, el antiguo presidio, el Museo del Fin del Mundo y los montes Olivia y Cinco Hermanos."
+      },
+      {
+        "id": "step-2",
+        "timeLabel": "",
+        "title": "Navegación por el Canal Beagle",
+        "description": "Ingreso al Canal Beagle rumbo a las islas Bridges, con avistaje de cormoranes imperiales, lobos marinos y diversas aves marinas típicas de la región."
+      },
+      {
+        "id": "step-3",
+        "timeLabel": "",
+        "title": "Desembarco en isla (según clima)",
+        "description": "Si las condiciones climáticas lo permiten, desembarco en la Isla Mary Ann para una sencilla caminata, observación de flora local y vistas panorámicas de Ushuaia y la cordillera."
+      },
+      {
+        "id": "step-4",
+        "timeLabel": "",
+        "title": "Faro Les Eclaireurs",
+        "description": "Continuamos navegando hacia el archipiélago Les Eclaireurs para conocer el faro homónimo, símbolo de la Ciudad del Fin del Mundo, y observar colonias de aves y restos del naufragio del Monte Cervantes."
+      },
+      {
+        "id": "step-5",
+        "timeLabel": "12:30 PM / 6:30 PM",
+        "title": "Regreso a Ushuaia",
+        "description": "Regreso aproximándonos a la costa norte del Canal Beagle, pasando frente a Estancia Túnel, la Reserva Natural y Cultural Playa Larga y el sector este de la ciudad, para finalmente arribar al puerto de Ushuaia."
+      }
+    ],
+    "importantNote": "El desembarco en isla y el desarrollo del itinerario están sujetos a condiciones meteorológicas y decisiones del capitán, sin derecho a reclamo por parte de los pasajeros."
+  },
+  "booking": {
+    "pricing": {
+      "currency": "ARS",
+      "priceAdult": 100000,
+      "priceChild": 80000
+    },
+    "availability": [
+      {
+        "date": "2025-11-17",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-17",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-18",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-18",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-19",
+        "available": 55,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-19",
+        "available": 55,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-20",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-20",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-21",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-21",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-22",
+        "available": 48,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-22",
+        "available": 48,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-23",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-23",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-24",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-24",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-25",
+        "available": 45,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-25",
+        "available": 45,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-26",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-26",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-27",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-27",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-28",
+        "available": 40,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-28",
+        "available": 40,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-29",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-29",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      },
+      {
+        "date": "2025-11-30",
+        "available": 60,
+        "timeSlot": { "start": "8:30 am", "end": "12:30 pm" }
+      },
+      {
+        "date": "2025-11-30",
+        "available": 60,
+        "timeSlot": { "start": "3:30 pm", "end": "6:30 pm" }
+      }
+    ]
+  },
+  "testimonials": [
+    {
+      "id": "t1",
+      "text": "Hermosa navegación por el Canal Beagle. Vimos lobos marinos, muchas aves y el faro Les Eclaireurs de cerca. Súper recomendable para conocer Ushuaia desde el mar.",
+      "author": "Carolina M.",
+      "avatar": "/images/testimonials/canal-beagle-catamaran-1.jpg",
+      "country": "Argentina"
+    }
+  ],
+  "seo": {
+    "metaTitle": "Canal Beagle en Catamarán | Antartur Turismo Aventura",
+    "metaDescription": "Navegación en catamarán por el Canal Beagle desde Ushuaia: vistas de la ciudad, avistaje de fauna marina, desembarco en isla (según clima) y visita al faro Les Eclaireurs.",
+    "canonicalUrl": "https://antartur.tur.ar/tour/canal-beagle-catamaran",
+    "ogImage": "/images/tours/canal-beagle-catamaran/featured.jpg"
   }
+}
 }
 
