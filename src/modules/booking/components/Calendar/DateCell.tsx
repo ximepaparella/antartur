@@ -38,23 +38,27 @@ export const DateCell: React.FC<DateCellProps> = React.memo(({
   const totalAvailable = availability?.totalAvailable || 0;
 
   return (
-    <div
-      className={`${styles.dayCell} ${
-        !isCurrentMonth ? styles.otherMonth : ""
-      } ${isDisabled ? styles.disabled : ""} ${
-        isAvailable ? styles.available : ""
-      } ${isSelected ? styles.selected : ""}`}
-      onClick={() => onClick(date)}
-      onMouseEnter={() => isAvailable && onMouseEnter(dateStr)}
-      onMouseLeave={onMouseLeave}
-    >
-      <span className={styles.dayNumber}>{date.getDate()}</span>
-      {isHovered && availability && (
-        <Tooltip position="top">
-          {totalAvailable} Disponibles{availability.timeSlots.length > 1 ? ` (${availability.timeSlots.length} horarios)` : ""}
-        </Tooltip>
-      )}
-    </div>
+            <button
+              type="button"
+              className={`${styles.dayCell} ${
+                !isCurrentMonth ? styles.otherMonth : ""
+              } ${isDisabled ? styles.disabled : ""} ${
+                isAvailable ? styles.available : ""
+              } ${isSelected ? styles.selected : ""}`}
+              onClick={() => onClick(date)}
+              onMouseEnter={() => isAvailable && onMouseEnter(dateStr)}
+              onMouseLeave={onMouseLeave}
+              disabled={isDisabled}
+              aria-label={`${date.getDate()} de ${date.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })}${isAvailable ? `, ${totalAvailable} disponibles` : ''}`}
+              aria-pressed={isSelected}
+            >
+              <span className={styles.dayNumber}>{date.getDate()}</span>
+              {isHovered && availability && (
+                <Tooltip position="top">
+                  {totalAvailable} Disponibles{availability.timeSlots.length > 1 ? ` (${availability.timeSlots.length} horarios)` : ""}
+                </Tooltip>
+              )}
+            </button>
   );
 });
 

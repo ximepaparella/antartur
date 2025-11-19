@@ -84,11 +84,19 @@
   font-size: $font-size-16;
   color: $gray-700;
   transform: scale(1);
+  background: none;
+  border: none;
+  padding: 0;
 
   &.otherMonth {
     color: $gray-200;
   }
 
+  &:disabled {
+    color: $gray-200;
+    cursor: not-allowed;
+  }
+  
   &.disabled {
     color: $gray-200;
     cursor: not-allowed;

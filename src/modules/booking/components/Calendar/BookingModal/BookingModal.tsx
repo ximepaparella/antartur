@@ -5,6 +5,7 @@ import { Button } from "@/components/common/Button/Button";
 import { Message } from "@/components/common/Message";
 import { Modal } from "@/components/common/Modal";
 import type { Pricing } from "@/lib/types/order";
+import { calculateOrderTotal } from "@/lib/utils/pricing";
 import { BookingModalHeader } from "./BookingModalHeader";
 import { PassengerInputs } from "./PassengerInputs";
 import { BookingSummary } from "./BookingSummary";
@@ -42,7 +43,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   exceedsAvailability,
   isClosing = false,
 }) => {
-  const subtotal = adults * pricing.priceAdult + childrenCount * pricing.priceChild;
+  const subtotal = calculateOrderTotal(adults, childrenCount, pricing);
 
   return (
     <Modal

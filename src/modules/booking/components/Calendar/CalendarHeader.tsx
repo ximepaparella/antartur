@@ -28,7 +28,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         className={styles.navButton}
         aria-label="Mes anterior"
       >
-        <Icon name="chevron-left" size={20} />
+        <Icon name="chevron-left" size={20} aria-hidden="true" />
       </button>
       <h2 className={styles.monthYear}>
         {MONTH_NAMES[currentMonth]} {currentYear}
@@ -39,7 +39,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         className={styles.navButton}
         aria-label="Mes siguiente"
       >
-        <Icon name="chevron-right" size={20} />
+        <Icon name="chevron-right" size={20} aria-hidden="true" />
       </button>
     </div>
   );

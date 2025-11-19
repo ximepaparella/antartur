@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
@@ -10,6 +10,7 @@ import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullDa
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
+import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
@@ -130,42 +131,52 @@ export default function CheckoutPage() {
   }
 
   return (
-    <>
+    <RouteErrorBoundary>
       <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
-        <div className={styles.checkoutPage}>
-          <div className={styles.leftColumn}>
-            <CheckoutForm
-              ref={checkoutFormRef}
-              hasPregnancyRestriction={hasPregnancyRestriction}
-              hasHealthRestriction={hasHealthRestriction}
-              onCheckoutComplete={handleCheckoutComplete}
-              onRestrictionViolationsChange={handleRestrictionViolationsChange}
-              onPassengersChange={handlePassengersChange}
-              onValidationErrorsChange={handleValidationErrorsChange}
-            />
+        <FeatureErrorBoundary featureName="reserva">
+          <div className={styles.checkoutPage}>
+            <div className={styles.leftColumn}>
+              <Suspense fallback={
+                <div className={styles.loading}>
+                  <p>Cargando formulario...</p>
+                </div>
+              }>
+                <CheckoutForm
+                  ref={checkoutFormRef}
+                  hasPregnancyRestriction={hasPregnancyRestriction}
+                  hasHealthRestriction={hasHealthRestriction}
+                  onCheckoutComplete={handleCheckoutComplete}
+                  onRestrictionViolationsChange={handleRestrictionViolationsChange}
+                  onPassengersChange={handlePassengersChange}
+                  onValidationErrorsChange={handleValidationErrorsChange}
+                />
+              </Suspense>
+            </div>
+            <div className={styles.rightColumn}>
+              {isUpdatingPassengers ? (
+                <MiniCartSkeleton />
+              ) : (
+                <Suspense fallback={<MiniCartSkeleton />}>
+                  <MiniCart
+                    tourTitle={bookingData.tourTitle}
+                    date={bookingData.date}
+                    timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
+                    adults={bookingData.adults}
+                    childrenCount={bookingData.children}
+                    pricing={bookingData.pricing}
+                    tourId={bookingData.tourId}
+                    exceedsAvailability={bookingData.exceedsAvailability}
+                    hasRestrictionViolations={hasRestrictionViolations}
+                    hasValidationErrors={hasValidationErrors}
+                    onPaymentMethodChange={handlePaymentMethodChange}
+                    onSubmit={handleSubmitFromCart}
+                  />
+                </Suspense>
+              )}
+            </div>
           </div>
-          <div className={styles.rightColumn}>
-            {isUpdatingPassengers ? (
-              <MiniCartSkeleton />
-            ) : (
-              <MiniCart
-                tourTitle={bookingData.tourTitle}
-                date={bookingData.date}
-                timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
-                adults={bookingData.adults}
-                childrenCount={bookingData.children}
-                pricing={bookingData.pricing}
-                tourId={bookingData.tourId}
-                exceedsAvailability={bookingData.exceedsAvailability}
-                hasRestrictionViolations={hasRestrictionViolations}
-                hasValidationErrors={hasValidationErrors}
-                onPaymentMethodChange={handlePaymentMethodChange}
-                onSubmit={handleSubmitFromCart}
-              />
-            )}
-          </div>
-        </div>
+        </FeatureErrorBoundary>
       </main>
 
       {showPaymentModal && completedOrder && (
@@ -180,6 +191,6 @@ export default function CheckoutPage() {
           }}
         />
       )}
-    </>
+    </RouteErrorBoundary>
   );
 }

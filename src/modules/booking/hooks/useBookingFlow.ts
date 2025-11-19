@@ -5,6 +5,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Pricing, TimeSlot } from "@/lib/types/order";
+import { calculateOrderTotal } from "@/lib/utils/pricing";
 import { savePendingBooking } from "@/lib/utils/orderStorage";
 
 interface TimeSlotWithAvailability extends TimeSlot {
@@ -32,7 +33,7 @@ export function useBookingFlow({
 
   // Calcular subtotal
   const subtotal = useMemo(() => {
-    return adults * pricing.priceAdult + children * pricing.priceChild;
+    return calculateOrderTotal(adults, children, pricing);
   }, [adults, children, pricing]);
 
   // Verificar si excede disponibilidad

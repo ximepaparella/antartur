@@ -19,22 +19,24 @@ export const PassengerActions: React.FC<PassengerActionsProps> = ({
 }) => {
   return (
     <div className={styles.passengersActions}>
-      <Button
-        variant="outline"
-        size="small"
-        onClick={onAddAdult}
-      >
-        <Icon name="users" size={16} />
-        Agregar adulto
-      </Button>
-      <Button
-        size="small"
-        variant="outline"
-        onClick={onAddChild}
-      >
-        <Icon name="users" size={16} />
-        Agregar niño
-      </Button>
+              <Button
+                variant="outline"
+                size="small"
+                onClick={onAddAdult}
+                aria-label="Agregar pasajero adulto"
+              >
+                <Icon name="users" size={16} aria-hidden="true" />
+                Agregar adulto
+              </Button>
+              <Button
+                size="small"
+                variant="outline"
+                onClick={onAddChild}
+                aria-label="Agregar pasajero niño"
+              >
+                <Icon name="users" size={16} aria-hidden="true" />
+                Agregar niño
+              </Button>
     </div>
   );
 };

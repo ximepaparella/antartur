@@ -50,7 +50,7 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
  * @example
  * ```tsx
  * // Como botón
- * <Button variant="primary" onClick={() => console.log('clicked')}>
+ * <Button variant="primary" onClick={() => {}}>
  *   Click me
  * </Button>
  * 

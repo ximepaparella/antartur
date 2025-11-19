@@ -165,12 +165,14 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
         onClick={() => setIsExpanded(!isExpanded)}
         className={`${styles.passengerHeader} ${hasErrors ? styles.passengerHeaderError : ""}`}
         aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? "Contraer" : "Expandir"} información del ${isAdult ? "pasajero adulto" : "pasajero menor"} ${passengerNumber}`}
       >
         <div className={`${styles.passengerHeaderContent} ${hasErrors ? styles.passengerHeaderContentError : ""}`}>
           <Icon 
             name={isExpanded ? "chevron-up" : "chevron-down"} 
             size={20} 
             className={styles.chevronIcon}
+            aria-hidden="true"
           />
           <h3 className={styles.passengerTitle}>
             {isAdult ? `Pasajero Adulto ${passengerNumber}` : `Pasajero Menor ${passengerNumber}`}
@@ -188,7 +190,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                 onClick={onRemove}
                 aria-label={`Eliminar ${isAdult ? "adulto" : "niño"} ${passengerNumber}`}
               >
-                <Icon name="close" size={16} />
+                <Icon name="close" size={16} aria-hidden="true" />
                 Eliminar {isAdult ? "adulto" : "niño"}
               </Button>
             </div>

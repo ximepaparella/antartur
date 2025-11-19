@@ -5,6 +5,7 @@ import { Icon } from "@/components/icons/Icon";
 import { Button } from "@/components/common/Button/Button";
 import { Modal } from "@/components/common/Modal";
 import { formatPrice } from "@/lib/utils/priceFormat";
+import { calculateOrderTotal } from "@/lib/utils/pricing";
 import type { Order, PaymentMethod } from "@/lib/types/order";
 import styles from "./PaymentModal.module.scss";
 
@@ -30,7 +31,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 }) => {
   const [isClosing, setIsClosing] = useState(false);
 
-  const total = order.adults * order.pricing.priceAdult + order.children * order.pricing.priceChild;
+  const total = calculateOrderTotal(order.adults, order.children, order.pricing);
 
   const getPaymentMethodLabel = (method: PaymentMethod): string => {
     switch (method) {
