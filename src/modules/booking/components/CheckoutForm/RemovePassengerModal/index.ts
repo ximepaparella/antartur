@@ -1,0 +1,2 @@
+export { RemovePassengerModal } from "./RemovePassengerModal";
+
