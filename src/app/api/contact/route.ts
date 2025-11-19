@@ -174,18 +174,20 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
 
     // Si no hay configuración de email (modo desarrollo), solo loguear
     if (!transporter) {
-      console.log("=".repeat(60));
-      console.log("📧 EMAIL DE CONTACTO (MODO DESARROLLO - NO ENVIADO)");
-      console.log("=".repeat(60));
-      console.log(`Para: ${recipientEmail || "CONTACT_RECIPIENT_EMAIL no configurado"}`);
-      console.log(`Asunto: Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`);
-      console.log(`\n${emailContent}`);
-      console.log("=".repeat(60));
-      console.log("\n💡 Para enviar emails reales, configura las variables de entorno:");
-      console.log("   - CONTACT_RECIPIENT_EMAIL (email destinatario - REQUERIDO)");
-      console.log("   - GMAIL_USER y GMAIL_APP_PASSWORD (para Gmail)");
-      console.log("   - O SMTP_HOST, SMTP_USER, SMTP_PASSWORD (para SMTP)");
-      console.log("=".repeat(60));
+      if (process.env.NODE_ENV === 'development') {
+        console.log("=".repeat(60));
+        console.log("📧 EMAIL DE CONTACTO (MODO DESARROLLO - NO ENVIADO)");
+        console.log("=".repeat(60));
+        console.log(`Para: ${recipientEmail || "CONTACT_RECIPIENT_EMAIL no configurado"}`);
+        console.log(`Asunto: Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`);
+        console.log(`\n${emailContent}`);
+        console.log("=".repeat(60));
+        console.log("\n💡 Para enviar emails reales, configura las variables de entorno:");
+        console.log("   - CONTACT_RECIPIENT_EMAIL (email destinatario - REQUERIDO)");
+        console.log("   - GMAIL_USER y GMAIL_APP_PASSWORD (para Gmail)");
+        console.log("   - O SMTP_HOST, SMTP_USER, SMTP_PASSWORD (para SMTP)");
+        console.log("=".repeat(60));
+      }
 
       return NextResponse.json(
         { message: "Consulta recibida exitosamente (modo desarrollo - email no enviado)" },
