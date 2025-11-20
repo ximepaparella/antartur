@@ -18,23 +18,25 @@ const controller = new TourPricesController();
 export const tourPricesHandler = {
   /**
    * GET /api/tours/:id/prices - Listar precios de un tour
+   * GET /api/tours/:id/prices?currency=ARS - Obtener precio específico por moneda
    */
   list: withErrorHandler(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     const { id: tourId } = await params;
     idSchema.parse(tourId);
+    
+    // Si hay query param currency, retornar solo ese precio
+    const { searchParams } = new URL(request.url);
+    const currency = searchParams.get("currency");
+    
+    if (currency) {
+      currencyCodeSchema.parse(currency);
+      const price = await controller.getByTourIdAndCurrency(tourId, currency);
+      return successResponse(price);
+    }
+    
+    // Si no hay currency, listar todos los precios
     const prices = await controller.listByTourId(tourId);
     return successResponse(prices);
-  }),
-
-  /**
-   * GET /api/tours/:id/prices/:currency - Obtener precio específico por moneda
-   */
-  getByCurrency: withErrorHandler(async (request: NextRequest, { params }: { params: Promise<{ id: string; currency: string }> }) => {
-    const { id: tourId, currency } = await params;
-    idSchema.parse(tourId);
-    currencyCodeSchema.parse(currency);
-    const price = await controller.getByTourIdAndCurrency(tourId, currency);
-    return successResponse(price);
   }),
 
   /**
