@@ -5,7 +5,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import { OrderRepository } from "../infra/orderRepository";
-import { BookingRepository } from "../../bookings/infra/bookingRepository";
+import { BookingRepository } from "../../booking/infra/bookingRepository";
 import { PassengerRepository } from "../../passengers/infra/passengerRepository";
 import { DepartureRepository } from "../../departures/infra/departureRepository";
 import { CurrencyRepository } from "../../currency/infra/currencyRepository";

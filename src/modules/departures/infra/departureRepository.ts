@@ -38,19 +38,28 @@ export class DepartureRepository {
   async create(data: CreateDepartureInput) {
     return prisma.tourDeparture.create({
       data: {
-        ...data,
+        tourId: data.tourId,
         departureDate: data.departureDate,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        seatsTotal: data.seatsTotal,
+        isActive: data.isActive ?? true,
       },
     });
   }
 
   async update(id: string, data: UpdateDepartureInput) {
+    const updateData: any = {};
+    if (data.tourId !== undefined) updateData.tourId = data.tourId;
+    if (data.departureDate !== undefined) updateData.departureDate = data.departureDate;
+    if (data.startTime !== undefined) updateData.startTime = data.startTime;
+    if (data.endTime !== undefined) updateData.endTime = data.endTime;
+    if (data.seatsTotal !== undefined) updateData.seatsTotal = data.seatsTotal;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
+
     return prisma.tourDeparture.update({
       where: { id },
-      data: {
-        ...data,
-        departureDate: data.departureDate,
-      },
+      data: updateData,
     });
   }
 

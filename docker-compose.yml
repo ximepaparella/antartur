@@ -44,7 +44,7 @@ services:
         condition: service_healthy
     networks:
       - antartur_network
-    command: sh -c "apt-get update && apt-get install -y openssl && npm install && npx prisma generate && npm run dev"
+    command: sh -c "apt-get update && apt-get install -y openssl && npm install --legacy-peer-deps && npx prisma generate && npm run dev"
 
   # pgAdmin (Optional - Database UI for development)
   pgadmin:
