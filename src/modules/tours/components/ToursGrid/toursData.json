@@ -6,6 +6,10 @@
     "title": "TREKKING GLACIAR OJO DE ALBINO",
     "difficulty": "ALTA",
     "price": "$ 233.000",
+    "prices": {
+      "ARS": { "adult": 233000, "child": 116500 },
+      "USD": { "adult": 233, "child": 116 }
+    },
     "category": "summer"
   },
   "lagos-off-road": {
@@ -15,6 +19,10 @@
     "title": "LAGOS OFF ROAD",
     "difficulty": "MEDIA",
     "price": "$ 210.000",
+    "prices": {
+      "ARS": { "adult": 210000, "child": 105000 },
+      "USD": { "adult": 210, "child": 105 }
+    },
     "category": "summer"
   },
   "parque-trekking-canoas": {
@@ -24,6 +32,10 @@
     "title": "PARQUE TREKKING & CANOAS",
     "difficulty": "MEDIA",
     "price": "$ 160.000",
+    "prices": {
+      "ARS": { "adult": 160000, "child": 80000 },
+      "USD": { "adult": 160, "child": 80 }
+    },
     "category": "summer"
   },
   "parque-aventura": {
@@ -33,6 +45,10 @@
     "title": "PARQUE AVENTURA",
     "difficulty": "MEDIA",
     "price": "$ 150.000",
+    "prices": {
+      "ARS": { "adult": 150000, "child": 75000 },
+      "USD": { "adult": 150, "child": 75 }
+    },
     "category": "summer"
   },
   "trekking-glaciar-vinciguerra": {
@@ -42,6 +58,10 @@
     "title": "TREKKING GLACIAR VINCIGUERRA",
     "difficulty": "ALTA",
     "price": "$ 200.000",
+    "prices": {
+      "ARS": { "adult": 200000, "child": 100000 },
+      "USD": { "adult": 200, "child": 100 }
+    },
     "category": "summer"
   },
   "trekking-laguna-esmeralda": {
@@ -51,6 +71,10 @@
     "title": "TREKKING LAGUNA ESMERALDA",
     "difficulty": "MEDIA",
     "price": "$ 160.000",
+    "prices": {
+      "ARS": { "adult": 160000, "child": 80000 },
+      "USD": { "adult": 160, "child": 80 }
+    },
     "category": "summer"
   },
   "pinguinera-isla-martillo": {
@@ -60,6 +84,10 @@
     "title": "PINGUINERA ISLA MARTILLO",
     "difficulty": "BAJA",
     "price": "$ 166.200",
+    "prices": {
+      "ARS": { "adult": 166200, "child": 83100 },
+      "USD": { "adult": 166, "child": 83 }
+    },
     "category": "summer"
   },
   "parque-nacional-clasico": {
@@ -69,6 +97,10 @@
     "title": "PARQUE NACIONAL CLÁSICO",
     "difficulty": "BAJA",
     "price": "$ 90.000",
+    "prices": {
+      "ARS": { "adult": 90000, "child": 45000 },
+      "USD": { "adult": 90, "child": 45 }
+    },
     "category": "summer"
   },
   "parque-nacional-clasico-winter": {
@@ -78,6 +110,10 @@
     "title": "PARQUE NACIONAL CLÁSICO",
     "difficulty": "BAJA",
     "price": "$ 90.000",
+    "prices": {
+      "ARS": { "adult": 90000, "child": 45000 },
+      "USD": { "adult": 90, "child": 45 }
+    },
     "category": "winter"
   },
   "canal-beagle-catamaran": {
@@ -87,6 +123,10 @@
     "title": "CANAL BEAGLE EN CATAMARAN",
     "difficulty": "BAJA",
     "price": "$ 100.000",
+    "prices": {
+      "ARS": { "adult": 100000, "child": 50000 },
+      "USD": { "adult": 100, "child": 50 }
+    },
     "category": "summer"
   },
   "canal-beagle-catamaran-winter": {
@@ -96,6 +136,10 @@
     "title": "CANAL BEAGLE EN CATAMARAN",
     "difficulty": "BAJA",
     "price": "$ 100.000",
+    "prices": {
+      "ARS": { "adult": 100000, "child": 50000 },
+      "USD": { "adult": 100, "child": 50 }
+    },
     "category": "winter"
   },
   "full-day-nieve": {

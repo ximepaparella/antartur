@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Icon } from "@/components/icons/Icon";
 import { Button } from "@/components/common/Button/Button";
 import { Modal } from "@/components/common/Modal";
-import { formatPrice } from "@/lib/utils/priceFormat";
+import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import { calculateOrderTotal } from "@/lib/utils/pricing";
 import type { Order, PaymentMethod } from "@/lib/types/order";
 import styles from "./PaymentModal.module.scss";
@@ -64,7 +64,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     >
       <div className={styles.orderInfo}>
         <p className={styles.orderNumber}>Orden: {order.orderId}</p>
-        <p className={styles.orderTotal}>Total: {formatPrice(total)}</p>
+        <p className={styles.orderTotal}>Total: {formatPriceByCurrency(total, order.pricing.currencyCode)}</p>
         <p className={styles.paymentMethod}>Método: {getPaymentMethodLabel(paymentMethod)}</p>
       </div>
 

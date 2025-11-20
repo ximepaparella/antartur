@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from "react";
-import type { Order, PaymentMethod, Passenger, BillingInfo } from "@/lib/types/order";
+import type { Order, PaymentMethod, Passenger, BillingInfo, Pricing } from "@/lib/types/order";
 import { generateOrderId, saveOrder, clearPendingBooking } from "@/lib/utils/orderStorage";
 import type { BookingData } from "./useCheckoutInitialization";
 
@@ -56,6 +56,11 @@ export function useOrderSubmission({
           bookingData.exceedsAvailability || hasRestrictionViolations ? "consulta" : "reserva";
 
         // Crear orden
+        // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
+        const pricing: Pricing = bookingData.pricing.currencyCode 
+          ? bookingData.pricing as Pricing
+          : { ...bookingData.pricing, currencyCode: "ARS" };
+        
         const order: Order = {
           orderId: generateOrderId(),
           tourId: bookingData.tourId,
@@ -63,7 +68,7 @@ export function useOrderSubmission({
           date: bookingData.date,
           adults: bookingData.adults,
           children: bookingData.children,
-          pricing: bookingData.pricing,
+          pricing,
           timeSlot: bookingData.timeSlot,
           passengers,
           billingInfo,

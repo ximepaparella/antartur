@@ -73,32 +73,11 @@ model Currency {
   isDefault Boolean @default(false)
 
   // Relaciones
-  baseTours  Tour[]         @relation("TourBaseCurrency")
-  baseRates  CurrencyRate[] @relation("BaseCurrency")
-  quoteRates CurrencyRate[] @relation("QuoteCurrency")
+  tourPrices TourPrice[]
   orders     Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model CurrencyRate {
-  id            String    @id @default(cuid())
-  baseCurrency  String    @db.VarChar(3)
-  quoteCurrency String    @db.VarChar(3)
-  rate          Decimal   @db.Decimal(18, 8)
-  source        String?
-  validFrom     DateTime  @default(now())
-  validTo       DateTime?
-
-  // Relaciones
-  base  Currency @relation("BaseCurrency", fields: [baseCurrency], references: [code])
-  quote Currency @relation("QuoteCurrency", fields: [quoteCurrency], references: [code])
-
-  createdAt DateTime @default(now())
-
-  @@index([baseCurrency, quoteCurrency, validFrom])
-  @@index([validTo])
 }
 
 model Tour {
@@ -109,9 +88,6 @@ model Tour {
   category         String // ej: 'summer', 'winter'
   difficulty       String // ej: 'Baja', 'Media', 'Alta'
   durationHours    Int
-  baseCurrency     String  @db.VarChar(3)
-  basePriceAdult   Decimal @db.Decimal(10, 2)
-  basePriceChild   Decimal @db.Decimal(10, 2)
   featuredImage    String
   heroImage        String
   shortDescription String  @db.Text
@@ -120,9 +96,9 @@ model Tour {
   isActive         Boolean @default(true)
 
   // Relaciones
-  baseCurrencyRef Currency        @relation("TourBaseCurrency", fields: [baseCurrency], references: [code])
-  images          TourImage[]
-  departures      TourDeparture[]
+  images     TourImage[]
+  departures TourDeparture[]
+  prices     TourPrice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,6 +106,25 @@ model Tour {
   @@index([slug])
   @@index([category])
   @@index([isActive])
+}
+
+model TourPrice {
+  id         String   @id @default(cuid())
+  tourId     String
+  currency   String   @db.VarChar(3)
+  priceAdult Decimal  @db.Decimal(10, 2)
+  priceChild Decimal  @db.Decimal(10, 2)
+
+  // Relaciones
+  tour         Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  currencyRef  Currency @relation(fields: [currency], references: [code])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tourId, currency])
+  @@index([tourId])
+  @@index([currency])
 }
 
 model TourImage {

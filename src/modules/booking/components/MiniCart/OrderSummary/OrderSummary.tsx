@@ -16,6 +16,7 @@ interface OrderSummaryProps {
   subtotalAdults: number;
   subtotalChildren: number;
   total: number;
+  currency: string;
 }
 
 /**
@@ -30,6 +31,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   subtotalAdults,
   subtotalChildren,
   total,
+  currency,
 }) => {
   return (
     <Card title="Resumen de la reserva">
@@ -47,6 +49,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
           subtotalAdults={subtotalAdults}
           subtotalChildren={subtotalChildren}
           total={total}
+          currency={currency}
         />
       </div>
     </Card>

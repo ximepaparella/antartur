@@ -3,9 +3,10 @@
  * Transformaciones entre modelos de dominio y respuestas de API
  */
 
-import type { Tour as PrismaTour, TourImage, TourDeparture } from "@prisma/client";
+import type { Tour as PrismaTour, TourImage, TourDeparture, TourPrice } from "@prisma/client";
 import type { Tour as DomainTour } from "../../domain/types";
 import { toAvailabilityResponse, type AvailabilityResponse } from "../../../departures/api/dto/availabilityDto";
+import { toTourPriceResponse, type TourPriceResponse } from "./tourPriceDto";
 
 /**
  * Tour con relaciones opcionales
@@ -13,6 +14,7 @@ import { toAvailabilityResponse, type AvailabilityResponse } from "../../../depa
 export type TourWithRelations = PrismaTour & {
   images?: TourImage[];
   departures?: TourDeparture[];
+  prices?: TourPrice[];
 };
 
 /**
@@ -26,15 +28,13 @@ export interface TourResponse {
   category: string;
   difficulty: string;
   durationHours: number;
-  baseCurrency: string;
-  basePriceAdult: number;
-  basePriceChild: number;
   featuredImage: string;
   heroImage: string;
   shortDescription: string;
   longDescription: string;
   restrictionText: string;
   isActive: boolean;
+  prices: TourPriceResponse[];
   createdAt: string;
   updatedAt: string;
 }
@@ -78,15 +78,13 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     category: tour.category,
     difficulty: tour.difficulty,
     durationHours: tour.durationHours,
-    baseCurrency: tour.baseCurrency,
-    basePriceAdult: Number(tour.basePriceAdult),
-    basePriceChild: Number(tour.basePriceChild),
     featuredImage: tour.featuredImage,
     heroImage: tour.heroImage,
     shortDescription: tour.shortDescription,
     longDescription: tour.longDescription,
     restrictionText: tour.restrictionText,
     isActive: tour.isActive,
+    prices: tour.prices?.map(toTourPriceResponse) || [],
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),
   };

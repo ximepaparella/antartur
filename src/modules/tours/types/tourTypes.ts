@@ -114,6 +114,11 @@ export interface Tour {
     pricing: {
       priceAdult: number;
       priceChild: number;
+      currency: string;
+    };
+    prices?: {
+      ARS?: { adult: number; child: number };
+      USD?: { adult: number; child: number };
     };
     availability: Array<{
       date: string; // YYYY-MM-DD

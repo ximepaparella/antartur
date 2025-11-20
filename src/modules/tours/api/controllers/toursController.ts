@@ -70,6 +70,7 @@ export class ToursController {
           : { createdAt: "desc" },
         include: {
           images: true,
+          prices: true,
         },
       }),
       prisma.tour.count({ where }),
@@ -85,7 +86,7 @@ export class ToursController {
    * Obtener tour por ID
    */
   async getById(id: string, includeAvailability = false) {
-    const tour = await tourRepository.findById(id, true, includeAvailability);
+    const tour = await tourRepository.findById(id, true, includeAvailability, true);
 
     if (!tour) {
       throw new NotFoundError("Tour", id);
@@ -102,7 +103,7 @@ export class ToursController {
    * Obtener tour por slug
    */
   async getBySlug(slug: string, includeAvailability = false) {
-    const tour = await tourRepository.findBySlug(slug, true, includeAvailability);
+    const tour = await tourRepository.findBySlug(slug, true, includeAvailability, true);
 
     if (!tour) {
       throw new NotFoundError("Tour", slug);
@@ -127,16 +128,11 @@ export class ToursController {
       throw new ValidationError("Tour with this slug already exists", { slug: data.slug });
     }
 
-    // Verificar que la moneda existe
-    const currency = await prisma.currency.findUnique({
-      where: { code: data.baseCurrency },
-    });
-    if (!currency) {
-      throw new ValidationError(`Currency '${data.baseCurrency}' not found`);
-    }
-
     const tour = await tourRepository.create(data);
-    return toTourResponse(tour);
+    
+    // Obtener tour con precios para la respuesta
+    const tourWithPrices = await tourRepository.findById(tour.id, false, false, true);
+    return toTourResponse(tourWithPrices!);
   }
 
   /**
@@ -159,18 +155,11 @@ export class ToursController {
       }
     }
 
-    // Si se actualiza la moneda, verificar que existe
-    if (data.baseCurrency && data.baseCurrency !== existingTour.baseCurrency) {
-      const currency = await prisma.currency.findUnique({
-        where: { code: data.baseCurrency },
-      });
-      if (!currency) {
-        throw new ValidationError(`Currency '${data.baseCurrency}' not found`);
-      }
-    }
-
     const updatedTour = await tourRepository.update(id, data);
-    return toTourResponse(updatedTour);
+    
+    // Obtener tour con precios para la respuesta
+    const tourWithPrices = await tourRepository.findById(updatedTour.id, false, false, true);
+    return toTourResponse(tourWithPrices!);
   }
 
   /**

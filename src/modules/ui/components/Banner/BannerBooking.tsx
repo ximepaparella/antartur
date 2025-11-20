@@ -1,6 +1,11 @@
+"use client";
+
 import React from "react";
 import { Icon, IconName } from "@/components/icons/Icon";
 import { Calendar } from "@/modules/booking/components/Calendar";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import type { Pricing } from "@/lib/types/order";
+import { getPriceByCurrency, ensurePricingWithCurrency } from "@/lib/utils/pricingHelpers";
 import styles from "./BannerBooking.module.scss";
 
 interface BookingStep {
@@ -18,11 +23,6 @@ interface AvailabilityDate {
   };
 }
 
-interface Pricing {
-  priceAdult: number;
-  priceChild: number;
-}
-
 interface BannerBookingProps {
   /** Pasos del proceso de reserva */
   steps?: BookingStep[];
@@ -32,8 +32,16 @@ interface BannerBookingProps {
   tourTitle?: string;
   /** Fechas con disponibilidad */
   availability?: AvailabilityDate[];
-  /** Precios del tour */
-  pricing?: Pricing;
+  /** Precios del tour (legacy - sin currency) */
+  pricing?: {
+    priceAdult: number;
+    priceChild: number;
+  };
+  /** Precios por moneda (nuevo formato) */
+  prices?: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
 }
 
 const defaultSteps: BookingStep[] = [
@@ -76,7 +84,21 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
   tourTitle,
   availability,
   pricing,
+  prices,
 }) => {
+  const { currency } = useCurrency();
+  
+  // Obtener precio según la moneda seleccionada
+  const currentPricing: Pricing | null = React.useMemo(() => {
+    if (prices) {
+      return getPriceByCurrency(prices, currency);
+    }
+    if (pricing) {
+      return ensurePricingWithCurrency(pricing, currency);
+    }
+    return null;
+  }, [prices, pricing, currency]);
+
   return (
     <div className={styles.bookingContainer}>
       <div className={styles.leftColumn}>
@@ -91,12 +113,12 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
         </ul>
       </div>
       <div className={styles.rightColumn}>
-        {tourId && tourTitle && availability && pricing ? (
+        {tourId && tourTitle && availability && currentPricing ? (
           <Calendar
             tourId={tourId}
             tourTitle={tourTitle}
             availability={availability}
-            pricing={pricing}
+            pricing={currentPricing}
           />
         ) : (
           <h2 className={styles.calendarTitle}>Calendario</h2>

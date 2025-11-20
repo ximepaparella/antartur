@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { formatPrice } from "@/lib/utils/priceFormat";
+import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import styles from "../MiniCart.module.scss";
 
 interface PricingBreakdownProps {
@@ -10,6 +10,7 @@ interface PricingBreakdownProps {
   subtotalAdults: number;
   subtotalChildren: number;
   total: number;
+  currency: string;
 }
 
 /**
@@ -21,6 +22,7 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
   subtotalAdults,
   subtotalChildren,
   total,
+  currency,
 }) => {
   return (
     <>
@@ -30,7 +32,7 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
             Adultos: {adults}
           </span>
           <span className={styles.summaryValue}>
-            {formatPrice(subtotalAdults)}
+            {formatPriceByCurrency(subtotalAdults, currency)}
           </span>
         </div>
       )}
@@ -41,7 +43,7 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
             Niños: {childrenCount}
           </span>
           <span className={styles.summaryValue}>
-            {formatPrice(subtotalChildren)}
+            {formatPriceByCurrency(subtotalChildren, currency)}
           </span>
         </div>
       )}
@@ -50,12 +52,12 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
 
       <div className={styles.summaryRow}>
         <span className={styles.summaryLabel}>Subtotal:</span>
-        <span className={styles.summaryValue}>{formatPrice(total)}</span>
+        <span className={styles.summaryValue}>{formatPriceByCurrency(total, currency)}</span>
       </div>
 
       <div className={styles.summaryRow}>
         <span className={styles.summaryLabelTotal}>Total:</span>
-        <span className={styles.summaryValueTotal}>{formatPrice(total)}</span>
+        <span className={styles.summaryValueTotal}>{formatPriceByCurrency(total, currency)}</span>
       </div>
     </>
   );

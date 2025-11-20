@@ -84,6 +84,7 @@ export default async function TourPage({ params }: TourPageProps) {
 
         {/* 2. QuickInfo */}
         <TourQuickInfo
+          tourId={fullTour.card.id}
           price={fullTour.quickInfo.price}
           items={fullTour.quickInfo.items}
           restriction={fullTour.quickInfo.restriction}
@@ -125,6 +126,7 @@ export default async function TourPage({ params }: TourPageProps) {
               tourTitle={fullTour.card.title}
               availability={fullTour.booking?.availability}
               pricing={fullTour.booking?.pricing}
+              prices={fullTour.booking?.prices}
             />
           </div>
         </Banner>

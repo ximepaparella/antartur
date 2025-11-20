@@ -17,7 +17,7 @@ export function savePendingBooking(bookingData: {
   date: string;
   adults: number;
   children: number;
-  pricing: { priceAdult: number; priceChild: number };
+  pricing: { currencyCode: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 }): void {
@@ -101,7 +101,7 @@ export function getPendingBooking(): {
   date: string;
   adults: number;
   children: number;
-  pricing: { priceAdult: number; priceChild: number };
+  pricing: { currencyCode: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 } | null {

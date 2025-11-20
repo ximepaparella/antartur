@@ -43,7 +43,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("transferencia");
 
   // Calcular precios usando hook
-  const { subtotalAdults, subtotalChildren, total } = useMiniCartPricing({
+  const { subtotalAdults, subtotalChildren, total, currentPricing } = useMiniCartPricing({
     pricing,
     tourId,
     adults,
@@ -70,6 +70,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         subtotalAdults={subtotalAdults}
         subtotalChildren={subtotalChildren}
         total={total}
+        currency={currentPricing.currencyCode}
       />
 
       <PaymentMethods

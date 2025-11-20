@@ -32,9 +32,6 @@ export interface CreateTourInput {
   category: string;
   difficulty: string;
   durationHours: number;
-  baseCurrency: string;
-  basePriceAdult: number;
-  basePriceChild: number;
   featuredImage: string;
   heroImage: string;
   shortDescription: string;
@@ -44,4 +41,26 @@ export interface CreateTourInput {
 }
 
 export interface UpdateTourInput extends Partial<CreateTourInput> {}
+
+export interface TourPrice {
+  id: string;
+  tourId: string;
+  currency: string;
+  priceAdult: number;
+  priceChild: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateTourPriceInput {
+  tourId: string;
+  currency: string;
+  priceAdult: number;
+  priceChild: number;
+}
+
+export interface UpdateTourPriceInput {
+  priceAdult?: number;
+  priceChild?: number;
+}
 

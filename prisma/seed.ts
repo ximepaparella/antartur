@@ -47,41 +47,8 @@ async function main() {
 
   console.log("✅ Currencies created:", { ars: ars.code, usd: usd.code, eur: eur.code });
 
-  // 2. Crear tipos de cambio iniciales
-  console.log("Creating currency rates...");
-
-  // Tipo de cambio ARS/USD (ejemplo: 1000 ARS = 1 USD)
-  // Ajustar según el tipo de cambio real cuando se implemente
-  const arsToUsdRate = await prisma.currencyRate.upsert({
-    where: {
-      id: "seed-ars-usd-1",
-    },
-    update: {},
-    create: {
-      baseCurrency: "ARS",
-      quoteCurrency: "USD",
-      rate: 1000.0, // 1 USD = 1000 ARS (ejemplo)
-      source: "seed",
-      validFrom: new Date(),
-    },
-  });
-
-  // Tipo de cambio USD/ARS (inverso)
-  const usdToArsRate = await prisma.currencyRate.upsert({
-    where: {
-      id: "seed-usd-ars-1",
-    },
-    update: {},
-    create: {
-      baseCurrency: "USD",
-      quoteCurrency: "ARS",
-      rate: 0.001, // 1 ARS = 0.001 USD
-      source: "seed",
-      validFrom: new Date(),
-    },
-  });
-
-  console.log("✅ Currency rates created");
+  // Nota: Ya no se crean tipos de cambio (CurrencyRate) porque cada tour
+  // tiene precios individuales por moneda en la tabla TourPrice
 
   console.log("✅ Seeding completed!");
 }

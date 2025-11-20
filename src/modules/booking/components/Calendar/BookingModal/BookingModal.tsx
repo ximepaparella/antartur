@@ -69,6 +69,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       <BookingSummary
         subtotal={subtotal}
         exceedsAvailability={exceedsAvailability}
+        currency={pricing.currencyCode}
       />
 
       <div className={styles.modalActions}>

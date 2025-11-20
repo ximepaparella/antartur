@@ -3,6 +3,7 @@
  */
 
 export interface Pricing {
+  currencyCode: string;
   priceAdult: number;
   priceChild: number;
 }

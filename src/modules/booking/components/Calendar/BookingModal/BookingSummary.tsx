@@ -1,12 +1,15 @@
+"use client";
+
 import React from "react";
 import { Icon } from "@/components/icons/Icon";
-import { formatPrice } from "@/lib/utils/priceFormat";
+import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import { Message } from "@/components/common/Message";
 import styles from "../Calendar.module.scss";
 
 interface BookingSummaryProps {
   subtotal: number;
   exceedsAvailability: boolean;
+  currency: string;
 }
 
 /**
@@ -15,6 +18,7 @@ interface BookingSummaryProps {
 export const BookingSummary: React.FC<BookingSummaryProps> = ({
   subtotal,
   exceedsAvailability,
+  currency,
 }) => {
   return (
     <>
@@ -33,7 +37,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
 
       <div className={styles.subtotalSection}>
         <p className={styles.subtotalLabel}>Subtotal:</p>
-        <p className={styles.subtotalAmount}>{formatPrice(subtotal)}</p>
+        <p className={styles.subtotalAmount}>{formatPriceByCurrency(subtotal, currency)}</p>
       </div>
     </>
   );

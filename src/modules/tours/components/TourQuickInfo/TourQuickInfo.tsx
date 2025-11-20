@@ -1,6 +1,12 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Icon, IconName } from "@/components/icons/Icon";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
+import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
 import styles from "./TourQuickInfo.module.scss";
 
 export interface QuickInfoItem {
@@ -11,7 +17,9 @@ export interface QuickInfoItem {
 }
 
 interface TourQuickInfoProps {
-  /** Precio del tour */
+  /** ID del tour para obtener precios dinámicos */
+  tourId: string;
+  /** Precio del tour (legacy, usado como fallback) */
   price: string;
   /** Items de información rápida (duración, dificultad, etc.) */
   items: QuickInfoItem[];
@@ -31,8 +39,10 @@ interface TourQuickInfoProps {
 /**
  * Componente QuickInfo para tours
  * Muestra precio, items de información y CTA de reserva en un fondo primary
+ * El precio se actualiza automáticamente según la moneda seleccionada
  */
 export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
+  tourId,
   price,
   items,
   restriction,
@@ -40,6 +50,38 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   ctaLabel,
   ctaHref,
 }) => {
+  const { currency } = useCurrency();
+  const defaultCurrency = "ARS"; // Moneda por defecto
+  const fullTour = getFullTourById(tourId);
+
+  // Obtener precio según la moneda seleccionada
+  const displayPrice = React.useMemo(() => {
+    if (fullTour?.booking?.prices) {
+      const priceData = getTourPriceByCurrency(fullTour.booking.prices, currency, defaultCurrency);
+      if (priceData) {
+        return formatPriceByCurrency(priceData.adult, priceData.currencyCode);
+      }
+    }
+    // Fallback al precio legacy si no hay precios por moneda
+    return price;
+  }, [fullTour, currency, defaultCurrency, price]);
+
+  // Obtener precio alternativo si existe
+  const alternativePrice = React.useMemo(() => {
+    if (!alternative?.price) return null;
+    
+    // Intentar parsear el precio alternativo si es numérico
+    const parsedPrice = parseFloat(alternative.price.replace(/[^0-9.-]+/g, ""));
+    if (!isNaN(parsedPrice) && fullTour?.booking?.prices) {
+      const priceData = getTourPriceByCurrency(fullTour.booking.prices, currency, defaultCurrency);
+      if (priceData) {
+        // Usar el mismo precio relativo (simplificado)
+        return formatPriceByCurrency(parsedPrice, priceData.currencyCode);
+      }
+    }
+    return alternative.price;
+  }, [alternative, fullTour, currency, defaultCurrency]);
+
   return (
     <section className={styles.quickInfo} id="quick-info">
       <div className={styles.wrapper}>
@@ -47,7 +89,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
           <div className={styles.topSection}>
             <div className={styles.priceColumn}>
               <div className={styles.priceLabel}>Precio</div>
-              <div className={styles.priceValue}>{price}</div>
+              <div className={styles.priceValue}>{displayPrice}</div>
             </div>
             
             <div className={styles.ctaColumn}>
@@ -75,12 +117,12 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
                 </div>
               </li>
             )}
-            {alternative && (
+            {alternative && alternativePrice && (
               <li className={styles.item}>
                 <Icon name="map-route" size={24} className={styles.icon} />
                 <div className={`${styles.itemContent} ${styles.itemContentRow}`}>
                   <span className={styles.itemValue}>{alternative.text}</span>
-                  <span className={styles.itemValue}>{alternative.price}</span>
+                  <span className={styles.itemValue}>{alternativePrice}</span>
                 </div>
               </li>
             )}

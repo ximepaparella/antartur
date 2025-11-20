@@ -38,6 +38,10 @@ export default function CheckoutPage() {
   useEffect(() => {
     const pending = getPendingBooking();
     if (pending) {
+      // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
+      if (!pending.pricing.currencyCode) {
+        pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
+      }
       setBookingData(pending);
     } else {
       // Si no hay datos, redirigir al inicio

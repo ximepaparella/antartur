@@ -7,15 +7,16 @@ import { OrderRepository } from "../infra/orderRepository";
 import { BookingRepository } from "../../booking/infra/bookingRepository";
 import { PassengerRepository } from "../../passengers/infra/passengerRepository";
 import { DepartureRepository } from "../../departures/infra/departureRepository";
-import { CurrencyRepository } from "../../currency/infra/currencyRepository";
+import { TourPriceRepository } from "../../tours/infra/tourPriceRepository";
 import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
 import { prisma } from "@/lib/db";
+
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
 const passengerRepo = new PassengerRepository();
 const departureRepo = new DepartureRepository();
-const currencyRepo = new CurrencyRepository();
+const tourPriceRepo = new TourPriceRepository();
 
 /**
  * Genera un código único para una orden en formato ANT-YYYY-NNNN
@@ -72,7 +73,7 @@ export async function createReservation(input: ReservationInput) {
       throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
     }
 
-    // 3. Obtener tour para snapshots y precios base
+    // 3. Obtener tour para snapshots
     const tour = await tx.tour.findUnique({
       where: { id: input.tourId },
     });
@@ -81,23 +82,22 @@ export async function createReservation(input: ReservationInput) {
       throw new Error(`Tour ${input.tourId} not found`);
     }
 
-    // 4. Calcular precios en la moneda solicitada
-    let unitPriceAdult = Number(tour.basePriceAdult);
-    let unitPriceChild = Number(tour.basePriceChild);
+    // 4. Obtener precios directamente de TourPrice en la moneda solicitada
+    const tourPrice = await tx.tourPrice.findUnique({
+      where: {
+        tourId_currency: {
+          tourId: input.tourId,
+          currency: input.currency,
+        },
+      },
+    });
 
-    if (input.currency !== tour.baseCurrency) {
-      const exchangeRate = await currencyRepo.getExchangeRate({
-        baseCurrency: tour.baseCurrency,
-        quoteCurrency: input.currency,
-      });
-
-      if (!exchangeRate) {
-        throw new Error(`Exchange rate not found for ${tour.baseCurrency} to ${input.currency}`);
-      }
-
-      unitPriceAdult = Number(tour.basePriceAdult) * exchangeRate;
-      unitPriceChild = Number(tour.basePriceChild) * exchangeRate;
+    if (!tourPrice) {
+      throw new Error(`Price not found for tour ${input.tourId} in currency ${input.currency}`);
     }
+
+    const unitPriceAdult = Number(tourPrice.priceAdult);
+    const unitPriceChild = Number(tourPrice.priceChild);
 
     const totalAmount = unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
 

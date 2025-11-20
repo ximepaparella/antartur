@@ -14,7 +14,7 @@ export interface BookingData {
   date: string;
   adults: number;
   children: number;
-  pricing: { priceAdult: number; priceChild: number };
+  pricing: { currencyCode?: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
 }

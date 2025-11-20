@@ -1,8 +1,12 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./TourCard.module.scss";
 import { Button } from "@/components/common/Button/Button";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 
 export interface TourCardData {
   /** ID único del tour (usado para la URL) */
@@ -15,8 +19,13 @@ export interface TourCardData {
   title: string;
   /** Nivel de dificultad */
   difficulty: string;
-  /** Precio del tour (opcional, se oculta si está vacío, es 0 o no existe) */
+  /** Precio del tour (opcional, se oculta si está vacío, es 0 o no existe) - DEPRECATED: usar prices */
   price?: string;
+  /** Precios por moneda */
+  prices?: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
   /** Categoría del tour: "winter" o "summer" */
   category: "winter" | "summer";
 }
@@ -71,7 +80,26 @@ export function isValidPrice(price?: string): boolean {
  * ```
  */
 export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
-  const showPrice = isValidPrice(tour.price);
+  const { currency, formatPrice } = useCurrency();
+  
+  // Obtener precio según la moneda seleccionada
+  const getDisplayPrice = (): string | null => {
+    // Si hay precios por moneda, usar esos
+    if (tour.prices && tour.prices[currency]) {
+      const priceData = tour.prices[currency];
+      return formatPrice(priceData.adult);
+    }
+    
+    // Fallback al precio legacy si existe
+    if (tour.price && isValidPrice(tour.price)) {
+      return tour.price;
+    }
+    
+    return null;
+  };
+
+  const displayPrice = getDisplayPrice();
+  const showPrice = displayPrice !== null;
 
   return (
     <div className={styles.tourCard}>
@@ -90,7 +118,7 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
             <h3 className={styles.title}>{tour.title}</h3>
             <div className={styles.details}>
               <span className={styles.difficulty}>Dificultad: {tour.difficulty}</span>
-              {showPrice && <span className={styles.price}>{tour.price}</span>}
+              {showPrice && <span className={styles.price}>{displayPrice}</span>}
             </div>
           </div>
         </div>
