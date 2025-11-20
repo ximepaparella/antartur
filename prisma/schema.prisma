@@ -9,33 +9,303 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Empty tables - structure to be defined later
-// These are placeholder tables to establish connection
+// ============================================
+// ENUMS
+// ============================================
 
-model Tour {
-  id        String   @id @default(cuid())
+enum OrderType {
+  RESERVATION
+  ENQUIRY
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  EXPIRED
+  COMPLETED
+}
+
+enum BookingStatus {
+  HELD
+  CONFIRMED
+  CANCELLED
+}
+
+enum PassengerType {
+  ADULT
+  CHILD
+  INFANT
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  REFUNDED
+}
+
+enum NotificationType {
+  EMAIL
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  ERROR
+}
+
+enum ImageType {
+  FEATURED
+  HERO
+  GALLERY
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model Currency {
+  code      String  @id @db.VarChar(3)
+  name      String
+  symbol    String
+  isDefault Boolean @default(false)
+
+  // Relaciones
+  baseTours  Tour[]         @relation("TourBaseCurrency")
+  baseRates  CurrencyRate[] @relation("BaseCurrency")
+  quoteRates CurrencyRate[] @relation("QuoteCurrency")
+  orders     Order[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Structure to be defined later
-  // Will add: title, description, pricing, etc.
+}
+
+model CurrencyRate {
+  id            String    @id @default(cuid())
+  baseCurrency  String    @db.VarChar(3)
+  quoteCurrency String    @db.VarChar(3)
+  rate          Decimal   @db.Decimal(18, 8)
+  source        String?
+  validFrom     DateTime  @default(now())
+  validTo       DateTime?
+
+  // Relaciones
+  base  Currency @relation("BaseCurrency", fields: [baseCurrency], references: [code])
+  quote Currency @relation("QuoteCurrency", fields: [quoteCurrency], references: [code])
+
+  createdAt DateTime @default(now())
+
+  @@index([baseCurrency, quoteCurrency, validFrom])
+  @@index([validTo])
+}
+
+model Tour {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  name             String
+  subtitle         String?
+  category         String // ej: 'summer', 'winter'
+  difficulty       String // ej: 'Baja', 'Media', 'Alta'
+  durationHours    Int
+  baseCurrency     String  @db.VarChar(3)
+  basePriceAdult   Decimal @db.Decimal(10, 2)
+  basePriceChild   Decimal @db.Decimal(10, 2)
+  featuredImage    String
+  heroImage        String
+  shortDescription String  @db.Text
+  longDescription  String  @db.Text
+  restrictionText  String  @db.Text
+  isActive         Boolean @default(true)
+
+  // Relaciones
+  baseCurrencyRef Currency        @relation("TourBaseCurrency", fields: [baseCurrency], references: [code])
+  images          TourImage[]
+  departures      TourDeparture[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+  @@index([isActive])
+}
+
+model TourImage {
+  id        String    @id @default(cuid())
+  tourId    String
+  imageType ImageType
+  url       String
+  altText   String
+  sortOrder Int       @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([tourId, imageType])
+  @@index([sortOrder])
+}
+
+model TourDeparture {
+  id             String   @id @default(cuid())
+  tourId         String
+  departureDate  DateTime @db.Date
+  startTime      String // HH:mm format
+  endTime        String? // HH:mm format
+  seatsTotal     Int
+  seatsHeld      Int      @default(0)
+  seatsConfirmed Int      @default(0)
+  isActive       Boolean  @default(true)
+
+  // Relaciones
+  tour     Tour      @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tourId, departureDate, startTime])
+  @@index([tourId, departureDate])
+  @@index([departureDate, isActive])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  code          String      @unique
+  type          OrderType
+  status        OrderStatus @default(PENDING_PAYMENT)
+  customerName  String
+  customerEmail String
+  customerPhone String
+  currency      String      @db.VarChar(3)
+  totalAmount   Decimal     @db.Decimal(10, 2)
+  expiresAt     DateTime?
+  notes         String?     @db.Text
+
+  // Relaciones
+  currencyRef   Currency       @relation(fields: [currency], references: [code])
+  bookings      Booking[]
+  payments      Payment[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([status, expiresAt])
 }
 
 model Booking {
-  id        String   @id @default(cuid())
+  id              String        @id @default(cuid())
+  orderId         String
+  tourDepartureId String
+  status          BookingStatus @default(HELD)
+  numAdults       Int
+  numChildren     Int
+  totalSeats      Int
+  unitPriceAdult  Decimal       @db.Decimal(10, 2)
+  unitPriceChild  Decimal       @db.Decimal(10, 2)
+  currency        String        @db.VarChar(3)
+
+  // Campos snapshot para robustez histórica
+  tourNameSnapshot      String
+  departureDateSnapshot DateTime @db.Date
+  startTimeSnapshot     String // HH:mm format
+  meetingPointSnapshot  String?
+
+  // Relaciones
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tourDeparture TourDeparture @relation(fields: [tourDepartureId], references: [id])
+  passengers    Passenger[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Structure to be defined later
-  // Will add: tourId, passengers, dates, etc.
+
+  @@index([orderId])
+  @@index([tourDepartureId])
+  @@index([status])
+}
+
+model Passenger {
+  id             String        @id @default(cuid())
+  bookingId      String
+  type           PassengerType
+  firstName      String
+  lastName       String
+  birthDate      DateTime?     @db.Date
+  documentType   String?
+  documentNumber String?
+  nationality    String?
+  email          String?
+  phone          String?
+
+  // Restricciones alimentarias y médicas (JSONB para flexibilidad)
+  restrictions Json?
+
+  // Relaciones
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookingId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String
+  provider          String // ej: 'PAYPAL', 'PAYWAY'
+  providerPaymentId String?
+  status            PaymentStatus @default(PENDING)
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @db.VarChar(3)
+  paidAt            DateTime?
+  rawRequest        Json?
+  rawResponse       Json?
+
+  // Relaciones
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([provider, providerPaymentId])
+  @@index([status])
+}
+
+model Notification {
+  id           String             @id @default(cuid())
+  orderId      String?
+  type         NotificationType
+  recipient    String
+  templateKey  String
+  subject      String?
+  body         String?            @db.Text
+  status       NotificationStatus @default(PENDING)
+  errorMessage String?            @db.Text
+  sentAt       DateTime?
+
+  // Relaciones
+  order Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([status])
+  @@index([type, status])
 }
 
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Structure to be defined later
-  // Will add: email, password, role, etc.
-}
 
+  // Estructura para futuro sistema de autenticación
+  // Campos a agregar cuando se implemente auth
+}
