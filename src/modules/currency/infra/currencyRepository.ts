@@ -2,7 +2,6 @@
  * Repositorio para acceso a datos de Currency usando Prisma
  */
 
-import type { GetExchangeRateInput } from "../domain/types";
 import { prisma } from "@/lib/db";
 
 export class CurrencyRepository {

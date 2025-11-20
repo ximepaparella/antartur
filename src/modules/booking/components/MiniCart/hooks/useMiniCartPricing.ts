@@ -7,6 +7,11 @@ import type { Pricing } from "@/lib/types/order";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
+import {
+  calculateSubtotalAdults,
+  calculateSubtotalChildren,
+  calculateOrderTotal,
+} from "@/lib/utils/pricing";
 
 interface UseMiniCartPricingProps {
   pricing: Pricing;
@@ -69,16 +74,16 @@ export function useMiniCartPricing({
   }, [pricing, tourId, currency, defaultCurrency]);
 
   const subtotalAdults = useMemo(() => {
-    return adults * currentPricing.priceAdult;
-  }, [adults, currentPricing.priceAdult]);
+    return calculateSubtotalAdults(adults, currentPricing);
+  }, [adults, currentPricing]);
 
   const subtotalChildren = useMemo(() => {
-    return childrenCount * currentPricing.priceChild;
-  }, [childrenCount, currentPricing.priceChild]);
+    return calculateSubtotalChildren(childrenCount, currentPricing);
+  }, [childrenCount, currentPricing]);
 
   const total = useMemo(() => {
-    return subtotalAdults + subtotalChildren;
-  }, [subtotalAdults, subtotalChildren]);
+    return calculateOrderTotal(adults, childrenCount, currentPricing);
+  }, [adults, childrenCount, currentPricing]);
 
   return {
     currentPricing,

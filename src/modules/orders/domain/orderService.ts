@@ -11,6 +11,7 @@ import { TourPriceRepository } from "../../tours/infra/tourPriceRepository";
 import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
 import { prisma } from "@/lib/db";
+import type { PrismaClient } from "@prisma/client";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -20,13 +21,14 @@ const tourPriceRepo = new TourPriceRepository();
 
 /**
  * Genera un código único para una orden en formato ANT-YYYY-NNNN
+ * Debe ejecutarse dentro de una transacción para evitar race conditions
  */
-async function generateOrderCode(): Promise<string> {
+async function generateOrderCode(tx: Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">): Promise<string> {
   const year = new Date().getFullYear();
   const prefix = `ANT-${year}-`;
 
-  // Buscar la última orden del año
-  const lastOrder = await prisma.order.findFirst({
+  // Buscar la última orden del año usando la transacción
+  const lastOrder = await tx.order.findFirst({
     where: {
       code: {
         startsWith: prefix,
@@ -52,7 +54,13 @@ async function generateOrderCode(): Promise<string> {
  */
 export async function createReservation(input: ReservationInput) {
   return prisma.$transaction(async (tx) => {
-    // 1. Bloquear el departure para actualización
+    // 1. Bloquear el departure para actualización con SELECT FOR UPDATE
+    await tx.$queryRaw`
+      SELECT * FROM "TourDeparture"
+      WHERE id = ${input.departureId}
+      FOR UPDATE
+    `;
+    
     const departure = await tx.tourDeparture.findUnique({
       where: { id: input.departureId },
     });
@@ -101,8 +109,8 @@ export async function createReservation(input: ReservationInput) {
 
     const totalAmount = unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
 
-    // 5. Generar código de orden
-    const orderCode = await generateOrderCode();
+    // 5. Generar código de orden dentro de la transacción
+    const orderCode = await generateOrderCode(tx);
 
     // 6. Calcular fecha de expiración (24 horas desde ahora)
     const expiresAt = new Date();
@@ -229,15 +237,19 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
         where: { id: booking.tourDepartureId },
       });
 
-      if (departure) {
-        await tx.tourDeparture.update({
-          where: { id: booking.tourDepartureId },
-          data: {
-            seatsHeld: departure.seatsHeld - booking.totalSeats,
-            seatsConfirmed: departure.seatsConfirmed + booking.totalSeats,
-          },
-        });
+      if (!departure) {
+        throw new Error(
+          `Departure ${booking.tourDepartureId} not found for booking ${booking.id}`
+        );
       }
+
+      await tx.tourDeparture.update({
+        where: { id: booking.tourDepartureId },
+        data: {
+          seatsHeld: departure.seatsHeld - booking.totalSeats,
+          seatsConfirmed: departure.seatsConfirmed + booking.totalSeats,
+        },
+      });
     }
 
     return {
@@ -258,14 +270,25 @@ export async function expirePendingOrders() {
   for (const order of expiredOrders) {
     try {
       await prisma.$transaction(async (tx) => {
-        // 1. Actualizar Order a EXPIRED
-        await tx.order.update({
+        // 1. Verificar que la orden sigue en PENDING_PAYMENT antes de expirar
+        const freshOrder = await tx.order.findUnique({
           where: { id: order.id },
+          include: { bookings: true },
+        });
+
+        if (!freshOrder || freshOrder.status !== "PENDING_PAYMENT") {
+          // La orden cambió de estado (probablemente fue pagada), saltar
+          return;
+        }
+
+        // 2. Actualizar Order a EXPIRED
+        await tx.order.update({
+          where: { id: freshOrder.id },
           data: { status: "EXPIRED" },
         });
 
-        // 2. Actualizar Bookings a CANCELLED y liberar cupos
-        for (const booking of order.bookings) {
+        // 3. Actualizar Bookings a CANCELLED y liberar cupos
+        for (const booking of freshOrder.bookings) {
           await tx.booking.update({
             where: { id: booking.id },
             data: { status: "CANCELLED" },

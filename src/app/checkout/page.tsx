@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useRef, Suspense } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
@@ -41,6 +41,8 @@ export default function CheckoutPage() {
       // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
       if (!pending.pricing.currencyCode) {
         pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
+        // Persistir la migración para evitar re-ejecutarla en cada carga
+        savePendingBooking(pending);
       }
       setBookingData(pending);
     } else {
@@ -141,42 +143,34 @@ export default function CheckoutPage() {
         <FeatureErrorBoundary featureName="reserva">
           <div className={styles.checkoutPage}>
             <div className={styles.leftColumn}>
-              <Suspense fallback={
-                <div className={styles.loading}>
-                  <p>Cargando formulario...</p>
-                </div>
-              }>
-                <CheckoutForm
-                  ref={checkoutFormRef}
-                  hasPregnancyRestriction={hasPregnancyRestriction}
-                  hasHealthRestriction={hasHealthRestriction}
-                  onCheckoutComplete={handleCheckoutComplete}
-                  onRestrictionViolationsChange={handleRestrictionViolationsChange}
-                  onPassengersChange={handlePassengersChange}
-                  onValidationErrorsChange={handleValidationErrorsChange}
-                />
-              </Suspense>
+              <CheckoutForm
+                ref={checkoutFormRef}
+                hasPregnancyRestriction={hasPregnancyRestriction}
+                hasHealthRestriction={hasHealthRestriction}
+                onCheckoutComplete={handleCheckoutComplete}
+                onRestrictionViolationsChange={handleRestrictionViolationsChange}
+                onPassengersChange={handlePassengersChange}
+                onValidationErrorsChange={handleValidationErrorsChange}
+              />
             </div>
             <div className={styles.rightColumn}>
               {isUpdatingPassengers ? (
                 <MiniCartSkeleton />
               ) : (
-                <Suspense fallback={<MiniCartSkeleton />}>
-                  <MiniCart
-                    tourTitle={bookingData.tourTitle}
-                    date={bookingData.date}
-                    timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
-                    adults={bookingData.adults}
-                    childrenCount={bookingData.children}
-                    pricing={bookingData.pricing}
-                    tourId={bookingData.tourId}
-                    exceedsAvailability={bookingData.exceedsAvailability}
-                    hasRestrictionViolations={hasRestrictionViolations}
-                    hasValidationErrors={hasValidationErrors}
-                    onPaymentMethodChange={handlePaymentMethodChange}
-                    onSubmit={handleSubmitFromCart}
-                  />
-                </Suspense>
+                <MiniCart
+                  tourTitle={bookingData.tourTitle}
+                  date={bookingData.date}
+                  timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
+                  adults={bookingData.adults}
+                  childrenCount={bookingData.children}
+                  pricing={bookingData.pricing}
+                  tourId={bookingData.tourId}
+                  exceedsAvailability={bookingData.exceedsAvailability}
+                  hasRestrictionViolations={hasRestrictionViolations}
+                  hasValidationErrors={hasValidationErrors}
+                  onPaymentMethodChange={handlePaymentMethodChange}
+                  onSubmit={handleSubmitFromCart}
+                />
               )}
             </div>
           </div>

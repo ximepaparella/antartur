@@ -6,7 +6,6 @@ import Link from "next/link";
 import styles from "./TourCard.module.scss";
 import { Button } from "@/components/common/Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 
 export interface TourCardData {
   /** ID único del tour (usado para la URL) */

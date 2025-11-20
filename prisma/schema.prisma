@@ -139,6 +139,7 @@ model TourImage {
   tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([tourId, imageType])
   @@index([sortOrder])
@@ -290,6 +291,7 @@ model Notification {
   order Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([status])
