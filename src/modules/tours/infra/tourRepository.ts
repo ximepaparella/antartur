@@ -2,10 +2,8 @@
  * Repositorio para acceso a datos de Tours usando Prisma
  */
 
-import { PrismaClient } from "@prisma/client";
 import type { CreateTourInput, UpdateTourInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class TourRepository {
   async findAll(includeImages = false, includeDepartures = false) {

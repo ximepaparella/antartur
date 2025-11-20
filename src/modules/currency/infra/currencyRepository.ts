@@ -2,10 +2,8 @@
  * Repositorio para acceso a datos de Currency usando Prisma
  */
 
-import { PrismaClient } from "@prisma/client";
 import type { GetExchangeRateInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class CurrencyRepository {
   async findAll() {

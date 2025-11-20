@@ -15,9 +15,6 @@ WORKDIR /app
 # Install OpenSSL for Prisma
 RUN apk add --no-cache openssl openssl-dev
 
-COPY package.json package-lock.json ./
-RUN npm ci
-
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 

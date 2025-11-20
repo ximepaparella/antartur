@@ -2,10 +2,9 @@
  * Repositorio para acceso a datos de Bookings usando Prisma
  */
 
-import { PrismaClient, BookingStatus } from "@prisma/client";
+import { BookingStatus } from "@prisma/client";
 import type { CreateBookingInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class BookingRepository {
   async findAll(orderId?: string) {

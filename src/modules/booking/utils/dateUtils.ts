@@ -17,9 +17,26 @@ export function formatDate(date: Date): string {
  * Ejemplo: "19 noviembre, 2025"
  */
 export function formatDisplayDate(dateStr: string): string {
+  // Validar formato YYYY-MM-DD
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(dateStr)) {
+    throw new Error(`Invalid date format. Expected YYYY-MM-DD, got: ${dateStr}`);
+  }
+  
   // Parsear como fecha local para evitar problemas de timezone
   const [y, m, d] = dateStr.split('-').map(Number);
+  
+  // Validar que los valores sean válidos
+  if (isNaN(y) || isNaN(m) || isNaN(d) || m < 1 || m > 12 || d < 1 || d > 31) {
+    throw new Error(`Invalid date values. Year: ${y}, Month: ${m}, Day: ${d}`);
+  }
+  
   const date = new Date(y, m - 1, d);
+  
+  // Validar que la fecha creada es válida
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+    throw new Error(`Invalid date: ${dateStr}`);
+  }
   const months = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"

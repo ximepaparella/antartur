@@ -2,10 +2,8 @@
  * Repositorio para acceso a datos de Departures usando Prisma
  */
 
-import { PrismaClient } from "@prisma/client";
 import type { CreateDepartureInput, UpdateDepartureInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class DepartureRepository {
   async findAll(tourId?: string) {

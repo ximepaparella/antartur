@@ -2,10 +2,9 @@
  * Repositorio para acceso a datos de Payments usando Prisma
  */
 
-import { PrismaClient, PaymentStatus } from "@prisma/client";
+import { PaymentStatus } from "@prisma/client";
 import type { CreatePaymentInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class PaymentRepository {
   async findAll(orderId?: string) {
@@ -46,13 +45,19 @@ export class PaymentRepository {
     });
   }
 
-  async updateStatus(id: string, status: PaymentStatus, paidAt?: Date) {
+  async updateStatus(id: string, status: PaymentStatus, paidAt?: Date | null) {
+    const updateData: { status: PaymentStatus; paidAt?: Date | null } = {
+      status,
+    };
+    
+    // Solo incluir paidAt si se proporciona explícitamente (incluyendo null para limpiar)
+    if (paidAt !== undefined) {
+      updateData.paidAt = paidAt;
+    }
+    
     return prisma.payment.update({
       where: { id },
-      data: {
-        status,
-        paidAt: paidAt || new Date(),
-      },
+      data: updateData,
     });
   }
 }

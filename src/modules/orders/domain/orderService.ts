@@ -3,7 +3,6 @@
  * Contiene la lógica de negocio para crear reservas, confirmar pagos y expirar órdenes
  */
 
-import { PrismaClient } from "@prisma/client";
 import { OrderRepository } from "../infra/orderRepository";
 import { BookingRepository } from "../../booking/infra/bookingRepository";
 import { PassengerRepository } from "../../passengers/infra/passengerRepository";
@@ -11,8 +10,7 @@ import { DepartureRepository } from "../../departures/infra/departureRepository"
 import { CurrencyRepository } from "../../currency/infra/currencyRepository";
 import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
 const passengerRepo = new PassengerRepository();

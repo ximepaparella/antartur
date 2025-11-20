@@ -65,9 +65,13 @@ export const Modal: React.FC<ModalProps> = ({
     const firstFocusable = focusableElements[0];
     const lastFocusable = focusableElements[focusableElements.length - 1];
 
-    // Focus en el primer elemento al abrir
-    if (firstFocusable) {
-      firstFocusable.focus();
+    // Focus en el primer elemento al abrir (con check defensivo)
+    if (firstFocusable && typeof firstFocusable.focus === 'function') {
+      try {
+        firstFocusable.focus();
+      } catch (error) {
+        console.warn("Error focusing first element:", error);
+      }
     }
 
     const handleTabKey = (e: KeyboardEvent) => {
@@ -142,6 +146,7 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
+        tabIndex={-1}
       >
         <button
           type="button"

@@ -46,6 +46,13 @@ export function useBookingFlow({
   const handleBooking = useCallback(() => {
     if (!selectedDate || !selectedTimeSlot) return;
 
+    // Usar el valor memoizado de exceedsAvailability en lugar de recalcular
+    if (exceedsAvailability) {
+      console.error("La reserva excede la disponibilidad disponible");
+      // TODO: Mostrar notificación al usuario cuando se implemente sistema de notificaciones
+      return;
+    }
+
     // Crear objeto de reserva inicial
     const bookingData = {
       tourId,
@@ -58,7 +65,7 @@ export function useBookingFlow({
         start: selectedTimeSlot.start,
         end: selectedTimeSlot.end,
       },
-      exceedsAvailability: adults + children > selectedTimeSlot.available,
+      exceedsAvailability: false, // Usar el valor memoizado
     };
 
     // Guardar en localStorage
@@ -66,12 +73,14 @@ export function useBookingFlow({
       savePendingBooking(bookingData);
     } catch (error) {
       console.error("Error al guardar datos de reserva:", error);
-      return;
+      // TODO: Mostrar notificación de error al usuario cuando se implemente sistema de notificaciones
+      // Por ahora, lanzar el error para que el componente pueda manejarlo
+      throw new Error("No se pudo guardar la reserva. Por favor, intenta nuevamente.");
     }
 
     // Redirigir a checkout
     router.push("/checkout");
-  }, [tourId, tourTitle, pricing, selectedDate, selectedTimeSlot, adults, children, router]);
+  }, [tourId, tourTitle, pricing, selectedDate, selectedTimeSlot, adults, children, exceedsAvailability, router]);
 
   return {
     adults,

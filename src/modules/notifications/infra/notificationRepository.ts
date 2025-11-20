@@ -2,10 +2,9 @@
  * Repositorio para acceso a datos de Notifications usando Prisma
  */
 
-import { PrismaClient, NotificationStatus } from "@prisma/client";
+import { NotificationStatus } from "@prisma/client";
 import type { CreateNotificationInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class NotificationRepository {
   async findAll(orderId?: string) {
@@ -29,14 +28,28 @@ export class NotificationRepository {
     });
   }
 
-  async updateStatus(id: string, status: NotificationStatus, sentAt?: Date, errorMessage?: string) {
+  async updateStatus(id: string, status: NotificationStatus, sentAt?: Date | null, errorMessage?: string | null) {
+    const updateData: {
+      status: NotificationStatus;
+      sentAt?: Date | null;
+      errorMessage?: string | null;
+    } = {
+      status,
+    };
+    
+    // Solo incluir sentAt si se proporciona explícitamente (incluyendo null para limpiar)
+    if (sentAt !== undefined) {
+      updateData.sentAt = sentAt;
+    }
+    
+    // Solo incluir errorMessage si se proporciona explícitamente
+    if (errorMessage !== undefined) {
+      updateData.errorMessage = errorMessage;
+    }
+    
     return prisma.notification.update({
       where: { id },
-      data: {
-        status,
-        sentAt: sentAt || new Date(),
-        errorMessage,
-      },
+      data: updateData,
     });
   }
 }

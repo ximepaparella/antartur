@@ -2,10 +2,9 @@
  * Repositorio para acceso a datos de Orders usando Prisma
  */
 
-import { PrismaClient, OrderStatus } from "@prisma/client";
+import { OrderStatus } from "@prisma/client";
 import type { CreateOrderInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class OrderRepository {
   async findAll() {

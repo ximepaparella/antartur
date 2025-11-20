@@ -2,10 +2,8 @@
  * Repositorio para acceso a datos de Passengers usando Prisma
  */
 
-import { PrismaClient } from "@prisma/client";
 import type { CreatePassengerInput } from "../domain/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 export class PassengerRepository {
   async findAll(bookingId?: string) {
