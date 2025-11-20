@@ -81,8 +81,8 @@ export function isValidPrice(price?: string): boolean {
 export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   const { currency, formatPrice } = useCurrency();
   
-  // Obtener precio según la moneda seleccionada
-  const getDisplayPrice = (): string | null => {
+  // Obtener precio según la moneda seleccionada (memoizado para evitar recálculos)
+  const displayPrice = React.useMemo(() => {
     // Si hay precios por moneda, usar esos
     if (tour.prices && tour.prices[currency]) {
       const priceData = tour.prices[currency];
@@ -95,9 +95,8 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
     }
     
     return null;
-  };
+  }, [tour.prices, tour.price, currency, formatPrice]);
 
-  const displayPrice = getDisplayPrice();
   const showPrice = displayPrice !== null;
 
   return (

@@ -3,9 +3,10 @@
  */
 
 import { prisma } from "@/lib/db";
+import type { Currency } from "@prisma/client";
 
 export class CurrencyRepository {
-  async findAll() {
+  async findAll(): Promise<Currency[]> {
     return prisma.currency.findMany({
       orderBy: {
         isDefault: "desc",
@@ -13,13 +14,13 @@ export class CurrencyRepository {
     });
   }
 
-  async findByCode(code: string) {
+  async findByCode(code: string): Promise<Currency | null> {
     return prisma.currency.findUnique({
       where: { code },
     });
   }
 
-  async findDefault() {
+  async findDefault(): Promise<Currency | null> {
     return prisma.currency.findFirst({
       where: { isDefault: true },
     });

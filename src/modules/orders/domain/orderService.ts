@@ -12,6 +12,7 @@ import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
 import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -172,7 +173,7 @@ export async function createReservation(input: ReservationInput) {
         nationality: p.nationality,
         email: p.email,
         phone: p.phone,
-        restrictions: p.restrictions ? JSON.parse(JSON.stringify(p.restrictions)) : null,
+        restrictions: p.restrictions ? (structuredClone(p.restrictions) as any) : Prisma.JsonNull,
       })),
     });
 
@@ -214,8 +215,8 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
         amount: input.amount,
         currency: input.currency,
         paidAt: new Date(),
-        rawRequest: input.rawRequest ? JSON.parse(JSON.stringify(input.rawRequest)) : null,
-        rawResponse: input.rawResponse ? JSON.parse(JSON.stringify(input.rawResponse)) : null,
+        rawRequest: input.rawRequest ? (structuredClone(input.rawRequest) as any) : Prisma.JsonNull,
+        rawResponse: input.rawResponse ? (structuredClone(input.rawResponse) as any) : Prisma.JsonNull,
       },
     });
 
@@ -246,7 +247,7 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
       await tx.tourDeparture.update({
         where: { id: booking.tourDepartureId },
         data: {
-          seatsHeld: departure.seatsHeld - booking.totalSeats,
+          seatsHeld: Math.max(0, departure.seatsHeld - booking.totalSeats),
           seatsConfirmed: departure.seatsConfirmed + booking.totalSeats,
         },
       });

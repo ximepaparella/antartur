@@ -12,9 +12,17 @@ async function main() {
   // 1. Crear monedas
   console.log("Creating currencies...");
   
+  // Ensure only one currency is default: first, set all existing currencies to false
+  await prisma.currency.updateMany({
+    where: { isDefault: true },
+    data: { isDefault: false },
+  });
+  
   const ars = await prisma.currency.upsert({
     where: { code: "ARS" },
-    update: {},
+    update: {
+      isDefault: true, // Ensure ARS is set as default
+    },
     create: {
       code: "ARS",
       name: "Peso Argentino",
@@ -25,7 +33,9 @@ async function main() {
 
   const usd = await prisma.currency.upsert({
     where: { code: "USD" },
-    update: {},
+    update: {
+      isDefault: false, // Explicitly set to false
+    },
     create: {
       code: "USD",
       name: "Dólar Estadounidense",
@@ -36,7 +46,9 @@ async function main() {
 
   const eur = await prisma.currency.upsert({
     where: { code: "EUR" },
-    update: {},
+    update: {
+      isDefault: false, // Explicitly set to false
+    },
     create: {
       code: "EUR",
       name: "Euro",

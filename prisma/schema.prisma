@@ -70,6 +70,9 @@ model Currency {
   code      String  @id @db.VarChar(3)
   name      String
   symbol    String
+  // NOTE: Only one currency should have isDefault = true at any time.
+  // This is enforced at the application level (see seed.ts and any currency update logic).
+  // Prisma does not support @unique on boolean fields directly.
   isDefault Boolean @default(false)
 
   // Relaciones

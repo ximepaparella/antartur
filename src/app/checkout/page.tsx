@@ -51,7 +51,6 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
-
   // Obtener restricciones del tour
   const tour = bookingData ? getFullTourById(bookingData.tourId) : null;
   const restriction = tour?.quickInfo?.restriction || "";
