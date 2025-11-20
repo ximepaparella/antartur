@@ -3,7 +3,7 @@
  */
 
 export interface Pricing {
-  currency: "ARS" | "USD";
+  currencyCode: string;
   priceAdult: number;
   priceChild: number;
 }

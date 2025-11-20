@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 
 export const metadata: Metadata = {
   title: "Ushuaia - La Ciudad Más Austral del Mundo | Antartur",

@@ -47,6 +47,7 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const generatedId = useId();
   const selectId = id || `select-${props.name || generatedId}`;
+  const errorId = `${selectId}-error`;
 
   return (
     <div className={`${styles.selectGroup} ${className}`.trim()}>
@@ -59,6 +60,9 @@ export const Select: React.FC<SelectProps> = ({
       <select
         id={selectId}
         className={`${styles.select} ${error ? styles.error : ""}`.trim()}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
+        aria-required={required}
         {...props}
       >
         {options.map((option) => (
@@ -67,7 +71,11 @@ export const Select: React.FC<SelectProps> = ({
           </option>
         ))}
       </select>
-      {error && <span className={styles.errorMessage}>{error}</span>}
+      {error && (
+        <span id={errorId} role="alert" className={styles.errorMessage}>
+          {error}
+        </span>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { WindyWidgetClient } from "@/modules/content/components/WindyWidget/WindyWidgetClient";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { WindyWidgetClient } from "@/modules/ui/components/WindyWidget/WindyWidgetClient";
 
 export const metadata: Metadata = {
   title: "Clima - Información del Clima en Ushuaia | Antartur",

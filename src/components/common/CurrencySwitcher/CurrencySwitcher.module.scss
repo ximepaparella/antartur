@@ -1,0 +1,37 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.switcher {
+  display: flex;
+  gap: $spacing-4;
+  align-items: center;
+}
+
+.button {
+  padding: $spacing-8 $spacing-12;
+  border: 1px solid $border-divider;
+  background-color: $white;
+  color: $gray-900;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: $gray-100;
+    border-color: $primary-color;
+  }
+
+  &.active {
+    background-color: $primary-color;
+    color: $white;
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+

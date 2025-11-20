@@ -2,14 +2,15 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { CheckoutForm, type CheckoutFormRef } from "@/modules/content/components/CheckoutForm";
-import { MiniCart } from "@/modules/content/components/MiniCart";
-import { MiniCartSkeleton } from "@/modules/content/components/MiniCart/MiniCartSkeleton";
-import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
-import { getPendingBooking } from "@/lib/utils/orderStorage";
-import type { Order, PaymentMethod } from "@/lib/types/order";
-import { PaymentModal } from "@/modules/content/components/PaymentModal/PaymentModal";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
+import { MiniCart } from "@/modules/booking/components/MiniCart";
+import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
+import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
+import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
+import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
+import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
@@ -20,7 +21,7 @@ export default function CheckoutPage() {
     date: string;
     adults: number;
     children: number;
-    pricing: { currency: "ARS" | "USD"; priceAdult: number; priceChild: number };
+    pricing: Pricing;
     timeSlot: { start: string; end: string };
     exceedsAvailability: boolean;
   } | null>(null);
@@ -37,6 +38,12 @@ export default function CheckoutPage() {
   useEffect(() => {
     const pending = getPendingBooking();
     if (pending) {
+      // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
+      if (!pending.pricing.currencyCode) {
+        pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
+        // Persistir la migración para evitar re-ejecutarla en cada carga
+        savePendingBooking(pending);
+      }
       setBookingData(pending);
     } else {
       // Si no hay datos, redirigir al inicio
@@ -129,41 +136,44 @@ export default function CheckoutPage() {
   }
 
   return (
-    <>
+    <RouteErrorBoundary>
       <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
-        <div className={styles.checkoutPage}>
-          <div className={styles.leftColumn}>
-            <CheckoutForm
-              ref={checkoutFormRef}
-              hasPregnancyRestriction={hasPregnancyRestriction}
-              hasHealthRestriction={hasHealthRestriction}
-              onCheckoutComplete={handleCheckoutComplete}
-              onRestrictionViolationsChange={handleRestrictionViolationsChange}
-              onPassengersChange={handlePassengersChange}
-              onValidationErrorsChange={handleValidationErrorsChange}
-            />
-          </div>
-          <div className={styles.rightColumn}>
-            {isUpdatingPassengers ? (
-              <MiniCartSkeleton />
-            ) : (
-              <MiniCart
-                tourTitle={bookingData.tourTitle}
-                date={bookingData.date}
-                timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
-                adults={bookingData.adults}
-                childrenCount={bookingData.children}
-                pricing={bookingData.pricing}
-                exceedsAvailability={bookingData.exceedsAvailability}
-                hasRestrictionViolations={hasRestrictionViolations}
-                hasValidationErrors={hasValidationErrors}
-                onPaymentMethodChange={handlePaymentMethodChange}
-                onSubmit={handleSubmitFromCart}
+        <FeatureErrorBoundary featureName="reserva">
+          <div className={styles.checkoutPage}>
+            <div className={styles.leftColumn}>
+              <CheckoutForm
+                ref={checkoutFormRef}
+                hasPregnancyRestriction={hasPregnancyRestriction}
+                hasHealthRestriction={hasHealthRestriction}
+                onCheckoutComplete={handleCheckoutComplete}
+                onRestrictionViolationsChange={handleRestrictionViolationsChange}
+                onPassengersChange={handlePassengersChange}
+                onValidationErrorsChange={handleValidationErrorsChange}
               />
-            )}
+            </div>
+            <div className={styles.rightColumn}>
+              {isUpdatingPassengers ? (
+                <MiniCartSkeleton />
+              ) : (
+                <MiniCart
+                  tourTitle={bookingData.tourTitle}
+                  date={bookingData.date}
+                  timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
+                  adults={bookingData.adults}
+                  childrenCount={bookingData.children}
+                  pricing={bookingData.pricing}
+                  tourId={bookingData.tourId}
+                  exceedsAvailability={bookingData.exceedsAvailability}
+                  hasRestrictionViolations={hasRestrictionViolations}
+                  hasValidationErrors={hasValidationErrors}
+                  onPaymentMethodChange={handlePaymentMethodChange}
+                  onSubmit={handleSubmitFromCart}
+                />
+              )}
+            </div>
           </div>
-        </div>
+        </FeatureErrorBoundary>
       </main>
 
       {showPaymentModal && completedOrder && (
@@ -178,6 +188,6 @@ export default function CheckoutPage() {
           }}
         />
       )}
-    </>
+    </RouteErrorBoundary>
   );
 }

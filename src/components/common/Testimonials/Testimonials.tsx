@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./Testimonials.module.scss";
-import type { Testimonial } from "@/modules/content/components/Testimonials/types";
+import type { Testimonial } from "@/modules/ui/components/Testimonials/types";
 
 // Re-exportar para compatibilidad
 export type { Testimonial };

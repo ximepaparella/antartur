@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Icon } from "@/components/icons/Icon";
 import styles from "./Modal.module.scss";
 
@@ -44,8 +44,68 @@ export const Modal: React.FC<ModalProps> = ({
   size = "medium",
   closeOnOverlayClick = true,
 }) => {
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
+
+  // Guardar el elemento activo antes de abrir el modal
+  useEffect(() => {
+    if (isOpen) {
+      previousActiveElementRef.current = document.activeElement as HTMLElement;
+    }
+  }, [isOpen]);
+
+  // Focus trap: mantener el foco dentro del modal
+  useEffect(() => {
+    if (!isOpen || !modalContentRef.current) return;
+
+    const modalContent = modalContentRef.current;
+    const focusableElements = modalContent.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    // Focus en el primer elemento al abrir (con check defensivo)
+    if (firstFocusable && typeof firstFocusable.focus === 'function') {
+      try {
+        firstFocusable.focus();
+      } catch (error) {
+        console.warn("Error focusing first element:", error);
+      }
+    }
+
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable?.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable?.focus();
+        }
+      }
+    };
+
+    modalContent.addEventListener("keydown", handleTabKey);
+    return () => modalContent.removeEventListener("keydown", handleTabKey);
+  }, [isOpen]);
+
+  // Restaurar focus al cerrar el modal
+  useEffect(() => {
+    if (!isOpen && previousActiveElementRef.current) {
+      previousActiveElementRef.current.focus();
+      previousActiveElementRef.current = null;
+    }
+  }, [isOpen]);
+
   // Cerrar con tecla ESC
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
@@ -59,7 +119,7 @@ export const Modal: React.FC<ModalProps> = ({
   }, [isOpen, onClose]);
 
   // Prevenir scroll del body cuando el modal está abierto
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -76,21 +136,28 @@ export const Modal: React.FC<ModalProps> = ({
     <div
       className={`${styles.modalOverlay} ${isClosing ? styles.modalOverlayClosing : ""}`}
       onClick={closeOnOverlayClick ? onClose : undefined}
+      role="presentation"
+      aria-hidden={!isOpen}
     >
       <div
+        ref={modalContentRef}
         className={`${styles.modalContent} ${styles[`modalContent${size.charAt(0).toUpperCase() + size.slice(1)}`]} ${isClosing ? styles.modalContentClosing : ""}`}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
+        tabIndex={-1}
       >
         <button
           type="button"
           onClick={onClose}
           className={styles.modalClose}
-          aria-label="Cerrar"
+          aria-label="Cerrar modal"
         >
-          <Icon name="close" size={24} />
+          <Icon name="close" size={24} aria-hidden="true" />
         </button>
 
-        {title && <h2 className={styles.modalTitle}>{title}</h2>}
+        {title && <h2 id="modal-title" className={styles.modalTitle}>{title}</h2>}
 
         <div className={styles.modalBody}>{children}</div>
       </div>

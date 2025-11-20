@@ -1,0 +1,311 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum OrderType {
+  RESERVATION
+  ENQUIRY
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  EXPIRED
+  COMPLETED
+}
+
+enum BookingStatus {
+  HELD
+  CONFIRMED
+  CANCELLED
+}
+
+enum PassengerType {
+  ADULT
+  CHILD
+  INFANT
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  REFUNDED
+}
+
+enum NotificationType {
+  EMAIL
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  ERROR
+}
+
+enum ImageType {
+  FEATURED
+  HERO
+  GALLERY
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model Currency {
+  code      String  @id @db.VarChar(3)
+  name      String
+  symbol    String
+  // NOTE: Only one currency should have isDefault = true at any time.
+  // This is enforced at the application level (see seed.ts and any currency update logic).
+  // Prisma does not support @unique on boolean fields directly.
+  isDefault Boolean @default(false)
+
+  // Relaciones
+  tourPrices TourPrice[]
+  orders     Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tour {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  name             String
+  subtitle         String?
+  category         String // ej: 'summer', 'winter'
+  difficulty       String // ej: 'Baja', 'Media', 'Alta'
+  durationHours    Int
+  featuredImage    String
+  heroImage        String
+  shortDescription String  @db.Text
+  longDescription  String  @db.Text
+  restrictionText  String  @db.Text
+  isActive         Boolean @default(true)
+
+  // Relaciones
+  images     TourImage[]
+  departures TourDeparture[]
+  prices     TourPrice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+  @@index([isActive])
+}
+
+model TourPrice {
+  id         String   @id @default(cuid())
+  tourId     String
+  currency   String   @db.VarChar(3)
+  priceAdult Decimal  @db.Decimal(10, 2)
+  priceChild Decimal  @db.Decimal(10, 2)
+
+  // Relaciones
+  tour         Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  currencyRef  Currency @relation(fields: [currency], references: [code])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tourId, currency])
+  @@index([tourId])
+  @@index([currency])
+}
+
+model TourImage {
+  id        String    @id @default(cuid())
+  tourId    String
+  imageType ImageType
+  url       String
+  altText   String
+  sortOrder Int       @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId, imageType])
+  @@index([sortOrder])
+}
+
+model TourDeparture {
+  id             String   @id @default(cuid())
+  tourId         String
+  departureDate  DateTime @db.Date
+  startTime      String // HH:mm format
+  endTime        String? // HH:mm format
+  seatsTotal     Int
+  seatsHeld      Int      @default(0)
+  seatsConfirmed Int      @default(0)
+  isActive       Boolean  @default(true)
+
+  // Relaciones
+  tour     Tour      @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tourId, departureDate, startTime])
+  @@index([tourId, departureDate])
+  @@index([departureDate, isActive])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  code          String      @unique
+  type          OrderType
+  status        OrderStatus @default(PENDING_PAYMENT)
+  customerName  String
+  customerEmail String
+  customerPhone String
+  currency      String      @db.VarChar(3)
+  totalAmount   Decimal     @db.Decimal(10, 2)
+  expiresAt     DateTime?
+  notes         String?     @db.Text
+
+  // Relaciones
+  currencyRef   Currency       @relation(fields: [currency], references: [code])
+  bookings      Booking[]
+  payments      Payment[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([status, expiresAt])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  orderId         String
+  tourDepartureId String
+  status          BookingStatus @default(HELD)
+  numAdults       Int
+  numChildren     Int
+  totalSeats      Int
+  unitPriceAdult  Decimal       @db.Decimal(10, 2)
+  unitPriceChild  Decimal       @db.Decimal(10, 2)
+  currency        String        @db.VarChar(3)
+
+  // Campos snapshot para robustez histórica
+  tourNameSnapshot      String
+  departureDateSnapshot DateTime @db.Date
+  startTimeSnapshot     String // HH:mm format
+  meetingPointSnapshot  String?
+
+  // Relaciones
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tourDeparture TourDeparture @relation(fields: [tourDepartureId], references: [id])
+  passengers    Passenger[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([tourDepartureId])
+  @@index([status])
+}
+
+model Passenger {
+  id             String        @id @default(cuid())
+  bookingId      String
+  type           PassengerType
+  firstName      String
+  lastName       String
+  birthDate      DateTime?     @db.Date
+  documentType   String?
+  documentNumber String?
+  nationality    String?
+  email          String?
+  phone          String?
+
+  // Restricciones alimentarias y médicas (JSONB para flexibilidad)
+  restrictions Json?
+
+  // Relaciones
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookingId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String
+  provider          String // ej: 'PAYPAL', 'PAYWAY'
+  providerPaymentId String?
+  status            PaymentStatus @default(PENDING)
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @db.VarChar(3)
+  paidAt            DateTime?
+  rawRequest        Json?
+  rawResponse       Json?
+
+  // Relaciones
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([provider, providerPaymentId])
+  @@index([status])
+}
+
+model Notification {
+  id           String             @id @default(cuid())
+  orderId      String?
+  type         NotificationType
+  recipient    String
+  templateKey  String
+  subject      String?
+  body         String?            @db.Text
+  status       NotificationStatus @default(PENDING)
+  errorMessage String?            @db.Text
+  sentAt       DateTime?
+
+  // Relaciones
+  order Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([type, status])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Estructura para futuro sistema de autenticación
+  // Campos a agregar cuando se implemente auth
+}
