@@ -85,14 +85,14 @@ export class ToursController {
   /**
    * Obtener tour por ID
    */
-  async getById(id: string, includeAvailability = false) {
-    const tour = await tourRepository.findById(id, true, includeAvailability, true);
+  async getById(id: string, includeAvailability = false, includeContent = false) {
+    const tour = await tourRepository.findById(id, true, includeAvailability, true, includeContent);
 
     if (!tour) {
       throw new NotFoundError("Tour", id);
     }
 
-    if (includeAvailability) {
+    if (includeAvailability || includeContent) {
       return toTourFullResponse(tour);
     }
 
@@ -102,18 +102,34 @@ export class ToursController {
   /**
    * Obtener tour por slug
    */
-  async getBySlug(slug: string, includeAvailability = false) {
-    const tour = await tourRepository.findBySlug(slug, true, includeAvailability, true);
+  async getBySlug(
+    slug: string,
+    includeImages = true,
+    includeDepartures = false,
+    includePrices = true,
+    includeContent = false
+  ) {
+    const tour = await tourRepository.findBySlug(
+      slug,
+      includeImages,
+      includeDepartures,
+      includePrices,
+      includeContent
+    );
 
     if (!tour) {
       throw new NotFoundError("Tour", slug);
     }
 
-    if (includeAvailability) {
+    if (includeDepartures || includeContent) {
       return toTourFullResponse(tour);
     }
 
-    return toTourWithImagesResponse(tour);
+    if (includeImages) {
+      return toTourWithImagesResponse(tour);
+    }
+
+    return toTourResponse(tour);
   }
 
   /**

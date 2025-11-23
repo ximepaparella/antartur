@@ -8,9 +8,13 @@ export interface TourCardData {
   subtitle: string;
   title: string;
   difficulty: string;
-  price?: string; // Para compatibilidad con datos existentes
+  price?: string; // Para compatibilidad con datos existentes - DEPRECATED: usar prices
   adultPrice?: string;
   childPrice?: string;
+  prices?: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
   category: "winter" | "summer";
 }
 

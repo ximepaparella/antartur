@@ -5,7 +5,8 @@ import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
 import { Banner, BannerText } from "@/modules/ui/components/Banner";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/tours/components/ToursGrid/toursData";
+import { getToursServer } from "@/lib/api/tours-server";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
 export const metadata: Metadata = {
   title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
@@ -25,14 +26,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
   const testimonials = testimonialsData.home;
 
-  // Tours de verano
-  const summerTours = getToursByCategory("summer");
+  // Obtener tours desde la API (Server Component)
+  const summerResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
+  const winterResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
 
-  // Tours de invierno
-  const winterTours = getToursByCategory("winter");
+  // Transformar a TourCardData
+  const summerTours = summerResponse.data.map(toTourCardData);
+  const winterTours = winterResponse.data.map(toTourCardData);
 
   return (
     <>

@@ -93,15 +93,37 @@ model Tour {
   durationHours    Int
   featuredImage    String
   heroImage        String
+  heroSubheadline  String? // Subheadline del hero
   shortDescription String  @db.Text
   longDescription  String  @db.Text
   restrictionText  String  @db.Text
   isActive         Boolean @default(true)
 
+  // SEO Metadata
+  metaTitle       String? @db.VarChar(200)
+  metaDescription String? @db.Text
+  canonicalUrl    String?
+  ogImage         String?
+
+  // QuickInfo CTA
+  ctaLabel String?
+  ctaHref  String?
+
+  // Alternative pricing info
+  alternativeText  String?
+  alternativePrice String?
+
+  // Timeline important note
+  timelineImportantNote String? @db.Text
+
   // Relaciones
-  images     TourImage[]
-  departures TourDeparture[]
-  prices     TourPrice[]
+  images        TourImage[]
+  departures    TourDeparture[]
+  prices        TourPrice[]
+  timelineItems TourTimelineItem[]
+  featuredInfos TourFeaturedInfo[]
+  testimonials  TourTestimonial[]
+  quickInfoItems TourQuickInfoItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -169,6 +191,79 @@ model TourDeparture {
   @@unique([tourId, departureDate, startTime])
   @@index([tourId, departureDate])
   @@index([departureDate, isActive])
+}
+
+model TourTimelineItem {
+  id          String  @id @default(cuid())
+  tourId      String
+  timeLabel   String  // ej: "9:00 AM"
+  title       String
+  description String  @db.Text
+  sortOrder   Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourFeaturedInfo {
+  id          String  @id @default(cuid())
+  tourId      String
+  icon        String  // ej: "clock", "difficulty", "family", etc.
+  title       String
+  description String  @db.Text
+  sortOrder   Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourTestimonial {
+  id        String  @id @default(cuid())
+  tourId    String
+  text      String  @db.Text
+  author    String
+  avatar    String
+  country   String
+  sortOrder Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourQuickInfoItem {
+  id        String  @id @default(cuid())
+  tourId    String
+  icon      String  // ej: "clock", "difficulty", "family", etc.
+  label     String
+  value     String
+  sortOrder Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
 }
 
 model Order {

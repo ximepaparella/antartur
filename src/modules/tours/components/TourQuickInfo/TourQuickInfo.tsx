@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Icon, IconName } from "@/components/icons/Icon";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
-import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getTourBySlugClient } from "@/lib/api/tours-client";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
 import styles from "./TourQuickInfo.module.scss";
 
@@ -52,19 +52,35 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
 }) => {
   const { currency } = useCurrency();
   const defaultCurrency = "ARS"; // Moneda por defecto
-  const fullTour = getFullTourById(tourId);
+  const [tourData, setTourData] = useState<any>(null);
+
+  useEffect(() => {
+    getTourBySlugClient(tourId, { includePrices: true })
+      .then((tour) => {
+        if (tour) {
+          setTourData(tour);
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener tour:", error);
+      });
+  }, [tourId]);
 
   // Obtener precio según la moneda seleccionada
   const displayPrice = React.useMemo(() => {
-    if (fullTour?.booking?.prices) {
-      const priceData = getTourPriceByCurrency(fullTour.booking.prices, currency, defaultCurrency);
+    if (tourData?.prices) {
+      const pricesMap = tourData.prices.reduce((acc: any, p: any) => {
+        acc[p.currency] = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
+        return acc;
+      }, {});
+      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
       if (priceData) {
         return formatPriceByCurrency(priceData.adult, priceData.currencyCode);
       }
     }
     // Fallback al precio legacy si no hay precios por moneda
     return price;
-  }, [fullTour, currency, defaultCurrency, price]);
+  }, [tourData, currency, defaultCurrency, price]);
 
   // Obtener precio alternativo si existe
   const alternativePrice = React.useMemo(() => {
@@ -72,15 +88,19 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
     
     // Intentar parsear el precio alternativo si es numérico
     const parsedPrice = parseFloat(alternative.price.replace(/[^0-9.-]+/g, ""));
-    if (!isNaN(parsedPrice) && fullTour?.booking?.prices) {
-      const priceData = getTourPriceByCurrency(fullTour.booking.prices, currency, defaultCurrency);
+    if (!isNaN(parsedPrice) && tourData?.prices) {
+      const pricesMap = tourData.prices.reduce((acc: any, p: any) => {
+        acc[p.currency] = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
+        return acc;
+      }, {});
+      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
       if (priceData) {
         // Usar el mismo precio relativo (simplificado)
         return formatPriceByCurrency(parsedPrice, priceData.currencyCode);
       }
     }
     return alternative.price;
-  }, [alternative, fullTour, currency, defaultCurrency]);
+  }, [alternative, tourData, currency, defaultCurrency]);
 
   return (
     <section className={styles.quickInfo} id="quick-info">

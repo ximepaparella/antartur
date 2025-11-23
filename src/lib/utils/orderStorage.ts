@@ -3,7 +3,7 @@
  */
 
 import type { Order } from "../types/order";
-import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getTourBySlugClient } from "@/lib/api/tours-client";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
 const ORDER_KEY_PREFIX = "order_";
@@ -30,6 +30,8 @@ export function savePendingBooking(bookingData: {
 
 /**
  * Calcula si excede la disponibilidad basado en la fecha y número de pasajeros
+ * Nota: Esta función es síncrona pero necesita datos de la API, por lo que retorna false por defecto
+ * La verificación real se hace en el servidor al crear la orden
  */
 function calculateExceedsAvailability(
   tourId: string,
@@ -38,29 +40,10 @@ function calculateExceedsAvailability(
   adults: number,
   children: number
 ): boolean {
-  try {
-    const tour = getFullTourById(tourId);
-    
-    if (!tour?.booking?.availability) {
-      return false;
-    }
-    
-    // Buscar la disponibilidad para la fecha y timeSlot específicos
-    const availability = tour.booking.availability.find(
-      (avail) => avail.date === date && 
-                 avail.timeSlot.start === timeSlot.start && 
-                 avail.timeSlot.end === timeSlot.end
-    );
-    
-    if (!availability) {
-      return false;
-    }
-    
-    return adults + children > availability.available;
-  } catch (error) {
-    console.error("Error al calcular disponibilidad:", error);
-    return false;
-  }
+  // Esta función ya no puede hacer fetch síncrono desde la API
+  // La verificación real se hace en el servidor al crear la orden
+  // Retornamos false por defecto para no bloquear la UI
+  return false;
 }
 
 /**

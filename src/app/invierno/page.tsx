@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/tours/components/ToursGrid/toursData";
+import { getToursServer } from "@/lib/api/tours-server";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
 export const metadata: Metadata = {
   title: "Invierno - Excursiones de Invierno en Tierra del Fuego | Antartur",
@@ -21,8 +22,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InviernoPage() {
-  const winterTours = getToursByCategory("winter");
+export default async function InviernoPage() {
+  const winterToursResponse = await getToursServer({ category: "winter", isActive: true });
+  const winterTours = winterToursResponse.data.map(toTourCardData);
 
   return (
     <>

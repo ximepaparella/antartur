@@ -5,7 +5,8 @@ import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
 import { Banner } from "@/modules/ui/components/Banner/Banner";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/tours/components/ToursGrid/toursData";
+import { getToursServer } from "@/lib/api/tours-server";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
 export const metadata: Metadata = {
   title: "Verano - Excursiones de Verano en Tierra del Fuego | Antartur",
@@ -24,9 +25,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function VeranoPage() {
+export default async function VeranoPage() {
   const testimonials = testimonialsData.verano;
-  const summerTours = getToursByCategory("summer");
+  const summerToursResponse = await getToursServer({ category: "summer", isActive: true });
+  const summerTours = summerToursResponse.data.map(toTourCardData);
 
   return (
     <>
