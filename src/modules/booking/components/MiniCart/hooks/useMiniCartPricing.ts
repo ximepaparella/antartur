@@ -7,10 +7,12 @@ import type { Pricing } from "@/lib/types/order";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { getTourBySlugClient } from "@/lib/api/tours-client";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
+import type { SelectedAdditional } from "@/lib/types/order";
 import {
   calculateSubtotalAdults,
   calculateSubtotalChildren,
   calculateOrderTotal,
+  calculateAdditionalsSubtotal,
 } from "@/lib/utils/pricing";
 
 interface UseMiniCartPricingProps {
@@ -18,12 +20,14 @@ interface UseMiniCartPricingProps {
   tourId?: string;
   adults: number;
   childrenCount: number;
+  additionals?: SelectedAdditional[];
 }
 
 interface UseMiniCartPricingReturn {
   currentPricing: Pricing;
   subtotalAdults: number;
   subtotalChildren: number;
+  additionalsSubtotal: number;
   total: number;
 }
 
@@ -36,6 +40,7 @@ export function useMiniCartPricing({
   tourId,
   adults,
   childrenCount,
+  additionals = [],
 }: UseMiniCartPricingProps): UseMiniCartPricingReturn {
   const { currency } = useCurrency();
   const defaultCurrency = "ARS"; // Moneda por defecto
@@ -95,14 +100,19 @@ export function useMiniCartPricing({
     return calculateSubtotalChildren(childrenCount, currentPricing);
   }, [childrenCount, currentPricing]);
 
+  const additionalsSubtotal = useMemo(() => {
+    return calculateAdditionalsSubtotal(additionals, adults, childrenCount, currentPricing);
+  }, [additionals, adults, childrenCount, currentPricing]);
+
   const total = useMemo(() => {
-    return calculateOrderTotal(adults, childrenCount, currentPricing);
-  }, [adults, childrenCount, currentPricing]);
+    return calculateOrderTotal(adults, childrenCount, currentPricing, additionals);
+  }, [adults, childrenCount, currentPricing, additionals]);
 
   return {
     currentPricing,
     subtotalAdults,
     subtotalChildren,
+    additionalsSubtotal,
     total,
   };
 }

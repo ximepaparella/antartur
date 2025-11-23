@@ -14,6 +14,7 @@ import { getTourBySlugServer, getToursServer } from "@/lib/api/tours-server";
 import { toFullTourData, toTourCardData } from "@/lib/adapters/tourAdapter";
 import type { TourFullResponse } from "@/modules/tours/api/dto/toursDto";
 import type { Testimonial as TestimonialType } from "@/modules/ui/components/Testimonials/types";
+import { generateWhatsAppLink } from "@/lib/utils/whatsapp";
 import styles from "./page.module.scss";
 
 interface TourPageProps {
@@ -91,6 +92,15 @@ export default async function TourPage({ params }: TourPageProps) {
 
   // Si hay datos completos, renderizar página completa
   if (fullTour.card && fullTour.hero && fullTour.quickInfo && fullTour.description) {
+    // Determinar si hay disponibilidad para reservas
+    const hasAvailability = fullTour.booking?.availability && fullTour.booking.availability.length > 0;
+    const hasPricing = fullTour.quickInfo.price && fullTour.quickInfo.price.trim() !== "";
+    
+    // Si no hay disponibilidad, cambiar CTA a WhatsApp
+    const ctaLabel = hasAvailability ? (fullTour.quickInfo.ctaLabel || "RESERVAR") : "CONSULTAR";
+    const ctaHref = hasAvailability 
+      ? (fullTour.quickInfo.ctaHref || "#booking")
+      : generateWhatsAppLink(fullTour.hero.headline);
 
     return (
       <>
@@ -99,8 +109,8 @@ export default async function TourPage({ params }: TourPageProps) {
           variant="tour"
           title={fullTour.hero.headline}
           backgroundImage={fullTour.hero.backgroundImage}
-          ctaText={fullTour.quickInfo.ctaLabel || "RESERVAR"}
-          ctaHref={fullTour.quickInfo.ctaHref || "#booking"}
+          ctaText={ctaLabel}
+          ctaHref={ctaHref}
         />
 
         {/* 2. QuickInfo */}
@@ -110,8 +120,9 @@ export default async function TourPage({ params }: TourPageProps) {
           items={fullTour.quickInfo.items}
           restriction={fullTour.quickInfo.restriction}
           alternative={fullTour.quickInfo.alternative}
-          ctaLabel={fullTour.quickInfo.ctaLabel}
-          ctaHref={fullTour.quickInfo.ctaHref}
+          ctaLabel={ctaLabel}
+          ctaHref={ctaHref}
+          hasPricing={hasPricing}
         />
 
         {/* 3. TourInfo */}
@@ -150,6 +161,10 @@ export default async function TourPage({ params }: TourPageProps) {
               availability={fullTour.booking?.availability}
               pricing={fullTour.booking?.pricing}
               prices={fullTour.booking?.prices}
+              additionals={fullTour.booking?.additionals}
+              minAge={fullTour.restrictions?.minAge}
+              minPassengers={fullTour.restrictions?.minPassengers}
+              restrictionText={fullTour.quickInfo?.restriction}
             />
           </div>
         </Banner>

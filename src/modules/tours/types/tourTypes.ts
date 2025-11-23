@@ -16,6 +16,18 @@ export interface TourCardData {
     USD?: { adult: number; child: number };
   };
   category: "winter" | "summer";
+  minAge?: number | null;
+  minPassengers?: number | null;
+}
+
+export interface TourAdditional {
+  id: string;
+  name: string;
+  description: string | null;
+  prices: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
 }
 
 export interface TourHero {
@@ -119,11 +131,16 @@ export interface Tour {
       priceAdult: number;
       priceChild: number;
       currency: string;
+      priceInfantFree?: boolean;
+      childAgeRange?: string | null;
+      childPriceType?: "FULL_CHILD_PRICE" | "HALF_ADULT_PRICE" | "ADULT_PRICE";
+      infantMaxAge?: number;
     };
     prices?: {
       ARS?: { adult: number; child: number };
       USD?: { adult: number; child: number };
     };
+    additionals?: TourAdditional[];
     availability: Array<{
       date: string; // YYYY-MM-DD
       available: number;
@@ -132,6 +149,11 @@ export interface Tour {
         end: string; // HH:mm
       };
     }>;
+  };
+  // Restricciones
+  restrictions?: {
+    minAge: number | null;
+    minPassengers: number | null;
   };
 }
 

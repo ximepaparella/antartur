@@ -12,10 +12,16 @@ import type {
   TourFeaturedInfo,
   TourTestimonial,
   TourQuickInfoItem,
+  TourAdditional,
+  TourAdditionalPrice,
 } from "@prisma/client";
 import type { Tour as DomainTour } from "../../domain/types";
 import { toAvailabilityResponse, type AvailabilityResponse } from "../../../departures/api/dto/availabilityDto";
 import { toTourPriceResponse, type TourPriceResponse } from "./tourPriceDto";
+import {
+  toTourAdditionalResponse,
+  type TourAdditionalResponse,
+} from "./tourAdditionalDto";
 
 /**
  * Tour con relaciones opcionales
@@ -24,6 +30,7 @@ export type TourWithRelations = PrismaTour & {
   images?: TourImage[];
   departures?: TourDeparture[];
   prices?: TourPrice[];
+  additionals?: (TourAdditional & { prices?: TourAdditionalPrice[] })[];
   timelineItems?: TourTimelineItem[];
   featuredInfos?: TourFeaturedInfo[];
   testimonials?: TourTestimonial[];
@@ -62,6 +69,9 @@ export interface TourResponse {
   alternativePrice: string | null;
   // Timeline note
   timelineImportantNote: string | null;
+  // Restricciones
+  minAge: number | null;
+  minPassengers: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -71,6 +81,7 @@ export interface TourResponse {
  */
 export interface TourWithImagesResponse extends TourResponse {
   images: TourImageResponse[];
+  additionals?: TourAdditionalResponse[];
 }
 
 /**
@@ -179,6 +190,9 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     alternativePrice: tour.alternativePrice,
     // Timeline note
     timelineImportantNote: tour.timelineImportantNote,
+    // Restricciones
+    minAge: tour.minAge,
+    minPassengers: tour.minPassengers,
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),
   };
@@ -213,6 +227,7 @@ export function toTourWithImagesResponse(tour: TourWithRelations): TourWithImage
   return {
     ...base,
     images: tour.images?.map(toTourImageResponse) || [],
+    additionals: tour.additionals?.map(toTourAdditionalResponse),
   };
 }
 

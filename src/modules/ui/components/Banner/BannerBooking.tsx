@@ -5,6 +5,7 @@ import { Icon, IconName } from "@/components/icons/Icon";
 import { Calendar } from "@/modules/booking/components/Calendar";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { Pricing } from "@/lib/types/order";
+import type { TourAdditional } from "@/modules/tours/types/tourTypes";
 import { getPriceByCurrency, ensurePricingWithCurrency } from "@/lib/utils/pricingHelpers";
 import styles from "./BannerBooking.module.scss";
 
@@ -42,6 +43,14 @@ interface BannerBookingProps {
     ARS?: { adult: number; child: number };
     USD?: { adult: number; child: number };
   };
+  /** Additionals disponibles para el tour */
+  additionals?: TourAdditional[];
+  /** Edad mínima requerida */
+  minAge?: number | null;
+  /** Mínimo de pasajeros requeridos */
+  minPassengers?: number | null;
+  /** Texto de restricciones del tour */
+  restrictionText?: string | null;
 }
 
 const defaultSteps: BookingStep[] = [
@@ -85,6 +94,10 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
   availability,
   pricing,
   prices,
+  additionals,
+  minAge,
+  minPassengers,
+  restrictionText,
 }) => {
   const { currency } = useCurrency();
   
@@ -113,16 +126,18 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
         </ul>
       </div>
       <div className={styles.rightColumn}>
-        {tourId && tourTitle && availability && currentPricing ? (
+        {tourId && tourTitle ? (
           <Calendar
             tourId={tourId}
             tourTitle={tourTitle}
-            availability={availability}
+            availability={availability || []}
             pricing={currentPricing}
+            additionals={additionals}
+            minAge={minAge}
+            minPassengers={minPassengers}
+            restrictionText={restrictionText}
           />
-        ) : (
-          <h2 className={styles.calendarTitle}>Calendario</h2>
-        )}
+        ) : null}
       </div>
     </div>
   );

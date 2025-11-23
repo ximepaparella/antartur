@@ -71,6 +71,13 @@ export class ToursController {
         include: {
           images: true,
           prices: true,
+          additionals: {
+            where: { isActive: true },
+            include: {
+              prices: true,
+            },
+            orderBy: { sortOrder: "asc" },
+          },
         },
       }),
       prisma.tour.count({ where }),
@@ -86,7 +93,7 @@ export class ToursController {
    * Obtener tour por ID
    */
   async getById(id: string, includeAvailability = false, includeContent = false) {
-    const tour = await tourRepository.findById(id, true, includeAvailability, true, includeContent);
+    const tour = await tourRepository.findById(id, true, includeAvailability, true, true, includeContent);
 
     if (!tour) {
       throw new NotFoundError("Tour", id);
@@ -114,6 +121,7 @@ export class ToursController {
       includeImages,
       includeDepartures,
       includePrices,
+      true, // includeAdditionals
       includeContent
     );
 

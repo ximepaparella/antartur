@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import type { SelectedAdditional } from "@/lib/types/order";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import styles from "../MiniCart.module.scss";
 
@@ -11,6 +12,8 @@ interface PricingBreakdownProps {
   subtotalChildren: number;
   total: number;
   currency: string;
+  additionals?: SelectedAdditional[];
+  additionalsSubtotal?: number;
 }
 
 /**
@@ -23,6 +26,8 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
   subtotalChildren,
   total,
   currency,
+  additionals,
+  additionalsSubtotal,
 }) => {
   return (
     <>
@@ -46,6 +51,24 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
             {formatPriceByCurrency(subtotalChildren, currency)}
           </span>
         </div>
+      )}
+
+      {additionals && additionals.length > 0 && additionalsSubtotal !== undefined && (
+        <>
+          {additionals.map((additional) => (
+            <div key={additional.additionalId} className={styles.summaryRow}>
+              <span className={styles.summaryLabel}>
+                {additional.name}
+              </span>
+              <span className={styles.summaryValue}>
+                {formatPriceByCurrency(
+                  (adults * additional.priceAdult) + (childrenCount * additional.priceChild),
+                  currency
+                )}
+              </span>
+            </div>
+          ))}
+        </>
       )}
 
       <div className={styles.divider} />

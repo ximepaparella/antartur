@@ -18,6 +18,8 @@ interface CheckoutFormProps {
   hasPregnancyRestriction?: boolean;
   /** Si el tour tiene restricciones para problemas de columna/salud */
   hasHealthRestriction?: boolean;
+  /** Edad mínima requerida para el tour */
+  minAge?: number | null;
   /** Callback cuando se completa el checkout */
   onCheckoutComplete: (order: Order) => void;
   /** Callback cuando cambia el estado de violaciones de restricciones */
@@ -40,6 +42,7 @@ export interface CheckoutFormRef {
 export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   hasPregnancyRestriction = false,
   hasHealthRestriction = false,
+  minAge,
   onCheckoutComplete,
   onRestrictionViolationsChange,
   onPassengersChange,
@@ -250,6 +253,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
         errors={errors}
         hasPregnancyRestriction={hasPregnancyRestriction}
         hasHealthRestriction={hasHealthRestriction}
+        minAge={minAge}
         onPassengerChange={replacePassenger}
         onPassengerValidate={validatePassenger}
         onAddPassenger={addPassenger}

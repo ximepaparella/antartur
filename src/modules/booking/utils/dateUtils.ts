@@ -46,11 +46,16 @@ export function formatDisplayDate(dateStr: string): string {
 
 /**
  * Verifica si una fecha está deshabilitada (en el pasado)
+ * Compara solo la fecha (sin hora) para evitar problemas de timezone
  */
 export function isDateDisabled(date: Date): boolean {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return date < today;
+  
+  const dateToCompare = new Date(date);
+  dateToCompare.setHours(0, 0, 0, 0);
+  
+  return dateToCompare < today;
 }
 
 /**

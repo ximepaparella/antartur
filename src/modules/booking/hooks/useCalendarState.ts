@@ -89,14 +89,18 @@ export function useCalendarState({ availability }: UseCalendarStateProps) {
   // Manejar click en fecha
   const handleDateClick = (date: Date) => {
     const dateStr = formatDate(date);
-    setSelectedDate(dateStr);
-    
-    // Si hay múltiples horarios, seleccionar el primero por defecto
     const grouped = groupedAvailabilityMap.get(dateStr);
-    if (grouped && grouped.timeSlots.length > 0) {
-      setSelectedTimeSlot(grouped.timeSlots[0]);
-    } else {
-      setSelectedTimeSlot(null);
+    
+    // Solo permitir seleccionar fechas con disponibilidad > 0
+    if (grouped && grouped.totalAvailable > 0) {
+      setSelectedDate(dateStr);
+      
+      // Si hay múltiples horarios, seleccionar el primero por defecto
+      if (grouped.timeSlots.length > 0) {
+        setSelectedTimeSlot(grouped.timeSlots[0]);
+      } else {
+        setSelectedTimeSlot(null);
+      }
     }
   };
 

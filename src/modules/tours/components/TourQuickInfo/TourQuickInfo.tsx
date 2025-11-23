@@ -34,6 +34,8 @@ interface TourQuickInfoProps {
   ctaLabel: string;
   /** URL del CTA de reserva */
   ctaHref: string;
+  /** Si hay datos de precio para mostrar */
+  hasPricing?: boolean;
 }
 
 /**
@@ -49,6 +51,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   alternative,
   ctaLabel,
   ctaHref,
+  hasPricing = true,
 }) => {
   const { currency } = useCurrency();
   const defaultCurrency = "ARS"; // Moneda por defecto
@@ -107,10 +110,12 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
       <div className={styles.wrapper}>
         <div className={styles.container}>
           <div className={styles.topSection}>
-            <div className={styles.priceColumn}>
-              <div className={styles.priceLabel}>Precio</div>
-              <div className={styles.priceValue}>{displayPrice}</div>
-            </div>
+            {hasPricing && (
+              <div className={styles.priceColumn}>
+                <div className={styles.priceLabel}>Precio</div>
+                <div className={styles.priceValue}>{displayPrice}</div>
+              </div>
+            )}
             
             <div className={styles.ctaColumn}>
               <Button variant="tertiary" href={ctaHref} size="large">

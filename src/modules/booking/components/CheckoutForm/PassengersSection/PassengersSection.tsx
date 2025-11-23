@@ -12,6 +12,7 @@ interface PassengersSectionProps {
   errors: Record<string, string>;
   hasPregnancyRestriction: boolean;
   hasHealthRestriction: boolean;
+  minAge?: number | null;
   onPassengerChange: (index: number, passenger: Passenger) => void;
   onPassengerValidate: (index: number) => void;
   onAddPassenger: (isAdult: boolean) => void;
@@ -26,6 +27,7 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
   errors,
   hasPregnancyRestriction,
   hasHealthRestriction,
+  minAge,
   onPassengerChange,
   onPassengerValidate,
   onAddPassenger,
@@ -43,6 +45,7 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
           errors={errors}
           hasPregnancyRestriction={hasPregnancyRestriction}
           hasHealthRestriction={hasHealthRestriction}
+          minAge={minAge}
           onPassengerChange={onPassengerChange}
           onPassengerValidate={onPassengerValidate}
           onPassengerRemove={onPassengerRemove}

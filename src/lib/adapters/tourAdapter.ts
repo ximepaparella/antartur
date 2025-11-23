@@ -180,11 +180,19 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
                 priceAdult: Number(arsPrice.priceAdult),
                 priceChild: Number(arsPrice.priceChild),
                 currency: "ARS",
+                priceInfantFree: arsPrice.priceInfantFree,
+                childAgeRange: arsPrice.childAgeRange,
+                childPriceType: arsPrice.childPriceType,
+                infantMaxAge: arsPrice.infantMaxAge,
               }
             : {
                 priceAdult: Number(usdPrice!.priceAdult),
                 priceChild: Number(usdPrice!.priceChild),
                 currency: "USD",
+                priceInfantFree: usdPrice!.priceInfantFree,
+                childAgeRange: usdPrice!.childAgeRange,
+                childPriceType: usdPrice!.childPriceType,
+                infantMaxAge: usdPrice!.infantMaxAge,
               },
           prices: {
             ARS: arsPrice
@@ -200,9 +208,38 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
                 }
               : undefined,
           },
+          additionals: tour.additionals && tour.additionals.length > 0
+            ? tour.additionals.map((add) => {
+                const arsPrice = add.prices.find((p) => p.currency === "ARS");
+                const usdPrice = add.prices.find((p) => p.currency === "USD");
+                return {
+                  id: add.id,
+                  name: add.name,
+                  description: add.description,
+                  prices: {
+                    ARS: arsPrice
+                      ? {
+                          adult: Number(arsPrice.priceAdult),
+                          child: Number(arsPrice.priceChild),
+                        }
+                      : undefined,
+                    USD: usdPrice
+                      ? {
+                          adult: Number(usdPrice.priceAdult),
+                          child: Number(usdPrice.priceChild),
+                        }
+                      : undefined,
+                  },
+                };
+              })
+            : undefined,
           availability,
         }
       : undefined,
+    restrictions: {
+      minAge: tour.minAge,
+      minPassengers: tour.minPassengers,
+    },
   };
 }
 

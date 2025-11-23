@@ -10,13 +10,36 @@ export class TourRepository {
     includeImages = false,
     includeDepartures = false,
     includePrices = false,
+    includeAdditionals = false,
     includeContent = false
   ) {
     return prisma.tour.findMany({
       include: {
         images: includeImages,
-        departures: includeDepartures,
+        departures: includeDepartures
+          ? {
+              where: {
+                isActive: true,
+                departureDate: {
+                  gte: new Date(), // Solo fechas futuras
+                },
+              },
+              orderBy: [
+                { departureDate: "asc" },
+                { startTime: "asc" },
+              ],
+            }
+          : false,
         prices: includePrices,
+        additionals: includeAdditionals
+          ? {
+              where: { isActive: true },
+              include: {
+                prices: true,
+              },
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
         timelineItems: includeContent
           ? {
               orderBy: { sortOrder: "asc" },
@@ -46,14 +69,37 @@ export class TourRepository {
     includeImages = false,
     includeDepartures = false,
     includePrices = false,
+    includeAdditionals = false,
     includeContent = false
   ) {
     return prisma.tour.findUnique({
       where: { id },
       include: {
         images: includeImages,
-        departures: includeDepartures,
+        departures: includeDepartures
+          ? {
+              where: {
+                isActive: true,
+                departureDate: {
+                  gte: new Date(), // Solo fechas futuras
+                },
+              },
+              orderBy: [
+                { departureDate: "asc" },
+                { startTime: "asc" },
+              ],
+            }
+          : false,
         prices: includePrices,
+        additionals: includeAdditionals
+          ? {
+              where: { isActive: true },
+              include: {
+                prices: true,
+              },
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
         timelineItems: includeContent
           ? {
               orderBy: { sortOrder: "asc" },
@@ -83,14 +129,37 @@ export class TourRepository {
     includeImages = false,
     includeDepartures = false,
     includePrices = false,
+    includeAdditionals = false,
     includeContent = false
   ) {
     return prisma.tour.findUnique({
       where: { slug },
       include: {
         images: includeImages,
-        departures: includeDepartures,
+        departures: includeDepartures
+          ? {
+              where: {
+                isActive: true,
+                departureDate: {
+                  gte: new Date(), // Solo fechas futuras
+                },
+              },
+              orderBy: [
+                { departureDate: "asc" },
+                { startTime: "asc" },
+              ],
+            }
+          : false,
         prices: includePrices,
+        additionals: includeAdditionals
+          ? {
+              where: { isActive: true },
+              include: {
+                prices: true,
+              },
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
         timelineItems: includeContent
           ? {
               orderBy: { sortOrder: "asc" },

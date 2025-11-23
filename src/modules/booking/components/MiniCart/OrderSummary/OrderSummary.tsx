@@ -3,6 +3,7 @@
 import React from "react";
 import { Card } from "@/components/common/Card";
 import { TourInfo } from "@/components/common/TourInfo";
+import type { SelectedAdditional } from "@/lib/types/order";
 import { formatDisplayDate } from "@/modules/booking/utils/dateUtils";
 import { PricingBreakdown } from "./PricingBreakdown";
 import styles from "../MiniCart.module.scss";
@@ -17,6 +18,8 @@ interface OrderSummaryProps {
   subtotalChildren: number;
   total: number;
   currency: string;
+  additionals?: SelectedAdditional[];
+  additionalsSubtotal?: number;
 }
 
 /**
@@ -32,6 +35,8 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   subtotalChildren,
   total,
   currency,
+  additionals,
+  additionalsSubtotal,
 }) => {
   return (
     <Card title="Resumen de la reserva">
@@ -50,6 +55,8 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
           subtotalChildren={subtotalChildren}
           total={total}
           currency={currency}
+          additionals={additionals}
+          additionalsSubtotal={additionalsSubtotal}
         />
       </div>
     </Card>

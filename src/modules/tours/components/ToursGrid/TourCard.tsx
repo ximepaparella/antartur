@@ -6,6 +6,7 @@ import Link from "next/link";
 import styles from "./TourCard.module.scss";
 import { Button } from "@/components/common/Button/Button";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { generateWhatsAppLink } from "@/lib/utils/whatsapp";
 
 export interface TourCardData {
   /** ID único del tour (usado para la URL) */
@@ -98,6 +99,10 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   }, [tour.prices, tour.price, currency, formatPrice]);
 
   const showPrice = displayPrice !== null;
+  
+  // Determinar CTA según si hay precio
+  const ctaLabel = showPrice ? "RESERVAR" : "CONSULTAR";
+  const ctaHref = showPrice ? `/tours/${tour.id}` : generateWhatsAppLink(tour.title);
 
   return (
     <div className={styles.tourCard}>
@@ -125,9 +130,9 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
         variant="secondary" 
         size="medium" 
         className={styles.cta}
-        href={`/tours/${tour.id}`}
+        href={ctaHref}
       >
-        RESERVAR
+        {ctaLabel}
       </Button>
     </div>
   );

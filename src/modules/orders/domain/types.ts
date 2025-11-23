@@ -44,6 +44,13 @@ export interface ReservationInput {
   customerPhone: string;
   passengers: PassengerInput[];
   notes?: string;
+  additionals?: Array<{
+    additionalId: string;
+    name: string;
+    priceAdult: number;
+    priceChild: number;
+    currency: string;
+  }>;
 }
 
 export interface PassengerInput {
