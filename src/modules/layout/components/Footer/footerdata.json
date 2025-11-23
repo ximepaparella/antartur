@@ -25,9 +25,9 @@
     "title": "Datos de Contacto",
     "address": {
       "email": {
-        "text": "hola@antartur.tur.ar",
-        "href": "mailto:hola@antartur.tur.ar",
-        "ariaLabel": "Enviar correo electrónico a hola@antartur.tur.ar"
+        "text": "agencias@antartur.tur.ar",
+        "href": "mailto:agencias@antartur.tur.ar",
+        "ariaLabel": "Enviar correo electrónico a agencias@antartur.tur.ar"
       },
       "phone": {
         "text": "+54 9 2901 48-7838",

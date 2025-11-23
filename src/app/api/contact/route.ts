@@ -256,7 +256,7 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
 
     // Enviar email real
     const mailOptions = {
-      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "noreply@antartur.tur.ar",
+      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "agencias@antartur.tur.ar",
       to: recipientEmail,
       subject: `Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`,
       text: emailContent,

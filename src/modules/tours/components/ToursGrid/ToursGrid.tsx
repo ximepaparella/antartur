@@ -23,7 +23,8 @@ interface ToursGridProps {
  * 
  * @example
  * ```tsx
- * <ToursGrid tours={toursData} category="winter" />
+ * const tours = await getToursServer({ category: "winter", isActive: true });
+ * <ToursGrid tours={tours.data.map(toTourCardData)} category="winter" />
  * ```
  */
 export const ToursGrid: React.FC<ToursGridProps> = ({ tours, category }) => {

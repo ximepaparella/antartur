@@ -14,7 +14,7 @@ const options: SwaggerOptions = {
       description: "API REST para el sistema de reservas de Antartur",
       contact: {
         name: "Antartur Support",
-        email: "info@antartur.tur.ar",
+        email: "agencias@antartur.tur.ar",
       },
     },
     servers: [

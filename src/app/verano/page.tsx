@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default async function VeranoPage() {
   const testimonials = testimonialsData.verano;
-  const summerToursResponse = await getToursServer({ category: "summer", isActive: true });
+  const summerToursResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
   const summerTours = summerToursResponse.data.map(toTourCardData);
 
   return (

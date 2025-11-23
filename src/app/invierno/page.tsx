@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export default async function InviernoPage() {
-  const winterToursResponse = await getToursServer({ category: "winter", isActive: true });
+  const winterToursResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
   const winterTours = winterToursResponse.data.map(toTourCardData);
 
   return (
