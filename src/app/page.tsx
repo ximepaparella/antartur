@@ -8,6 +8,9 @@ import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { getToursServer } from "@/lib/api/tours-server";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
   description: "Descubrí las mejores excursiones y aventuras en Ushuaia, Tierra del Fuego. Excursiones de invierno y verano, viajes a la Antártida y turismo corporativo.",

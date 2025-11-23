@@ -8,6 +8,9 @@ import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { getToursServer } from "@/lib/api/tours-server";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Verano - Excursiones de Verano en Tierra del Fuego | Antartur",
   description: "Los días son largos y el clima en verano es muy ameno! Las temperaturas en Verano van entre los 6° y los 15 grados. Descubrí nuestras excursiones de verano en Ushuaia.",

@@ -5,6 +5,9 @@ import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { getToursServer } from "@/lib/api/tours-server";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Invierno - Excursiones de Invierno en Tierra del Fuego | Antartur",
   description: "Nuestra temporada de invierno comienza el 21 de junio y se extiende hasta los primeros días de octubre. Descubrí nuestras excursiones de invierno en Ushuaia.",

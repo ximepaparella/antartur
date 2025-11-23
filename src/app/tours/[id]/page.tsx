@@ -17,6 +17,9 @@ import type { Testimonial as TestimonialType } from "@/modules/ui/components/Tes
 import { generateWhatsAppLink } from "@/lib/utils/whatsapp";
 import styles from "./page.module.scss";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 interface TourPageProps {
   params: Promise<{ id: string }>;
 }

@@ -5,6 +5,9 @@ import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { getToursServer } from "@/lib/api/tours-server";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
   description: "Por su ubicación estratégica, Ushuaia se constituye como Ciudad Puerta de Entrada a la Antártida. La temporada se extiende entre noviembre y abril. Descubrí nuestros viajes a la Antártida.",

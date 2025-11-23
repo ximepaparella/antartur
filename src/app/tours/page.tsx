@@ -4,6 +4,9 @@ import { Heading } from "@/components/common/Heading/Heading";
 import { getToursServer } from "@/lib/api/tours-server";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Tours - Excursiones y Aventuras | Antartur",
   description: "Descubrí nuestras excursiones y aventuras en Tierra del Fuego. Trekking, off road, canoas y más actividades para todas las temporadas.",
