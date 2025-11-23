@@ -94,7 +94,7 @@ export default async function TourPage({ params }: TourPageProps) {
   if (fullTour.card && fullTour.hero && fullTour.quickInfo && fullTour.description) {
     // Determinar si hay disponibilidad para reservas
     const hasAvailability = fullTour.booking?.availability && fullTour.booking.availability.length > 0;
-    const hasPricing = fullTour.quickInfo.price && fullTour.quickInfo.price.trim() !== "";
+    const hasPricing = fullTour.quickInfo.price ? fullTour.quickInfo.price.trim() !== "" : false;
     
     // Si no hay disponibilidad, cambiar CTA a WhatsApp
     const ctaLabel = hasAvailability ? (fullTour.quickInfo.ctaLabel || "RESERVAR") : "CONSULTAR";

@@ -65,7 +65,7 @@ export const DateCell: React.FC<DateCellProps> = React.memo(({
       aria-pressed={cellState.isSelected}
     >
       <span className={styles.dayNumber}>{date.getDate()}</span>
-      {showTooltip && (
+      {showTooltip && cellState.availability && (
         <Tooltip position="top">
           {cellState.totalAvailable} cupo{cellState.totalAvailable !== 1 ? 's' : ''} disponible{cellState.totalAvailable !== 1 ? 's' : ''}
           {cellState.availability.timeSlots.length > 1 ? ` (${cellState.availability.timeSlots.length} horarios)` : ""}

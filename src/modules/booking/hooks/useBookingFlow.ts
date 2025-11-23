@@ -45,7 +45,7 @@ export function useBookingFlow({
 
   // Manejar reserva
   const handleBooking = useCallback(() => {
-    if (!selectedDate || !selectedTimeSlot) return;
+    if (!selectedDate || !selectedTimeSlot || !pricing) return;
 
     // Usar el valor memoizado de exceedsAvailability en lugar de recalcular
     if (exceedsAvailability) {
