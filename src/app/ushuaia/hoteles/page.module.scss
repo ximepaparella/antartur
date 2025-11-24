@@ -1,0 +1,8 @@
+@use "@/styles/variables" as *;
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin: $spacing-24;
+}
+

@@ -1,6 +1,5 @@
 import React from "react";
 import { DateCell } from "./DateCell";
-import { formatDate, isDateDisabled } from "../../utils/dateUtils";
 import type { GroupedAvailability } from "../../hooks/useCalendarState";
 import styles from "./Calendar.module.scss";
 
@@ -29,29 +28,19 @@ export const CalendarGrid: React.FC<CalendarGridProps> = React.memo(({
 }) => {
   return (
     <div className={styles.daysGrid}>
-      {calendarDays.map(({ date, isCurrentMonth }, index) => {
-        const dateStr = formatDate(date);
-        const isDisabled = isDateDisabled(date);
-        const isAvailable = groupedAvailability.has(dateStr);
-        const isSelected = selectedDate === dateStr;
-        const availability = groupedAvailability.get(dateStr);
-
-        return (
-          <DateCell
-            key={`${dateStr}-${index}`}
-            date={date}
-            isCurrentMonth={isCurrentMonth}
-            isSelected={isSelected}
-            isDisabled={isDisabled}
-            isAvailable={isAvailable}
-            availability={availability}
-            hoveredDate={hoveredDate}
-            onClick={onDateClick}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-          />
-        );
-      })}
+      {calendarDays.map(({ date, isCurrentMonth }, index) => (
+        <DateCell
+          key={`${date.getTime()}-${index}`}
+          date={date}
+          isCurrentMonth={isCurrentMonth}
+          groupedAvailability={groupedAvailability}
+          selectedDate={selectedDate}
+          hoveredDate={hoveredDate}
+          onClick={onDateClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        />
+      ))}
     </div>
   );
 });

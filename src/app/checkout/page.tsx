@@ -6,7 +6,7 @@ import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
 import { MiniCart } from "@/modules/booking/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
-import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getTourBySlugClient } from "@/lib/api/tours-client";
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
@@ -51,13 +51,32 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
-  // Obtener restricciones del tour
-  const tour = bookingData ? getFullTourById(bookingData.tourId) : null;
-  const restriction = tour?.quickInfo?.restriction || "";
-  const hasPregnancyRestriction = restriction.toLowerCase().includes("embarazada");
-  const hasHealthRestriction = restriction.toLowerCase().includes("columna") || 
-                               restriction.toLowerCase().includes("dolencias") ||
-                               restriction.toLowerCase().includes("salud");
+  // Obtener restricciones del tour desde la API
+  const [restriction, setRestriction] = useState("");
+  const [hasPregnancyRestriction, setHasPregnancyRestriction] = useState(false);
+  const [hasHealthRestriction, setHasHealthRestriction] = useState(false);
+
+  useEffect(() => {
+    if (bookingData?.tourId) {
+      // tourId es el slug en este contexto
+      getTourBySlugClient(bookingData.tourId, { includeContent: true })
+        .then((tour) => {
+          if (tour) {
+            const tourRestriction = tour.restrictionText || "";
+            setRestriction(tourRestriction);
+            setHasPregnancyRestriction(tourRestriction.toLowerCase().includes("embarazada"));
+            setHasHealthRestriction(
+              tourRestriction.toLowerCase().includes("columna") ||
+              tourRestriction.toLowerCase().includes("dolencias") ||
+              tourRestriction.toLowerCase().includes("salud")
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error al obtener restricciones del tour:", error);
+        });
+    }
+  }, [bookingData?.tourId]);
 
   const handlePaymentMethodChange = (method: PaymentMethod) => {
     setPaymentMethod(method);

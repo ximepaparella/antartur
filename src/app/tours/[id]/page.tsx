@@ -10,11 +10,15 @@ import { Banner, BannerBooking } from "@/modules/ui/components/Banner";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getTourById } from "@/modules/tours/components/ToursGrid/toursData";
-import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
-import { getAllTours } from "@/modules/tours/components/ToursGrid/toursData";
+import { getTourBySlugServer, getToursServer } from "@/lib/api/tours-server";
+import { toFullTourData, toTourCardData } from "@/lib/adapters/tourAdapter";
+import type { TourFullResponse } from "@/modules/tours/api/dto/toursDto";
 import type { Testimonial as TestimonialType } from "@/modules/ui/components/Testimonials/types";
+import { generateWhatsAppLink } from "@/lib/utils/whatsapp";
 import styles from "./page.module.scss";
+
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
 
 interface TourPageProps {
   params: Promise<{ id: string }>;
@@ -22,19 +26,16 @@ interface TourPageProps {
 
 export async function generateMetadata({ params }: TourPageProps): Promise<Metadata> {
   const { id } = await params;
-  const fullTour = getFullTourById(id);
-  const tour = getTourById(id);
+  const tour = await getTourBySlugServer(id, { includeContent: true });
 
-  if (!fullTour && !tour) {
+  if (!tour) {
     return {
       title: "Tour no encontrado | Antartur",
     };
   }
 
-  // Usar datos completos si están disponibles, sino usar datos básicos
-  const seo = fullTour?.seo;
-  const title = seo?.metaTitle || `${tour?.title || "Tour"} | Antartur`;
-  const description = seo?.metaDescription || tour?.subtitle || "";
+  const title = tour.metaTitle || `${tour.name} | Antartur`;
+  const description = tour.metaDescription || tour.shortDescription;
 
   return {
     title,
@@ -44,32 +45,65 @@ export async function generateMetadata({ params }: TourPageProps): Promise<Metad
       description,
       type: "website",
       locale: "es_AR",
-      images: seo?.ogImage ? [{ url: seo.ogImage }] : undefined,
+      images: tour.ogImage ? [{ url: tour.ogImage }] : undefined,
     },
     alternates: {
-      canonical: seo?.canonicalUrl,
+      canonical: tour.canonicalUrl || undefined,
     },
   };
 }
 
 export default async function TourPage({ params }: TourPageProps) {
   const { id } = await params;
-  const fullTour = getFullTourById(id);
-  const tour = getTourById(id);
+  
+  // Obtener tour completo desde la API con todo el contenido (Server Component)
+  const tourResponse = await getTourBySlugServer(id, {
+    includeImages: true,
+    includeDepartures: true,
+    includePrices: true,
+    includeContent: true,
+  });
 
-  // Si no hay datos completos, usar datos básicos como fallback
-  if (!fullTour && !tour) {
+  if (!tourResponse) {
     notFound();
   }
 
-  // Si hay datos completos, usar esos; sino usar datos básicos
-  if (fullTour) {
-    // Los testimonios ya están en el formato correcto
-    const testimonials: TestimonialType[] = fullTour.testimonials || [];
+  // Transformar respuesta de API a formato esperado por componentes
+  // tourResponse es TourFullResponse cuando includeContent o includeDepartures es true
+  const fullTour = toFullTourData(tourResponse as TourFullResponse);
 
-    // Obtener todos los tours para el grid
-    const allTours = getAllTours();
-    const relatedCategory = fullTour.card.category;
+  // Transformar testimonials al formato esperado
+  const testimonials: TestimonialType[] =
+    fullTour.testimonials?.map((t) => ({
+      id: t.id,
+      text: t.text,
+      author: t.author,
+      avatar: t.avatar,
+      country: t.country,
+    })) || [];
+
+  // Obtener tours relacionados de la misma categoría (Server Component)
+  const relatedToursResponse = await getToursServer({
+    category: fullTour.card?.category,
+    isActive: true,
+    includeImages: true,
+    includePrices: true,
+  });
+  const relatedTours = relatedToursResponse.data
+    .filter((t: { slug: string }) => t.slug !== id) // Excluir el tour actual
+    .map(toTourCardData);
+
+  // Si hay datos completos, renderizar página completa
+  if (fullTour.card && fullTour.hero && fullTour.quickInfo && fullTour.description) {
+    // Determinar si hay disponibilidad para reservas
+    const hasAvailability = fullTour.booking?.availability && fullTour.booking.availability.length > 0;
+    const hasPricing = fullTour.quickInfo.price ? fullTour.quickInfo.price.trim() !== "" : false;
+    
+    // Si no hay disponibilidad, cambiar CTA a WhatsApp
+    const ctaLabel = hasAvailability ? (fullTour.quickInfo.ctaLabel || "RESERVAR") : "CONSULTAR";
+    const ctaHref = hasAvailability 
+      ? (fullTour.quickInfo.ctaHref || "#booking")
+      : generateWhatsAppLink(fullTour.hero.headline);
 
     return (
       <>
@@ -78,8 +112,8 @@ export default async function TourPage({ params }: TourPageProps) {
           variant="tour"
           title={fullTour.hero.headline}
           backgroundImage={fullTour.hero.backgroundImage}
-          ctaText={fullTour.quickInfo.ctaLabel || "RESERVAR"}
-          ctaHref={fullTour.quickInfo.ctaHref || "#booking"}
+          ctaText={ctaLabel}
+          ctaHref={ctaHref}
         />
 
         {/* 2. QuickInfo */}
@@ -89,8 +123,9 @@ export default async function TourPage({ params }: TourPageProps) {
           items={fullTour.quickInfo.items}
           restriction={fullTour.quickInfo.restriction}
           alternative={fullTour.quickInfo.alternative}
-          ctaLabel={fullTour.quickInfo.ctaLabel}
-          ctaHref={fullTour.quickInfo.ctaHref}
+          ctaLabel={ctaLabel}
+          ctaHref={ctaHref}
+          hasPricing={hasPricing}
         />
 
         {/* 3. TourInfo */}
@@ -110,10 +145,12 @@ export default async function TourPage({ params }: TourPageProps) {
         )}
 
         {/* 6. Timeline */}
-        <TourTimeline
-          items={fullTour.timeline.items}
-          importantNote={fullTour.timeline.importantNote}
-        />
+        {fullTour.timeline && fullTour.timeline.items && fullTour.timeline.items.length > 0 && (
+          <TourTimeline
+            items={fullTour.timeline.items}
+            importantNote={fullTour.timeline.importantNote}
+          />
+        )}
 
         {/* 7. Banner con booking module */}
         <Banner
@@ -127,6 +164,10 @@ export default async function TourPage({ params }: TourPageProps) {
               availability={fullTour.booking?.availability}
               pricing={fullTour.booking?.pricing}
               prices={fullTour.booking?.prices}
+              additionals={fullTour.booking?.additionals}
+              minAge={fullTour.restrictions?.minAge}
+              minPassengers={fullTour.restrictions?.minPassengers}
+              restrictionText={fullTour.quickInfo?.restriction}
             />
           </div>
         </Banner>
@@ -142,33 +183,27 @@ export default async function TourPage({ params }: TourPageProps) {
           paragraph="Conocé todas las aventuras que te esperan con Antartur Turismo."
         />
         <div className="mainContainer">
-          <ToursGrid tours={allTours} category={relatedCategory} />
+          <ToursGrid tours={relatedTours} category={fullTour.card.category} />
         </div>
       </>
     );
   }
 
-  // Fallback: usar datos básicos si no hay datos completos
-  // En este punto, tour debe existir porque ya validamos arriba
-  if (!tour) {
-    notFound();
-  }
-
+  // Fallback: si no hay datos completos, mostrar página básica
   return (
     <>
       <Hero
         variant="tour"
-        title={tour.title}
-        backgroundImage={tour.featuredImage}
+        title={tourResponse.name}
+        backgroundImage={tourResponse.heroImage}
         ctaText="RESERVAR"
         ctaHref="#booking"
       />
       <div className="mainContainer" style={{ padding: "2rem 0" }}>
-        <h1>{tour.title}</h1>
-        <p>{tour.subtitle}</p>
-        <p>Dificultad: {tour.difficulty}</p>
-        {tour.price && <p>Precio: {tour.price}</p>}
-        <p>Esta página está en desarrollo. Los datos completos del tour estarán disponibles pronto.</p>
+        <h1>{tourResponse.name}</h1>
+        <p>{tourResponse.subtitle}</p>
+        <p>Dificultad: {tourResponse.difficulty}</p>
+        <p>{tourResponse.shortDescription}</p>
       </div>
     </>
   );

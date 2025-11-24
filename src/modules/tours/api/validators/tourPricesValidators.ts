@@ -13,6 +13,11 @@ export const createTourPriceSchema = z.object({
   currency: currencyCodeSchema,
   priceAdult: priceSchema,
   priceChild: priceSchema,
+  // Nuevos campos para sistema de rangos de edad
+  priceInfantFree: z.boolean().default(false),
+  childAgeRange: z.string().optional().nullable(),
+  childPriceType: z.enum(["FULL_CHILD_PRICE", "HALF_ADULT_PRICE", "ADULT_PRICE"]).default("FULL_CHILD_PRICE"),
+  infantMaxAge: z.coerce.number().int().min(0).max(12).default(3),
 });
 
 export type CreateTourPriceInput = z.infer<typeof createTourPriceSchema>;
@@ -23,6 +28,10 @@ export type CreateTourPriceInput = z.infer<typeof createTourPriceSchema>;
 export const updateTourPriceSchema = z.object({
   priceAdult: priceSchema.optional(),
   priceChild: priceSchema.optional(),
+  priceInfantFree: z.boolean().optional(),
+  childAgeRange: z.string().optional().nullable(),
+  childPriceType: z.enum(["FULL_CHILD_PRICE", "HALF_ADULT_PRICE", "ADULT_PRICE"]).optional(),
+  infantMaxAge: z.coerce.number().int().min(0).max(12).optional(),
 });
 
 export type UpdateTourPriceInput = z.infer<typeof updateTourPriceSchema>;

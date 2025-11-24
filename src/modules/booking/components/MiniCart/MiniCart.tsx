@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { PaymentMethod, Pricing } from "@/lib/types/order";
+import type { PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { useMiniCartPricing } from "./hooks/useMiniCartPricing";
 import { OrderSummary } from "./OrderSummary";
 import { PaymentMethods } from "./PaymentMethods";
@@ -19,6 +19,7 @@ interface MiniCartProps {
   exceedsAvailability: boolean;
   hasRestrictionViolations?: boolean;
   hasValidationErrors?: boolean;
+  additionals?: SelectedAdditional[];
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
 }
@@ -37,17 +38,19 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   exceedsAvailability,
   hasRestrictionViolations = false,
   hasValidationErrors = false,
+  additionals = [],
   onPaymentMethodChange,
   onSubmit,
 }) => {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("transferencia");
 
   // Calcular precios usando hook
-  const { subtotalAdults, subtotalChildren, total, currentPricing } = useMiniCartPricing({
+  const { subtotalAdults, subtotalChildren, additionalsSubtotal, total, currentPricing } = useMiniCartPricing({
     pricing,
     tourId,
     adults,
     childrenCount,
+    additionals,
   });
 
   // Manejar cambio de método de pago
@@ -71,6 +74,8 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         subtotalChildren={subtotalChildren}
         total={total}
         currency={currentPricing.currencyCode}
+        additionals={additionals}
+        additionalsSubtotal={additionalsSubtotal}
       />
 
       <PaymentMethods

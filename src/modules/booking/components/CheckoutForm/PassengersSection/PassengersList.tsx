@@ -9,6 +9,7 @@ interface PassengersListProps {
   errors: Record<string, string>;
   hasPregnancyRestriction: boolean;
   hasHealthRestriction: boolean;
+  minAge?: number | null;
   onPassengerChange: (index: number, passenger: Passenger) => void;
   onPassengerValidate: (index: number) => void;
   onPassengerRemove: (index: number) => void;
@@ -22,6 +23,7 @@ export const PassengersList: React.FC<PassengersListProps> = ({
   errors,
   hasPregnancyRestriction,
   hasHealthRestriction,
+  minAge,
   onPassengerChange,
   onPassengerValidate,
   onPassengerRemove,
@@ -51,6 +53,7 @@ export const PassengersList: React.FC<PassengersListProps> = ({
             onValidateField={() => onPassengerValidate(index)}
             hasPregnancyRestriction={hasPregnancyRestriction}
             hasHealthRestriction={hasHealthRestriction}
+            minAge={minAge}
             errors={passengerErrors}
             hasErrors={hasErrors}
             canRemove={passengers.length > 1}

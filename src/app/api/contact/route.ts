@@ -1,3 +1,61 @@
+/**
+ * @swagger
+ * /api/contact:
+ *   post:
+ *     summary: Enviar formulario de contacto
+ *     tags: [Contact]
+ *     description: Endpoint para enviar mensajes desde el formulario de contacto del sitio
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [nombreCompleto, apellidos, email, codigoPais, celular, mensaje]
+ *             properties:
+ *               nombreCompleto:
+ *                 type: string
+ *               apellidos:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               codigoPais:
+ *                 type: string
+ *               codigoCiudad:
+ *                 type: string
+ *               celular:
+ *                 type: string
+ *               codigoReserva:
+ *                 type: string
+ *               mensaje:
+ *                 type: string
+ *               recaptchaToken:
+ *                 type: string
+ *                 description: Token de reCAPTCHA (opcional en desarrollo)
+ *     responses:
+ *       200:
+ *         description: Mensaje enviado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       429:
+ *         description: Demasiadas solicitudes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { RateLimiterMemory } from "rate-limiter-flexible";
@@ -198,7 +256,7 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
 
     // Enviar email real
     const mailOptions = {
-      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "noreply@antartur.tur.ar",
+      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "agencias@antartur.tur.ar",
       to: recipientEmail,
       subject: `Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`,
       text: emailContent,

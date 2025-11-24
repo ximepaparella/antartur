@@ -2,15 +2,17 @@
  * Hook para manejar cálculos de precios en MiniCart
  */
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { Pricing } from "@/lib/types/order";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { getFullTourById } from "@/modules/tours/components/ToursGrid/tourFullData";
+import { getTourBySlugClient } from "@/lib/api/tours-client";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
+import type { SelectedAdditional } from "@/lib/types/order";
 import {
   calculateSubtotalAdults,
   calculateSubtotalChildren,
   calculateOrderTotal,
+  calculateAdditionalsSubtotal,
 } from "@/lib/utils/pricing";
 
 interface UseMiniCartPricingProps {
@@ -18,12 +20,14 @@ interface UseMiniCartPricingProps {
   tourId?: string;
   adults: number;
   childrenCount: number;
+  additionals?: SelectedAdditional[];
 }
 
 interface UseMiniCartPricingReturn {
   currentPricing: Pricing;
   subtotalAdults: number;
   subtotalChildren: number;
+  additionalsSubtotal: number;
   total: number;
 }
 
@@ -36,32 +40,47 @@ export function useMiniCartPricing({
   tourId,
   adults,
   childrenCount,
+  additionals = [],
 }: UseMiniCartPricingProps): UseMiniCartPricingReturn {
   const { currency } = useCurrency();
   const defaultCurrency = "ARS"; // Moneda por defecto
 
+  // Obtener tour desde la API si tenemos tourId
+  const [tourData, setTourData] = useState<any>(null);
+
+  useEffect(() => {
+    if (tourId) {
+      getTourBySlugClient(tourId, { includePrices: true })
+        .then((tour) => {
+          if (tour) {
+            setTourData(tour);
+          }
+        })
+        .catch((error) => {
+          console.error("Error al obtener tour:", error);
+        });
+    }
+  }, [tourId]);
+
   // Obtener pricing completo del tour si tenemos tourId, según la moneda seleccionada
   const currentPricing = useMemo(() => {
-    if (tourId) {
-      const tour = getFullTourById(tourId);
-      // Priorizar prices (nuevo formato) sobre pricing (legacy)
-      if (tour?.booking?.prices) {
-        const priceData = getTourPriceByCurrency(tour.booking.prices, currency, defaultCurrency);
-        if (priceData) {
-          return {
-            priceAdult: priceData.adult,
-            priceChild: priceData.child,
-            currencyCode: priceData.currencyCode,
-          } as Pricing;
+    if (tourId && tourData?.prices) {
+      // Convertir prices de la API al formato esperado por getTourPriceByCurrency
+      const pricesMap: { ARS?: { adult: number; child: number }; USD?: { adult: number; child: number } } = {};
+      tourData.prices.forEach((p: any) => {
+        if (p.currency === "ARS") {
+          pricesMap.ARS = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
+        } else if (p.currency === "USD") {
+          pricesMap.USD = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
         }
-      }
-      // Fallback a pricing legacy si no hay prices
-      if (tour?.booking?.pricing) {
-        const tourPricing = tour.booking.pricing as any;
+      });
+      
+      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
+      if (priceData) {
         return {
-          priceAdult: tourPricing.priceAdult,
-          priceChild: tourPricing.priceChild,
-          currencyCode: tourPricing.currencyCode || tourPricing.currency || currency,
+          priceAdult: priceData.adult,
+          priceChild: priceData.child,
+          currencyCode: priceData.currencyCode,
         } as Pricing;
       }
     }
@@ -71,7 +90,7 @@ export function useMiniCartPricing({
       ...pricing,
       currencyCode: pricing.currencyCode || currency,
     };
-  }, [pricing, tourId, currency, defaultCurrency]);
+  }, [pricing, tourId, currency, defaultCurrency, tourData]);
 
   const subtotalAdults = useMemo(() => {
     return calculateSubtotalAdults(adults, currentPricing);
@@ -81,14 +100,19 @@ export function useMiniCartPricing({
     return calculateSubtotalChildren(childrenCount, currentPricing);
   }, [childrenCount, currentPricing]);
 
+  const additionalsSubtotal = useMemo(() => {
+    return calculateAdditionalsSubtotal(additionals, adults, childrenCount, currentPricing);
+  }, [additionals, adults, childrenCount, currentPricing]);
+
   const total = useMemo(() => {
-    return calculateOrderTotal(adults, childrenCount, currentPricing);
-  }, [adults, childrenCount, currentPricing]);
+    return calculateOrderTotal(adults, childrenCount, currentPricing, additionals);
+  }, [adults, childrenCount, currentPricing, additionals]);
 
   return {
     currentPricing,
     subtotalAdults,
     subtotalChildren,
+    additionalsSubtotal,
     total,
   };
 }

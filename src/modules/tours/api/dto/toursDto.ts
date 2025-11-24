@@ -3,10 +3,25 @@
  * Transformaciones entre modelos de dominio y respuestas de API
  */
 
-import type { Tour as PrismaTour, TourImage, TourDeparture, TourPrice } from "@prisma/client";
+import type {
+  Tour as PrismaTour,
+  TourImage,
+  TourDeparture,
+  TourPrice,
+  TourTimelineItem,
+  TourFeaturedInfo,
+  TourTestimonial,
+  TourQuickInfoItem,
+  TourAdditional,
+  TourAdditionalPrice,
+} from "@prisma/client";
 import type { Tour as DomainTour } from "../../domain/types";
 import { toAvailabilityResponse, type AvailabilityResponse } from "../../../departures/api/dto/availabilityDto";
 import { toTourPriceResponse, type TourPriceResponse } from "./tourPriceDto";
+import {
+  toTourAdditionalResponse,
+  type TourAdditionalResponse,
+} from "./tourAdditionalDto";
 
 /**
  * Tour con relaciones opcionales
@@ -15,6 +30,11 @@ export type TourWithRelations = PrismaTour & {
   images?: TourImage[];
   departures?: TourDeparture[];
   prices?: TourPrice[];
+  additionals?: (TourAdditional & { prices?: TourAdditionalPrice[] })[];
+  timelineItems?: TourTimelineItem[];
+  featuredInfos?: TourFeaturedInfo[];
+  testimonials?: TourTestimonial[];
+  quickInfoItems?: TourQuickInfoItem[];
 };
 
 /**
@@ -30,11 +50,28 @@ export interface TourResponse {
   durationHours: number;
   featuredImage: string;
   heroImage: string;
+  heroSubheadline: string | null;
   shortDescription: string;
   longDescription: string;
   restrictionText: string;
   isActive: boolean;
   prices: TourPriceResponse[];
+  // SEO
+  metaTitle: string | null;
+  metaDescription: string | null;
+  canonicalUrl: string | null;
+  ogImage: string | null;
+  // QuickInfo CTA
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  // Alternative pricing
+  alternativeText: string | null;
+  alternativePrice: string | null;
+  // Timeline note
+  timelineImportantNote: string | null;
+  // Restricciones
+  minAge: number | null;
+  minPassengers: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,13 +81,18 @@ export interface TourResponse {
  */
 export interface TourWithImagesResponse extends TourResponse {
   images: TourImageResponse[];
+  additionals?: TourAdditionalResponse[];
 }
 
 /**
- * DTO de respuesta para Tour completo (con imágenes y disponibilidad)
+ * DTO de respuesta para Tour completo (con imágenes, disponibilidad y contenido)
  */
 export interface TourFullResponse extends TourWithImagesResponse {
   availability: AvailabilityResponse[];
+  timelineItems?: TimelineItemResponse[];
+  featuredInfos?: FeaturedInfoResponse[];
+  testimonials?: TestimonialResponse[];
+  quickInfoItems?: QuickInfoItemResponse[];
 }
 
 /**
@@ -67,6 +109,55 @@ export interface TourImageResponse {
 }
 
 /**
+ * DTO de respuesta para TimelineItem
+ */
+export interface TimelineItemResponse {
+  id: string;
+  tourId: string;
+  timeLabel: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+}
+
+/**
+ * DTO de respuesta para FeaturedInfo
+ */
+export interface FeaturedInfoResponse {
+  id: string;
+  tourId: string;
+  icon: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+}
+
+/**
+ * DTO de respuesta para Testimonial
+ */
+export interface TestimonialResponse {
+  id: string;
+  tourId: string;
+  text: string;
+  author: string;
+  avatar: string;
+  country: string;
+  sortOrder: number;
+}
+
+/**
+ * DTO de respuesta para QuickInfoItem
+ */
+export interface QuickInfoItemResponse {
+  id: string;
+  tourId: string;
+  icon: string;
+  label: string;
+  value: string;
+  sortOrder: number;
+}
+
+/**
  * Transforma un Tour de Prisma a TourResponse
  */
 export function toTourResponse(tour: TourWithRelations): TourResponse {
@@ -80,11 +171,28 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     durationHours: tour.durationHours,
     featuredImage: tour.featuredImage,
     heroImage: tour.heroImage,
+    heroSubheadline: tour.heroSubheadline,
     shortDescription: tour.shortDescription,
     longDescription: tour.longDescription,
     restrictionText: tour.restrictionText,
     isActive: tour.isActive,
     prices: tour.prices?.map(toTourPriceResponse) || [],
+    // SEO
+    metaTitle: tour.metaTitle,
+    metaDescription: tour.metaDescription,
+    canonicalUrl: tour.canonicalUrl,
+    ogImage: tour.ogImage,
+    // QuickInfo CTA
+    ctaLabel: tour.ctaLabel,
+    ctaHref: tour.ctaHref,
+    // Alternative pricing
+    alternativeText: tour.alternativeText,
+    alternativePrice: tour.alternativePrice,
+    // Timeline note
+    timelineImportantNote: tour.timelineImportantNote,
+    // Restricciones
+    minAge: tour.minAge,
+    minPassengers: tour.minPassengers,
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),
   };
@@ -119,6 +227,64 @@ export function toTourWithImagesResponse(tour: TourWithRelations): TourWithImage
   return {
     ...base,
     images: tour.images?.map(toTourImageResponse) || [],
+    additionals: tour.additionals?.map(toTourAdditionalResponse),
+  };
+}
+
+/**
+ * Transforma un TourTimelineItem a TimelineItemResponse
+ */
+export function toTimelineItemResponse(item: TourTimelineItem): TimelineItemResponse {
+  return {
+    id: item.id,
+    tourId: item.tourId,
+    timeLabel: item.timeLabel,
+    title: item.title,
+    description: item.description,
+    sortOrder: item.sortOrder,
+  };
+}
+
+/**
+ * Transforma un TourFeaturedInfo a FeaturedInfoResponse
+ */
+export function toFeaturedInfoResponse(item: TourFeaturedInfo): FeaturedInfoResponse {
+  return {
+    id: item.id,
+    tourId: item.tourId,
+    icon: item.icon,
+    title: item.title,
+    description: item.description,
+    sortOrder: item.sortOrder,
+  };
+}
+
+/**
+ * Transforma un TourTestimonial a TestimonialResponse
+ */
+export function toTestimonialResponse(item: TourTestimonial): TestimonialResponse {
+  return {
+    id: item.id,
+    tourId: item.tourId,
+    text: item.text,
+    author: item.author,
+    avatar: item.avatar,
+    country: item.country,
+    sortOrder: item.sortOrder,
+  };
+}
+
+/**
+ * Transforma un TourQuickInfoItem a QuickInfoItemResponse
+ */
+export function toQuickInfoItemResponse(item: TourQuickInfoItem): QuickInfoItemResponse {
+  return {
+    id: item.id,
+    tourId: item.tourId,
+    icon: item.icon,
+    label: item.label,
+    value: item.value,
+    sortOrder: item.sortOrder,
   };
 }
 
@@ -130,6 +296,10 @@ export function toTourFullResponse(tour: TourWithRelations): TourFullResponse {
   return {
     ...base,
     availability: tour.departures?.map(toAvailabilityResponse) || [],
+    timelineItems: tour.timelineItems?.map(toTimelineItemResponse),
+    featuredInfos: tour.featuredInfos?.map(toFeaturedInfoResponse),
+    testimonials: tour.testimonials?.map(toTestimonialResponse),
+    quickInfoItems: tour.quickInfoItems?.map(toQuickInfoItemResponse),
   };
 }
 

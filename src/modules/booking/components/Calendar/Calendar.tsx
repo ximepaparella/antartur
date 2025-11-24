@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import type { Pricing } from "@/lib/types/order";
+import type { TourAdditional } from "@/modules/tours/types/tourTypes";
 import { useCalendarState, type AvailabilityDate } from "../../hooks/useCalendarState";
 import { useBookingFlow } from "../../hooks/useBookingFlow";
 import { CalendarHeader } from "./CalendarHeader";
@@ -19,8 +20,16 @@ interface CalendarProps {
   tourTitle: string;
   /** Fechas con disponibilidad */
   availability: AvailabilityDate[];
-  /** Precios del tour */
-  pricing: Pricing;
+  /** Precios del tour (opcional si no hay disponibilidad) */
+  pricing?: Pricing | null;
+  /** Additionals disponibles para el tour */
+  additionals?: TourAdditional[];
+  /** Edad mínima requerida */
+  minAge?: number | null;
+  /** Mínimo de pasajeros requeridos */
+  minPassengers?: number | null;
+  /** Texto de restricciones del tour */
+  restrictionText?: string | null;
 }
 
 /**
@@ -34,6 +43,10 @@ export const Calendar: React.FC<CalendarProps> = ({
   tourTitle,
   availability,
   pricing,
+  additionals,
+  minAge,
+  minPassengers,
+  restrictionText,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [isClosingModal, setIsClosingModal] = useState(false);
@@ -100,7 +113,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         )}
       </div>
 
-      {showModal && calendarState.selectedDate && calendarState.selectedTimeSlot && (
+      {showModal && calendarState.selectedDate && calendarState.selectedTimeSlot && pricing && (
         <BookingModal
           tourTitle={tourTitle}
           date={formatDisplayDate(calendarState.selectedDate)}
@@ -114,6 +127,10 @@ export const Calendar: React.FC<CalendarProps> = ({
           onBooking={bookingFlow.handleBooking}
           exceedsAvailability={bookingFlow.exceedsAvailability}
           isClosing={isClosingModal}
+          additionals={additionals}
+          minAge={minAge}
+          minPassengers={minPassengers}
+          restrictionText={restrictionText}
         />
       )}
     </>

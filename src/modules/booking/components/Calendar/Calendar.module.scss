@@ -92,26 +92,29 @@
     color: $gray-200;
   }
 
-  &:disabled {
-    color: $gray-200;
-    cursor: not-allowed;
-  }
-  
+  &:disabled,
   &.disabled {
-    color: $gray-200;
+    color: $gray-400;
     cursor: not-allowed;
+    opacity: 0.5;
+    
+    &:hover {
+      background-color: transparent;
+      transform: none;
+    }
   }
 
   &.available {
     color: $primary-color;
     font-weight: $font-weight-medium;
+    cursor: pointer;
 
-    &:hover {
-      background-color: $tertiary-color;
+    &:hover:not(:disabled) {
+      background-color: rgba($tertiary-color, 0.1);
       transform: scale(1.05);
     }
 
-    &:active {
+    &:active:not(:disabled) {
       transform: scale(0.95);
     }
   }
@@ -119,7 +122,13 @@
   &.selected {
     background-color: $primary-color;
     color: $white;
+    font-weight: $font-weight-bold;
     animation: selectDate 0.3s ease-out;
+    
+    &:hover {
+      background-color: $primary-color;
+      transform: scale(1);
+    }
   }
 }
 
@@ -309,7 +318,16 @@
 .helperText {
   font-family: $font-roboto;
   font-size: $font-size-12;
-  color: $gray-400;
+  color: $gray-500;
+  margin: $spacing-4 0 0 0;
+  line-height: $line-height-normal;
+}
+
+.priceText {
+  font-family: $font-roboto;
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  color: $primary-color;
   margin: $spacing-4 0 0 0;
   line-height: $line-height-normal;
 }
@@ -377,5 +395,12 @@
   :global(.button) {
     flex: 1;
   }
+}
+
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-bottom: $spacing-24;
 }
 

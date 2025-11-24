@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/common/Input";
 import { Select } from "@/components/common/Select";
 import { Button } from "@/components/common/Button/Button";
 import { Icon } from "@/components/icons/Icon";
 import type { Passenger } from "@/lib/types/order";
+import { calculateAge, validateMinAge } from "@/lib/utils/pricing";
 import styles from "./CheckoutForm.module.scss";
 
 interface PassengerFormProps {
@@ -23,6 +24,8 @@ interface PassengerFormProps {
   hasPregnancyRestriction?: boolean;
   /** Si el tour tiene restricciones para problemas de columna/salud */
   hasHealthRestriction?: boolean;
+  /** Edad mínima requerida para el tour */
+  minAge?: number | null;
   /** Errores de validación para este pasajero */
   errors?: Record<string, string>;
   /** Si este pasajero tiene errores */
@@ -44,6 +47,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
   onValidateField,
   hasPregnancyRestriction = false,
   hasHealthRestriction = false,
+  minAge,
   errors = {},
   hasErrors = false,
   canRemove = false,
@@ -136,6 +140,17 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
       setBirthDay("");
     }
   }, [fechaNacimiento]);
+
+  // Calcular edad y validar edad mínima
+  const passengerAge = useMemo(() => {
+    if (!passenger.fechaNacimiento) return null;
+    return calculateAge(passenger.fechaNacimiento);
+  }, [passenger.fechaNacimiento]);
+
+  const ageViolatesMinAge = useMemo(() => {
+    if (!minAge || passengerAge === null) return false;
+    return !validateMinAge(passengerAge, minAge);
+  }, [passengerAge, minAge]);
 
   const handleDateChange = (type: "year" | "month" | "day", value: string) => {
     // Calcular los nuevos valores usando el estado actual + el nuevo valor
@@ -241,6 +256,11 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           </div>
           {errors.fechaNacimiento && (
             <span className={styles.errorMessage}>{errors.fechaNacimiento}</span>
+          )}
+          {ageViolatesMinAge && minAge && passengerAge !== null && (
+            <span className={styles.errorMessage}>
+              La edad mínima requerida para este tour es {minAge} años. Este pasajero tiene {passengerAge} años.
+            </span>
           )}
         </div>
       </div>

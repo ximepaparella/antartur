@@ -62,6 +62,12 @@ enum ImageType {
   GALLERY
 }
 
+enum ChildPriceType {
+  FULL_CHILD_PRICE
+  HALF_ADULT_PRICE
+  ADULT_PRICE
+}
+
 // ============================================
 // MODELS
 // ============================================
@@ -76,8 +82,9 @@ model Currency {
   isDefault Boolean @default(false)
 
   // Relaciones
-  tourPrices TourPrice[]
-  orders     Order[]
+  tourPrices           TourPrice[]
+  tourAdditionalPrices TourAdditionalPrice[]
+  orders               Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -93,15 +100,42 @@ model Tour {
   durationHours    Int
   featuredImage    String
   heroImage        String
+  heroSubheadline  String? // Subheadline del hero
   shortDescription String  @db.Text
   longDescription  String  @db.Text
   restrictionText  String  @db.Text
   isActive         Boolean @default(true)
 
+  // SEO Metadata
+  metaTitle       String? @db.VarChar(200)
+  metaDescription String? @db.Text
+  canonicalUrl    String?
+  ogImage         String?
+
+  // QuickInfo CTA
+  ctaLabel String?
+  ctaHref  String?
+
+  // Alternative pricing info
+  alternativeText  String?
+  alternativePrice String?
+
+  // Timeline important note
+  timelineImportantNote String? @db.Text
+
+  // Restricciones
+  minAge        Int? // Edad mínima permitida
+  minPassengers Int? // Mínimo de pasajeros requeridos
+
   // Relaciones
-  images     TourImage[]
-  departures TourDeparture[]
-  prices     TourPrice[]
+  images        TourImage[]
+  departures    TourDeparture[]
+  prices        TourPrice[]
+  additionals   TourAdditional[]
+  timelineItems TourTimelineItem[]
+  featuredInfos TourFeaturedInfo[]
+  testimonials  TourTestimonial[]
+  quickInfoItems TourQuickInfoItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -117,6 +151,12 @@ model TourPrice {
   currency   String   @db.VarChar(3)
   priceAdult Decimal  @db.Decimal(10, 2)
   priceChild Decimal  @db.Decimal(10, 2)
+
+  // Nuevos campos para sistema de rangos de edad
+  priceInfantFree Boolean @default(false) // 0-3 años gratis
+  childAgeRange   String? // ej: "4-11" o "0-11"
+  childPriceType  ChildPriceType @default(FULL_CHILD_PRICE) // Tipo de precio para menores
+  infantMaxAge    Int     @default(3) // Edad máxima para considerar "infant"
 
   // Relaciones
   tour         Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
@@ -169,6 +209,118 @@ model TourDeparture {
   @@unique([tourId, departureDate, startTime])
   @@index([tourId, departureDate])
   @@index([departureDate, isActive])
+}
+
+model TourTimelineItem {
+  id          String  @id @default(cuid())
+  tourId      String
+  timeLabel   String  // ej: "9:00 AM"
+  title       String
+  description String  @db.Text
+  sortOrder   Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourFeaturedInfo {
+  id          String  @id @default(cuid())
+  tourId      String
+  icon        String  // ej: "clock", "difficulty", "family", etc.
+  title       String
+  description String  @db.Text
+  sortOrder   Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourTestimonial {
+  id        String  @id @default(cuid())
+  tourId    String
+  text      String  @db.Text
+  author    String
+  avatar    String
+  country   String
+  sortOrder Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourQuickInfoItem {
+  id        String  @id @default(cuid())
+  tourId    String
+  icon      String  // ej: "clock", "difficulty", "family", etc.
+  label     String
+  value     String
+  sortOrder Int     @default(0)
+
+  // Relaciones
+  tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
+model TourAdditional {
+  id          String   @id @default(cuid())
+  tourId      String
+  name        String   // ej: "Con Canoas"
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  // Relaciones
+  tour    Tour                @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  prices  TourAdditionalPrice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, isActive])
+  @@index([sortOrder])
+}
+
+model TourAdditionalPrice {
+  id                String   @id @default(cuid())
+  tourAdditionalId  String
+  currency          String   @db.VarChar(3)
+  priceAdult        Decimal  @db.Decimal(10, 2)
+  priceChild        Decimal  @db.Decimal(10, 2)
+
+  // Relaciones
+  tourAdditional TourAdditional @relation(fields: [tourAdditionalId], references: [id], onDelete: Cascade)
+  currencyRef    Currency        @relation(fields: [currency], references: [code])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tourAdditionalId, currency])
+  @@index([tourAdditionalId])
+  @@index([currency])
 }
 
 model Order {

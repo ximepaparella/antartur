@@ -21,6 +21,9 @@ export const createTourSchema = z.object({
   longDescription: z.string().min(1, "Long description is required"),
   restrictionText: z.string().optional().default(""),
   isActive: z.boolean().default(true),
+  // Restricciones
+  minAge: z.coerce.number().int().min(0).optional().nullable(),
+  minPassengers: z.coerce.number().int().min(1).optional().nullable(),
 });
 
 export type CreateTourInput = z.infer<typeof createTourSchema>;

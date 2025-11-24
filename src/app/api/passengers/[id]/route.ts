@@ -1,6 +1,43 @@
 /**
- * API Route: Passenger por ID
- * GET /api/passengers/:id - Obtener pasajero por ID
+ * @swagger
+ * /api/passengers/{id}:
+ *   get:
+ *     summary: Obtener pasajero por ID
+ *     tags: [Passengers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del pasajero
+ *     responses:
+ *       200:
+ *         description: Pasajero encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     firstName:
+ *                       type: string
+ *                     lastName:
+ *                       type: string
+ *                     type:
+ *                       type: string
+ *                       enum: [ADULT, CHILD, INFANT]
+ *                     birthDate:
+ *                       type: string
+ *                       format: date
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 
 import { passengersHandler } from "@/modules/passengers/api/handlers/passengersHandler";

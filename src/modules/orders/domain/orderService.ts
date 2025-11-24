@@ -10,6 +10,7 @@ import { DepartureRepository } from "../../departures/infra/departureRepository"
 import { TourPriceRepository } from "../../tours/infra/tourPriceRepository";
 import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
+import { calculateAge, validateMinAge, validateMinPassengers, calculateAdditionalsSubtotal } from "@/lib/utils/pricing";
 import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
@@ -74,15 +75,7 @@ export async function createReservation(input: ReservationInput) {
       throw new Error(`Departure ${input.departureId} is not active`);
     }
 
-    // 2. Calcular cupos disponibles
-    const totalSeats = input.numAdults + input.numChildren;
-    const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
-
-    if (availableSeats < totalSeats) {
-      throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
-    }
-
-    // 3. Obtener tour para snapshots
+    // 2. Obtener tour para snapshots y validaciones
     const tour = await tx.tour.findUnique({
       where: { id: input.tourId },
     });
@@ -91,7 +84,35 @@ export async function createReservation(input: ReservationInput) {
       throw new Error(`Tour ${input.tourId} not found`);
     }
 
-    // 4. Obtener precios directamente de TourPrice en la moneda solicitada
+    // 3. Validar mínimo de pasajeros
+    if (tour.minPassengers) {
+      const totalSeats = input.numAdults + input.numChildren;
+      if (!validateMinPassengers(totalSeats, tour.minPassengers)) {
+        throw new Error(`This tour requires a minimum of ${tour.minPassengers} passenger${tour.minPassengers > 1 ? "s" : ""}`);
+      }
+    }
+
+    // 4. Validar edad mínima de pasajeros
+    if (tour.minAge && input.passengers) {
+      for (const passenger of input.passengers) {
+        if (passenger.birthDate) {
+          const age = calculateAge(passenger.birthDate.toISOString().split("T")[0]);
+          if (!validateMinAge(age, tour.minAge)) {
+            throw new Error(`Passenger ${passenger.firstName} ${passenger.lastName} does not meet the minimum age requirement of ${tour.minAge} years (age: ${age})`);
+          }
+        }
+      }
+    }
+
+    // 5. Calcular cupos disponibles
+    const totalSeats = input.numAdults + input.numChildren;
+    const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+
+    if (availableSeats < totalSeats) {
+      throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+    }
+
+    // 6. Obtener precios directamente de TourPrice en la moneda solicitada
     const tourPrice = await tx.tourPrice.findUnique({
       where: {
         tourId_currency: {
@@ -108,16 +129,38 @@ export async function createReservation(input: ReservationInput) {
     const unitPriceAdult = Number(tourPrice.priceAdult);
     const unitPriceChild = Number(tourPrice.priceChild);
 
-    const totalAmount = unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
+    // Calcular total base
+    let totalAmount = unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
 
-    // 5. Generar código de orden dentro de la transacción
+    // Sumar additionals si existen
+    if (input.additionals && input.additionals.length > 0) {
+      const additionalsSubtotal = calculateAdditionalsSubtotal(
+        input.additionals,
+        input.numAdults,
+        input.numChildren,
+        {
+          currencyCode: input.currency,
+          priceAdult: unitPriceAdult,
+          priceChild: unitPriceChild,
+        }
+      );
+      totalAmount += additionalsSubtotal;
+    }
+
+    // 7. Generar código de orden dentro de la transacción
     const orderCode = await generateOrderCode(tx);
 
-    // 6. Calcular fecha de expiración (24 horas desde ahora)
+    // 8. Calcular fecha de expiración (24 horas desde ahora)
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
 
-    // 7. Crear Order
+    // 9. Crear Order con información de additionals en notes si existen
+    const orderNotes = input.notes || "";
+    const additionalsNote = input.additionals && input.additionals.length > 0
+      ? `\n\nAdditionals seleccionados: ${input.additionals.map(a => a.name).join(", ")}`
+      : "";
+
+    // 10. Crear Order
     const order = await tx.order.create({
       data: {
         code: orderCode,
@@ -129,11 +172,11 @@ export async function createReservation(input: ReservationInput) {
         currency: input.currency,
         totalAmount,
         expiresAt,
-        notes: input.notes,
+        notes: orderNotes + additionalsNote,
       },
     });
 
-    // 8. Actualizar cupos del departure (incrementar seatsHeld)
+    // 11. Actualizar cupos del departure (incrementar seatsHeld)
     await tx.tourDeparture.update({
       where: { id: input.departureId },
       data: {
@@ -141,7 +184,7 @@ export async function createReservation(input: ReservationInput) {
       },
     });
 
-    // 9. Crear Booking con snapshots
+    // 12. Crear Booking con snapshots
     const booking = await tx.booking.create({
       data: {
         orderId: order.id,
@@ -160,7 +203,7 @@ export async function createReservation(input: ReservationInput) {
       },
     });
 
-    // 10. Crear Passengers
+    // 13. Crear Passengers
     await tx.passenger.createMany({
       data: input.passengers.map((p) => ({
         bookingId: booking.id,

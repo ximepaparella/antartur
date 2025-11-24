@@ -15,7 +15,7 @@ interface TimeSlotWithAvailability extends TimeSlot {
 interface UseBookingFlowProps {
   tourId: string;
   tourTitle: string;
-  pricing: Pricing;
+  pricing?: Pricing | null;
   selectedDate: string | null;
   selectedTimeSlot: TimeSlotWithAvailability | null;
 }
@@ -33,6 +33,7 @@ export function useBookingFlow({
 
   // Calcular subtotal
   const subtotal = useMemo(() => {
+    if (!pricing) return 0;
     return calculateOrderTotal(adults, children, pricing);
   }, [adults, children, pricing]);
 
@@ -44,7 +45,7 @@ export function useBookingFlow({
 
   // Manejar reserva
   const handleBooking = useCallback(() => {
-    if (!selectedDate || !selectedTimeSlot) return;
+    if (!selectedDate || !selectedTimeSlot || !pricing) return;
 
     // Usar el valor memoizado de exceedsAvailability en lugar de recalcular
     if (exceedsAvailability) {
