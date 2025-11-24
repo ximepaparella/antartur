@@ -63,6 +63,13 @@ export class ConflictError extends ApiError {
   }
 }
 
+export class BadRequestError extends ApiError {
+  constructor(message: string, details?: Record<string, unknown>) {
+    super(message, 400, "BAD_REQUEST", details);
+    this.name = "BadRequestError";
+  }
+}
+
 /**
  * Formatea un error según RFC 7807
  */

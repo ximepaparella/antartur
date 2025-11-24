@@ -1,11 +1,10 @@
 /**
  * Controller para Availability (TourDepartures)
- * Maneja la lógica de validación, transformación y llamadas a servicios
+ * Solo orquesta: valida entrada, llama servicios, transforma salida
  */
 
 import { NextRequest } from "next/server";
-import { DepartureRepository } from "../../infra/departureRepository";
-import { TourRepository } from "../../../tours/infra/tourRepository";
+import { DepartureService } from "../../domain/departureService";
 import { validateQuery, validateBody } from "@/lib/validation/schemas";
 import {
   createAvailabilitySchema,
@@ -21,49 +20,15 @@ import {
   type AvailabilityResponse,
   type AvailabilityDetailResponse,
 } from "../dto/availabilityDto";
-import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
-import { prisma } from "@/lib/db";
 
-const departureRepository = new DepartureRepository();
-const tourRepository = new TourRepository();
+const departureService = new DepartureService();
 
 export class AvailabilityController {
   /**
    * Obtener disponibilidad de un tour
    */
   async getByTourId(tourId: string, query: TourAvailabilityQuery) {
-    // Verificar que el tour existe
-    const tour = await tourRepository.findById(tourId);
-    if (!tour) {
-      throw new NotFoundError("Tour", tourId);
-    }
-
-    // Construir where clause
-    const where: any = { tourId };
-    if (query.date) {
-      where.departureDate = new Date(query.date);
-    }
-    if (query.startDate && query.endDate) {
-      where.departureDate = {
-        gte: new Date(query.startDate),
-        lte: new Date(query.endDate),
-      };
-    } else if (query.startDate) {
-      where.departureDate = { gte: new Date(query.startDate) };
-    } else if (query.endDate) {
-      where.departureDate = { lte: new Date(query.endDate) };
-    }
-    if (query.isActive !== undefined) {
-      where.isActive = query.isActive;
-    }
-
-    const departures = await prisma.tourDeparture.findMany({
-      where,
-      orderBy: {
-        departureDate: "asc",
-      },
-    });
-
+    const departures = await departureService.getAvailabilityByTourId(tourId, query);
     return departures.map(toAvailabilityResponse);
   }
 
@@ -71,22 +36,7 @@ export class AvailabilityController {
    * Obtener disponibilidad para una fecha específica
    */
   async getByTourIdAndDate(tourId: string, date: string) {
-    // Verificar que el tour existe
-    const tour = await tourRepository.findById(tourId);
-    if (!tour) {
-      throw new NotFoundError("Tour", tourId);
-    }
-
-    const departures = await prisma.tourDeparture.findMany({
-      where: {
-        tourId,
-        departureDate: new Date(date),
-      },
-      orderBy: {
-        startTime: "asc",
-      },
-    });
-
+    const departures = await departureService.getAvailabilityByTourIdAndDate(tourId, date);
     return departures.map(toAvailabilityResponse);
   }
 
@@ -94,11 +44,7 @@ export class AvailabilityController {
    * Obtener availability por ID
    */
   async getById(id: string) {
-    const departure = await departureRepository.findById(id);
-    if (!departure) {
-      throw new NotFoundError("Availability", id);
-    }
-
+    const departure = await departureService.getAvailabilityById(id);
     return toAvailabilityDetailResponse(departure);
   }
 
@@ -107,35 +53,7 @@ export class AvailabilityController {
    */
   async create(body: unknown) {
     const data = validateBody(createAvailabilitySchema, body);
-
-    // Verificar que el tour existe
-    const tour = await tourRepository.findById(data.tourId);
-    if (!tour) {
-      throw new NotFoundError("Tour", data.tourId);
-    }
-
-    // Verificar que no exista ya un departure con la misma fecha y hora
-    const existing = await prisma.tourDeparture.findFirst({
-      where: {
-        tourId: data.tourId,
-        departureDate: new Date(data.departureDate),
-        startTime: data.startTime,
-      },
-    });
-
-    if (existing) {
-      throw new ValidationError("Availability already exists for this tour, date and time", {
-        tourId: data.tourId,
-        date: data.departureDate,
-        startTime: data.startTime,
-      });
-    }
-
-    const departure = await departureRepository.create({
-      ...data,
-      departureDate: new Date(data.departureDate),
-    });
-
+    const departure = await departureService.createAvailability(data);
     return toAvailabilityDetailResponse(departure);
   }
 
@@ -143,46 +61,8 @@ export class AvailabilityController {
    * Actualizar availability
    */
   async update(id: string, body: unknown) {
-    const departure = await departureRepository.findById(id);
-    if (!departure) {
-      throw new NotFoundError("Availability", id);
-    }
-
     const data = validateBody(updateAvailabilitySchema, body);
-
-    // Si se actualiza tourId, verificar que existe
-    if (data.tourId && data.tourId !== departure.tourId) {
-      const tour = await tourRepository.findById(data.tourId);
-      if (!tour) {
-        throw new NotFoundError("Tour", data.tourId);
-      }
-    }
-
-    // Si se actualiza fecha/hora, verificar que no haya conflicto
-    if (data.departureDate || data.startTime) {
-      const checkDate = data.departureDate ? new Date(data.departureDate) : departure.departureDate;
-      const checkTime = data.startTime || departure.startTime;
-      const checkTourId = data.tourId || departure.tourId;
-
-      const existing = await prisma.tourDeparture.findFirst({
-        where: {
-          tourId: checkTourId,
-          departureDate: checkDate,
-          startTime: checkTime,
-          NOT: { id },
-        },
-      });
-
-      if (existing) {
-        throw new ValidationError("Availability already exists for this tour, date and time");
-      }
-    }
-
-    const updated = await departureRepository.update(id, {
-      ...data,
-      departureDate: data.departureDate ? new Date(data.departureDate) : undefined,
-    });
-
+    const updated = await departureService.updateAvailability(id, data);
     return toAvailabilityDetailResponse(updated);
   }
 
@@ -190,12 +70,7 @@ export class AvailabilityController {
    * Eliminar availability
    */
   async delete(id: string) {
-    const departure = await departureRepository.findById(id);
-    if (!departure) {
-      throw new NotFoundError("Availability", id);
-    }
-
-    await departureRepository.delete(id);
+    await departureService.deleteAvailability(id);
     return null;
   }
 }

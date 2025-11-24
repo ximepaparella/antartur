@@ -10,7 +10,7 @@ import { Banner, BannerBooking } from "@/modules/ui/components/Banner";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getTourBySlugServer, getToursServer } from "@/lib/api/tours-server";
+import { getTourBySlugServer, getToursServer } from "@/modules/tours/api/server/toursServer";
 import { toFullTourData, toTourCardData } from "@/lib/adapters/tourAdapter";
 import type { TourFullResponse } from "@/modules/tours/api/dto/toursDto";
 import type { Testimonial as TestimonialType } from "@/modules/ui/components/Testimonials/types";

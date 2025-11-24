@@ -1,15 +1,14 @@
 /**
  * Servicios para consumir datos de Tours directamente desde el servidor
  * Usa los controllers directamente en lugar de fetch HTTP para mejor performance
- * Solo para uso en Server Components
+ * Solo para uso en Server Components cuando se necesita acceso directo al controller
  */
 
-import { ToursController } from "@/modules/tours/api/controllers/toursController";
-import { NextRequest } from "next/server";
+import { ToursController } from "../controllers/toursController";
 
 const controller = new ToursController();
 
-interface GetToursOptions {
+export interface GetToursOptions {
   category?: string;
   difficulty?: string;
   isActive?: boolean;
@@ -22,7 +21,7 @@ interface GetToursOptions {
   includePrices?: boolean;
 }
 
-interface GetTourOptions {
+export interface GetTourOptions {
   includeImages?: boolean;
   includeDepartures?: boolean;
   includePrices?: boolean;
@@ -30,7 +29,8 @@ interface GetTourOptions {
 }
 
 /**
- * Lista todos los tours con filtros opcionales (Server Component)
+ * Lista todos los tours con filtros opcionales (Server Component - acceso directo)
+ * Usa el controller directamente sin HTTP overhead
  */
 export async function getToursServer(options: GetToursOptions = {}) {
   const {
@@ -59,6 +59,7 @@ export async function getToursServer(options: GetToursOptions = {}) {
   if (includeImages) url.searchParams.append("includeImages", "true");
   if (includePrices) url.searchParams.append("includePrices", "true");
 
+  const { NextRequest } = await import("next/server");
   const request = new NextRequest(url);
   const result = await controller.list(request);
 
@@ -66,7 +67,7 @@ export async function getToursServer(options: GetToursOptions = {}) {
 }
 
 /**
- * Obtiene un tour por ID (Server Component)
+ * Obtiene un tour por ID (Server Component - acceso directo)
  */
 export async function getTourByIdServer(id: string, options: GetTourOptions = {}) {
   const { includeImages = true, includeDepartures = false, includePrices = true, includeContent = false } = options;
@@ -74,7 +75,7 @@ export async function getTourByIdServer(id: string, options: GetTourOptions = {}
 }
 
 /**
- * Obtiene un tour por slug (Server Component)
+ * Obtiene un tour por slug (Server Component - acceso directo)
  */
 export async function getTourBySlugServer(slug: string, options: GetTourOptions = {}) {
   const { includeImages = true, includeDepartures = false, includePrices = true, includeContent = false } = options;

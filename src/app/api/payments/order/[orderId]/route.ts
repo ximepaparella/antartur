@@ -29,7 +29,16 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { paymentsHandler } from "@/modules/payments/api/handlers/paymentsHandler";
+import { PaymentsController } from "@/modules/payments/api/controllers/paymentsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = paymentsHandler.getByOrderId;
+const controller = new PaymentsController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { orderId } = await context!.params!;
+  const payments = await controller.getByOrderId(orderId);
+  return successResponse(payments);
+}));
 

@@ -5,7 +5,7 @@ import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
 import { Banner, BannerText } from "@/modules/ui/components/Banner";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursServer } from "@/lib/api/tours-server";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
 // Forzar renderizado dinámico ya que depende de datos de la base de datos

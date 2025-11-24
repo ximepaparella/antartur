@@ -41,7 +41,16 @@
  *                   type: object
  */
 
-import { paymentsHandler } from "@/modules/payments/api/handlers/paymentsHandler";
+import { PaymentsController } from "@/modules/payments/api/controllers/paymentsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { createdResponse } from "@/lib/api/response";
 
-export const POST = paymentsHandler.create;
+const controller = new PaymentsController();
+
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request) => {
+  const body = await request.json();
+  const payment = await controller.create(body);
+  return createdResponse(payment);
+}));
 

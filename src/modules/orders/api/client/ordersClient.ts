@@ -1,5 +1,6 @@
 /**
  * Cliente API para Orders (frontend)
+ * Para uso en Client Components
  */
 
 import type { PaymentMethod, SelectedAdditional } from "@/lib/types/order";

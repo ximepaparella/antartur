@@ -7,7 +7,7 @@ import { useState, useCallback } from "react";
 import type { Order, PaymentMethod, Passenger, BillingInfo, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { generateOrderId, saveOrder, clearPendingBooking } from "@/lib/utils/orderStorage";
 import { calculateAge, getPassengerPriceType } from "@/lib/utils/pricing";
-import { createOrder, type CreateOrderRequest } from "@/lib/api/orders-client";
+import { createOrder, type CreateOrderRequest } from "@/modules/orders/api/client/ordersClient";
 import type { BookingData } from "./useCheckoutInitialization";
 
 interface OrderSubmissionData {

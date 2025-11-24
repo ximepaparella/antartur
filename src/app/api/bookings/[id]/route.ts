@@ -40,7 +40,16 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { bookingsHandler } from "@/modules/booking/api/handlers/bookingsHandler";
+import { BookingsController } from "@/modules/booking/api/controllers/bookingsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = bookingsHandler.getById;
+const controller = new BookingsController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context!.params!;
+  const booking = await controller.getById(id);
+  return successResponse(booking);
+}));
 

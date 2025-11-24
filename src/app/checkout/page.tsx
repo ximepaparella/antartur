@@ -6,7 +6,7 @@ import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
 import { MiniCart } from "@/modules/booking/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
-import { getTourBySlugClient } from "@/lib/api/tours-client";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getPendingBooking, savePendingBooking, saveCompletedOrderData } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
 import { calculateOrderTotal } from "@/lib/utils/pricing";
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (bookingData?.tourId) {
       // tourId es el slug en este contexto
-      getTourBySlugClient(bookingData.tourId, { includeContent: true })
+      toursClient.client.getBySlug(bookingData.tourId, { includeContent: true })
         .then((tour) => {
           if (tour) {
             const tourRestriction = tour.restrictionText || "";

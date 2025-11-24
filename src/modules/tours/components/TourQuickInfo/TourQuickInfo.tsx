@@ -5,7 +5,7 @@ import { Button } from "@/components/common/Button/Button";
 import { Icon, IconName } from "@/components/icons/Icon";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
-import { getTourBySlugClient } from "@/lib/api/tours-client";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
 import styles from "./TourQuickInfo.module.scss";
 
@@ -58,7 +58,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   const [tourData, setTourData] = useState<any>(null);
 
   useEffect(() => {
-    getTourBySlugClient(tourId, { includePrices: true })
+    toursClient.client.getBySlug(tourId, { includePrices: true })
       .then((tour) => {
         if (tour) {
           setTourData(tour);

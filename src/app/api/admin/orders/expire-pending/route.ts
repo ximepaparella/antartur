@@ -24,7 +24,15 @@
  *                       type: string
  */
 
-import { adminHandler } from "@/modules/orders/api/handlers/adminHandler";
+import { AdminController } from "@/modules/orders/api/controllers/adminController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const POST = adminHandler.expirePendingOrders;
+const controller = new AdminController();
+
+export const POST = withRateLimitHandler("admin", withControllerErrorHandler(async () => {
+  const result = await controller.expirePendingOrders();
+  return successResponse(result);
+}));
 

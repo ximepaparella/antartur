@@ -1,10 +1,10 @@
 /**
  * Controller para Tours
- * Maneja la lógica de validación, transformación y llamadas a servicios
+ * Solo orquesta: valida entrada, llama servicios, transforma salida
  */
 
 import { NextRequest } from "next/server";
-import { TourRepository } from "../../infra/tourRepository";
+import { TourService } from "../../domain/tourService";
 import { validateQuery, validateBody } from "@/lib/validation/schemas";
 import {
   createTourSchema,
@@ -24,11 +24,8 @@ import {
   type TourWithImagesResponse,
   type TourFullResponse,
 } from "../dto/toursDto";
-import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
-import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
-import { prisma } from "@/lib/db";
 
-const tourRepository = new TourRepository();
+const tourService = new TourService();
 
 export class ToursController {
   /**
@@ -38,66 +35,17 @@ export class ToursController {
     const { searchParams } = new URL(request.url);
     const query = validateQuery(listToursQuerySchema, Object.fromEntries(searchParams));
 
-    const { page, limit, skip } = normalizePagination(query.page, query.limit);
+    const result = await tourService.listTours(query);
+    const data = result.data.map(toTourWithImagesResponse);
 
-    // Construir where clause para filtros
-    const where: any = {};
-    if (query.category) {
-      where.category = query.category;
-    }
-    if (query.difficulty) {
-      where.difficulty = query.difficulty;
-    }
-    if (query.isActive !== undefined) {
-      where.isActive = query.isActive;
-    }
-    if (query.search) {
-      where.OR = [
-        { name: { contains: query.search, mode: "insensitive" } },
-        { subtitle: { contains: query.search, mode: "insensitive" } },
-        { shortDescription: { contains: query.search, mode: "insensitive" } },
-      ];
-    }
-
-    // Obtener tours con paginación
-    const [tours, total] = await Promise.all([
-      prisma.tour.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: query.sortBy
-          ? { [query.sortBy]: query.sortOrder || "asc" }
-          : { createdAt: "desc" },
-        include: {
-          images: true,
-          prices: true,
-          additionals: {
-            where: { isActive: true },
-            include: {
-              prices: true,
-            },
-            orderBy: { sortOrder: "asc" },
-          },
-        },
-      }),
-      prisma.tour.count({ where }),
-    ]);
-
-    const meta = calculatePaginationMeta(page, limit, total);
-    const data = tours.map(toTourWithImagesResponse);
-
-    return { data, meta };
+    return { data, meta: result.meta };
   }
 
   /**
    * Obtener tour por ID
    */
   async getById(id: string, includeAvailability = false, includeContent = false) {
-    const tour = await tourRepository.findById(id, true, includeAvailability, true, true, includeContent);
-
-    if (!tour) {
-      throw new NotFoundError("Tour", id);
-    }
+    const tour = await tourService.getTourById(id, includeAvailability, includeContent);
 
     if (includeAvailability || includeContent) {
       return toTourFullResponse(tour);
@@ -116,18 +64,13 @@ export class ToursController {
     includePrices = true,
     includeContent = false
   ) {
-    const tour = await tourRepository.findBySlug(
+    const tour = await tourService.getTourBySlug(
       slug,
       includeImages,
       includeDepartures,
       includePrices,
-      true, // includeAdditionals
       includeContent
     );
-
-    if (!tour) {
-      throw new NotFoundError("Tour", slug);
-    }
 
     if (includeDepartures || includeContent) {
       return toTourFullResponse(tour);
@@ -145,57 +88,24 @@ export class ToursController {
    */
   async create(body: unknown) {
     const data = validateBody(createTourSchema, body);
-
-    // Verificar que el slug no exista
-    const existingTour = await tourRepository.findBySlug(data.slug);
-    if (existingTour) {
-      throw new ValidationError("Tour with this slug already exists", { slug: data.slug });
-    }
-
-    const tour = await tourRepository.create(data);
-    
-    // Obtener tour con precios para la respuesta
-    const tourWithPrices = await tourRepository.findById(tour.id, false, false, true);
-    return toTourResponse(tourWithPrices!);
+    const tour = await tourService.createTour(data);
+    return toTourResponse(tour);
   }
 
   /**
    * Actualizar tour existente
    */
   async update(id: string, body: unknown) {
-    // Verificar que el tour existe
-    const existingTour = await tourRepository.findById(id);
-    if (!existingTour) {
-      throw new NotFoundError("Tour", id);
-    }
-
     const data = validateBody(updateTourSchema, body);
-
-    // Si se actualiza el slug, verificar que no exista otro tour con ese slug
-    if (data.slug && data.slug !== existingTour.slug) {
-      const slugExists = await tourRepository.findBySlug(data.slug);
-      if (slugExists) {
-        throw new ValidationError("Tour with this slug already exists", { slug: data.slug });
-      }
-    }
-
-    const updatedTour = await tourRepository.update(id, data);
-    
-    // Obtener tour con precios para la respuesta
-    const tourWithPrices = await tourRepository.findById(updatedTour.id, false, false, true);
-    return toTourResponse(tourWithPrices!);
+    const tour = await tourService.updateTour(id, data);
+    return toTourResponse(tour);
   }
 
   /**
    * Eliminar tour
    */
   async delete(id: string) {
-    const tour = await tourRepository.findById(id);
-    if (!tour) {
-      throw new NotFoundError("Tour", id);
-    }
-
-    await tourRepository.delete(id);
+    await tourService.deleteTour(id);
     return null;
   }
 }

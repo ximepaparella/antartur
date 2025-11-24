@@ -94,7 +94,7 @@ export async function GET() {
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
+  // Note: No $disconnect() call - Prisma Client uses connection pooling
+  // and manages connections automatically via singleton pattern
 }

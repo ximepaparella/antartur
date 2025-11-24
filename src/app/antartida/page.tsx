@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursServer } from "@/lib/api/tours-server";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
 
 // Forzar renderizado dinámico ya que depende de datos de la base de datos

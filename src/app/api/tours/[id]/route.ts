@@ -78,9 +78,34 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { toursHandler } from "@/modules/tours/api/handlers/toursHandler";
+import { ToursController } from "@/modules/tours/api/controllers/toursController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { successResponse, noContentResponse } from "@/lib/api/response";
 
-export const GET = toursHandler.getById;
-export const PUT = toursHandler.update;
-export const DELETE = toursHandler.delete;
+const controller = new ToursController();
+
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context!.params!;
+  const { searchParams } = new URL(request.url);
+  const includeAvailability = searchParams.get("includeAvailability") === "true";
+  const includeContent = searchParams.get("includeContent") === "true";
+
+  const tour = await controller.getById(id, includeAvailability, includeContent);
+  return successResponse(tour);
+}));
+
+export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context!.params!;
+  const body = await request.json();
+  const tour = await controller.update(id, body);
+  return successResponse(tour);
+}));
+
+export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context!.params!;
+  await controller.delete(id);
+  return noContentResponse();
+}));
 

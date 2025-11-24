@@ -3,7 +3,7 @@
  */
 
 import type { Order } from "../types/order";
-import { getTourBySlugClient } from "@/lib/api/tours-client";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
 const ORDER_KEY_PREFIX = "order_";

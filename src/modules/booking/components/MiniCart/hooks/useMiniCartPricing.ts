@@ -5,7 +5,7 @@
 import { useMemo, useState, useEffect } from "react";
 import type { Pricing } from "@/lib/types/order";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { getTourBySlugClient } from "@/lib/api/tours-client";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
 import type { SelectedAdditional } from "@/lib/types/order";
 import {
@@ -59,7 +59,7 @@ export function useMiniCartPricing({
 
   useEffect(() => {
     if (tourId) {
-      getTourBySlugClient(tourId, { includePrices: true })
+      toursClient.client.getBySlug(tourId, { includePrices: true })
         .then((tour) => {
           if (tour) {
             setTourData(tour);
