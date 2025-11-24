@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   // Docker standalone output
   output: 'standalone',
   
+  // Evitar prerender durante build si no hay DB disponible
+  experimental: {
+    // No intentar generar páginas estáticas durante build
+    isrMemoryCacheSize: 0,
+  },
+  
   // Optimización de imágenes
   images: {
     formats: ["image/avif", "image/webp"],

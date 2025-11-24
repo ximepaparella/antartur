@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
+    "start:dev": "next start",
     "lint": "next lint",
     "lighthouse": "lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html",
     "postinstall": "prisma generate",
