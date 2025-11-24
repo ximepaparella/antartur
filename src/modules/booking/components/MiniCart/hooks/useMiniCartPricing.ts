@@ -42,7 +42,16 @@ export function useMiniCartPricing({
   childrenCount,
   additionals = [],
 }: UseMiniCartPricingProps): UseMiniCartPricingReturn {
-  const { currency } = useCurrency();
+  // Safe access to currency context - fallback to ARS if not available (e.g., during SSR/build)
+  let currency: "ARS" | "USD" = "ARS";
+  try {
+    const currencyContext = useCurrency();
+    currency = currencyContext.currency;
+  } catch (error) {
+    // Context not available (e.g., during build/prerender)
+    // Use default currency
+    currency = "ARS";
+  }
   const defaultCurrency = "ARS"; // Moneda por defecto
 
   // Obtener tour desde la API si tenemos tourId
