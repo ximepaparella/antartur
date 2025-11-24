@@ -26,8 +26,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AntartidaPage() {
-  const winterToursResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
-  const winterTours = winterToursResponse.data.map(toTourCardData);
+  let winterTours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    const winterToursResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
+    winterTours = winterToursResponse.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading winter tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>

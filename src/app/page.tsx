@@ -32,13 +32,22 @@ export const metadata: Metadata = {
 export default async function Home() {
   const testimonials = testimonialsData.home;
 
-  // Obtener tours desde la API (Server Component)
-  const summerResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
-  const winterResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
+  // Obtener tours desde la API (Server Component) con manejo de errores
+  let summerTours: ReturnType<typeof toTourCardData>[] = [];
+  let winterTours: ReturnType<typeof toTourCardData>[] = [];
 
-  // Transformar a TourCardData
-  const summerTours = summerResponse.data.map(toTourCardData);
-  const winterTours = winterResponse.data.map(toTourCardData);
+  try {
+    const summerResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
+    const winterResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
+
+    // Transformar a TourCardData
+    summerTours = summerResponse.data.map(toTourCardData);
+    winterTours = winterResponse.data.map(toTourCardData);
+  } catch (error) {
+    // En producción, loguear error pero continuar con arrays vacíos
+    console.error("Error loading tours:", error);
+    // Las páginas mostrarán grids vacíos en lugar de fallar completamente
+  }
 
   return (
     <>

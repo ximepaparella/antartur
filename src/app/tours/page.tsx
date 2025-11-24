@@ -25,9 +25,16 @@ export const metadata: Metadata = {
 };
 
 export default async function ToursPage() {
-  // Obtener todos los tours activos desde la API (Server Component)
-  const response = await getToursServer({ isActive: true, includeImages: true, includePrices: true });
-  const tours = response.data.map(toTourCardData);
+  let tours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    // Obtener todos los tours activos desde la API (Server Component)
+    const response = await getToursServer({ isActive: true, includeImages: true, includePrices: true });
+    tours = response.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>

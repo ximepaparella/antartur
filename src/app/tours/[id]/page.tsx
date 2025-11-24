@@ -25,73 +25,89 @@ interface TourPageProps {
 }
 
 export async function generateMetadata({ params }: TourPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const tour = await getTourBySlugServer(id, { includeContent: true });
+  try {
+    const { id } = await params;
+    const tour = await getTourBySlugServer(id, { includeContent: true });
 
-  if (!tour) {
+    if (!tour) {
+      return {
+        title: "Tour no encontrado | Antartur",
+      };
+    }
+
+    const title = tour.metaTitle || `${tour.name} | Antartur`;
+    const description = tour.metaDescription || tour.shortDescription;
+
     return {
-      title: "Tour no encontrado | Antartur",
-    };
-  }
-
-  const title = tour.metaTitle || `${tour.name} | Antartur`;
-  const description = tour.metaDescription || tour.shortDescription;
-
-  return {
-    title,
-    description,
-    openGraph: {
       title,
       description,
-      type: "website",
-      locale: "es_AR",
-      images: tour.ogImage ? [{ url: tour.ogImage }] : undefined,
-    },
-    alternates: {
-      canonical: tour.canonicalUrl || undefined,
-    },
-  };
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        locale: "es_AR",
+        images: tour.ogImage ? [{ url: tour.ogImage }] : undefined,
+      },
+      alternates: {
+        canonical: tour.canonicalUrl || undefined,
+      },
+    };
+  } catch (error) {
+    // Si hay error de base de datos, devolver metadata por defecto
+    console.error("Error generating metadata for tour:", error);
+    return {
+      title: "Tour | Antartur",
+      description: "Descubrí nuestros tours y excursiones en Ushuaia",
+    };
+  }
 }
 
 export default async function TourPage({ params }: TourPageProps) {
-  const { id } = await params;
-  
-  // Obtener tour completo desde la API con todo el contenido (Server Component)
-  const tourResponse = await getTourBySlugServer(id, {
-    includeImages: true,
-    includeDepartures: true,
-    includePrices: true,
-    includeContent: true,
-  });
+  try {
+    const { id } = await params;
+    
+    // Obtener tour completo desde la API con todo el contenido (Server Component)
+    const tourResponse = await getTourBySlugServer(id, {
+      includeImages: true,
+      includeDepartures: true,
+      includePrices: true,
+      includeContent: true,
+    });
 
-  if (!tourResponse) {
-    notFound();
-  }
+    if (!tourResponse) {
+      notFound();
+    }
 
-  // Transformar respuesta de API a formato esperado por componentes
-  // tourResponse es TourFullResponse cuando includeContent o includeDepartures es true
-  const fullTour = toFullTourData(tourResponse as TourFullResponse);
+    // Transformar respuesta de API a formato esperado por componentes
+    // tourResponse es TourFullResponse cuando includeContent o includeDepartures es true
+    const fullTour = toFullTourData(tourResponse as TourFullResponse);
 
-  // Transformar testimonials al formato esperado
-  const testimonials: TestimonialType[] =
-    fullTour.testimonials?.map((t) => ({
-      id: t.id,
-      text: t.text,
-      author: t.author,
-      avatar: t.avatar,
-      country: t.country,
-    })) || [];
+    // Transformar testimonials al formato esperado
+    const testimonials: TestimonialType[] =
+      fullTour.testimonials?.map((t) => ({
+        id: t.id,
+        text: t.text,
+        author: t.author,
+        avatar: t.avatar,
+        country: t.country,
+      })) || [];
 
-  // Obtener tours relacionados de la misma categoría (Server Component)
-  const relatedToursResponse = await getToursServer({
-    category: fullTour.card?.category,
-    isActive: true,
-    includeImages: true,
-    includePrices: true,
-  });
-  const relatedTours = relatedToursResponse.data
-    .filter((t: { slug: string }) => t.slug !== id) // Excluir el tour actual
-    .map(toTourCardData);
+    // Obtener tours relacionados de la misma categoría (Server Component)
+    let relatedTours: ReturnType<typeof toTourCardData>[] = [];
+    try {
+      const relatedToursResponse = await getToursServer({
+        category: fullTour.card?.category,
+        isActive: true,
+        includeImages: true,
+        includePrices: true,
+      });
+      relatedTours = relatedToursResponse.data
+        .filter((t: { slug: string }) => t.slug !== id) // Excluir el tour actual
+        .map(toTourCardData);
+    } catch (error) {
+      console.error("Error loading related tours:", error);
+      // Continuar con array vacío para tours relacionados
+    }
 
   // Si hay datos completos, renderizar página completa
   if (fullTour.card && fullTour.hero && fullTour.quickInfo && fullTour.description) {
@@ -189,23 +205,29 @@ export default async function TourPage({ params }: TourPageProps) {
     );
   }
 
-  // Fallback: si no hay datos completos, mostrar página básica
-  return (
-    <>
-      <Hero
-        variant="tour"
-        title={tourResponse.name}
-        backgroundImage={tourResponse.heroImage}
-        ctaText="RESERVAR"
-        ctaHref="#booking"
-      />
-      <div className="mainContainer" style={{ padding: "2rem 0" }}>
-        <h1>{tourResponse.name}</h1>
-        <p>{tourResponse.subtitle}</p>
-        <p>Dificultad: {tourResponse.difficulty}</p>
-        <p>{tourResponse.shortDescription}</p>
-      </div>
-    </>
-  );
+    // Fallback: si no hay datos completos, mostrar página básica
+    return (
+      <>
+        <Hero
+          variant="tour"
+          title={tourResponse.name}
+          backgroundImage={tourResponse.heroImage}
+          ctaText="RESERVAR"
+          ctaHref="#booking"
+        />
+        <div className="mainContainer" style={{ padding: "2rem 0" }}>
+          <h1>{tourResponse.name}</h1>
+          <p>{tourResponse.subtitle}</p>
+          <p>Dificultad: {tourResponse.difficulty}</p>
+          <p>{tourResponse.shortDescription}</p>
+        </div>
+      </>
+    );
+  } catch (error) {
+    // Si hay error de base de datos, loguear y mostrar 404
+    console.error("Error loading tour:", error);
+    const { id } = await params;
+    notFound();
+  }
 }
 

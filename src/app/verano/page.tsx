@@ -30,8 +30,15 @@ export const metadata: Metadata = {
 
 export default async function VeranoPage() {
   const testimonials = testimonialsData.verano;
-  const summerToursResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
-  const summerTours = summerToursResponse.data.map(toTourCardData);
+  let summerTours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    const summerToursResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
+    summerTours = summerToursResponse.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading summer tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>
