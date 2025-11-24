@@ -104,15 +104,20 @@ export async function createReservation(input: ReservationInput) {
       }
     }
 
-    // 5. Calcular cupos disponibles
-    const totalSeats = input.numAdults + input.numChildren;
-    const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+    // 5. Determinar tipo de orden
+    const isEnquiry = input.exceedsAvailability || input.hasRestrictionViolations || false;
+    const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
 
-    if (availableSeats < totalSeats) {
-      throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+    // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
+    const totalSeats = input.numAdults + input.numChildren;
+    if (!isEnquiry) {
+      const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+      if (availableSeats < totalSeats) {
+        throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+      }
     }
 
-    // 6. Obtener precios directamente de TourPrice en la moneda solicitada
+    // 7. Obtener precios directamente de TourPrice en la moneda solicitada
     const tourPrice = await tx.tourPrice.findUnique({
       where: {
         tourId_currency: {
@@ -147,24 +152,37 @@ export async function createReservation(input: ReservationInput) {
       totalAmount += additionalsSubtotal;
     }
 
-    // 7. Generar código de orden dentro de la transacción
+    // 8. Generar código de orden dentro de la transacción
     const orderCode = await generateOrderCode(tx);
 
-    // 8. Calcular fecha de expiración (24 horas desde ahora)
+    // 9. Calcular fecha de expiración según método de pago
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24);
+    if (input.paymentMethod === "transferencia") {
+      // Transferencia bancaria: 24 horas
+      const bankTransferHours = parseInt(process.env.BANK_TRANSFER_EXPIRATION_HOURS || "24", 10);
+      expiresAt.setHours(expiresAt.getHours() + bankTransferHours);
+    } else {
+      // PayPal/Payway/Consulta: tiempo configurable (default 1 hora)
+      const orderExpirationHours = parseInt(process.env.ORDER_EXPIRATION_HOURS || "1", 10);
+      expiresAt.setHours(expiresAt.getHours() + orderExpirationHours);
+    }
 
-    // 9. Crear Order con información de additionals en notes si existen
+    // 10. Crear Order con información de additionals en notes si existen
     const orderNotes = input.notes || "";
     const additionalsNote = input.additionals && input.additionals.length > 0
       ? `\n\nAdditionals seleccionados: ${input.additionals.map(a => a.name).join(", ")}`
       : "";
+    
+    // Agregar información sobre motivo de consulta si es ENQUIRY
+    const enquiryNote = isEnquiry
+      ? `\n\nMotivo de consulta: ${input.exceedsAvailability ? "Excede disponibilidad" : ""}${input.hasRestrictionViolations ? (input.exceedsAvailability ? " y " : "") + "Violación de restricciones" : ""}`
+      : "";
 
-    // 10. Crear Order
+    // 11. Crear Order
     const order = await tx.order.create({
       data: {
         code: orderCode,
-        type: "RESERVATION",
+        type: orderType,
         status: "PENDING_PAYMENT",
         customerName: input.customerName,
         customerEmail: input.customerEmail,
@@ -172,19 +190,21 @@ export async function createReservation(input: ReservationInput) {
         currency: input.currency,
         totalAmount,
         expiresAt,
-        notes: orderNotes + additionalsNote,
+        notes: orderNotes + additionalsNote + enquiryNote,
       },
     });
 
-    // 11. Actualizar cupos del departure (incrementar seatsHeld)
-    await tx.tourDeparture.update({
-      where: { id: input.departureId },
-      data: {
-        seatsHeld: departure.seatsHeld + totalSeats,
-      },
-    });
+    // 12. Actualizar cupos del departure (solo si NO es ENQUIRY)
+    if (!isEnquiry) {
+      await tx.tourDeparture.update({
+        where: { id: input.departureId },
+        data: {
+          seatsHeld: departure.seatsHeld + totalSeats,
+        },
+      });
+    }
 
-    // 12. Crear Booking con snapshots
+    // 13. Crear Booking con snapshots
     const booking = await tx.booking.create({
       data: {
         orderId: order.id,
@@ -203,7 +223,7 @@ export async function createReservation(input: ReservationInput) {
       },
     });
 
-    // 13. Crear Passengers
+    // 14. Crear Passengers
     await tx.passenger.createMany({
       data: input.passengers.map((p) => ({
         bookingId: booking.id,
@@ -304,17 +324,18 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
 }
 
 /**
- * Expira órdenes pendientes que han pasado su fecha de expiración
+ * Cancela órdenes pendientes que han pasado su fecha de expiración
  * Libera los cupos reservados
+ * Actualiza estado a CANCELLED (no EXPIRED, según requerimientos)
  */
-export async function expirePendingOrders() {
+export async function cancelExpiredOrders() {
   const expiredOrders = await orderRepo.findPendingExpired();
   const results = [];
 
   for (const order of expiredOrders) {
     try {
       await prisma.$transaction(async (tx) => {
-        // 1. Verificar que la orden sigue en PENDING_PAYMENT antes de expirar
+        // 1. Verificar que la orden sigue en PENDING_PAYMENT antes de cancelar
         const freshOrder = await tx.order.findUnique({
           where: { id: order.id },
           include: { bookings: true },
@@ -325,10 +346,10 @@ export async function expirePendingOrders() {
           return;
         }
 
-        // 2. Actualizar Order a EXPIRED
+        // 2. Actualizar Order a CANCELLED
         await tx.order.update({
           where: { id: freshOrder.id },
-          data: { status: "EXPIRED" },
+          data: { status: "CANCELLED" },
         });
 
         // 3. Actualizar Bookings a CANCELLED y liberar cupos
@@ -353,7 +374,7 @@ export async function expirePendingOrders() {
         }
       });
 
-      results.push({ orderId: order.id, status: "expired" });
+      results.push({ orderId: order.id, status: "cancelled" });
     } catch (error) {
       results.push({
         orderId: order.id,
@@ -364,5 +385,14 @@ export async function expirePendingOrders() {
   }
 
   return results;
+}
+
+/**
+ * Expira órdenes pendientes que han pasado su fecha de expiración
+ * Libera los cupos reservados
+ * @deprecated Usar cancelExpiredOrders en su lugar
+ */
+export async function expirePendingOrders() {
+  return cancelExpiredOrders();
 }
 

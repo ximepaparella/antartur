@@ -1,0 +1,88 @@
+@use "@/styles/variables" as *;
+
+.paymentDetailsCard {
+  margin-bottom: $spacing-24;
+}
+
+.title {
+  font-size: $font-size-20;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0 0 $spacing-16 0;
+  padding-bottom: $spacing-8;
+  border-bottom: 1px solid $gray-200;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.label {
+  font-weight: $font-weight-semibold;
+  color: $gray-400;
+  min-width: 120px;
+}
+
+.value {
+  color: $gray-700;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.totalAmount {
+  font-size: $font-size-20;
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+}
+
+.icon {
+  color: $primary-color;
+  flex-shrink: 0;
+}
+
+.transferNote,
+.onlinePaymentNote {
+  margin-top: $spacing-8;
+  padding: $spacing-12;
+  background-color: $gray-50;
+  border-radius: $spacing-4;
+  display: flex;
+  gap: $spacing-8;
+  align-items: flex-start;
+  
+  p {
+    margin: 0;
+    font-size: $font-size-14;
+    color: $gray-600;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.infoIcon {
+  color: $primary-color;
+  flex-shrink: 0;
+  margin-top: $spacing-4 / 2; // 2px
+}
+
+.successIcon {
+  color: $success-color;
+  flex-shrink: 0;
+  margin-top: $spacing-4 / 2; // 2px
+}
+

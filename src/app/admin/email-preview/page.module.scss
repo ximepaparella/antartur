@@ -1,0 +1,129 @@
+@use "@/styles/variables" as *;
+
+.previewPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-32 $spacing-16;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding: $spacing-32;
+
+  h1 {
+    font-size: $font-size-32;
+    color: $error-color;
+    margin-bottom: $spacing-16;
+  }
+
+  p {
+    font-size: $font-size-18;
+    color: $gray-600;
+  }
+}
+
+.header {
+  margin-bottom: $spacing-32;
+  text-align: center;
+}
+
+.title {
+  font-size: $font-size-40;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0 0 $spacing-8 0;
+}
+
+.subtitle {
+  font-size: $font-size-18;
+  color: $gray-400;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-bottom: $spacing-24;
+  padding: $spacing-16;
+  background-color: $gray-50;
+  border-radius: $spacing-8;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.templateSelector {
+  display: flex;
+  gap: $spacing-8;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-8;
+  flex-wrap: wrap;
+}
+
+.previewContainer {
+  width: 100%;
+  border: 2px solid $gray-200;
+  border-radius: $spacing-8;
+  overflow: hidden;
+  background-color: $white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.emailFrame {
+  width: 100%;
+  height: 800px;
+  border: none;
+  display: block;
+}
+
+.rawHtml {
+  width: 100%;
+  height: 800px;
+  margin: 0;
+  padding: $spacing-16;
+  background-color: $gray-900;
+  color: $gray-100;
+  overflow: auto;
+  font-family: monospace;
+  font-size: $font-size-12;
+  line-height: $line-height-relaxed;
+
+  code {
+    display: block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
+.info {
+  margin-top: $spacing-24;
+  padding: $spacing-16;
+  background-color: $gray-50;
+  border-radius: $spacing-8;
+  border-left: 4px solid $primary-color;
+
+  p {
+    margin: 0;
+    font-size: $font-size-14;
+    color: $gray-600;
+    line-height: $line-height-relaxed;
+
+    strong {
+      color: $gray-700;
+    }
+  }
+}
+

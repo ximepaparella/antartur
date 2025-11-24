@@ -51,6 +51,10 @@ export interface ReservationInput {
     priceChild: number;
     currency: string;
   }>;
+  // Nuevos campos para determinar tipo de orden y expiración
+  paymentMethod?: "transferencia" | "paypal" | "payway";
+  exceedsAvailability?: boolean;
+  hasRestrictionViolations?: boolean;
 }
 
 export interface PassengerInput {

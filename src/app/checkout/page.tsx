@@ -7,8 +7,9 @@ import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components
 import { MiniCart } from "@/modules/booking/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
 import { getTourBySlugClient } from "@/lib/api/tours-client";
-import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
+import { getPendingBooking, savePendingBooking, saveCompletedOrderData } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
+import { calculateOrderTotal } from "@/lib/utils/pricing";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
 import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
 import styles from "./page.module.scss";
@@ -82,15 +83,54 @@ export default function CheckoutPage() {
     setPaymentMethod(method);
   };
 
-  const handleCheckoutComplete = (order: Order) => {
+  const handleCheckoutComplete = async (order: Order) => {
     setCompletedOrder(order);
-    // Si es una reserva (no consulta), mostrar modal de pago
-    if (order.orderType === "reserva") {
-      setShowPaymentModal(true);
-    } else {
-      // Si es consulta, mostrar mensaje de éxito sin pago
-      // TODO: Mostrar página de confirmación de consulta
-      alert("Consulta generada exitosamente. Te contactaremos pronto.");
+    
+    // Guardar datos en sessionStorage en lugar de pasarlos por URL (más seguro)
+    const orderData = {
+      code: order.orderId,
+      customerName: order.billingInfo.nombreCompleto,
+      customerEmail: order.billingInfo.email,
+      customerPhone: order.billingInfo.telefono,
+      totalAmount: calculateOrderTotal(order.adults, order.children, order.pricing),
+      currency: order.pricing.currencyCode,
+      type: order.orderType === "consulta" ? "ENQUIRY" as const : "RESERVATION" as const,
+      paymentMethod: order.paymentMethod,
+      // Detalles de la orden
+      tourTitle: order.tourTitle,
+      date: order.date,
+      timeSlot: order.timeSlot,
+      adults: order.adults,
+      children: order.children,
+      passengers: order.passengers.map(p => ({
+        nombreCompleto: p.nombreCompleto,
+        esAdulto: p.esAdulto,
+      })),
+    };
+    
+    saveCompletedOrderData(orderData);
+
+    // Redirigir según tipo de orden y método de pago (sin parámetros en URL)
+    if (order.orderType === "consulta") {
+      // Consulta: redirigir a página de éxito
+      router.push("/checkout/success");
+    } else if (order.orderType === "reserva") {
+      // Reserva: redirigir según método de pago
+      if (order.paymentMethod === "transferencia") {
+        // Transferencia bancaria: mostrar página de transferencia
+        router.push("/checkout/transfer");
+      } else if (order.paymentMethod === "paypal") {
+        // PayPal: redirigir a gateway (TODO: implementar)
+        // Por ahora redirigir a éxito
+        router.push("/checkout/success");
+      } else if (order.paymentMethod === "payway") {
+        // Payway: redirigir a gateway (TODO: implementar)
+        // Por ahora redirigir a éxito
+        router.push("/checkout/success");
+      } else {
+        // Sin método de pago: redirigir a éxito
+        router.push("/checkout/success");
+      }
     }
   };
 

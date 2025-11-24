@@ -4,8 +4,10 @@
  */
 
 import { useState, useCallback } from "react";
-import type { Order, PaymentMethod, Passenger, BillingInfo, Pricing } from "@/lib/types/order";
+import type { Order, PaymentMethod, Passenger, BillingInfo, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { generateOrderId, saveOrder, clearPendingBooking } from "@/lib/utils/orderStorage";
+import { calculateAge, getPassengerPriceType } from "@/lib/utils/pricing";
+import { createOrder, type CreateOrderRequest } from "@/lib/api/orders-client";
 import type { BookingData } from "./useCheckoutInitialization";
 
 interface OrderSubmissionData {
@@ -18,8 +20,8 @@ interface OrderSubmissionData {
 
 interface UseOrderSubmissionProps {
   onCheckoutComplete: (order: Order) => void;
-  /** Función opcional para crear orden en API (por defecto usa localStorage) */
-  createOrderAPI?: (order: Order) => Promise<Order>;
+  /** Si usar API en lugar de localStorage (default: true en producción) */
+  useAPI?: boolean;
 }
 
 interface UseOrderSubmissionReturn {
@@ -38,10 +40,72 @@ interface UseOrderSubmissionReturn {
  */
 export function useOrderSubmission({
   onCheckoutComplete,
-  createOrderAPI,
+  useAPI = process.env.NODE_ENV === "production",
 }: UseOrderSubmissionProps): UseOrderSubmissionReturn {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Convierte Passenger del frontend al formato del backend
+   */
+  const convertPassengerToAPI = useCallback((passenger: Passenger, pricing: Pricing): {
+    type: "ADULT" | "CHILD" | "INFANT";
+    firstName: string;
+    lastName: string;
+    birthDate?: string;
+    documentType?: string;
+    documentNumber?: string;
+    nationality?: string;
+    email?: string;
+    phone?: string;
+    restrictions?: Record<string, unknown>;
+  } => {
+    // Separar nombre completo en firstName y lastName
+    const nameParts = passenger.nombreCompleto.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    // Determinar tipo de pasajero basado en edad
+    let passengerType: "ADULT" | "CHILD" | "INFANT" = "ADULT";
+    if (passenger.fechaNacimiento) {
+      const age = calculateAge(passenger.fechaNacimiento);
+      const priceType = getPassengerPriceType(age, pricing);
+      if (priceType === "INFANT") {
+        passengerType = "INFANT";
+      } else if (priceType === "CHILD") {
+        passengerType = "CHILD";
+      } else {
+        passengerType = "ADULT";
+      }
+    } else if (!passenger.esAdulto) {
+      passengerType = "CHILD";
+    }
+
+    // Construir restrictions object
+    const restrictions: Record<string, unknown> = {};
+    if (passenger.tieneRestriccionesAlimentarias && passenger.restriccionesAlimentarias) {
+      restrictions.foodRestrictions = passenger.restriccionesAlimentarias;
+    }
+    if (passenger.embarazada) {
+      restrictions.pregnant = true;
+    }
+    if (passenger.problemasColumnaSalud) {
+      restrictions.healthIssues = true;
+    }
+
+    return {
+      type: passengerType,
+      firstName,
+      lastName,
+      birthDate: passenger.fechaNacimiento || undefined,
+      documentType: undefined, // No se captura en el frontend actual
+      documentNumber: passenger.documento || undefined,
+      nationality: undefined, // No se captura en el frontend actual
+      email: undefined, // No se captura por pasajero en el frontend actual
+      phone: passenger.telefono || undefined,
+      restrictions: Object.keys(restrictions).length > 0 ? restrictions : undefined,
+    };
+  }, []);
 
   const submitOrder = useCallback(
     async (data: OrderSubmissionData) => {
@@ -55,12 +119,12 @@ export function useOrderSubmission({
         const orderType: "reserva" | "consulta" =
           bookingData.exceedsAvailability || hasRestrictionViolations ? "consulta" : "reserva";
 
-        // Crear orden
         // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
         const pricing: Pricing = bookingData.pricing.currencyCode 
           ? bookingData.pricing as Pricing
           : { ...bookingData.pricing, currencyCode: "ARS" };
-        
+
+        // Crear orden para localStorage (compatibilidad)
         const order: Order = {
           orderId: generateOrderId(),
           tourId: bookingData.tourId,
@@ -79,11 +143,34 @@ export function useOrderSubmission({
         };
 
         // Crear orden (API o localStorage)
-        if (createOrderAPI) {
-          // Usar API si está disponible
-          const createdOrder = await createOrderAPI(order);
+        if (useAPI) {
+          // Convertir datos al formato de la API
+          const apiData: CreateOrderRequest = {
+            tourId: bookingData.tourId, // slug
+            date: bookingData.date,
+            startTime: bookingData.timeSlot.start,
+            numAdults: bookingData.adults,
+            numChildren: bookingData.children,
+            currency: pricing.currencyCode,
+            customerName: `${billingInfo.nombreCompleto} ${billingInfo.apellidos}`.trim(),
+            customerEmail: billingInfo.email,
+            customerPhone: billingInfo.telefono,
+            passengers: passengers.map(p => convertPassengerToAPI(p, pricing)),
+            notes: billingInfo.notasPedido,
+            paymentMethod,
+            exceedsAvailability: bookingData.exceedsAvailability,
+            hasRestrictionViolations,
+            additionals: order.additionals,
+          };
+
+          // Llamar a la API
+          const createdOrder = await createOrder(apiData);
+          
+          // Actualizar order con datos de la respuesta
+          order.orderId = createdOrder.id;
+          
           clearPendingBooking();
-          onCheckoutComplete(createdOrder);
+          onCheckoutComplete(order);
         } else {
           // Usar localStorage (comportamiento actual)
           saveOrder(order);
@@ -99,7 +186,7 @@ export function useOrderSubmission({
         setIsSubmitting(false);
       }
     },
-    [onCheckoutComplete, createOrderAPI]
+    [onCheckoutComplete, useAPI, convertPassengerToAPI]
   );
 
   return {

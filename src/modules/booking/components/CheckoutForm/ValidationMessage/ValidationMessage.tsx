@@ -27,19 +27,26 @@ export const ValidationMessage: React.FC<ValidationMessageProps> = ({
   // Hacer focus en el mensaje de validación solo cuando aparezcan errores por primera vez
   // Y solo si el usuario NO está activamente editando campos
   useEffect(() => {
+    // NO hacer scroll/focus si el usuario está activamente editando
+    if (isUserEditingRef.current) {
+      return;
+    }
+
     // Solo hacer scroll si:
     // 1. Cambió de false a true (errores aparecieron)
-    // 2. El usuario NO está activamente editando (o pasó suficiente tiempo desde la última edición)
+    // 2. El usuario NO está activamente editando
+    // 3. Pasó suficiente tiempo desde la última edición (3 segundos para estar seguro)
     const timeSinceLastEdit = Date.now() - lastEditTimeRef.current;
     const shouldScroll =
       hasValidationErrors &&
       !prevHasValidationErrorsRef.current &&
       validationMessageRef.current &&
-      (!isUserEditingRef.current || timeSinceLastEdit > 2000);
+      timeSinceLastEdit > 3000; // Aumentado a 3 segundos para dar más tiempo
 
     if (shouldScroll) {
+      // Solo hacer scroll, NO hacer focus para no sacar al usuario del campo
       validationMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      validationMessageRef.current.focus();
+      // NO hacer focus aquí - solo scroll
     }
     // Actualizar el ref con el valor actual
     prevHasValidationErrorsRef.current = hasValidationErrors;

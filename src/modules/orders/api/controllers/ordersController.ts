@@ -6,6 +6,7 @@
 import { NextRequest } from "next/server";
 import { OrderRepository } from "../../infra/orderRepository";
 import { createReservation } from "../../domain/orderService";
+import { TourRepository } from "@/modules/tours/infra/tourRepository";
 import { validateQuery, validateBody } from "@/lib/validation/schemas";
 import {
   createOrderSchema,
@@ -23,8 +24,13 @@ import {
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
 import { prisma } from "@/lib/db";
+import { sendEmail } from "@/modules/notifications/services/emailService";
+import { generateReservationEmailHTML, generateReservationEmailText } from "@/modules/notifications/templates/reservationEmail";
+import { generateEnquiryEmailHTML, generateEnquiryEmailText } from "@/modules/notifications/templates/enquiryEmail";
+import { generateWhatsAppLink } from "@/lib/utils/whatsapp";
 
 const orderRepository = new OrderRepository();
+const tourRepository = new TourRepository();
 
 export class OrdersController {
   /**
@@ -47,6 +53,40 @@ export class OrdersController {
       throw new ValidationError("At least one adult is required when booking for children");
     }
 
+    // Si se proporciona departureId directamente, usarlo
+    // Si no, buscar por tourId (slug), date y startTime
+    let departureId = data.departureId;
+    let tourId = data.tourId;
+
+    if (!departureId && data.date && data.startTime) {
+      // Buscar tour por slug si tourId es un slug
+      const tour = await tourRepository.findBySlug(data.tourId);
+      if (!tour) {
+        throw new NotFoundError("Tour", data.tourId);
+      }
+      tourId = tour.id;
+
+      // Buscar departure por tourId, date y startTime
+      const departure = await prisma.tourDeparture.findFirst({
+        where: {
+          tourId: tour.id,
+          departureDate: new Date(data.date),
+          startTime: data.startTime,
+        },
+      });
+
+      if (!departure) {
+        throw new NotFoundError(
+          "TourDeparture",
+          `Tour ${data.tourId} on ${data.date} at ${data.startTime}`
+        );
+      }
+
+      departureId = departure.id;
+    } else if (!departureId) {
+      throw new ValidationError("Either departureId or (tourId, date, startTime) must be provided");
+    }
+
     // Mapear passengers al formato esperado por createReservation
     const passengers = data.passengers.map((p) => ({
       type: p.type as "ADULT" | "CHILD" | "INFANT",
@@ -63,8 +103,8 @@ export class OrdersController {
 
     // Crear reserva usando el servicio de dominio
     const result = await createReservation({
-      tourId: data.tourId,
-      departureId: data.departureId,
+      tourId,
+      departureId,
       numAdults: data.numAdults,
       numChildren: data.numChildren,
       currency: data.currency,
@@ -73,6 +113,10 @@ export class OrdersController {
       customerPhone: data.customerPhone,
       passengers,
       notes: data.notes,
+      paymentMethod: data.paymentMethod,
+      exceedsAvailability: data.exceedsAvailability,
+      hasRestrictionViolations: data.hasRestrictionViolations,
+      additionals: data.additionals,
     });
 
     // Obtener la orden completa con relaciones usando Prisma directamente
@@ -82,6 +126,11 @@ export class OrdersController {
         bookings: {
           include: {
             passengers: true,
+            tourDeparture: {
+              include: {
+                tour: true,
+              },
+            },
           },
         },
         payments: true,
@@ -91,7 +140,171 @@ export class OrdersController {
       throw new NotFoundError("Order", result.order.id);
     }
 
+    // Enviar emails (no bloquear si falla)
+    try {
+      await sendOrderEmails(order);
+    } catch (emailError) {
+      console.error("Error al enviar emails de orden:", emailError);
+      // No fallar la creación de la orden si el email falla
+    }
+
+    // Generar link de WhatsApp para consultas
+    if (order.type === "ENQUIRY") {
+      try {
+        const whatsappLink = generateWhatsAppLinkForEnquiry(order);
+        // El link se puede incluir en la respuesta o loguearse
+        console.log("WhatsApp link para consulta:", whatsappLink);
+      } catch (whatsappError) {
+        console.error("Error al generar link de WhatsApp:", whatsappError);
+      }
+    }
+
     return toOrderFullResponse(order);
+  }
+}
+
+/**
+ * Envía emails de confirmación al cliente y copia a agencias@antartur.tur.ar
+ */
+async function sendOrderEmails(order: any) {
+    if (!order.bookings || order.bookings.length === 0) {
+      return;
+    }
+
+    const booking = order.bookings[0];
+    const departure = booking.tourDeparture;
+    const tour = departure?.tour;
+
+    if (!tour || !departure) {
+      return;
+    }
+
+    const passengers = booking.passengers || [];
+    const passengerList = passengers.map((p: any) => ({
+      firstName: p.firstName,
+      lastName: p.lastName,
+      type: p.type,
+    }));
+
+    const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+    const startTime = booking.startTimeSnapshot || departure.startTime;
+
+    if (order.type === "ENQUIRY") {
+      // Email de consulta
+      const enquiryData = {
+        orderCode: order.code,
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        customerPhone: order.customerPhone,
+        tourName: booking.tourNameSnapshot || tour.name,
+        departureDate,
+        startTime,
+        numAdults: booking.numAdults,
+        numChildren: booking.numChildren,
+        totalAmount: Number(order.totalAmount),
+        currency: order.currency,
+        reason: order.notes || "",
+        passengers: passengerList,
+      };
+
+      const html = generateEnquiryEmailHTML(enquiryData);
+      const text = generateEnquiryEmailText(enquiryData);
+
+      // Enviar al cliente
+      await sendEmail({
+        to: order.customerEmail,
+        subject: `Consulta Recibida - ${order.code}`,
+        html,
+        text,
+        replyTo: "agencias@antartur.tur.ar",
+      });
+
+      // Enviar copia a agencias@antartur.tur.ar
+      await sendEmail({
+        to: "agencias@antartur.tur.ar",
+        subject: `Nueva Consulta - ${order.code}`,
+        html,
+        text,
+        replyTo: order.customerEmail,
+      });
+    } else {
+      // Email de reserva confirmada
+      const reservationData = {
+        orderCode: order.code,
+        customerName: order.customerName,
+        tourName: booking.tourNameSnapshot || tour.name,
+        departureDate,
+        startTime,
+        numAdults: booking.numAdults,
+        numChildren: booking.numChildren,
+        totalAmount: Number(order.totalAmount),
+        currency: order.currency,
+        passengers: passengerList,
+        additionals: [], // TODO: obtener additionals de order.notes si están disponibles
+      };
+
+      const html = generateReservationEmailHTML(reservationData);
+      const text = generateReservationEmailText(reservationData);
+
+      // Enviar al cliente
+      await sendEmail({
+        to: order.customerEmail,
+        subject: `Confirmación de Reserva - ${order.code}`,
+        html,
+        text,
+        replyTo: "agencias@antartur.tur.ar",
+      });
+
+      // Enviar copia a agencias@antartur.tur.ar
+      await sendEmail({
+        to: "agencias@antartur.tur.ar",
+        subject: `Nueva Reserva - ${order.code}`,
+        html,
+        text,
+        replyTo: order.customerEmail,
+      });
+    }
+  }
+
+/**
+ * Genera link de WhatsApp para consultas
+ */
+function generateWhatsAppLinkForEnquiry(order: any): string {
+    if (!order.bookings || order.bookings.length === 0) {
+      return "";
+    }
+
+    const booking = order.bookings[0];
+    const departure = booking.tourDeparture;
+    const tourName = booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
+    const departureDate = booking.departureDateSnapshot 
+      ? new Date(booking.departureDateSnapshot).toLocaleDateString("es-AR")
+      : departure?.departureDate 
+        ? new Date(departure.departureDate).toLocaleDateString("es-AR")
+        : "Fecha no disponible";
+    const totalPassengers = booking.numAdults + booking.numChildren;
+    const totalAmount = Number(order.totalAmount).toLocaleString("es-AR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    const reason = order.notes?.includes("exceedsAvailability")
+      ? "Excede disponibilidad"
+      : order.notes?.includes("hasRestrictionViolations")
+      ? "Restricciones"
+      : "Consulta";
+
+    const message = `Nueva consulta:\n` +
+      `Cliente: ${order.customerName}\n` +
+      `Pasajeros: ${totalPassengers} (${booking.numAdults} adultos, ${booking.numChildren} menores)\n` +
+      `Excursión: ${tourName}\n` +
+      `Fecha: ${departureDate}\n` +
+      `Motivo: ${reason}\n` +
+      `Total: ${order.currency === "USD" ? "$" : "$"} ${totalAmount}\n` +
+      `Teléfono: ${order.customerPhone}`;
+
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/5492901487838?text=${encodedMessage}`;
   }
 
   /**

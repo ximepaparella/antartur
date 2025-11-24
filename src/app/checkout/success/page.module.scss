@@ -1,0 +1,62 @@
+@use "@/styles/variables" as *;
+
+.successPage {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-32 0;
+  text-align: center;
+}
+
+// Los detalles de la orden deben estar alineados a la izquierda
+.orderDetailsWrapper {
+  text-align: left;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: $font-size-18;
+  color: $gray-600;
+}
+
+.successIcon {
+  margin-bottom: $spacing-24;
+  color: $success-color;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-32;
+  color: $gray-700;
+}
+
+// Estilos movidos a OrderSummaryCard.module.scss
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-16;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.whatsappButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-8;
+  background-color: $whatsapp-color !important;
+  color: $white !important;
+  
+  &:hover {
+    background-color: $whatsapp-color-hover !important;
+  }
+}
+
