@@ -14,9 +14,13 @@ import {
   ConflictError,
 } from "./errorHandler";
 
+type RouteContext = {
+  params: Promise<Record<string, string>>;
+};
+
 type ControllerHandler = (
   request: NextRequest,
-  context?: { params?: Promise<Record<string, string>> }
+  context: RouteContext
 ) => Promise<NextResponse | Response>;
 
 /**
@@ -26,7 +30,7 @@ type ControllerHandler = (
 export function withControllerErrorHandler(handler: ControllerHandler) {
   return async (
     request: NextRequest,
-    context?: { params?: Promise<Record<string, string>> }
+    context: RouteContext = { params: Promise.resolve({}) }
   ): Promise<NextResponse | Response> => {
     try {
       return await handler(request, context);

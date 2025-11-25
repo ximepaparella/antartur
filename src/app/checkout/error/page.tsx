@@ -119,7 +119,7 @@ export default function CheckoutErrorPage() {
 
   return (
     <>
-      <Hero variant="internal" pageKey="checkout-error" />
+      <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
         <div className={styles.errorPage}>
           <div className={styles.errorIcon}>
@@ -167,8 +167,6 @@ export default function CheckoutErrorPage() {
               <Button
                 variant="primary"
                 href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 <Icon name="whatsapp" size={20} />
                 Contactar por WhatsApp

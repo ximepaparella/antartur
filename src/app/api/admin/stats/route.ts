@@ -35,7 +35,7 @@ import { successResponse } from "@/lib/api/response";
 
 const controller = new AdminController();
 
-export const GET = withRateLimitHandler("admin", withControllerErrorHandler(async () => {
+export const GET = withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
   const stats = await controller.getStats();
   return successResponse(stats);
 }));

@@ -75,7 +75,7 @@ import { idSchema, currencyCodeSchema } from "@/lib/validation/schemas";
 const controller = new TourPricesController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id: tourId } = await context!.params!;
+  const { id: tourId } = await context.params;
   idSchema.parse(tourId);
   
   const { searchParams } = new URL(request.url);
@@ -92,7 +92,7 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 }));
 
 export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id: tourId } = await context!.params!;
+  const { id: tourId } = await context.params;
   idSchema.parse(tourId);
   const body = await request.json();
   const { validateBody } = await import("@/lib/validation/schemas");

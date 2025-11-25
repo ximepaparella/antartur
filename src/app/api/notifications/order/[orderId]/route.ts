@@ -37,7 +37,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new NotificationsController();
 
 export const GET = withRateLimitHandler("notifications", withControllerErrorHandler(async (request, context) => {
-  const { orderId } = await context!.params!;
+  const { orderId } = await context.params;
   const notifications = await controller.getByOrderId(orderId);
   return successResponse(notifications);
 }));

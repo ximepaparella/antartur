@@ -46,7 +46,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new BookingsController();
 
 export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const body = await request.json();
   const booking = await controller.updateStatus(id, body);
   return successResponse(booking);

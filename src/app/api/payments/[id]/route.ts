@@ -48,7 +48,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new PaymentsController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const payment = await controller.getById(id);
   return successResponse(payment);
 }));

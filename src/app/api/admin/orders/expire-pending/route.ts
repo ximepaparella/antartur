@@ -31,7 +31,7 @@ import { successResponse } from "@/lib/api/response";
 
 const controller = new AdminController();
 
-export const POST = withRateLimitHandler("admin", withControllerErrorHandler(async () => {
+export const POST = withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
   const result = await controller.expirePendingOrders();
   return successResponse(result);
 }));

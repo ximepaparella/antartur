@@ -87,7 +87,7 @@ const controller = new ToursController();
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const { searchParams } = new URL(request.url);
   const includeAvailability = searchParams.get("includeAvailability") === "true";
   const includeContent = searchParams.get("includeContent") === "true";
@@ -97,14 +97,14 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 }));
 
 export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const body = await request.json();
   const tour = await controller.update(id, body);
   return successResponse(tour);
 }));
 
 export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   await controller.delete(id);
   return noContentResponse();
 }));

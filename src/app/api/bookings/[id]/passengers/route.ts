@@ -47,7 +47,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new PassengersController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const passengers = await controller.getByBookingId(id);
   return successResponse(passengers);
 }));

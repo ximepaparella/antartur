@@ -39,7 +39,7 @@ const controller = new PaymentsController();
 export const POST = withRateLimitHandler({
   points: 100,
   duration: 3600,
-}, withControllerErrorHandler(async (request) => {
+}, withControllerErrorHandler(async (request, context) => {
   const body = await request.json();
   const result = await controller.processPayPalWebhook(body);
   return successResponse(result);

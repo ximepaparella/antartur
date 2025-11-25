@@ -77,12 +77,12 @@ import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/r
 
 const controller = new OrdersController();
 
-export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request) => {
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const result = await controller.list(request);
   return paginatedResponse(result.data, result.meta);
 }));
 
-export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request) => {
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
   const body = await request.json();
   const order = await controller.create(body);
   return createdResponse(order);

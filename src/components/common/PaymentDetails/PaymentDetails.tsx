@@ -91,7 +91,7 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         
         {(paymentMethod === "paypal" || paymentMethod === "payway") && (
           <div className={styles.onlinePaymentNote}>
-            <Icon name="check-circle" size={16} className={styles.successIcon} />
+            <Icon name="check" size={16} className={styles.successIcon} />
             <p>
               El pago ha sido procesado exitosamente. Recibirás el comprobante por correo electrónico.
             </p>

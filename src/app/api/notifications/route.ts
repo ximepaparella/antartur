@@ -43,7 +43,7 @@ import { createdResponse } from "@/lib/api/response";
 
 const controller = new NotificationsController();
 
-export const POST = withRateLimitHandler("notifications", withControllerErrorHandler(async (request) => {
+export const POST = withRateLimitHandler("notifications", withControllerErrorHandler(async (request, context) => {
   const body = await request.json();
   const notification = await controller.create(body);
   return createdResponse(notification);

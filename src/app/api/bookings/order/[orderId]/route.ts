@@ -45,7 +45,7 @@ import { orderBookingsQuerySchema } from "@/modules/booking/api/validators/booki
 const controller = new BookingsController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { orderId } = await context!.params!;
+  const { orderId } = await context.params;
   const { searchParams } = new URL(request.url);
   const query = validateQuery(orderBookingsQuerySchema, Object.fromEntries(searchParams));
 

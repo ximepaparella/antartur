@@ -58,7 +58,7 @@ export default function CheckoutTransferPage() {
 
   return (
     <>
-      <Hero variant="internal" pageKey="checkout-transfer" />
+      <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
         <div className={styles.transferPage}>
           <h1 className={styles.title}>Instrucciones para Transferencia Bancaria</h1>

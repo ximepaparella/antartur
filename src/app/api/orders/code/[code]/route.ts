@@ -41,7 +41,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new OrdersController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { code } = await context!.params!;
+  const { code } = await context.params;
   const { searchParams } = new URL(request.url);
   const includePayments = searchParams.get("includePayments") === "true";
 

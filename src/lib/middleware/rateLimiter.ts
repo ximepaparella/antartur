@@ -99,24 +99,31 @@ export function withRateLimit(
 }
 
 /**
+ * Tipo helper para asegurar que el segundo parámetro sea requerido
+ */
+type RouteHandler = (
+  request: NextRequest,
+  context: { params: Promise<Record<string, string>> }
+) => Promise<NextResponse | Response>;
+
+/**
  * Helper para aplicar rate limiting en route handlers
  * Uso: export const GET = withRateLimitHandler("public", handler);
  */
-export function withRateLimitHandler<T extends (...args: any[]) => Promise<any>>(
+export function withRateLimitHandler(
   config: RateLimitConfig | keyof typeof rateLimitConfigs,
-  handler: T
-): T {
+  handler: RouteHandler
+): RouteHandler {
   const rateLimitMiddleware = withRateLimit(config);
 
-  return (async (...args: Parameters<T>) => {
-    const request = args[0] as NextRequest;
+  return async (request: NextRequest, context: { params: Promise<Record<string, string>> }) => {
     const rateLimitResponse = await rateLimitMiddleware(request);
 
     if (rateLimitResponse) {
       return rateLimitResponse;
     }
 
-    return handler(...args);
-  }) as T;
+    return handler(request, context);
+  };
 }
 

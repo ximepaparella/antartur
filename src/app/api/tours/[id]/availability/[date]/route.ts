@@ -42,7 +42,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new AvailabilityController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id, date } = await context!.params!;
+  const { id, date } = await context.params;
   const availability = await controller.getByTourIdAndDate(id, date);
   return successResponse(availability);
 }));

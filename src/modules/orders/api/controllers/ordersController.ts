@@ -97,7 +97,11 @@ export class OrdersController {
 
     // Enviar emails (no bloquear si falla)
     try {
-      await sendOrderEmails(order);
+      // Convertir Decimal a number para sendOrderEmails
+      await sendOrderEmails({
+        ...order,
+        totalAmount: Number(order.totalAmount),
+      });
     } catch (emailError) {
       logger.error("Error al enviar emails de orden", emailError);
       // No fallar la creación de la orden si el email falla
@@ -106,7 +110,11 @@ export class OrdersController {
     // Generar link de WhatsApp para consultas
     if (order.type === "ENQUIRY") {
       try {
-        const whatsappLink = generateWhatsAppLinkForEnquiry(order);
+        // Convertir Decimal a number para generateWhatsAppLinkForEnquiry
+        const whatsappLink = generateWhatsAppLinkForEnquiry({
+          ...order,
+          totalAmount: Number(order.totalAmount),
+        });
         logger.info("WhatsApp link para consulta generado", { orderCode: order.code });
       } catch (whatsappError) {
         logger.error("Error al generar link de WhatsApp", whatsappError);

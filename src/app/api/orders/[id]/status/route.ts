@@ -46,7 +46,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new OrdersController();
 
 export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const body = await request.json();
 
   const order = await controller.updateStatus(id, body);

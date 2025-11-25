@@ -41,7 +41,7 @@ import { successResponse } from "@/lib/api/response";
 const controller = new ToursController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { slug } = await context!.params!;
+  const { slug } = await context.params;
   const { searchParams } = new URL(request.url);
   const includeImages = searchParams.get("includeImages") !== "false";
   const includeDepartures = searchParams.get("includeDepartures") === "true";

@@ -74,7 +74,7 @@ import { idSchema } from "@/lib/validation/schemas";
 const controller = new TourPricesController();
 
 export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { priceId } = await context!.params!;
+  const { priceId } = await context.params;
   idSchema.parse(priceId);
   const body = await request.json();
   const { validateBody } = await import("@/lib/validation/schemas");
@@ -85,7 +85,7 @@ export const PUT = withRateLimitHandler("write", withControllerErrorHandler(asyn
 }));
 
 export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { priceId } = await context!.params!;
+  const { priceId } = await context.params;
   idSchema.parse(priceId);
   await controller.delete(priceId);
   return noContentResponse();

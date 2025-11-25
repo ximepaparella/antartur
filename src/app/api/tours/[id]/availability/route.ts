@@ -100,7 +100,7 @@ import { tourAvailabilityQuerySchema } from "@/modules/departures/api/validators
 const controller = new AvailabilityController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const { searchParams } = new URL(request.url);
   const query = validateQuery(tourAvailabilityQuerySchema, Object.fromEntries(searchParams));
 
@@ -109,7 +109,7 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 }));
 
 export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context!.params!;
+  const { id } = await context.params;
   const body = await request.json();
   const data = { ...body, tourId: id };
 

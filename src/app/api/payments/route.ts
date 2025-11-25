@@ -48,7 +48,7 @@ import { createdResponse } from "@/lib/api/response";
 
 const controller = new PaymentsController();
 
-export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request) => {
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
   const body = await request.json();
   const payment = await controller.create(body);
   return createdResponse(payment);
