@@ -393,6 +393,8 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       html,
       text,
       replyTo: "agencias@antartur.tur.ar",
+      orderId: order.id,
+      templateKey: "payment-confirmation",
     });
 
     logger.info("Payment confirmation email sent", {
@@ -645,6 +647,7 @@ export async function getOrderByCode(code: string, includePayments = false) {
  * Envía emails de confirmación al cliente y copia a agencias@antartur.tur.ar
  */
 export async function sendOrderEmails(order: {
+  id: string;
   code: string;
   type: "RESERVATION" | "ENQUIRY";
   customerName: string;
@@ -727,6 +730,8 @@ export async function sendOrderEmails(order: {
       html,
       text,
       replyTo: "agencias@antartur.tur.ar",
+      orderId: order.id,
+      templateKey: "enquiry-confirmation",
     });
 
     // Enviar copia a agencias@antartur.tur.ar
@@ -736,6 +741,8 @@ export async function sendOrderEmails(order: {
       html,
       text,
       replyTo: order.customerEmail,
+      orderId: order.id,
+      templateKey: "enquiry-notification",
     });
   } else {
     // Email de reserva confirmada
@@ -763,6 +770,8 @@ export async function sendOrderEmails(order: {
       html,
       text,
       replyTo: "agencias@antartur.tur.ar",
+      orderId: order.id,
+      templateKey: "reservation-confirmation",
     });
 
     // Enviar copia a agencias@antartur.tur.ar
@@ -772,6 +781,8 @@ export async function sendOrderEmails(order: {
       html,
       text,
       replyTo: order.customerEmail,
+      orderId: order.id,
+      templateKey: "reservation-notification",
     });
   }
 }

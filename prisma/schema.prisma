@@ -441,6 +441,9 @@ model Notification {
   status       NotificationStatus @default(PENDING)
   errorMessage String?            @db.Text
   sentAt       DateTime?
+  retryCount   Int                @default(0)
+  maxRetries   Int                @default(5)
+  nextRetryAt  DateTime?
 
   // Relaciones
   order Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
@@ -451,6 +454,7 @@ model Notification {
   @@index([orderId])
   @@index([status])
   @@index([type, status])
+  @@index([status, nextRetryAt])
 }
 
 model User {

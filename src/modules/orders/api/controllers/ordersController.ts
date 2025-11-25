@@ -97,14 +97,39 @@ export class OrdersController {
 
     // Enviar emails (no bloquear si falla)
     try {
+      logger.info("Attempting to send order emails", {
+        orderId: order.id,
+        orderCode: order.code,
+        orderType: order.type,
+        customerEmail: order.customerEmail,
+      });
+
       // Convertir Decimal a number para sendOrderEmails
       await sendOrderEmails({
         ...order,
         totalAmount: Number(order.totalAmount),
       });
+
+      logger.info("Order emails sent successfully", {
+        orderId: order.id,
+        orderCode: order.code,
+        orderType: order.type,
+        customerEmail: order.customerEmail,
+        note: "Notifications are tracked in database and will be retried automatically if failed",
+      });
     } catch (emailError) {
-      logger.error("Error al enviar emails de orden", emailError);
+      const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
+      logger.error("Error sending order emails - notifications will be retried automatically", {
+        error: emailError,
+        orderId: order.id,
+        orderCode: order.code,
+        orderType: order.type,
+        customerEmail: order.customerEmail,
+        errorMessage,
+        note: "Order creation succeeded, but email notifications failed. They will be retried by cron job.",
+      });
       // No fallar la creación de la orden si el email falla
+      // Las notificaciones fallidas serán reintentadas automáticamente por el cron job
     }
 
     // Generar link de WhatsApp para consultas

@@ -115,7 +115,8 @@ function createTransporter() {
   const smtpHost = process.env.SMTP_HOST;
   const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
   const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASSWORD;
+  // Soportar tanto SMTP_PASSWORD como SMTP_PASS para compatibilidad
+  const smtpPass = process.env.SMTP_PASSWORD || process.env.SMTP_PASS;
   const smtpFrom = process.env.SMTP_FROM || smtpUser;
 
   // Si hay configuración SMTP, usarla
