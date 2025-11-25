@@ -6,7 +6,7 @@ import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard/OrderSummaryCard";
 import { getCompletedOrderData } from "@/lib/utils/orderStorage";
 import { usePaymentVerification } from "@/modules/booking/hooks/usePaymentVerification";
-import styles from "../paypal/return/page.module.scss";
+import styles from "./page.module.scss";
 
 export default function PaywayReturnPage() {
   const searchParams = useSearchParams();
