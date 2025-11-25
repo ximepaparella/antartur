@@ -68,8 +68,24 @@ export default function CheckoutSuccessPage() {
           </div>
 
           <h1 className={styles.title}>
-            {isEnquiry ? "Consulta enviada exitosamente" : "¡Reserva confirmada!"}
+            {isEnquiry 
+              ? "Consulta enviada exitosamente" 
+              : orderData?.paymentMethod === "transferencia"
+              ? "¡Reserva creada exitosamente!"
+              : "¡Reserva confirmada!"}
           </h1>
+          
+          {!isEnquiry && orderData?.paymentMethod === "transferencia" && (
+            <p className={styles.subtitle}>
+              Tu reserva está pendiente de pago. Por favor, realiza la transferencia bancaria según las instrucciones que recibiste por email.
+            </p>
+          )}
+          
+          {!isEnquiry && (orderData?.paymentMethod === "paypal" || orderData?.paymentMethod === "payway") && (
+            <p className={styles.subtitle}>
+              Tu pago ha sido procesado exitosamente. Recibirás el comprobante por correo electrónico.
+            </p>
+          )}
 
           {orderData && (
             <>

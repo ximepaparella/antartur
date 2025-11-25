@@ -39,6 +39,17 @@ SMTP_FROM=noreply@antartur.tur.ar
 ```
 **Descripción:** Configuración SMTP para envío de emails.
 
+### Opción C: Mailtrap (Para testing y desarrollo)
+```env
+SMTP_HOST=smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=tu_usuario_mailtrap
+SMTP_PASSWORD=tu_password_mailtrap
+SMTP_FROM=noreply@antartur.tur.ar
+```
+**Descripción:** Configuración SMTP de Mailtrap para testing de emails.  
+**Nota:** Mailtrap captura todos los emails enviados para testing sin enviarlos realmente. Ideal para desarrollo.
+
 ### Email Destinatario
 ```env
 CONTACT_RECIPIENT_EMAIL=agencias@antartur.tur.ar
@@ -81,17 +92,21 @@ BANK_ALIAS=Antartur
 ```env
 PAYPAL_CLIENT_ID=tu_paypal_client_id
 PAYPAL_CLIENT_SECRET=tu_paypal_client_secret
+PAYPAL_MODE=sandbox|live
 ```
 **Descripción:** Credenciales de PayPal API.  
-**Uso:** Solo disponible cuando currency es USD.
+**Uso:** Solo disponible cuando currency es USD.  
+**PAYPAL_MODE:** `sandbox` para testing, `live` para producción.
 
 ### Payway
 ```env
 PAYWAY_API_KEY=tu_payway_api_key
 PAYWAY_MERCHANT_ID=tu_payway_merchant_id
+PAYWAY_ENVIRONMENT=sandbox|production
 ```
 **Descripción:** Credenciales de Payway API.  
 **Uso:** Solo disponible cuando currency es ARS.  
+**PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
 **Documentación:** https://developers.payway.com.ar/documentation
 
 ## Variables de Cron Job

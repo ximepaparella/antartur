@@ -14,6 +14,7 @@ import { calculateAge, validateMinAge, validateMinPassengers, calculateAdditiona
 import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { logger } from "@/lib/services/logger";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -283,10 +284,22 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
       },
     });
 
-    // 3. Actualizar Order a PAID
-    await tx.order.update({
+    // 3. Actualizar Order a PAID (reserva confirmada con pago)
+    const updatedOrder = await tx.order.update({
       where: { id: order.id },
       data: { status: "PAID" },
+      include: {
+        bookings: {
+          include: {
+            passengers: true,
+            tourDeparture: {
+              include: {
+                tour: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     // 4. Actualizar Bookings a CONFIRMED y ajustar cupos
@@ -317,10 +330,80 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
     }
 
     return {
-      order,
+      order: updatedOrder,
       payment,
     };
   });
+}
+
+/**
+ * Envía email de confirmación de pago después de confirmar un pago
+ */
+export async function sendPaymentConfirmationEmail(orderId: string, paymentProvider: string, transactionId?: string) {
+  try {
+    const order = await getOrderWithRelations(orderId, true);
+
+    if (!order.bookings || order.bookings.length === 0) {
+      return;
+    }
+
+    const booking = order.bookings[0];
+    const departure = booking.tourDeparture;
+    const tour = departure?.tour;
+
+    if (!tour || !departure) {
+      return;
+    }
+
+    const passengers = booking.passengers || [];
+    const passengerList = passengers.map((p) => ({
+      firstName: p.firstName,
+      lastName: p.lastName,
+      type: p.type,
+    }));
+
+    const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+    const startTime = booking.startTimeSnapshot || departure.startTime;
+
+    const { sendEmail } = await import("../../notifications/domain/emailService");
+    const { generatePaymentConfirmationEmailHTML, generatePaymentConfirmationEmailText } = await import("../../notifications/templates/paymentConfirmationEmail");
+
+    const emailData = {
+      orderCode: order.code,
+      customerName: order.customerName,
+      tourName: booking.tourNameSnapshot || tour.name,
+      departureDate,
+      startTime,
+      numAdults: booking.numAdults,
+      numChildren: booking.numChildren,
+      totalAmount: Number(order.totalAmount),
+      currency: order.currency,
+      paymentMethod: paymentProvider,
+      transactionId,
+      passengers: passengerList,
+    };
+
+    const html = generatePaymentConfirmationEmailHTML(emailData);
+    const text = generatePaymentConfirmationEmailText(emailData);
+
+    // Enviar al cliente
+    await sendEmail({
+      to: order.customerEmail,
+      subject: `Pago Confirmado - ${order.code}`,
+      html,
+      text,
+      replyTo: "agencias@antartur.tur.ar",
+    });
+
+    logger.info("Payment confirmation email sent", {
+      orderId,
+      orderCode: order.code,
+      customerEmail: order.customerEmail,
+    });
+  } catch (error) {
+    logger.error("Error sending payment confirmation email", error);
+    // No lanzar error para no romper el flujo de confirmación de pago
+  }
 }
 
 /**
