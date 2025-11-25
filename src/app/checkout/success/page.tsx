@@ -86,7 +86,7 @@ export default function CheckoutSuccessPage() {
                   date={orderData.date}
                   timeSlot={orderData.timeSlot}
                   adults={orderData.adults}
-                  children={orderData.children}
+                  numChildren={orderData.children}
                   passengers={orderData.passengers}
                 />
                 

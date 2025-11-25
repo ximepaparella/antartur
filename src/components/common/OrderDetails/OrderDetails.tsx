@@ -12,7 +12,7 @@ interface OrderDetailsProps {
     end: string;
   };
   adults: number;
-  children: number;
+  numChildren: number;
   passengers: Array<{
     nombreCompleto: string;
     esAdulto: boolean;
@@ -27,7 +27,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
   date,
   timeSlot,
   adults,
-  children,
+  numChildren,
   passengers,
 }) => {
   // Formatear fecha
@@ -44,7 +44,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
     return `${hours}:${minutes}`;
   };
 
-  const totalPassengers = adults + children;
+  const totalPassengers = adults + numChildren;
 
   return (
     <Card className={styles.orderDetailsCard}>
@@ -72,9 +72,9 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
           <span className={styles.label}>Pasajeros:</span>
           <span className={styles.value}>
             {totalPassengers} {totalPassengers === 1 ? "pasajero" : "pasajeros"}
-            {adults > 0 && children > 0 && ` (${adults} ${adults === 1 ? "adulto" : "adultos"}, ${children} ${children === 1 ? "menor" : "menores"})`}
-            {adults > 0 && children === 0 && ` (${adults} ${adults === 1 ? "adulto" : "adultos"})`}
-            {adults === 0 && children > 0 && ` (${children} ${children === 1 ? "menor" : "menores"})`}
+            {adults > 0 && numChildren > 0 && ` (${adults} ${adults === 1 ? "adulto" : "adultos"}, ${numChildren} ${numChildren === 1 ? "menor" : "menores"})`}
+            {adults > 0 && numChildren === 0 && ` (${adults} ${adults === 1 ? "adulto" : "adultos"})`}
+            {adults === 0 && numChildren > 0 && ` (${numChildren} ${numChildren === 1 ? "menor" : "menores"})`}
           </span>
         </div>
         

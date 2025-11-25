@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Badge.module.scss";
 
 interface BadgeProps {
@@ -22,14 +23,13 @@ export const Badge: React.FC<BadgeProps> = ({
   height = 80,
 }) => {
   const imageElement = (
-    <img
+    <Image
       src={image}
       alt={alt}
       width={width}
       height={height}
       className={styles.image}
       loading="lazy"
-      decoding="async"
     />
   );
 
