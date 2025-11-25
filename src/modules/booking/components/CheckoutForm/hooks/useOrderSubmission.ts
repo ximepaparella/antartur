@@ -40,7 +40,7 @@ interface UseOrderSubmissionReturn {
  */
 export function useOrderSubmission({
   onCheckoutComplete,
-  useAPI = process.env.NODE_ENV === "production",
+  useAPI = true, // Siempre usar API para crear órdenes reales en BD
 }: UseOrderSubmissionProps): UseOrderSubmissionReturn {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,9 +61,13 @@ export function useOrderSubmission({
     restrictions?: Record<string, unknown>;
   } => {
     // Separar nombre completo en firstName y lastName
-    const nameParts = passenger.nombreCompleto.trim().split(/\s+/);
+    const nameParts = passenger.nombreCompleto.trim().split(/\s+/).filter(part => part.length > 0);
     const firstName = nameParts[0] || "";
-    const lastName = nameParts.slice(1).join(" ") || "";
+    // Si solo hay una palabra, usar "-" como lastName para cumplir con la validación
+    // Si hay múltiples palabras, usar todas menos la primera como lastName
+    const lastName = nameParts.length > 1 
+      ? nameParts.slice(1).join(" ") 
+      : "-";
 
     // Determinar tipo de pasajero basado en edad
     let passengerType: "ADULT" | "CHILD" | "INFANT" = "ADULT";
@@ -178,7 +182,19 @@ export function useOrderSubmission({
           onCheckoutComplete(order);
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Error al crear la orden";
+        let errorMessage = "Error al crear la orden";
+        
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (typeof err === "object" && err !== null && "message" in err) {
+          errorMessage = String(err.message);
+        }
+        
+        // Si es un error de validación de la API, mostrar mensaje más claro
+        if (err instanceof Error && err.message.includes("validation")) {
+          errorMessage = "Por favor, verifica que todos los campos estén completos correctamente.";
+        }
+        
         setError(errorMessage);
         console.error("Error al crear la orden:", err);
         throw err;

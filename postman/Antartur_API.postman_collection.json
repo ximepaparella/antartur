@@ -761,14 +761,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"orderId\": \"\",\n  \"type\": \"EMAIL\",\n  \"message\": \"Su orden ha sido confirmada\",\n  \"status\": \"PENDING\"\n}"
+              "raw": "{\n  \"orderId\": \"\",\n  \"type\": \"EMAIL\",\n  \"recipient\": \"cliente@example.com\",\n  \"templateKey\": \"reservation-confirmation\",\n  \"subject\": \"Confirmación de Reserva\",\n  \"body\": \"Su orden ha sido confirmada\",\n  \"status\": \"PENDING\"\n}"
             },
             "url": {
               "raw": "{{api_url}}/notifications",
               "host": ["{{api_url}}"],
               "path": ["notifications"]
             },
-            "description": "Crear una nueva notificación"
+            "description": "Crear una nueva notificación. Campos requeridos: type, recipient, templateKey. Template keys disponibles: reservation-confirmation, reservation-notification, enquiry-confirmation, enquiry-notification, payment-confirmation"
           },
           "response": []
         }
@@ -802,6 +802,92 @@
               "path": ["admin", "stats"]
             },
             "description": "Obtener estadísticas generales del sistema"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cron Jobs",
+      "item": [
+        {
+          "name": "Cancel Expired Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/cancel-expired-orders?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "cancel-expired-orders"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Cancelar órdenes expiradas automáticamente. Ejecutar cada hora. Requiere autenticación con CRON_SECRET."
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Failed Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/retry-notifications?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "retry-notifications"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Reintentar notificaciones fallidas automáticamente. Ejecutar cada 15 minutos. Requiere autenticación con CRON_SECRET. Procesa hasta 100 notificaciones por ejecución."
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Failed Notifications (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/retry-notifications?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "retry-notifications"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Reintentar notificaciones fallidas (método POST para compatibilidad con algunos sistemas de cron). Ejecutar cada 15 minutos."
           },
           "response": []
         }
@@ -849,6 +935,34 @@
               "path": ["docs"]
             },
             "description": "Obtener la especificación Swagger/OpenAPI en formato JSON"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Testing",
+      "item": [
+        {
+          "name": "Test Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>Test Email</h1><p>This is a test email to verify SMTP configuration.</p>\",\n  \"text\": \"Test Email\\n\\nThis is a test email to verify SMTP configuration.\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/test-email",
+              "host": ["{{api_url}}"],
+              "path": ["test-email"]
+            },
+            "description": "Probar configuración SMTP y envío de emails. Solo disponible en desarrollo. Retorna información sobre la configuración SMTP y el resultado del envío."
           },
           "response": []
         }

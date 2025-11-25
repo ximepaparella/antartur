@@ -70,7 +70,7 @@ export class PaymentService {
       }
 
       // Confirmar pago usando el servicio de dominio de orders
-      await confirmPayment({
+      const result = await confirmPayment({
         orderId,
         provider: "PAYPAL",
         providerPaymentId: (resource.id as string) || (resource.sale_id as string),
@@ -79,6 +79,14 @@ export class PaymentService {
         rawRequest: data as Record<string, unknown>,
         rawResponse: resource,
       });
+
+      // Enviar email de confirmación de pago
+      const { sendPaymentConfirmationEmail } = await import("../../orders/domain/orderService");
+      await sendPaymentConfirmationEmail(
+        orderId,
+        "PAYPAL",
+        (resource.id as string) || (resource.sale_id as string)
+      );
 
       return { success: true, message: "Payment confirmed" };
     }
@@ -99,7 +107,7 @@ export class PaymentService {
       }
 
       // Confirmar pago usando el servicio de dominio de orders
-      await confirmPayment({
+      const result = await confirmPayment({
         orderId,
         provider: "PAYWAY",
         providerPaymentId: data.payment_id,
@@ -108,6 +116,14 @@ export class PaymentService {
         rawRequest: data as Record<string, unknown>,
         rawResponse: data.metadata,
       });
+
+      // Enviar email de confirmación de pago
+      const { sendPaymentConfirmationEmail } = await import("../../orders/domain/orderService");
+      await sendPaymentConfirmationEmail(
+        orderId,
+        "PAYWAY",
+        data.payment_id
+      );
 
       return { success: true, message: "Payment confirmed" };
     }

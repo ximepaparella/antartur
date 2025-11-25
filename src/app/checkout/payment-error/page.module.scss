@@ -1,29 +1,15 @@
 @use "@/styles/variables" as *;
 
-.successPage {
+.errorPage {
   max-width: 600px;
   margin: 0 auto;
   padding: $spacing-32 0;
   text-align: center;
 }
 
-// Los detalles de la orden deben estar alineados a la izquierda
-.orderDetailsWrapper {
-  text-align: left;
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: $font-size-18;
-  color: $gray-600;
-}
-
-.successIcon {
+.errorIcon {
   margin-bottom: $spacing-24;
-  color: $success-color;
+  color: $error-color;
 }
 
 .title {
@@ -33,24 +19,24 @@
   color: $gray-700;
 }
 
-.subtitle {
+.message {
   font-size: $font-size-16;
   color: $gray-600;
   margin-bottom: $spacing-32;
   line-height: 1.6;
 }
 
-// Estilos movidos a OrderSummaryCard.module.scss
-
 .actions {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $spacing-16;
+  margin-top: $spacing-32;
   
   @media (min-width: 768px) {
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap;
   }
 }
 

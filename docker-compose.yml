@@ -29,6 +29,8 @@ services:
     container_name: antartur_app
     restart: unless-stopped
     working_dir: /app
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://antartur:antartur_dev_password@postgres:5432/antartur

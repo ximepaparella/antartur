@@ -10,18 +10,35 @@
  *         application/json:
  *           schema:
  *             type: object
- *             required: [orderId, type, message]
+ *             required: [type, recipient, templateKey]
  *             properties:
  *               orderId:
  *                 type: string
+ *                 description: ID de la orden asociada (opcional)
  *               type:
  *                 type: string
- *                 enum: [EMAIL, SMS, PUSH]
- *               message:
+ *                 enum: [EMAIL, WHATSAPP]
+ *                 description: Tipo de notificación
+ *               recipient:
  *                 type: string
+ *                 description: Email o número de teléfono del destinatario
+ *                 example: "cliente@example.com"
+ *               templateKey:
+ *                 type: string
+ *                 description: Clave del template de notificación
+ *                 enum: [reservation-confirmation, reservation-notification, enquiry-confirmation, enquiry-notification, payment-confirmation]
+ *                 example: "reservation-confirmation"
+ *               subject:
+ *                 type: string
+ *                 description: Asunto del email (opcional)
+ *               body:
+ *                 type: string
+ *                 description: Cuerpo del mensaje (opcional)
  *               status:
  *                 type: string
- *                 enum: [PENDING, SENT, FAILED]
+ *                 enum: [PENDING, SENT, ERROR]
+ *                 default: PENDING
+ *                 description: Estado inicial de la notificación
  *     responses:
  *       201:
  *         description: Notificación creada exitosamente

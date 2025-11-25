@@ -39,6 +39,17 @@ SMTP_FROM=noreply@antartur.tur.ar
 ```
 **Descripción:** Configuración SMTP para envío de emails.
 
+### Opción C: Mailtrap (Para testing y desarrollo)
+```env
+SMTP_HOST=smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=tu_usuario_mailtrap
+SMTP_PASSWORD=tu_password_mailtrap
+SMTP_FROM=noreply@antartur.tur.ar
+```
+**Descripción:** Configuración SMTP de Mailtrap para testing de emails.  
+**Nota:** Mailtrap captura todos los emails enviados para testing sin enviarlos realmente. Ideal para desarrollo.
+
 ### Email Destinatario
 ```env
 CONTACT_RECIPIENT_EMAIL=agencias@antartur.tur.ar
@@ -81,17 +92,21 @@ BANK_ALIAS=Antartur
 ```env
 PAYPAL_CLIENT_ID=tu_paypal_client_id
 PAYPAL_CLIENT_SECRET=tu_paypal_client_secret
+PAYPAL_MODE=sandbox|live
 ```
 **Descripción:** Credenciales de PayPal API.  
-**Uso:** Solo disponible cuando currency es USD.
+**Uso:** Solo disponible cuando currency es USD.  
+**PAYPAL_MODE:** `sandbox` para testing, `live` para producción.
 
 ### Payway
 ```env
 PAYWAY_API_KEY=tu_payway_api_key
 PAYWAY_MERCHANT_ID=tu_payway_merchant_id
+PAYWAY_ENVIRONMENT=sandbox|production
 ```
 **Descripción:** Credenciales de Payway API.  
 **Uso:** Solo disponible cuando currency es ARS.  
+**PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
 **Documentación:** https://developers.payway.com.ar/documentation
 
 ## Variables de Cron Job
@@ -99,9 +114,22 @@ PAYWAY_MERCHANT_ID=tu_payway_merchant_id
 ```env
 CRON_SECRET=tu_secret_aleatorio_para_cron
 ```
-**Descripción:** Secret para proteger el endpoint de cancelación automática de órdenes.  
-**Uso:** Configurar en Vercel Cron o sistema de cron similar.  
-**Generación:** Usar un string aleatorio seguro (ej: `openssl rand -hex 32`)
+**Descripción:** Secret para proteger los endpoints de cron (cancelación de órdenes y reintentos de notificaciones).  
+**Uso:** Configurar en Don Web, Vercel Cron o sistema de cron similar.  
+**Generación:** Usar un string aleatorio seguro (ej: `openssl rand -hex 32`)  
+**Endpoints protegidos:**
+- `/api/cron/cancel-expired-orders`
+- `/api/cron/retry-notifications`
+
+## Variables de Notificaciones
+
+```env
+NOTIFICATION_DRY_RUN=true|false
+```
+**Descripción:** Flag opcional para modo "dry-run" de notificaciones. Si está en `true`, los emails no se envían realmente, solo se registran en la base de datos y se loguean.  
+**Default:** `false` (los emails se envían normalmente)  
+**Uso:** Útil para desarrollo y testing sin enviar emails reales.  
+**Nota:** En producción, debe estar en `false` o no configurado para que los clientes reciban las notificaciones.
 
 ## Variables Opcionales
 
@@ -132,7 +160,10 @@ Después de configurar las variables:
 1. **Database:** Verifica conexión en `/api/test-db` (si existe)
 2. **Email:** Envía un test desde el formulario de contacto
 3. **Checkout:** Crea una orden de prueba y verifica que se envíen emails
-4. **Cron:** Verifica que el endpoint `/api/cron/cancel-expired-orders` responda (requiere autenticación)
+4. **Cron:** Verifica que los endpoints de cron respondan (requieren autenticación):
+   - `/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET`
+   - `/api/cron/retry-notifications?secret=TU_CRON_SECRET`
+5. **Notificaciones:** Verifica en la base de datos que se creen registros en la tabla `Notification` cuando se envían emails
 
 ## Notas Importantes
 
