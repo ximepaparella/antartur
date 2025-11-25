@@ -28,7 +28,20 @@
  *         $ref: '#/components/responses/BadRequestError'
  */
 
-import { paymentsHandler } from "@/modules/payments/api/handlers/paymentsHandler";
+import { PaymentsController } from "@/modules/payments/api/controllers/paymentsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const POST = paymentsHandler.paywayWebhook;
+const controller = new PaymentsController();
+
+// Webhooks necesitan límite más alto ya que pueden recibir múltiples requests
+export const POST = withRateLimitHandler({
+  points: 100,
+  duration: 3600,
+}, withControllerErrorHandler(async (request, context) => {
+  const body = await request.json();
+  const result = await controller.processPaywayWebhook(body);
+  return successResponse(result);
+}));
 

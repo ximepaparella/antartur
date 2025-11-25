@@ -104,15 +104,20 @@ export async function createReservation(input: ReservationInput) {
       }
     }
 
-    // 5. Calcular cupos disponibles
-    const totalSeats = input.numAdults + input.numChildren;
-    const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+    // 5. Determinar tipo de orden
+    const isEnquiry = input.exceedsAvailability || input.hasRestrictionViolations || false;
+    const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
 
-    if (availableSeats < totalSeats) {
-      throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+    // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
+    const totalSeats = input.numAdults + input.numChildren;
+    if (!isEnquiry) {
+      const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+      if (availableSeats < totalSeats) {
+        throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+      }
     }
 
-    // 6. Obtener precios directamente de TourPrice en la moneda solicitada
+    // 7. Obtener precios directamente de TourPrice en la moneda solicitada
     const tourPrice = await tx.tourPrice.findUnique({
       where: {
         tourId_currency: {
@@ -147,24 +152,37 @@ export async function createReservation(input: ReservationInput) {
       totalAmount += additionalsSubtotal;
     }
 
-    // 7. Generar código de orden dentro de la transacción
+    // 8. Generar código de orden dentro de la transacción
     const orderCode = await generateOrderCode(tx);
 
-    // 8. Calcular fecha de expiración (24 horas desde ahora)
+    // 9. Calcular fecha de expiración según método de pago
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24);
+    if (input.paymentMethod === "transferencia") {
+      // Transferencia bancaria: 24 horas
+      const bankTransferHours = parseInt(process.env.BANK_TRANSFER_EXPIRATION_HOURS || "24", 10);
+      expiresAt.setHours(expiresAt.getHours() + bankTransferHours);
+    } else {
+      // PayPal/Payway/Consulta: tiempo configurable (default 1 hora)
+      const orderExpirationHours = parseInt(process.env.ORDER_EXPIRATION_HOURS || "1", 10);
+      expiresAt.setHours(expiresAt.getHours() + orderExpirationHours);
+    }
 
-    // 9. Crear Order con información de additionals en notes si existen
+    // 10. Crear Order con información de additionals en notes si existen
     const orderNotes = input.notes || "";
     const additionalsNote = input.additionals && input.additionals.length > 0
       ? `\n\nAdditionals seleccionados: ${input.additionals.map(a => a.name).join(", ")}`
       : "";
+    
+    // Agregar información sobre motivo de consulta si es ENQUIRY
+    const enquiryNote = isEnquiry
+      ? `\n\nMotivo de consulta: ${input.exceedsAvailability ? "Excede disponibilidad" : ""}${input.hasRestrictionViolations ? (input.exceedsAvailability ? " y " : "") + "Violación de restricciones" : ""}`
+      : "";
 
-    // 10. Crear Order
+    // 11. Crear Order
     const order = await tx.order.create({
       data: {
         code: orderCode,
-        type: "RESERVATION",
+        type: orderType,
         status: "PENDING_PAYMENT",
         customerName: input.customerName,
         customerEmail: input.customerEmail,
@@ -172,19 +190,21 @@ export async function createReservation(input: ReservationInput) {
         currency: input.currency,
         totalAmount,
         expiresAt,
-        notes: orderNotes + additionalsNote,
+        notes: orderNotes + additionalsNote + enquiryNote,
       },
     });
 
-    // 11. Actualizar cupos del departure (incrementar seatsHeld)
-    await tx.tourDeparture.update({
-      where: { id: input.departureId },
-      data: {
-        seatsHeld: departure.seatsHeld + totalSeats,
-      },
-    });
+    // 12. Actualizar cupos del departure (solo si NO es ENQUIRY)
+    if (!isEnquiry) {
+      await tx.tourDeparture.update({
+        where: { id: input.departureId },
+        data: {
+          seatsHeld: departure.seatsHeld + totalSeats,
+        },
+      });
+    }
 
-    // 12. Crear Booking con snapshots
+    // 13. Crear Booking con snapshots
     const booking = await tx.booking.create({
       data: {
         orderId: order.id,
@@ -203,7 +223,7 @@ export async function createReservation(input: ReservationInput) {
       },
     });
 
-    // 13. Crear Passengers
+    // 14. Crear Passengers
     await tx.passenger.createMany({
       data: input.passengers.map((p) => ({
         bookingId: booking.id,
@@ -304,17 +324,18 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
 }
 
 /**
- * Expira órdenes pendientes que han pasado su fecha de expiración
+ * Cancela órdenes pendientes que han pasado su fecha de expiración
  * Libera los cupos reservados
+ * Actualiza estado a CANCELLED (no EXPIRED, según requerimientos)
  */
-export async function expirePendingOrders() {
+export async function cancelExpiredOrders() {
   const expiredOrders = await orderRepo.findPendingExpired();
   const results = [];
 
   for (const order of expiredOrders) {
     try {
       await prisma.$transaction(async (tx) => {
-        // 1. Verificar que la orden sigue en PENDING_PAYMENT antes de expirar
+        // 1. Verificar que la orden sigue en PENDING_PAYMENT antes de cancelar
         const freshOrder = await tx.order.findUnique({
           where: { id: order.id },
           include: { bookings: true },
@@ -325,10 +346,10 @@ export async function expirePendingOrders() {
           return;
         }
 
-        // 2. Actualizar Order a EXPIRED
+        // 2. Actualizar Order a CANCELLED
         await tx.order.update({
           where: { id: freshOrder.id },
-          data: { status: "EXPIRED" },
+          data: { status: "CANCELLED" },
         });
 
         // 3. Actualizar Bookings a CANCELLED y liberar cupos
@@ -353,7 +374,7 @@ export async function expirePendingOrders() {
         }
       });
 
-      results.push({ orderId: order.id, status: "expired" });
+      results.push({ orderId: order.id, status: "cancelled" });
     } catch (error) {
       results.push({
         orderId: order.id,
@@ -364,5 +385,401 @@ export async function expirePendingOrders() {
   }
 
   return results;
+}
+
+/**
+ * Expira órdenes pendientes que han pasado su fecha de expiración
+ * Libera los cupos reservados
+ * @deprecated Usar cancelExpiredOrders en su lugar
+ */
+export async function expirePendingOrders() {
+  return cancelExpiredOrders();
+}
+
+/**
+ * Encuentra un departure por tourId (slug), date y startTime
+ * Retorna el departureId y tourId real
+ */
+export async function findDepartureByTourDateAndTime(
+  tourIdOrSlug: string,
+  date: string,
+  startTime: string
+): Promise<{ departureId: string; tourId: string }> {
+  const { TourRepository } = await import("../../tours/infra/tourRepository");
+  const { NotFoundError } = await import("@/lib/api/errorHandler");
+  const tourRepository = new TourRepository();
+
+  // Buscar tour por slug si tourId es un slug
+  const tour = await tourRepository.findBySlug(tourIdOrSlug);
+  if (!tour) {
+    throw new NotFoundError("Tour", tourIdOrSlug);
+  }
+
+  // Buscar departure por tourId, date y startTime
+  const departure = await prisma.tourDeparture.findFirst({
+    where: {
+      tourId: tour.id,
+      departureDate: new Date(date),
+      startTime: startTime,
+    },
+  });
+
+  if (!departure) {
+    throw new NotFoundError(
+      "TourDeparture",
+      `Tour ${tourIdOrSlug} on ${date} at ${startTime}`
+    );
+  }
+
+  return { departureId: departure.id, tourId: tour.id };
+}
+
+/**
+ * Valida que el número de pasajeros coincida con adultos + niños
+ */
+export function validatePassengerCount(
+  passengers: Array<unknown>,
+  numAdults: number,
+  numChildren: number
+): void {
+  const { ValidationError } = require("@/lib/api/errorHandler");
+  const totalPassengers = numAdults + numChildren;
+  if (passengers.length !== totalPassengers) {
+    throw new ValidationError(
+      `Number of passengers (${passengers.length}) does not match adults + children (${totalPassengers})`
+    );
+  }
+}
+
+/**
+ * Valida que haya al menos un adulto si hay niños
+ */
+export function validateAdultRequired(numAdults: number, numChildren: number): void {
+  const { ValidationError } = require("@/lib/api/errorHandler");
+  if (numChildren > 0 && numAdults === 0) {
+    throw new ValidationError("At least one adult is required when booking for children");
+  }
+}
+
+/**
+ * Obtiene una orden completa con todas sus relaciones
+ */
+export async function getOrderWithRelations(orderId: string, includePayments = false) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      bookings: {
+        include: {
+          passengers: true,
+          tourDeparture: {
+            include: {
+              tour: true,
+            },
+          },
+        },
+      },
+      ...(includePayments && { payments: true }),
+    },
+  });
+
+  if (!order) {
+    throw new Error(`Order ${orderId} not found`);
+  }
+
+  return order;
+}
+
+/**
+ * Lista órdenes con filtros y paginación
+ */
+export async function listOrders(query: {
+  status?: string;
+  type?: string;
+  customerEmail?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { page = 1, limit = 10 } = query;
+  const skip = (page - 1) * limit;
+
+  const where: Record<string, unknown> = {};
+  if (query.status) {
+    where.status = query.status;
+  }
+  if (query.type) {
+    where.type = query.type;
+  }
+  if (query.customerEmail) {
+    where.customerEmail = query.customerEmail;
+  }
+
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        bookings: {
+          include: {
+            passengers: true,
+          },
+        },
+      },
+    }),
+    prisma.order.count({ where }),
+  ]);
+
+  return { data: orders, total, page, limit };
+}
+
+/**
+ * Obtiene una orden por código
+ */
+export async function getOrderByCode(code: string, includePayments = false) {
+  const order = await prisma.order.findUnique({
+    where: { code },
+    include: {
+      bookings: {
+        include: {
+          passengers: true,
+        },
+      },
+      ...(includePayments && { payments: true }),
+    },
+  });
+
+  if (!order) {
+    throw new Error(`Order with code ${code} not found`);
+  }
+
+  return order;
+}
+
+/**
+ * Envía emails de confirmación al cliente y copia a agencias@antartur.tur.ar
+ */
+export async function sendOrderEmails(order: {
+  code: string;
+  type: "RESERVATION" | "ENQUIRY";
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  totalAmount: number;
+  currency: string;
+  notes: string | null;
+  bookings?: Array<{
+    numAdults: number;
+    numChildren: number;
+    departureDateSnapshot?: Date | string;
+    startTimeSnapshot?: string;
+    tourNameSnapshot?: string;
+    passengers?: Array<{
+      firstName: string;
+      lastName: string;
+      type: string;
+    }>;
+    tourDeparture?: {
+      departureDate: Date;
+      startTime: string;
+      tour?: {
+        name: string;
+      };
+    };
+  }>;
+}) {
+  if (!order.bookings || order.bookings.length === 0) {
+    return;
+  }
+
+  const { sendEmail } = await import("../../notifications/domain/emailService");
+  const { generateReservationEmailHTML, generateReservationEmailText } = await import("../../notifications/templates/reservationEmail");
+  const { generateEnquiryEmailHTML, generateEnquiryEmailText } = await import("../../notifications/templates/enquiryEmail");
+
+  const booking = order.bookings[0];
+  const departure = booking.tourDeparture;
+  const tour = departure?.tour;
+
+  if (!tour || !departure) {
+    return;
+  }
+
+  const passengers = booking.passengers || [];
+  const passengerList = passengers.map((p) => ({
+    firstName: p.firstName,
+    lastName: p.lastName,
+    type: p.type,
+  }));
+
+  const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+  const startTime = booking.startTimeSnapshot || departure.startTime;
+
+  if (order.type === "ENQUIRY") {
+    // Email de consulta
+    const enquiryData = {
+      orderCode: order.code,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      customerPhone: order.customerPhone,
+      tourName: booking.tourNameSnapshot || tour.name,
+      departureDate,
+      startTime,
+      numAdults: booking.numAdults,
+      numChildren: booking.numChildren,
+      totalAmount: Number(order.totalAmount),
+      currency: order.currency,
+      reason: order.notes || "",
+      passengers: passengerList,
+    };
+
+    const html = generateEnquiryEmailHTML(enquiryData);
+    const text = generateEnquiryEmailText(enquiryData);
+
+    // Enviar al cliente
+    await sendEmail({
+      to: order.customerEmail,
+      subject: `Consulta Recibida - ${order.code}`,
+      html,
+      text,
+      replyTo: "agencias@antartur.tur.ar",
+    });
+
+    // Enviar copia a agencias@antartur.tur.ar
+    await sendEmail({
+      to: "agencias@antartur.tur.ar",
+      subject: `Nueva Consulta - ${order.code}`,
+      html,
+      text,
+      replyTo: order.customerEmail,
+    });
+  } else {
+    // Email de reserva confirmada
+    const reservationData = {
+      orderCode: order.code,
+      customerName: order.customerName,
+      tourName: booking.tourNameSnapshot || tour.name,
+      departureDate,
+      startTime,
+      numAdults: booking.numAdults,
+      numChildren: booking.numChildren,
+      totalAmount: Number(order.totalAmount),
+      currency: order.currency,
+      passengers: passengerList,
+      additionals: [], // TODO: obtener additionals de order.notes si están disponibles
+    };
+
+    const html = generateReservationEmailHTML(reservationData);
+    const text = generateReservationEmailText(reservationData);
+
+    // Enviar al cliente
+    await sendEmail({
+      to: order.customerEmail,
+      subject: `Confirmación de Reserva - ${order.code}`,
+      html,
+      text,
+      replyTo: "agencias@antartur.tur.ar",
+    });
+
+    // Enviar copia a agencias@antartur.tur.ar
+    await sendEmail({
+      to: "agencias@antartur.tur.ar",
+      subject: `Nueva Reserva - ${order.code}`,
+      html,
+      text,
+      replyTo: order.customerEmail,
+    });
+  }
+}
+
+/**
+ * Actualiza el estado de una orden
+ */
+export async function updateOrderStatus(orderId: string, newStatus: string) {
+  const { ValidationError, NotFoundError } = await import("@/lib/api/errorHandler");
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    throw new NotFoundError("Order", orderId);
+  }
+
+  // Validaciones de transición de estado
+  if (order.status === "PAID" && newStatus !== "COMPLETED" && newStatus !== "CANCELLED") {
+    throw new ValidationError("Cannot change status from PAID to " + newStatus);
+  }
+
+  if (order.status === "EXPIRED" || order.status === "CANCELLED") {
+    throw new ValidationError(`Cannot change status from ${order.status}`);
+  }
+
+  const updated = await prisma.order.update({
+    where: { id: orderId },
+    data: { status: newStatus as typeof order.status },
+  });
+
+  return updated;
+}
+
+/**
+ * Genera link de WhatsApp para consultas
+ */
+export function generateWhatsAppLinkForEnquiry(order: {
+  code: string;
+  customerName: string;
+  customerPhone: string;
+  totalAmount: number;
+  currency: string;
+  notes: string | null;
+  bookings?: Array<{
+    numAdults: number;
+    numChildren: number;
+    departureDateSnapshot?: Date | string;
+    tourNameSnapshot?: string;
+    tourDeparture?: {
+      departureDate: Date;
+      tour?: {
+        name: string;
+      };
+    };
+  }>;
+}): string {
+  if (!order.bookings || order.bookings.length === 0) {
+    return "";
+  }
+
+  const booking = order.bookings[0];
+  const departure = booking.tourDeparture;
+  const tourName = booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
+  const departureDate = booking.departureDateSnapshot 
+    ? new Date(booking.departureDateSnapshot).toLocaleDateString("es-AR")
+    : departure?.departureDate 
+      ? new Date(departure.departureDate).toLocaleDateString("es-AR")
+      : "Fecha no disponible";
+  const totalPassengers = booking.numAdults + booking.numChildren;
+  const totalAmount = Number(order.totalAmount).toLocaleString("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const reason = order.notes?.includes("exceedsAvailability")
+    ? "Excede disponibilidad"
+    : order.notes?.includes("hasRestrictionViolations")
+    ? "Restricciones"
+    : "Consulta";
+
+  const message = `Nueva consulta:\n` +
+    `Cliente: ${order.customerName}\n` +
+    `Pasajeros: ${totalPassengers} (${booking.numAdults} adultos, ${booking.numChildren} menores)\n` +
+    `Excursión: ${tourName}\n` +
+    `Fecha: ${departureDate}\n` +
+    `Motivo: ${reason}\n` +
+    `Total: ${order.currency === "USD" ? "$" : "$"} ${totalAmount}\n` +
+    `Teléfono: ${order.customerPhone}`;
+
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/5492901487838?text=${encodedMessage}`;
 }
 

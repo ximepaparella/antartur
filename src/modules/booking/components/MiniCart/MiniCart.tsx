@@ -80,6 +80,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
       <PaymentMethods
         selectedPayment={selectedPayment}
+        currencyCode={currentPricing.currencyCode}
         showBlur={showPaymentBlur}
         exceedsAvailability={exceedsAvailability}
         hasRestrictionViolations={hasRestrictionViolations}

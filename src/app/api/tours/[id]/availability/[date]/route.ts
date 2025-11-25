@@ -34,7 +34,16 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { availabilityHandler } from "@/modules/departures/api/handlers/availabilityHandler";
+import { AvailabilityController } from "@/modules/departures/api/controllers/availabilityController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = availabilityHandler.getByTourIdAndDate;
+const controller = new AvailabilityController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id, date } = await context.params;
+  const availability = await controller.getByTourIdAndDate(id, date);
+  return successResponse(availability);
+}));
 

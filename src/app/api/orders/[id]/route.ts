@@ -33,7 +33,19 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { ordersHandler } from "@/modules/orders/api/handlers/ordersHandler";
+import { OrdersController } from "@/modules/orders/api/controllers/ordersController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = ordersHandler.getById;
+const controller = new OrdersController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const { searchParams } = new URL(request.url);
+  const includePayments = searchParams.get("includePayments") === "true";
+
+  const order = await controller.getById(id, includePayments);
+  return successResponse(order);
+}));
 

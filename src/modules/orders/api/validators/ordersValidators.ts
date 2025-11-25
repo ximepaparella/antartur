@@ -7,10 +7,13 @@ import { idSchema, emailSchema, phoneSchema, currencyCodeSchema, priceSchema } f
 
 /**
  * Schema para crear una Order (Reservation)
+ * Acepta departureId directamente O tourId (slug) + date + startTime
  */
 export const createOrderSchema = z.object({
-  tourId: idSchema,
-  departureId: idSchema,
+  tourId: idSchema, // Puede ser slug o ID
+  departureId: idSchema.optional(), // Opcional si se proporciona date + startTime
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), // YYYY-MM-DD
+  startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // HH:mm
   numAdults: z.coerce.number().int().positive("Number of adults must be positive"),
   numChildren: z.coerce.number().int().min(0, "Number of children cannot be negative"),
   currency: currencyCodeSchema,
@@ -32,6 +35,19 @@ export const createOrderSchema = z.object({
     })
   ).min(1, "At least one passenger is required"),
   notes: z.string().optional(),
+  // Nuevos campos para checkout completo
+  paymentMethod: z.enum(["transferencia", "paypal", "payway"]).optional(),
+  exceedsAvailability: z.boolean().optional().default(false),
+  hasRestrictionViolations: z.boolean().optional().default(false),
+  additionals: z.array(
+    z.object({
+      additionalId: idSchema,
+      name: z.string().min(1),
+      priceAdult: priceSchema,
+      priceChild: priceSchema,
+      currency: currencyCodeSchema,
+    })
+  ).optional(),
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;

@@ -65,8 +65,29 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { tourPricesHandler } from "@/modules/tours/api/handlers/tourPricesHandler";
+import { TourPricesController } from "@/modules/tours/api/controllers/tourPricesController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, noContentResponse } from "@/lib/api/response";
+import { idSchema } from "@/lib/validation/schemas";
 
-export const PUT = tourPricesHandler.update;
-export const DELETE = tourPricesHandler.remove;
+const controller = new TourPricesController();
+
+export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { priceId } = await context.params;
+  idSchema.parse(priceId);
+  const body = await request.json();
+  const { validateBody } = await import("@/lib/validation/schemas");
+  const { updateTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
+  const data = validateBody(updateTourPriceSchema, body);
+  const updatedPrice = await controller.update(priceId, data);
+  return successResponse(updatedPrice);
+}));
+
+export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { priceId } = await context.params;
+  idSchema.parse(priceId);
+  await controller.delete(priceId);
+  return noContentResponse();
+}));
 

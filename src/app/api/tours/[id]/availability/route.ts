@@ -90,8 +90,30 @@
  *                   $ref: '#/components/schemas/Availability'
  */
 
-import { availabilityHandler } from "@/modules/departures/api/handlers/availabilityHandler";
+import { AvailabilityController } from "@/modules/departures/api/controllers/availabilityController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, createdResponse } from "@/lib/api/response";
+import { validateQuery } from "@/lib/validation/schemas";
+import { tourAvailabilityQuerySchema } from "@/modules/departures/api/validators/availabilityValidators";
 
-export const GET = availabilityHandler.getByTourId;
-export const POST = availabilityHandler.create;
+const controller = new AvailabilityController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const { searchParams } = new URL(request.url);
+  const query = validateQuery(tourAvailabilityQuerySchema, Object.fromEntries(searchParams));
+
+  const availability = await controller.getByTourId(id, query);
+  return successResponse(availability);
+}));
+
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const body = await request.json();
+  const data = { ...body, tourId: id };
+
+  const availability = await controller.create(data);
+  return createdResponse(availability);
+}));
 

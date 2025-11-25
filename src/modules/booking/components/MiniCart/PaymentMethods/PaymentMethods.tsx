@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "@/components/common/Card";
 import { Message } from "@/components/common/Message";
 import type { PaymentMethod } from "@/lib/types/order";
-import { AVAILABLE_PAYMENT_METHODS } from "../utils/paymentUtils";
+import { getAvailablePaymentMethods } from "../utils/paymentUtils";
 import { PaymentMethodOption } from "./PaymentMethodOption";
 import styles from "../MiniCart.module.scss";
 
 interface PaymentMethodsProps {
   selectedPayment: PaymentMethod;
-  availableMethods?: PaymentMethod[];
+  currencyCode: string;
   showBlur: boolean;
   exceedsAvailability: boolean;
   hasRestrictionViolations: boolean;
@@ -22,12 +22,24 @@ interface PaymentMethodsProps {
  */
 export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   selectedPayment,
-  availableMethods = AVAILABLE_PAYMENT_METHODS,
+  currencyCode,
   showBlur,
   exceedsAvailability,
   hasRestrictionViolations,
   onPaymentChange,
 }) => {
+  // Filtrar métodos de pago según currency
+  const availableMethods = useMemo(() => {
+    return getAvailablePaymentMethods(currencyCode);
+  }, [currencyCode]);
+
+  // Si el método seleccionado no está disponible, seleccionar el primero disponible
+  React.useEffect(() => {
+    if (!availableMethods.includes(selectedPayment) && availableMethods.length > 0) {
+      onPaymentChange(availableMethods[0]);
+    }
+  }, [availableMethods, selectedPayment, onPaymentChange]);
+
   const showPaymentMethods = !exceedsAvailability && !hasRestrictionViolations;
 
   return (

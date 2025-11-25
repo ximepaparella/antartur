@@ -36,7 +36,16 @@
  *                   type: object
  */
 
-import { notificationsHandler } from "@/modules/notifications/api/handlers/notificationsHandler";
+import { NotificationsController } from "@/modules/notifications/api/controllers/notificationsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { createdResponse } from "@/lib/api/response";
 
-export const POST = notificationsHandler.create;
+const controller = new NotificationsController();
+
+export const POST = withRateLimitHandler("notifications", withControllerErrorHandler(async (request, context) => {
+  const body = await request.json();
+  const notification = await controller.create(body);
+  return createdResponse(notification);
+}));
 

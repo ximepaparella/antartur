@@ -1,0 +1,71 @@
+@use "@/styles/variables" as *;
+
+.errorPage {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-32 0;
+  text-align: center;
+}
+
+.errorIcon {
+  margin-bottom: $spacing-24;
+  color: $error-color;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-32;
+  color: $gray-700;
+}
+
+.errorCard {
+  margin-bottom: $spacing-32;
+  text-align: left;
+}
+
+.orderCode {
+  margin-top: $spacing-16;
+  font-size: $font-size-18;
+  color: $gray-700;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: $font-size-18;
+  color: $gray-600;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-16;
+  flex-wrap: wrap;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.whatsappButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-8;
+  background-color: $whatsapp-color;
+  color: $white;
+  
+  &:hover {
+    background-color: $whatsapp-color-hover;
+  }
+}
+

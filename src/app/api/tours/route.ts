@@ -76,8 +76,21 @@
  *                   $ref: '#/components/schemas/Tour'
  */
 
-import { toursHandler } from "@/modules/tours/api/handlers/toursHandler";
+import { ToursController } from "@/modules/tours/api/controllers/toursController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/response";
 
-export const GET = toursHandler.list;
-export const POST = toursHandler.create;
+const controller = new ToursController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const result = await controller.list(request);
+  return paginatedResponse(result.data, result.meta);
+}));
+
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const body = await request.json();
+  const tour = await controller.create(body);
+  return createdResponse(tour);
+}));
 

@@ -70,8 +70,21 @@
  *         $ref: '#/components/responses/BadRequestError'
  */
 
-import { ordersHandler } from "@/modules/orders/api/handlers/ordersHandler";
+import { OrdersController } from "@/modules/orders/api/controllers/ordersController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/response";
 
-export const GET = ordersHandler.list;
-export const POST = ordersHandler.create;
+const controller = new OrdersController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const result = await controller.list(request);
+  return paginatedResponse(result.data, result.meta);
+}));
+
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const body = await request.json();
+  const order = await controller.create(body);
+  return createdResponse(order);
+}));
 

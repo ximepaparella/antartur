@@ -35,7 +35,21 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { bookingsHandler } from "@/modules/booking/api/handlers/bookingsHandler";
+import { BookingsController } from "@/modules/booking/api/controllers/bookingsController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
+import { validateQuery } from "@/lib/validation/schemas";
+import { orderBookingsQuerySchema } from "@/modules/booking/api/validators/bookingsValidators";
 
-export const GET = bookingsHandler.getByOrderId;
+const controller = new BookingsController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { orderId } = await context.params;
+  const { searchParams } = new URL(request.url);
+  const query = validateQuery(orderBookingsQuerySchema, Object.fromEntries(searchParams));
+
+  const bookings = await controller.getByOrderId(orderId, query.includePassengers);
+  return successResponse(bookings);
+}));
 

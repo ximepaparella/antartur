@@ -40,7 +40,16 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { passengersHandler } from "@/modules/passengers/api/handlers/passengersHandler";
+import { PassengersController } from "@/modules/passengers/api/controllers/passengersController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = passengersHandler.getById;
+const controller = new PassengersController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const passenger = await controller.getById(id);
+  return successResponse(passenger);
+}));
 

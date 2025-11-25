@@ -1,0 +1,90 @@
+@use "@/styles/variables" as *;
+
+.transferPage {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: $spacing-32 0;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-32;
+  text-align: center;
+  color: $gray-700;
+}
+
+// Estilos movidos a OrderSummaryCard.module.scss
+
+.expirationWarning {
+  margin-bottom: $spacing-32;
+}
+
+.bankCard,
+.instructionsCard {
+  margin-bottom: $spacing-24;
+}
+
+.bankTitle,
+.instructionsTitle {
+  font-size: $font-size-24;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-24;
+  color: $gray-700;
+}
+
+.bankData {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.bankRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.label {
+  font-weight: $font-weight-semibold;
+  color: $gray-400;
+  min-width: 150px;
+}
+
+.value {
+  color: $gray-700;
+  font-family: monospace;
+  font-size: $font-size-18;
+}
+
+.instructionsList {
+  padding-left: $spacing-24;
+  line-height: $line-height-relaxed;
+  color: $gray-700;
+  
+  li {
+    margin-bottom: $spacing-12;
+  }
+  
+  a {
+    color: $primary-color;
+    text-decoration: underline;
+    
+    &:hover {
+      color: darken($primary-color, 10%);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-32;
+}
+

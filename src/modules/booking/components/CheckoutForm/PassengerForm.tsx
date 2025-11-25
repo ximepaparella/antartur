@@ -164,13 +164,27 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     if (type === "day") setBirthDay(value);
     
     // Solo actualizar passenger.fechaNacimiento cuando todos los campos estén completos
-    if (newYear && newMonth && newDay) {
+    // Y todos tengan valores válidos (no solo el primer número)
+    if (newYear && newYear.length === 4 && newMonth && newMonth.length === 2 && newDay && newDay.length === 2) {
       const dateStr = `${newYear}-${newMonth}-${newDay}`;
       // Actualizar el pasajero con la fecha completa
-      // replacePassenger ya valida automáticamente, así que no necesitamos llamar onValidateField aquí
       handleChange("fechaNacimiento", dateStr);
+    } else {
+      // Si no está completa, limpiar la fecha para evitar validaciones prematuras
+      // Solo limpiar si antes había una fecha completa
+      if (passenger.fechaNacimiento) {
+        handleChange("fechaNacimiento", "");
+      }
     }
     // No validar con valores parciales - esperar a que se complete la fecha
+  };
+
+  const handleDateBlur = () => {
+    // Validar solo cuando el usuario termine de seleccionar todos los campos
+    // Y la fecha esté completa
+    if (birthYear && birthYear.length === 4 && birthMonth && birthMonth.length === 2 && birthDay && birthDay.length === 2) {
+      onValidateField?.();
+    }
   };
 
   return (
@@ -234,6 +248,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
               options={dayOptions}
               value={birthDay}
               onChange={(e) => handleDateChange("day", e.target.value)}
+              onBlur={handleDateBlur}
               error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />
@@ -242,6 +257,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
               options={monthOptions}
               value={birthMonth}
               onChange={(e) => handleDateChange("month", e.target.value)}
+              onBlur={handleDateBlur}
               error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />
@@ -250,6 +266,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
               options={yearOptions}
               value={birthYear}
               onChange={(e) => handleDateChange("year", e.target.value)}
+              onBlur={handleDateBlur}
               error={errors.fechaNacimiento ? "" : undefined}
               className={styles.dateSelect}
             />

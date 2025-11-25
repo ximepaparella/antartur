@@ -3,7 +3,7 @@
  */
 
 import type { Order } from "../types/order";
-import { getTourBySlugClient } from "@/lib/api/tours-client";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 
 const PENDING_BOOKING_KEY = "pendingBooking";
 const ORDER_KEY_PREFIX = "order_";
@@ -142,6 +142,82 @@ export function clearPendingBooking(): void {
     localStorage.removeItem(PENDING_BOOKING_KEY);
   } catch (error) {
     console.error("Error al limpiar datos de reserva:", error);
+  }
+}
+
+/**
+ * Clave para almacenar datos de orden completada en sessionStorage
+ */
+const COMPLETED_ORDER_DATA_KEY = "completedOrderData";
+
+/**
+ * Interfaz para los datos de orden completada que se pasan entre páginas
+ */
+export interface CompletedOrderData {
+  code: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  totalAmount: number;
+  currency: string;
+  type?: "RESERVATION" | "ENQUIRY";
+  paymentMethod?: "transferencia" | "paypal" | "payway";
+  // Detalles de la orden
+  tourTitle: string;
+  date: string;
+  timeSlot: {
+    start: string;
+    end: string;
+  };
+  adults: number;
+  children: number;
+  passengers: Array<{
+    nombreCompleto: string;
+    esAdulto: boolean;
+  }>;
+}
+
+/**
+ * Guarda los datos de orden completada en sessionStorage
+ * (más seguro que pasarlos por URL)
+ */
+export function saveCompletedOrderData(data: CompletedOrderData): void {
+  try {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(COMPLETED_ORDER_DATA_KEY, JSON.stringify(data));
+    }
+  } catch (error) {
+    console.error("Error al guardar datos de orden completada:", error);
+  }
+}
+
+/**
+ * Obtiene los datos de orden completada desde sessionStorage
+ */
+export function getCompletedOrderData(): CompletedOrderData | null {
+  try {
+    if (typeof window !== "undefined") {
+      const data = sessionStorage.getItem(COMPLETED_ORDER_DATA_KEY);
+      if (!data) return null;
+      return JSON.parse(data);
+    }
+    return null;
+  } catch (error) {
+    console.error("Error al leer datos de orden completada:", error);
+    return null;
+  }
+}
+
+/**
+ * Limpia los datos de orden completada de sessionStorage
+ */
+export function clearCompletedOrderData(): void {
+  try {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem(COMPLETED_ORDER_DATA_KEY);
+    }
+  } catch (error) {
+    console.error("Error al limpiar datos de orden completada:", error);
   }
 }
 

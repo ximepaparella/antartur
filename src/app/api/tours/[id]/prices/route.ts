@@ -65,8 +65,40 @@
  *                   $ref: '#/components/schemas/TourPrice'
  */
 
-import { tourPricesHandler } from "@/modules/tours/api/handlers/tourPricesHandler";
+import { TourPricesController } from "@/modules/tours/api/controllers/tourPricesController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, createdResponse } from "@/lib/api/response";
+import { validateQuery } from "@/lib/validation/schemas";
+import { idSchema, currencyCodeSchema } from "@/lib/validation/schemas";
 
-export const GET = tourPricesHandler.list;
-export const POST = tourPricesHandler.create;
+const controller = new TourPricesController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id: tourId } = await context.params;
+  idSchema.parse(tourId);
+  
+  const { searchParams } = new URL(request.url);
+  const currency = searchParams.get("currency");
+  
+  if (currency) {
+    currencyCodeSchema.parse(currency);
+    const price = await controller.getByTourIdAndCurrency(tourId, currency);
+    return successResponse(price);
+  }
+  
+  const prices = await controller.listByTourId(tourId);
+  return successResponse(prices);
+}));
+
+export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id: tourId } = await context.params;
+  idSchema.parse(tourId);
+  const body = await request.json();
+  const { validateBody } = await import("@/lib/validation/schemas");
+  const { createTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
+  const data = validateBody(createTourPriceSchema, { ...body, tourId });
+  const newPrice = await controller.create(data);
+  return createdResponse(newPrice);
+}));
 

@@ -1,11 +1,21 @@
 /**
  * Controller para Orders
- * Maneja la lógica de validación, transformación y llamadas a servicios
+ * Solo orquesta: valida entrada, llama servicios, transforma salida
  */
 
 import { NextRequest } from "next/server";
-import { OrderRepository } from "../../infra/orderRepository";
-import { createReservation } from "../../domain/orderService";
+import {
+  createReservation,
+  findDepartureByTourDateAndTime,
+  validatePassengerCount,
+  validateAdultRequired,
+  getOrderWithRelations,
+  listOrders,
+  getOrderByCode,
+  updateOrderStatus,
+  sendOrderEmails,
+  generateWhatsAppLinkForEnquiry,
+} from "../../domain/orderService";
 import { validateQuery, validateBody } from "@/lib/validation/schemas";
 import {
   createOrderSchema,
@@ -22,29 +32,32 @@ import {
 } from "../dto/ordersDto";
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
-import { prisma } from "@/lib/db";
+import { OrderRepository } from "../../infra/orderRepository";
+import { logger } from "@/lib/services/logger";
 
 const orderRepository = new OrderRepository();
 
 export class OrdersController {
   /**
    * Crear una nueva orden/reserva
-   * Usa el servicio createReservation que maneja toda la lógica de negocio
    */
   async create(body: unknown) {
     const data = validateBody(createOrderSchema, body);
 
-    // Validar que el número de pasajeros coincida
-    const totalPassengers = data.numAdults + data.numChildren;
-    if (data.passengers.length !== totalPassengers) {
-      throw new ValidationError(
-        `Number of passengers (${data.passengers.length}) does not match adults + children (${totalPassengers})`
-      );
-    }
+    // Validaciones de negocio (delegadas al servicio)
+    validatePassengerCount(data.passengers, data.numAdults, data.numChildren);
+    validateAdultRequired(data.numAdults, data.numChildren);
 
-    // Validar que haya al menos un adulto si hay niños
-    if (data.numChildren > 0 && data.numAdults === 0) {
-      throw new ValidationError("At least one adult is required when booking for children");
+    // Resolver departureId y tourId
+    let departureId = data.departureId;
+    let tourId = data.tourId;
+
+    if (!departureId && data.date && data.startTime) {
+      const result = await findDepartureByTourDateAndTime(data.tourId, data.date, data.startTime);
+      departureId = result.departureId;
+      tourId = result.tourId;
+    } else if (!departureId) {
+      throw new ValidationError("Either departureId or (tourId, date, startTime) must be provided");
     }
 
     // Mapear passengers al formato esperado por createReservation
@@ -63,8 +76,8 @@ export class OrdersController {
 
     // Crear reserva usando el servicio de dominio
     const result = await createReservation({
-      tourId: data.tourId,
-      departureId: data.departureId,
+      tourId,
+      departureId,
       numAdults: data.numAdults,
       numChildren: data.numChildren,
       currency: data.currency,
@@ -73,22 +86,39 @@ export class OrdersController {
       customerPhone: data.customerPhone,
       passengers,
       notes: data.notes,
+      paymentMethod: data.paymentMethod,
+      exceedsAvailability: data.exceedsAvailability,
+      hasRestrictionViolations: data.hasRestrictionViolations,
+      additionals: data.additionals,
     });
 
-    // Obtener la orden completa con relaciones usando Prisma directamente
-    const order = await prisma.order.findUnique({
-      where: { id: result.order.id },
-      include: {
-        bookings: {
-          include: {
-            passengers: true,
-          },
-        },
-        payments: true,
-      },
-    });
-    if (!order) {
-      throw new NotFoundError("Order", result.order.id);
+    // Obtener la orden completa con relaciones
+    const order = await getOrderWithRelations(result.order.id, true);
+
+    // Enviar emails (no bloquear si falla)
+    try {
+      // Convertir Decimal a number para sendOrderEmails
+      await sendOrderEmails({
+        ...order,
+        totalAmount: Number(order.totalAmount),
+      });
+    } catch (emailError) {
+      logger.error("Error al enviar emails de orden", emailError);
+      // No fallar la creación de la orden si el email falla
+    }
+
+    // Generar link de WhatsApp para consultas
+    if (order.type === "ENQUIRY") {
+      try {
+        // Convertir Decimal a number para generateWhatsAppLinkForEnquiry
+        const whatsappLink = generateWhatsAppLinkForEnquiry({
+          ...order,
+          totalAmount: Number(order.totalAmount),
+        });
+        logger.info("WhatsApp link para consulta generado", { orderCode: order.code });
+      } catch (whatsappError) {
+        logger.error("Error al generar link de WhatsApp", whatsappError);
+      }
     }
 
     return toOrderFullResponse(order);
@@ -101,42 +131,16 @@ export class OrdersController {
     const { searchParams } = new URL(request.url);
     const query = validateQuery(listOrdersQuerySchema, Object.fromEntries(searchParams));
 
-    const { page, limit, skip } = normalizePagination(query.page, query.limit);
+    const result = await listOrders({
+      status: query.status,
+      type: query.type,
+      customerEmail: query.customerEmail,
+      page: query.page,
+      limit: query.limit,
+    });
 
-    // Construir where clause
-    const where: any = {};
-    if (query.status) {
-      where.status = query.status;
-    }
-    if (query.type) {
-      where.type = query.type;
-    }
-    if (query.customerEmail) {
-      where.customerEmail = query.customerEmail;
-    }
-
-    // Obtener órdenes con paginación
-    const [orders, total] = await Promise.all([
-      prisma.order.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          bookings: {
-            include: {
-              passengers: true,
-            },
-          },
-        },
-      }),
-      prisma.order.count({ where }),
-    ]);
-
-    const meta = calculatePaginationMeta(page, limit, total);
-    const data = orders.map(toOrderWithBookingsResponse);
+    const meta = calculatePaginationMeta(result.page, result.limit, result.total);
+    const data = result.data.map(toOrderWithBookingsResponse);
 
     return { data, meta };
   }
@@ -145,10 +149,7 @@ export class OrdersController {
    * Obtener orden por ID
    */
   async getById(id: string, includePayments = false) {
-    const order = await orderRepository.findById(id);
-    if (!order) {
-      throw new NotFoundError("Order", id);
-    }
+    const order = await getOrderWithRelations(id, includePayments);
 
     if (includePayments) {
       return toOrderFullResponse(order);
@@ -161,20 +162,7 @@ export class OrdersController {
    * Obtener orden por código
    */
   async getByCode(code: string, includePayments = false) {
-    const order = await prisma.order.findUnique({
-      where: { code },
-      include: {
-        bookings: {
-          include: {
-            passengers: true,
-          },
-        },
-        ...(includePayments && { payments: true }),
-      },
-    });
-    if (!order) {
-      throw new NotFoundError("Order", code);
-    }
+    const order = await getOrderByCode(code, includePayments);
 
     if (includePayments) {
       return toOrderFullResponse(order);
@@ -187,23 +175,8 @@ export class OrdersController {
    * Actualizar estado de orden
    */
   async updateStatus(id: string, body: unknown) {
-    const order = await orderRepository.findById(id);
-    if (!order) {
-      throw new NotFoundError("Order", id);
-    }
-
     const data = validateBody(updateOrderStatusSchema, body);
-
-    // Validaciones de transición de estado
-    if (order.status === "PAID" && data.status !== "COMPLETED" && data.status !== "CANCELLED") {
-      throw new ValidationError("Cannot change status from PAID to " + data.status);
-    }
-
-    if (order.status === "EXPIRED" || order.status === "CANCELLED") {
-      throw new ValidationError(`Cannot change status from ${order.status}`);
-    }
-
-    const updated = await orderRepository.updateStatus(id, data.status);
+    const updated = await updateOrderStatus(id, data.status);
     return toOrderResponse(updated);
   }
 }

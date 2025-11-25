@@ -28,7 +28,15 @@
  *                       type: number
  */
 
-import { adminHandler } from "@/modules/orders/api/handlers/adminHandler";
+import { AdminController } from "@/modules/orders/api/controllers/adminController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = adminHandler.getStats;
+const controller = new AdminController();
+
+export const GET = withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+  const stats = await controller.getStats();
+  return successResponse(stats);
+}));
 

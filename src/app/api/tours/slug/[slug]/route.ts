@@ -33,7 +33,22 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { toursHandler } from "@/modules/tours/api/handlers/toursHandler";
+import { ToursController } from "@/modules/tours/api/controllers/toursController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse } from "@/lib/api/response";
 
-export const GET = toursHandler.getBySlug;
+const controller = new ToursController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { slug } = await context.params;
+  const { searchParams } = new URL(request.url);
+  const includeImages = searchParams.get("includeImages") !== "false";
+  const includeDepartures = searchParams.get("includeDepartures") === "true";
+  const includePrices = searchParams.get("includePrices") !== "false";
+  const includeContent = searchParams.get("includeContent") === "true";
+
+  const tour = await controller.getBySlug(slug, includeImages, includeDepartures, includePrices, includeContent);
+  return successResponse(tour);
+}));
 

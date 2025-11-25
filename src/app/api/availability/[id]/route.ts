@@ -86,9 +86,29 @@
  *         $ref: '#/components/responses/NotFoundError'
  */
 
-import { availabilityHandler } from "@/modules/departures/api/handlers/availabilityHandler";
+import { AvailabilityController } from "@/modules/departures/api/controllers/availabilityController";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { successResponse, noContentResponse } from "@/lib/api/response";
 
-export const GET = availabilityHandler.getById;
-export const PUT = availabilityHandler.update;
-export const DELETE = availabilityHandler.delete;
+const controller = new AvailabilityController();
+
+export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const availability = await controller.getById(id);
+  return successResponse(availability);
+}));
+
+export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  const body = await request.json();
+  const availability = await controller.update(id, body);
+  return successResponse(availability);
+}));
+
+export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  const { id } = await context.params;
+  await controller.delete(id);
+  return noContentResponse();
+}));
 
