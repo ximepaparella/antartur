@@ -79,3 +79,11 @@
   }
 }
 
+.errorActions {
+  display: flex;
+  gap: $spacing-16;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: $spacing-24;
+}
+

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
+import { Button } from "@/components/common/Button/Button";
+import styles from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: "Gastronomía en Ushuaia - Restaurantes y Comida | Antartur",
@@ -28,6 +30,11 @@ export default function GastronomiaPage() {
           title="GASTRONOMÍA EN USHUAIA"
           paragraph="Tenemos más de 100 alojamientos habilitados, incluyendo hoteles cinco estrellas de categoría internacional, cabañas de primer nivel en medio del bosque, aparts y hostels con habitaciones compartidas. Cualquiera que venga podrá pasarla muy bien."
         />
+        <div className={styles.buttonContainer}>
+          <Button variant="primary" href="https://turismoushuaia.com/contenidos/gastronomia/?lang=es_AR">
+            Ver más información
+          </Button>
+        </div>
       </main>
     </>
   );

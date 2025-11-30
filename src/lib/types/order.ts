@@ -3,9 +3,32 @@
  */
 
 export interface Pricing {
-  currency: "ARS" | "USD";
+  currencyCode: string;
   priceAdult: number;
   priceChild: number;
+  // Nuevos campos para sistema de rangos de edad
+  priceInfantFree?: boolean;
+  childAgeRange?: string | null;
+  childPriceType?: "FULL_CHILD_PRICE" | "HALF_ADULT_PRICE" | "ADULT_PRICE";
+  infantMaxAge?: number;
+}
+
+export interface TourAdditional {
+  id: string;
+  name: string;
+  description: string | null;
+  prices: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
+}
+
+export interface SelectedAdditional {
+  additionalId: string;
+  name: string;
+  priceAdult: number;
+  priceChild: number;
+  currency: string;
 }
 
 export interface TimeSlot {
@@ -88,6 +111,8 @@ export interface Order {
   pricing: Pricing;
   /** Horario del tour */
   timeSlot: TimeSlot;
+  /** Additionals seleccionados */
+  additionals?: SelectedAdditional[];
   /** Información de los pasajeros */
   passengers: Passenger[];
   /** Información de facturación */

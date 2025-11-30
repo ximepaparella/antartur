@@ -141,7 +141,9 @@ export const Icon: FC<IconProps> = ({
   const Component = iconMap[name];
 
   if (!Component) {
-    console.warn(`Icon "${name}" not found in iconMap`);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Icon "${name}" not found in iconMap`);
+    }
     return null;
   }
 

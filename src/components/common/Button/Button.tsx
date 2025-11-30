@@ -50,7 +50,7 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
  * @example
  * ```tsx
  * // Como botón
- * <Button variant="primary" onClick={() => console.log('clicked')}>
+ * <Button variant="primary" onClick={() => {}}>
  *   Click me
  * </Button>
  * 
@@ -80,6 +80,22 @@ export const Button: React.FC<ButtonProps> = ({
   const baseClassName = `${styles.button} ${styles[`button${variant.charAt(0).toUpperCase() + variant.slice(1)}`]} ${styles[`button${size.charAt(0).toUpperCase() + size.slice(1)}`]} ${className}`.trim();
 
   if ("href" in props && props.href) {
+    // Si es un link externo (http/https), usar <a> con target="_blank"
+    const isExternal = props.href.startsWith("http://") || props.href.startsWith("https://");
+    
+    if (isExternal) {
+      return (
+        <a 
+          href={props.href} 
+          className={baseClassName}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      );
+    }
+    
     return (
       <Link href={props.href} className={baseClassName}>
         {children}

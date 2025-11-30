@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { Heading } from "@/components/common/Heading/Heading";
-import { getAllTours } from "@/modules/content/components/ToursGrid/toursData";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
+
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Tours - Excursiones y Aventuras | Antartur",
@@ -20,8 +24,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ToursPage() {
-  const tours = getAllTours();
+export default async function ToursPage() {
+  let tours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    // Obtener todos los tours activos desde la API (Server Component)
+    const response = await getToursServer({ isActive: true, includeImages: true, includePrices: true });
+    tours = response.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>

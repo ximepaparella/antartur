@@ -2,21 +2,21 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Hero } from "@/modules/content/components/Hero/Hero";
-import { CheckoutForm, type CheckoutFormRef } from "@/modules/content/components/CheckoutForm";
-import { MiniCart } from "@/modules/content/components/MiniCart";
-import { MiniCartSkeleton } from "@/modules/content/components/MiniCart/MiniCartSkeleton";
-import { getFullTourById } from "@/modules/content/components/ToursGrid/tourFullData";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
+import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
+import { MiniCart } from "@/modules/booking/components/MiniCart";
+import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
+import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
-import { useCurrency } from "@/contexts/CurrencyContext";
-import { getPriceByCurrency } from "@/lib/utils/priceFormat";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
-import { PaymentModal } from "@/modules/content/components/PaymentModal/PaymentModal";
+import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
+import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
+import { useCheckoutFlow } from "@/modules/booking/hooks/useCheckoutFlow";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { currency } = useCurrency();
+  const { handleCheckoutComplete } = useCheckoutFlow();
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
@@ -40,6 +40,12 @@ export default function CheckoutPage() {
   useEffect(() => {
     const pending = getPendingBooking();
     if (pending) {
+      // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
+      if (!pending.pricing.currencyCode) {
+        pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
+        // Persistir la migración para evitar re-ejecutarla en cada carga
+        savePendingBooking(pending);
+      }
       setBookingData(pending);
     } else {
       // Si no hay datos, redirigir al inicio
@@ -47,61 +53,44 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
-  // Actualizar precios cuando cambia la moneda
-  useEffect(() => {
-    if (bookingData) {
-      console.log("[Checkout] Currency changed:", currency);
-      console.log("[Checkout] Current bookingData.pricing:", bookingData.pricing);
-      console.log("[Checkout] TourId:", bookingData.tourId);
-      
-      const tour = getFullTourById(bookingData.tourId);
-      if (tour?.booking?.pricing) {
-        console.log("[Checkout] Tour pricing:", tour.booking.pricing);
-        // IMPORTANTE: Siempre usar el pricing completo del tour como fuente de verdad
-        // priceAdult y priceChild deben SIEMPRE ser valores en ARS (nunca modificarlos)
-        // Los valores USD están en priceAdultUSD y priceChildUSD
-        const updatedPricing: Pricing = {
-          ...tour.booking.pricing, // Mantener TODOS los valores originales (ARS y USD)
-          currency, // Solo actualizar metadata de moneda actual
-          // NO modificar priceAdult ni priceChild - deben permanecer como ARS
-        };
-        console.log("[Checkout] Updated pricing:", updatedPricing);
-        const updatedBooking = {
-          ...bookingData,
-          pricing: updatedPricing,
-        };
-        setBookingData(updatedBooking);
-        // Actualizar localStorage también
-        savePendingBooking(updatedBooking);
-      } else {
-        console.log("[Checkout] No tour or pricing found");
-      }
-    }
-  }, [currency, bookingData?.tourId]);
+  // Obtener restricciones del tour desde la API
+  const [restriction, setRestriction] = useState("");
+  const [hasPregnancyRestriction, setHasPregnancyRestriction] = useState(false);
+  const [hasHealthRestriction, setHasHealthRestriction] = useState(false);
 
-  // Obtener restricciones del tour
-  const tour = bookingData ? getFullTourById(bookingData.tourId) : null;
-  const restriction = tour?.quickInfo?.restriction || "";
-  const hasPregnancyRestriction = restriction.toLowerCase().includes("embarazada");
-  const hasHealthRestriction = restriction.toLowerCase().includes("columna") || 
-                               restriction.toLowerCase().includes("dolencias") ||
-                               restriction.toLowerCase().includes("salud");
+  useEffect(() => {
+    if (bookingData?.tourId) {
+      // tourId es el slug en este contexto
+      toursClient.client.getBySlug(bookingData.tourId, { includeContent: true })
+        .then((tour) => {
+          if (tour) {
+            const tourRestriction = tour.restrictionText || "";
+            setRestriction(tourRestriction);
+            setHasPregnancyRestriction(tourRestriction.toLowerCase().includes("embarazada"));
+            setHasHealthRestriction(
+              tourRestriction.toLowerCase().includes("columna") ||
+              tourRestriction.toLowerCase().includes("dolencias") ||
+              tourRestriction.toLowerCase().includes("salud")
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error al obtener restricciones del tour:", error);
+        });
+    }
+  }, [bookingData?.tourId]);
 
   const handlePaymentMethodChange = (method: PaymentMethod) => {
     setPaymentMethod(method);
   };
 
-  const handleCheckoutComplete = (order: Order) => {
-    setCompletedOrder(order);
-    // Si es una reserva (no consulta), mostrar modal de pago
-    if (order.orderType === "reserva") {
-      setShowPaymentModal(true);
-    } else {
-      // Si es consulta, mostrar mensaje de éxito sin pago
-      // TODO: Mostrar página de confirmación de consulta
-      alert("Consulta generada exitosamente. Te contactaremos pronto.");
-    }
-  };
+  const onCheckoutComplete = useCallback(
+    async (order: Order) => {
+      setCompletedOrder(order);
+      await handleCheckoutComplete(order);
+    },
+    [handleCheckoutComplete]
+  );
 
   const handleSubmitFromCart = (method?: PaymentMethod) => {
     // Solo actualizar paymentMethod si se proporciona
@@ -164,42 +153,44 @@ export default function CheckoutPage() {
   }
 
   return (
-    <>
+    <RouteErrorBoundary>
       <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
-        <div className={styles.checkoutPage}>
-          <div className={styles.leftColumn}>
-            <CheckoutForm
-              ref={checkoutFormRef}
-              hasPregnancyRestriction={hasPregnancyRestriction}
-              hasHealthRestriction={hasHealthRestriction}
-              onCheckoutComplete={handleCheckoutComplete}
-              onRestrictionViolationsChange={handleRestrictionViolationsChange}
-              onPassengersChange={handlePassengersChange}
-              onValidationErrorsChange={handleValidationErrorsChange}
-            />
-          </div>
-          <div className={styles.rightColumn}>
-            {isUpdatingPassengers ? (
-              <MiniCartSkeleton />
-            ) : (
-              <MiniCart
-                tourTitle={bookingData.tourTitle}
-                date={bookingData.date}
-                timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
-                adults={bookingData.adults}
-                childrenCount={bookingData.children}
-                pricing={bookingData.pricing}
-                tourId={bookingData.tourId}
-                exceedsAvailability={bookingData.exceedsAvailability}
-                hasRestrictionViolations={hasRestrictionViolations}
-                hasValidationErrors={hasValidationErrors}
-                onPaymentMethodChange={handlePaymentMethodChange}
-                onSubmit={handleSubmitFromCart}
+        <FeatureErrorBoundary featureName="reserva">
+          <div className={styles.checkoutPage}>
+            <div className={styles.leftColumn}>
+              <CheckoutForm
+                ref={checkoutFormRef}
+                hasPregnancyRestriction={hasPregnancyRestriction}
+                hasHealthRestriction={hasHealthRestriction}
+                onCheckoutComplete={onCheckoutComplete}
+                onRestrictionViolationsChange={handleRestrictionViolationsChange}
+                onPassengersChange={handlePassengersChange}
+                onValidationErrorsChange={handleValidationErrorsChange}
               />
-            )}
+            </div>
+            <div className={styles.rightColumn}>
+              {isUpdatingPassengers ? (
+                <MiniCartSkeleton />
+              ) : (
+                <MiniCart
+                  tourTitle={bookingData.tourTitle}
+                  date={bookingData.date}
+                  timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
+                  adults={bookingData.adults}
+                  childrenCount={bookingData.children}
+                  pricing={bookingData.pricing}
+                  tourId={bookingData.tourId}
+                  exceedsAvailability={bookingData.exceedsAvailability}
+                  hasRestrictionViolations={hasRestrictionViolations}
+                  hasValidationErrors={hasValidationErrors}
+                  onPaymentMethodChange={handlePaymentMethodChange}
+                  onSubmit={handleSubmitFromCart}
+                />
+              )}
+            </div>
           </div>
-        </div>
+        </FeatureErrorBoundary>
       </main>
 
       {showPaymentModal && completedOrder && (
@@ -214,6 +205,6 @@ export default function CheckoutPage() {
           }}
         />
       )}
-    </>
+    </RouteErrorBoundary>
   );
 }

@@ -1,0 +1,96 @@
+@use "@/styles/variables" as *;
+
+.paypalReturn {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-24;
+  text-align: center;
+}
+
+.loading,
+.success,
+.error {
+  padding: $spacing-24;
+  border-radius: 8px;
+  background: $white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading {
+  p {
+    font-size: $font-size-20;
+    color: $gray-700;
+    margin: $spacing-8 0;
+  }
+
+  .subtitle {
+    font-size: $font-size-16;
+    color: $gray-500;
+  }
+}
+
+.success {
+  h1 {
+    color: $success-color;
+    margin-bottom: $spacing-16;
+  }
+
+  p {
+    color: $gray-700;
+    font-size: $font-size-16;
+  }
+}
+
+.error {
+  h1 {
+    color: $error-color;
+    margin-bottom: $spacing-16;
+  }
+
+  p {
+    color: $gray-700;
+    margin-bottom: $spacing-16;
+  }
+}
+
+.orderInfo {
+  margin: $spacing-24 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-top: $spacing-24;
+}
+
+.button,
+.buttonSecondary {
+  padding: $spacing-12 $spacing-24;
+  border-radius: 8px;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.button {
+  background: $primary-color;
+  color: $white;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.buttonSecondary {
+  background: transparent;
+  color: $gray-700;
+  border: 1px solid $gray-300;
+
+  &:hover {
+    background: $gray-50;
+  }
+}
+

@@ -1,0 +1,73 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.additionalsSelector {
+  margin-top: $spacing-24;
+  padding-top: $spacing-24;
+  border-top: 1px solid $border-divider;
+}
+
+.title {
+  font-family: $font-primary;
+  font-size: $font-size-20;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-16;
+  color: $gray-900;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-12;
+  cursor: pointer;
+  padding: $spacing-12;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $gray-50;
+  }
+}
+
+.checkbox {
+  margin-top: $spacing-4;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: $primary-color;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.name {
+  font-family: $font-secondary;
+  font-size: $font-size-16;
+  font-weight: $font-weight-medium;
+  color: $gray-900;
+}
+
+.description {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  color: $gray-500;
+  line-height: $line-height-normal;
+}
+
+.price {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $primary-color;
+}
+

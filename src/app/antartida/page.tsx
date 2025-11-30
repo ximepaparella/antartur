@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
+
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
@@ -21,8 +25,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AntartidaPage() {
-  const winterTours = getToursByCategory("winter");
+export default async function AntartidaPage() {
+  let winterTours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    const winterToursResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
+    winterTours = winterToursResponse.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading winter tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>

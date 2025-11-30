@@ -1,0 +1,35 @@
+@use "@/styles/variables" as *;
+
+.orderCard {
+  margin-bottom: $spacing-24;
+  text-align: left;
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.orderCode {
+  font-size: $font-size-18;
+  color: $gray-700;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.orderTotal {
+  font-size: $font-size-20;
+  color: $gray-700;
+  
+  strong {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.orderMessage {
+  margin-top: $spacing-8;
+}
+

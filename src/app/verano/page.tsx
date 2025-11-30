@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
-import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
-import { Banner } from "@/modules/content/components/Banner/Banner";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
+import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
+import { Banner } from "@/modules/ui/components/Banner/Banner";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
+
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Verano - Excursiones de Verano en Tierra del Fuego | Antartur",
@@ -24,9 +28,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function VeranoPage() {
+export default async function VeranoPage() {
   const testimonials = testimonialsData.verano;
-  const summerTours = getToursByCategory("summer");
+  let summerTours: ReturnType<typeof toTourCardData>[] = [];
+
+  try {
+    const summerToursResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
+    summerTours = summerToursResponse.data.map(toTourCardData);
+  } catch (error) {
+    console.error("Error loading summer tours:", error);
+    // Continuar con array vacío para mostrar página sin tours
+  }
 
   return (
     <>

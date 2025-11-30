@@ -1,0 +1,985 @@
+{
+  "info": {
+    "name": "Antartur API",
+    "description": "API REST completa para el sistema de reservas de Antartur",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "antartur-api"
+  },
+  "item": [
+    {
+      "name": "Tours",
+      "item": [
+        {
+          "name": "List Tours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/tours?page=1&limit=10",
+              "host": ["{{api_url}}"],
+              "path": ["tours"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "category", "value": "summer", "disabled": true },
+                { "key": "difficulty", "value": "Baja", "disabled": true },
+                { "key": "isActive", "value": "true", "disabled": true },
+                { "key": "search", "value": "", "disabled": true }
+              ]
+            },
+            "description": "Listar todos los tours con paginación y filtros opcionales"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tour by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/tours/:id?includeAvailability=false",
+              "host": ["{{api_url}}"],
+              "path": ["tours", ":id"],
+              "query": [
+                { "key": "includeAvailability", "value": "false" }
+              ],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener un tour específico por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tour by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/tours/slug/:slug?includeAvailability=false",
+              "host": ["{{api_url}}"],
+              "path": ["tours", "slug", ":slug"],
+              "query": [
+                { "key": "includeAvailability", "value": "false" }
+              ],
+              "variable": [
+                { "key": "slug", "value": "" }
+              ]
+            },
+            "description": "Obtener un tour específico por su slug (URL-friendly identifier)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tour",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"tour-ushuaia\",\n  \"name\": \"Tour Ushuaia\",\n  \"subtitle\": \"Descubre Ushuaia\",\n  \"category\": \"summer\",\n  \"difficulty\": \"Baja\",\n  \"durationHours\": 4,\n  \"featuredImage\": \"/images/tour.jpg\",\n  \"heroImage\": \"/images/tour-hero.jpg\",\n  \"shortDescription\": \"Descripción corta\",\n  \"longDescription\": \"Descripción larga\",\n  \"restrictionText\": \"Restricciones\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/tours",
+              "host": ["{{api_url}}"],
+              "path": ["tours"]
+            },
+            "description": "Crear un nuevo tour"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tour",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tour Ushuaia Actualizado\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/tours/:id",
+              "host": ["{{api_url}}"],
+              "path": ["tours", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Actualizar un tour existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tour",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/tours/:id",
+              "host": ["{{api_url}}"],
+              "path": ["tours", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Eliminar un tour"
+          },
+          "response": []
+        },
+        {
+          "name": "Tour Prices",
+          "item": [
+            {
+              "name": "List Tour Prices",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/prices",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "prices"],
+                  "variable": [
+                    { "key": "id", "value": "" }
+                  ]
+                },
+                "description": "Listar todos los precios de un tour"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Tour Price by Currency",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/prices?currency=ARS",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "prices"],
+                  "query": [
+                    { "key": "currency", "value": "ARS" }
+                  ],
+                  "variable": [
+                    { "key": "id", "value": "" }
+                  ]
+                },
+                "description": "Obtener precio específico por moneda"
+              },
+              "response": []
+            },
+            {
+              "name": "Create Tour Price",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"ARS\",\n  \"priceAdult\": 100000,\n  \"priceChild\": 50000\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/prices",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "prices"],
+                  "variable": [
+                    { "key": "id", "value": "" }
+                  ]
+                },
+                "description": "Crear un nuevo precio para un tour"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Tour Price",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"priceAdult\": 120000,\n  \"priceChild\": 60000\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/prices/:priceId",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "prices", ":priceId"],
+                  "variable": [
+                    { "key": "id", "value": "" },
+                    { "key": "priceId", "value": "" }
+                  ]
+                },
+                "description": "Actualizar un precio existente"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Tour Price",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/prices/:priceId",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "prices", ":priceId"],
+                  "variable": [
+                    { "key": "id", "value": "" },
+                    { "key": "priceId", "value": "" }
+                  ]
+                },
+                "description": "Eliminar un precio"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Tour Availability",
+          "item": [
+            {
+              "name": "Get Tour Availability",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/availability",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "availability"],
+                  "variable": [
+                    { "key": "id", "value": "" }
+                  ]
+                },
+                "description": "Obtener disponibilidad de un tour"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Tour Availability by Date",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/availability/:date",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "availability", ":date"],
+                  "variable": [
+                    { "key": "id", "value": "" },
+                    { "key": "date", "value": "2024-01-15" }
+                  ]
+                },
+                "description": "Obtener disponibilidad para una fecha específica"
+              },
+              "response": []
+            },
+            {
+              "name": "Create Availability",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2024-01-15\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"13:00\",\n  \"available\": 20,\n  \"seatsTotal\": 20\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/tours/:id/availability",
+                  "host": ["{{api_url}}"],
+                  "path": ["tours", ":id", "availability"],
+                  "variable": [
+                    { "key": "id", "value": "" }
+                  ]
+                },
+                "description": "Crear disponibilidad para un tour"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "item": [
+        {
+          "name": "Get Availability by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/availability/:id",
+              "host": ["{{api_url}}"],
+              "path": ["availability", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener disponibilidad por ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Availability",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": 15,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/availability/:id",
+              "host": ["{{api_url}}"],
+              "path": ["availability", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Actualizar disponibilidad"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Availability",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/availability/:id",
+              "host": ["{{api_url}}"],
+              "path": ["availability", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Eliminar disponibilidad"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/orders?page=1&limit=10",
+              "host": ["{{api_url}}"],
+              "path": ["orders"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "PENDING_PAYMENT", "disabled": true },
+                { "key": "type", "value": "RESERVATION", "disabled": true }
+              ]
+            },
+            "description": "Listar todas las órdenes con paginación"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tourId\": \"\",\n  \"departureId\": \"\",\n  \"numAdults\": 2,\n  \"numChildren\": 1,\n  \"currency\": \"ARS\",\n  \"customerName\": \"Juan Pérez\",\n  \"customerEmail\": \"juan@example.com\",\n  \"customerPhone\": \"+5491123456789\",\n  \"passengers\": [\n    {\n      \"type\": \"ADULT\",\n      \"firstName\": \"Juan\",\n      \"lastName\": \"Pérez\",\n      \"birthDate\": \"1990-01-15\",\n      \"documentType\": \"DNI\",\n      \"documentNumber\": \"12345678\",\n      \"nationality\": \"AR\",\n      \"email\": \"juan@example.com\",\n      \"phone\": \"+5491123456789\"\n    }\n  ],\n  \"notes\": \"Notas adicionales\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/orders",
+              "host": ["{{api_url}}"],
+              "path": ["orders"]
+            },
+            "description": "Crear una nueva orden/reserva"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/orders/:id?includePayments=false",
+              "host": ["{{api_url}}"],
+              "path": ["orders", ":id"],
+              "query": [
+                { "key": "includePayments", "value": "false" }
+              ],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener una orden por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/orders/code/:code?includePayments=false",
+              "host": ["{{api_url}}"],
+              "path": ["orders", "code", ":code"],
+              "query": [
+                { "key": "includePayments", "value": "false" }
+              ],
+              "variable": [
+                { "key": "code", "value": "ORD-2024-001" }
+              ]
+            },
+            "description": "Obtener una orden por su código único"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PAID\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/orders/:id/status",
+              "host": ["{{api_url}}"],
+              "path": ["orders", ":id", "status"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Actualizar el estado de una orden"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/bookings/:id",
+              "host": ["{{api_url}}"],
+              "path": ["bookings", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener un booking por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Bookings by Order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/bookings/order/:orderId?includePassengers=false",
+              "host": ["{{api_url}}"],
+              "path": ["bookings", "order", ":orderId"],
+              "query": [
+                { "key": "includePassengers", "value": "false" }
+              ],
+              "variable": [
+                { "key": "orderId", "value": "" }
+              ]
+            },
+            "description": "Obtener todos los bookings de una orden"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/bookings/:id/status",
+              "host": ["{{api_url}}"],
+              "path": ["bookings", ":id", "status"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Actualizar el estado de un booking"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Booking Passengers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/bookings/:id/passengers",
+              "host": ["{{api_url}}"],
+              "path": ["bookings", ":id", "passengers"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener los pasajeros de un booking"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Passengers",
+      "item": [
+        {
+          "name": "Get Passenger by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/passengers/:id",
+              "host": ["{{api_url}}"],
+              "path": ["passengers", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener un pasajero por su ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/payments/:id",
+              "host": ["{{api_url}}"],
+              "path": ["payments", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener un pago por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payments by Order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/payments/order/:orderId",
+              "host": ["{{api_url}}"],
+              "path": ["payments", "order", ":orderId"],
+              "variable": [
+                { "key": "orderId", "value": "" }
+              ]
+            },
+            "description": "Obtener todos los pagos de una orden"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"\",\n  \"amount\": 100000,\n  \"currency\": \"ARS\",\n  \"method\": \"PAYPAL\",\n  \"transactionId\": \"TXN-123456\",\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/payments",
+              "host": ["{{api_url}}"],
+              "path": ["payments"]
+            },
+            "description": "Crear un registro de pago (admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "PayPal Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.completed\",\n  \"data\": {}\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/payments/webhook/paypal",
+              "host": ["{{api_url}}"],
+              "path": ["payments", "webhook", "paypal"]
+            },
+            "description": "Webhook de PayPal para procesar notificaciones de pago"
+          },
+          "response": []
+        },
+        {
+          "name": "Payway Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.completed\",\n  \"data\": {}\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/payments/webhook/payway",
+              "host": ["{{api_url}}"],
+              "path": ["payments", "webhook", "payway"]
+            },
+            "description": "Webhook de Payway para procesar notificaciones de pago"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notification by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/notifications/:id",
+              "host": ["{{api_url}}"],
+              "path": ["notifications", ":id"],
+              "variable": [
+                { "key": "id", "value": "" }
+              ]
+            },
+            "description": "Obtener una notificación por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notifications by Order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/notifications/order/:orderId",
+              "host": ["{{api_url}}"],
+              "path": ["notifications", "order", ":orderId"],
+              "variable": [
+                { "key": "orderId", "value": "" }
+              ]
+            },
+            "description": "Obtener todas las notificaciones de una orden"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"\",\n  \"type\": \"EMAIL\",\n  \"recipient\": \"cliente@example.com\",\n  \"templateKey\": \"reservation-confirmation\",\n  \"subject\": \"Confirmación de Reserva\",\n  \"body\": \"Su orden ha sido confirmada\",\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/notifications",
+              "host": ["{{api_url}}"],
+              "path": ["notifications"]
+            },
+            "description": "Crear una nueva notificación. Campos requeridos: type, recipient, templateKey. Template keys disponibles: reservation-confirmation, reservation-notification, enquiry-confirmation, enquiry-notification, payment-confirmation"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Expire Pending Orders",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/admin/orders/expire-pending",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "orders", "expire-pending"]
+            },
+            "description": "Expirar órdenes pendientes (cron job)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/admin/stats",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "stats"]
+            },
+            "description": "Obtener estadísticas generales del sistema"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cron Jobs",
+      "item": [
+        {
+          "name": "Cancel Expired Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/cancel-expired-orders?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "cancel-expired-orders"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Cancelar órdenes expiradas automáticamente. Ejecutar cada hora. Requiere autenticación con CRON_SECRET."
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Failed Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/retry-notifications?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "retry-notifications"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Reintentar notificaciones fallidas automáticamente. Ejecutar cada 15 minutos. Requiere autenticación con CRON_SECRET. Procesa hasta 100 notificaciones por ejecución."
+          },
+          "response": []
+        },
+        {
+          "name": "Retry Failed Notifications (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{cron_secret}}",
+                "description": "Bearer token con CRON_SECRET"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/cron/retry-notifications?secret={{cron_secret}}",
+              "host": ["{{api_url}}"],
+              "path": ["cron", "retry-notifications"],
+              "query": [
+                {
+                  "key": "secret",
+                  "value": "{{cron_secret}}",
+                  "description": "CRON_SECRET como query parameter (alternativa al header)"
+                }
+              ]
+            },
+            "description": "Reintentar notificaciones fallidas (método POST para compatibilidad con algunos sistemas de cron). Ejecutar cada 15 minutos."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "Send Contact Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Juan Pérez\",\n  \"apellidos\": \"García\",\n  \"email\": \"juan@example.com\",\n  \"codigoPais\": \"+54\",\n  \"codigoCiudad\": \"11\",\n  \"celular\": \"1234567890\",\n  \"codigoReserva\": \"ORD-2024-001\",\n  \"mensaje\": \"Mensaje de contacto\",\n  \"recaptchaToken\": \"token\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/contact",
+              "host": ["{{api_url}}"],
+              "path": ["contact"]
+            },
+            "description": "Enviar formulario de contacto"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Docs",
+      "item": [
+        {
+          "name": "Get Swagger Spec",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/docs",
+              "host": ["{{api_url}}"],
+              "path": ["docs"]
+            },
+            "description": "Obtener la especificación Swagger/OpenAPI en formato JSON"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Testing",
+      "item": [
+        {
+          "name": "Test Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>Test Email</h1><p>This is a test email to verify SMTP configuration.</p>\",\n  \"text\": \"Test Email\\n\\nThis is a test email to verify SMTP configuration.\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/test-email",
+              "host": ["{{api_url}}"],
+              "path": ["test-email"]
+            },
+            "description": "Probar configuración SMTP y envío de emails. Solo disponible en desarrollo. Retorna información sobre la configuración SMTP y el resultado del envío."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "api_url",
+      "value": "{{base_url}}/api",
+      "type": "string"
+    }
+  ]
+}
+

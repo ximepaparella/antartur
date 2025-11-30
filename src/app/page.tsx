@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Hero } from "@/modules/content/components/Hero/Hero";
+import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
-import testimonialsData from "@/modules/content/components/Testimonials/testimonialsdata.json";
-import { Banner, BannerText } from "@/modules/content/components/Banner";
-import { ToursGrid } from "@/modules/content/components/ToursGrid/ToursGrid";
-import { getToursByCategory } from "@/modules/content/components/ToursGrid/toursData";
+import testimonialsData from "@/modules/ui/components/Testimonials/testimonialsdata.json";
+import { Banner, BannerText } from "@/modules/ui/components/Banner";
+import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
+import { getToursServer } from "@/modules/tours/api/server/toursServer";
+import { toTourCardData } from "@/lib/adapters/tourAdapter";
+
+// Forzar renderizado dinámico ya que depende de datos de la base de datos
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Antartur - Experiencia & Aventura en Tierra del Fuego",
@@ -25,14 +29,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
   const testimonials = testimonialsData.home;
 
-  // Tours de verano
-  const summerTours = getToursByCategory("summer");
+  // Obtener tours desde la API (Server Component) con manejo de errores
+  let summerTours: ReturnType<typeof toTourCardData>[] = [];
+  let winterTours: ReturnType<typeof toTourCardData>[] = [];
 
-  // Tours de invierno
-  const winterTours = getToursByCategory("winter");
+  try {
+    const summerResponse = await getToursServer({ category: "summer", isActive: true, includeImages: true, includePrices: true });
+    const winterResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
+
+    // Transformar a TourCardData
+    summerTours = summerResponse.data.map(toTourCardData);
+    winterTours = winterResponse.data.map(toTourCardData);
+  } catch (error) {
+    // En producción, loguear error pero continuar con arrays vacíos
+    console.error("Error loading tours:", error);
+    // Las páginas mostrarán grids vacíos en lugar de fallar completamente
+  }
 
   return (
     <>

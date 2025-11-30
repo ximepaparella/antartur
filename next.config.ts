@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Docker standalone output
+  output: 'standalone',
+  
   // Optimización de imágenes
   images: {
     formats: ["image/avif", "image/webp"],
@@ -9,6 +12,13 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.afip.gob.ar",
+        pathname: "/images/**",
+      },
+    ],
   },
 
   // Compresión
@@ -44,6 +54,25 @@ const nextConfig: NextConfig = {
   // Optimizaciones de producción
   poweredByHeader: false,
   reactStrictMode: true,
+
+  // Módulos que deben ser externos en el servidor (no empaquetados)
+  // PayPal SDK es CommonJS y debe ser externo para evitar problemas de resolución
+  serverExternalPackages: ["@paypal/checkout-server-sdk"],
+
+  // Configuración de webpack para módulos CommonJS
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Asegurar que los módulos CommonJS se resuelvan correctamente en el servidor
+      config.externals = config.externals || [];
+      // No empaquetar PayPal SDK, usarlo como externo
+      if (Array.isArray(config.externals)) {
+        config.externals.push("@paypal/checkout-server-sdk");
+      } else if (typeof config.externals === "object") {
+        config.externals["@paypal/checkout-server-sdk"] = "@paypal/checkout-server-sdk";
+      }
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

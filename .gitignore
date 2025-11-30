@@ -7,26 +7,32 @@
 
 # testing
 /coverage
+*.test.js.snap
+.nyc_output
 
 # next.js
 /.next/
 /out/
+.next/
 
 # production
 /build
 
 # misc
-.DS_Store
 *.pem
+Thumbs.db
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
+# Environment files (NEVER commit secrets)
+.env
+.env.*
 .env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+!.env.example
 
 # vercel
 .vercel
@@ -35,5 +41,70 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#docs
-/docs
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Compiled CSS (source SCSS should be tracked)
+site.css
+site.css.map
+
+# Generated reports
+lighthouse-report.html
+*.html.report
+
+# Test HTML file (appears to be a test file)
+index.html
+
+# Docker volumes and data
+postgres_data/
+pgadmin_data/
+backups/
+certbot/
+
+# SSL/TLS certificates and keys
+*.key
+*.crt
+*.csr
+ssl/
+
+# SSH keys (never commit these)
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.ppk
+ssh_keys/
+
+# Prisma generated files (if any outside node_modules)
+prisma/generated/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# Logs
+logs/
+*.log
+
+# Optional: Uncomment if you want to ignore docs during development
+# /docs

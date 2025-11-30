@@ -1,3 +1,61 @@
+/**
+ * @swagger
+ * /api/contact:
+ *   post:
+ *     summary: Enviar formulario de contacto
+ *     tags: [Contact]
+ *     description: Endpoint para enviar mensajes desde el formulario de contacto del sitio
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [nombreCompleto, apellidos, email, codigoPais, celular, mensaje]
+ *             properties:
+ *               nombreCompleto:
+ *                 type: string
+ *               apellidos:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               codigoPais:
+ *                 type: string
+ *               codigoCiudad:
+ *                 type: string
+ *               celular:
+ *                 type: string
+ *               codigoReserva:
+ *                 type: string
+ *               mensaje:
+ *                 type: string
+ *               recaptchaToken:
+ *                 type: string
+ *                 description: Token de reCAPTCHA (opcional en desarrollo)
+ *     responses:
+ *       200:
+ *         description: Mensaje enviado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       429:
+ *         description: Demasiadas solicitudes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { RateLimiterMemory } from "rate-limiter-flexible";
@@ -57,7 +115,8 @@ function createTransporter() {
   const smtpHost = process.env.SMTP_HOST;
   const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
   const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASSWORD;
+  // Soportar tanto SMTP_PASSWORD como SMTP_PASS para compatibilidad
+  const smtpPass = process.env.SMTP_PASSWORD || process.env.SMTP_PASS;
   const smtpFrom = process.env.SMTP_FROM || smtpUser;
 
   // Si hay configuración SMTP, usarla
@@ -174,18 +233,12 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
 
     // Si no hay configuración de email (modo desarrollo), solo loguear
     if (!transporter) {
-      console.log("=".repeat(60));
-      console.log("📧 EMAIL DE CONTACTO (MODO DESARROLLO - NO ENVIADO)");
-      console.log("=".repeat(60));
-      console.log(`Para: ${recipientEmail || "CONTACT_RECIPIENT_EMAIL no configurado"}`);
-      console.log(`Asunto: Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`);
-      console.log(`\n${emailContent}`);
-      console.log("=".repeat(60));
-      console.log("\n💡 Para enviar emails reales, configura las variables de entorno:");
-      console.log("   - CONTACT_RECIPIENT_EMAIL (email destinatario - REQUERIDO)");
-      console.log("   - GMAIL_USER y GMAIL_APP_PASSWORD (para Gmail)");
-      console.log("   - O SMTP_HOST, SMTP_USER, SMTP_PASSWORD (para SMTP)");
-      console.log("=".repeat(60));
+      // En desarrollo, loguear información útil pero de forma más limpia
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("⚠️  Email no enviado - Modo desarrollo sin configuración SMTP");
+        console.warn(`Para: ${recipientEmail || "CONTACT_RECIPIENT_EMAIL no configurado"}`);
+        console.warn(`Asunto: Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`);
+      }
 
       return NextResponse.json(
         { message: "Consulta recibida exitosamente (modo desarrollo - email no enviado)" },
@@ -204,7 +257,7 @@ Este mensaje fue enviado desde el formulario de contacto de Antartur.
 
     // Enviar email real
     const mailOptions = {
-      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "noreply@antartur.tur.ar",
+      from: process.env.SMTP_FROM || process.env.GMAIL_USER || "agencias@antartur.tur.ar",
       to: recipientEmail,
       subject: `Nueva consulta de contacto - ${body.nombreCompleto} ${body.apellidos}`,
       text: emailContent,

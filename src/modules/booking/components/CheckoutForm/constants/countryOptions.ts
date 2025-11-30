@@ -1,0 +1,37 @@
+/**
+ * Opciones de países (lista internacional completa)
+ */
+export const COUNTRY_OPTIONS = [
+  { value: "Argentina", label: "Argentina" },
+  { value: "Chile", label: "Chile" },
+  { value: "Uruguay", label: "Uruguay" },
+  { value: "Brasil", label: "Brasil" },
+  { value: "Paraguay", label: "Paraguay" },
+  { value: "Bolivia", label: "Bolivia" },
+  { value: "Perú", label: "Perú" },
+  { value: "Colombia", label: "Colombia" },
+  { value: "Ecuador", label: "Ecuador" },
+  { value: "Venezuela", label: "Venezuela" },
+  { value: "Estados Unidos", label: "Estados Unidos" },
+  { value: "Canadá", label: "Canadá" },
+  { value: "México", label: "México" },
+  { value: "Reino Unido", label: "Reino Unido" },
+  { value: "España", label: "España" },
+  { value: "Francia", label: "Francia" },
+  { value: "Alemania", label: "Alemania" },
+  { value: "Italia", label: "Italia" },
+  { value: "Portugal", label: "Portugal" },
+  { value: "Países Bajos", label: "Países Bajos" },
+  { value: "Bélgica", label: "Bélgica" },
+  { value: "Suiza", label: "Suiza" },
+  { value: "Austria", label: "Austria" },
+  { value: "Australia", label: "Australia" },
+  { value: "Nueva Zelanda", label: "Nueva Zelanda" },
+  { value: "China", label: "China" },
+  { value: "Japón", label: "Japón" },
+  { value: "India", label: "India" },
+  { value: "Corea del Sur", label: "Corea del Sur" },
+  { value: "Israel", label: "Israel" },
+  { value: "Sudáfrica", label: "Sudáfrica" },
+];
+

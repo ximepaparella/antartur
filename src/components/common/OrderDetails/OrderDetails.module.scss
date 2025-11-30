@@ -1,0 +1,82 @@
+@use "@/styles/variables" as *;
+
+.orderDetailsCard {
+  margin-bottom: $spacing-24;
+}
+
+.title {
+  font-size: $font-size-20;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0 0 $spacing-16 0;
+  padding-bottom: $spacing-8;
+  border-bottom: 1px solid $gray-200;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.label {
+  font-weight: $font-weight-semibold;
+  color: $gray-400;
+  min-width: 120px;
+}
+
+.value {
+  color: $gray-700;
+  flex: 1;
+}
+
+.passengersSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  margin-top: $spacing-8;
+  padding-top: $spacing-16;
+  border-top: 1px solid $gray-200;
+}
+
+.passengersList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.passengerItem {
+  color: $gray-700;
+  padding-left: $spacing-16;
+  position: relative;
+  
+  &::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: $primary-color;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.passengerType {
+  color: $gray-400;
+  font-size: $font-size-14;
+  margin-left: $spacing-4;
+}
+
