@@ -17,11 +17,15 @@ export interface RateLimitConfig {
  */
 export const rateLimitConfigs = {
   public: {
-    points: 100,
+    points: process.env.NODE_ENV === "development" ? 1000 : 100, // Más permisivo en desarrollo
+    duration: 3600, // 1 hora
+  },
+  read: {
+    points: process.env.NODE_ENV === "development" ? 2000 : 500, // Para endpoints de lectura frecuentes
     duration: 3600, // 1 hora
   },
   write: {
-    points: 20,
+    points: process.env.NODE_ENV === "development" ? 200 : 20,
     duration: 3600, // 1 hora
   },
   admin: {
@@ -53,7 +57,17 @@ function getClientIp(request: NextRequest): string {
     return realIp;
   }
 
-  // Fallback para desarrollo local
+  // En desarrollo local, usar un identificador más único basado en headers
+  // para evitar que todas las requests compartan el mismo límite
+  if (process.env.NODE_ENV === "development") {
+    const userAgent = request.headers.get("user-agent") || "";
+    const referer = request.headers.get("referer") || "";
+    // Crear un hash simple basado en headers para diferenciar sesiones
+    const sessionId = Buffer.from(`${userAgent}-${referer}`).toString("base64").slice(0, 16);
+    return `dev-${sessionId}`;
+  }
+
+  // Fallback para producción
   return "unknown";
 }
 

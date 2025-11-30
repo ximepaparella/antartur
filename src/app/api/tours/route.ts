@@ -83,7 +83,7 @@ import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/r
 
 const controller = new ToursController();
 
-export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
+export const GET = withRateLimitHandler("read", withControllerErrorHandler(async (request, context) => {
   const result = await controller.list(request);
   return paginatedResponse(result.data, result.meta);
 }));

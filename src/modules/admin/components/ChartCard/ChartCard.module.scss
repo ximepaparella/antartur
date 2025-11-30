@@ -1,0 +1,20 @@
+@use "@/styles/variables" as *;
+
+.chartCard {
+  background: $white;
+  border-radius: 12px;
+  padding: $spacing-24;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  font-size: $font-size-18;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0 0 $spacing-24 0;
+}
+
+.chartContainer {
+  width: 100%;
+}
+

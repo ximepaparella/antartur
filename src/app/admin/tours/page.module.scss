@@ -1,0 +1,38 @@
+@use "@/styles/variables" as *;
+
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-32;
+  gap: $spacing-16;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-8 0;
+}
+
+.subtitle {
+  font-size: $font-size-16;
+  color: $gray-600;
+  margin: 0;
+}
+
+.category {
+  text-transform: capitalize;
+}
+
+.slug {
+  font-family: monospace;
+  font-size: $font-size-14;
+  color: $gray-600;
+}
+

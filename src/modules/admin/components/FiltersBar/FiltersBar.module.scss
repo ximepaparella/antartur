@@ -1,0 +1,36 @@
+@use "@/styles/variables" as *;
+
+.filtersBar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  padding: $spacing-24;
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: $spacing-24;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-16;
+}
+
+.filterItem {
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $spacing-16;
+  border-top: 1px solid $gray-200;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
+

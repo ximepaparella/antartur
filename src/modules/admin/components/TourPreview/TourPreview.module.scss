@@ -1,0 +1,41 @@
+@use "@/styles/variables" as *;
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.previewHeader {
+  padding: $spacing-16;
+  background: $gray-50;
+  border-radius: 8px;
+  border: 1px solid $gray-200;
+
+  h2 {
+    font-size: $font-size-20;
+    font-weight: $font-weight-semibold;
+    color: $gray-900;
+    margin: 0 0 $spacing-8 0;
+  }
+}
+
+.previewNote {
+  font-size: $font-size-14;
+  color: $gray-600;
+  margin: 0;
+}
+
+.previewContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0; // Los componentes ya tienen su propio spacing
+}
+
+.empty {
+  padding: $spacing-48;
+  text-align: center;
+  color: $gray-500;
+  font-size: $font-size-16;
+}
+

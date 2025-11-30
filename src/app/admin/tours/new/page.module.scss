@@ -1,0 +1,44 @@
+@use "@/styles/variables" as *;
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-32;
+  gap: $spacing-16;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-12;
+  justify-content: flex-end;
+  margin-top: $spacing-24;
+}
+
+.error {
+  padding: $spacing-12;
+  background: $error-bg;
+  border: 1px solid $error-border;
+  border-radius: 8px;
+  color: $error-text;
+  font-size: $font-size-14;
+}
+

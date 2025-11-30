@@ -103,6 +103,8 @@ export const PUT = withRateLimitHandler("write", withControllerErrorHandler(asyn
   return successResponse(tour);
 }));
 
+export const PATCH = PUT; // Alias para PATCH
+
 export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
   const { id } = await context.params;
   await controller.delete(id);

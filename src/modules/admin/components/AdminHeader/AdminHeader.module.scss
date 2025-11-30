@@ -1,0 +1,78 @@
+@use "@/styles/variables" as *;
+
+.header {
+  height: 70px;
+  background: $white;
+  border-bottom: 1px solid $gray-200;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  z-index: 999;
+}
+
+.headerContent {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $spacing-32;
+}
+
+.left {
+  flex: 1;
+}
+
+.title {
+  font-size: $font-size-20;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  padding: $spacing-8 $spacing-16;
+  background: $gray-50;
+  border-radius: 8px;
+  color: $gray-700;
+  font-size: $font-size-14;
+}
+
+.userName {
+  font-weight: $font-weight-medium;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+@media (max-width: 768px) {
+  .header {
+    left: 0;
+  }
+
+  .headerContent {
+    padding: 0 $spacing-16;
+  }
+
+  .title {
+    font-size: $font-size-18;
+  }
+
+  .userName {
+    display: none;
+  }
+}
+

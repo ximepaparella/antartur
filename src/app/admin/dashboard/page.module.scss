@@ -1,0 +1,119 @@
+@use "@/styles/variables" as *;
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: $spacing-32;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-8 0;
+}
+
+.subtitle {
+  font-size: $font-size-16;
+  color: $gray-600;
+  margin: 0;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-24;
+  margin-bottom: $spacing-32;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: $spacing-24;
+  margin-bottom: $spacing-32;
+}
+
+.recentOrders {
+  margin-top: $spacing-32;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-16;
+  background: $gray-50;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $gray-100;
+  }
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.orderCode {
+  font-weight: $font-weight-semibold;
+  color: $primary-color;
+  font-size: $font-size-14;
+}
+
+.customerName {
+  font-size: $font-size-14;
+  color: $gray-700;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $spacing-4;
+}
+
+.amount {
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  font-size: $font-size-16;
+}
+
+.status {
+  font-size: $font-size-12;
+  color: $gray-600;
+  text-transform: uppercase;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: $spacing-48;
+  color: $gray-600;
+}
+
+.error {
+  color: $error-color;
+}
+
+@media (max-width: 768px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
