@@ -45,17 +45,69 @@ export function formatDisplayDate(dateStr: string): string {
 }
 
 /**
- * Verifica si una fecha está deshabilitada (en el pasado)
- * Compara solo la fecha (sin hora) para evitar problemas de timezone
+ * Obtiene la hora actual en Argentina (UTC-3)
+ */
+function getArgentinaTime(): Date {
+  const now = new Date();
+  // Convertir a hora Argentina (UTC-3)
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  return new Date(utc + (-3 * 3600000));
+}
+
+/**
+ * Obtiene la hora de corte para reservas desde la variable de entorno
+ * Default: 20 (8 PM)
+ */
+function getBookingCutoffHour(): number {
+  const cutoffHour = parseInt(process.env.NEXT_PUBLIC_BOOKING_CUTOFF_HOUR || '20', 10);
+  return isNaN(cutoffHour) ? 20 : cutoffHour;
+}
+
+/**
+ * Verifica si una fecha está deshabilitada para reservas
+ * 
+ * Reglas:
+ * - Fechas en el pasado están deshabilitadas
+ * - El día de hoy está deshabilitado (no se puede reservar para el mismo día)
+ * - Después de la hora de corte (default 20:00 Argentina), el día siguiente también está deshabilitado
+ * 
+ * @param date - Fecha a verificar
+ * @returns true si la fecha está deshabilitada
  */
 export function isDateDisabled(date: Date): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const argentinaTime = getArgentinaTime();
+  const currentHour = argentinaTime.getHours();
+  const cutoffHour = getBookingCutoffHour();
   
+  // Obtener fecha de hoy en Argentina (sin hora)
+  const todayArgentina = new Date(argentinaTime);
+  todayArgentina.setHours(0, 0, 0, 0);
+  
+  // Fecha a comparar (sin hora)
   const dateToCompare = new Date(date);
   dateToCompare.setHours(0, 0, 0, 0);
   
-  return dateToCompare < today;
+  // Si la fecha es del pasado, está deshabilitada
+  if (dateToCompare < todayArgentina) {
+    return true;
+  }
+  
+  // Si la fecha es hoy, está deshabilitada (no se puede reservar para el mismo día)
+  if (dateToCompare.getTime() === todayArgentina.getTime()) {
+    return true;
+  }
+  
+  // Si estamos después de la hora de corte, también deshabilitar mañana
+  if (currentHour >= cutoffHour) {
+    const tomorrow = new Date(todayArgentina);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    if (dateToCompare.getTime() === tomorrow.getTime()) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 /**

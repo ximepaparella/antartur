@@ -71,6 +71,23 @@ BANK_TRANSFER_EXPIRATION_HOURS=24
 **Descripción:** Tiempo en horas antes de cancelar automáticamente órdenes con transferencia bancaria.  
 **Default:** 24 horas
 
+```env
+PENDING_RESERVATION_HOLD_HOURS=2
+```
+**Descripción:** Tiempo en horas que una reserva pendiente retiene los cupos antes de cancelarse automáticamente.  
+**Default:** 2 horas  
+**Nota:** Aplica a reservas pendientes por cualquier razón (pago no confirmado, excede disponibilidad, violación de restricciones). Después de este tiempo, si la reserva no se confirma, se cancela automáticamente y los cupos se liberan.
+
+## Variables de Restricciones de Reserva
+
+```env
+NEXT_PUBLIC_BOOKING_CUTOFF_HOUR=20
+```
+**Descripción:** Hora (0-23) después de la cual se bloquean las reservas para el día siguiente.  
+**Default:** 20 (8 PM hora Argentina)  
+**Ejemplo:** Si son las 20:30 en Argentina, no se puede reservar para mañana.  
+**Nota:** Usa la zona horaria de Argentina (UTC-3). Esta variable tiene prefijo `NEXT_PUBLIC_` porque se usa en el frontend.
+
 ## Variables de Datos Bancarios
 
 Estas variables se usan en la página de transferencia bancaria:

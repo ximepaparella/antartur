@@ -157,15 +157,19 @@ export async function createReservation(input: ReservationInput) {
     const orderCode = await generateOrderCode(tx);
 
     // 9. Calcular fecha de expiración según método de pago
+    // Las reservas pendientes retienen cupos por un tiempo configurable
     const expiresAt = new Date();
     if (input.paymentMethod === "transferencia") {
-      // Transferencia bancaria: 24 horas
+      // Transferencia bancaria: tiempo extendido (default 24 horas)
       const bankTransferHours = parseInt(process.env.BANK_TRANSFER_EXPIRATION_HOURS || "24", 10);
       expiresAt.setHours(expiresAt.getHours() + bankTransferHours);
     } else {
-      // PayPal/Payway/Consulta: tiempo configurable (default 1 hora)
-      const orderExpirationHours = parseInt(process.env.ORDER_EXPIRATION_HOURS || "1", 10);
-      expiresAt.setHours(expiresAt.getHours() + orderExpirationHours);
+      // PayPal/Payway/Consulta/Otros: tiempo de hold para reservas pendientes (default 2 horas)
+      // Si la reserva es PENDING (por cualquier razón: pago no confirmado, excede disponibilidad,
+      // violación de restricciones), los cupos se retienen por este tiempo.
+      // Después de este tiempo, si no se confirma el pago, la orden se cancela y los cupos se liberan.
+      const pendingHoldHours = parseInt(process.env.PENDING_RESERVATION_HOLD_HOURS || "2", 10);
+      expiresAt.setHours(expiresAt.getHours() + pendingHoldHours);
     }
 
     // 10. Crear Order con información de additionals en notes si existen

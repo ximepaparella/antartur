@@ -32,19 +32,45 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER:-antartur}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-antartur}
-      - NEXT_PUBLIC_SITE_URL=${SITE_URL}
+      - NEXT_PUBLIC_SITE_URL=${SITE_URL:-https://coderoots.tech}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - NEXTAUTH_URL=${SITE_URL}
+      - NEXTAUTH_URL=${SITE_URL:-https://coderoots.tech}
+      # Email configuration
       - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
       - CONTACT_EMAIL=${CONTACT_EMAIL}
+      - CONTACT_RECIPIENT_EMAIL=${CONTACT_RECIPIENT_EMAIL}
+      # reCAPTCHA
       - NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
-    # No exponer puerto 3000 - solo accesible vía nginx reverse proxy
-    # ports:
-    #   - "3000:3000"
+      # Cron jobs
+      - CRON_SECRET=${CRON_SECRET}
+      # Order expiration and booking restrictions
+      - ORDER_EXPIRATION_HOURS=${ORDER_EXPIRATION_HOURS:-1}
+      - BANK_TRANSFER_EXPIRATION_HOURS=${BANK_TRANSFER_EXPIRATION_HOURS:-24}
+      - PENDING_RESERVATION_HOLD_HOURS=${PENDING_RESERVATION_HOLD_HOURS:-2}
+      - NEXT_PUBLIC_BOOKING_CUTOFF_HOUR=${NEXT_PUBLIC_BOOKING_CUTOFF_HOUR:-20}
+      # Payment gateways
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
+      - PAYPAL_MODE=${PAYPAL_MODE:-live}
+      - PAYWAY_API_KEY=${PAYWAY_API_KEY}
+      - PAYWAY_MERCHANT_ID=${PAYWAY_MERCHANT_ID}
+      - PAYWAY_ENVIRONMENT=${PAYWAY_ENVIRONMENT:-production}
+      # Bank details
+      - BANK_ACCOUNT_NAME=${BANK_ACCOUNT_NAME}
+      - BANK_ACCOUNT_NUMBER=${BANK_ACCOUNT_NUMBER}
+      - BANK_NAME=${BANK_NAME}
+      - BANK_CUIT=${BANK_CUIT}
+      - BANK_CBU=${BANK_CBU}
+      - BANK_ALIAS=${BANK_ALIAS}
+      # Notifications
+      - NOTIFICATION_DRY_RUN=${NOTIFICATION_DRY_RUN:-false}
     depends_on:
       postgres:
         condition: service_healthy
@@ -67,6 +93,17 @@ services:
       - app
     networks:
       - antartur_network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  # Certbot for SSL certificates
+  certbot:
+    image: certbot/certbot
+    container_name: antartur_certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   antartur_network:
@@ -74,4 +111,3 @@ networks:
 
 volumes:
   postgres_data:
-
