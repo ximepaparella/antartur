@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAdminAuth } from "@/modules/admin/hooks/useAdminAuth";
-import { AdminLayout } from "@/modules/admin/components/AdminLayout/AdminLayout";
+import { AdminLayout } from "@/modules/admin/components/layout/AdminLayout";
 
 export default function AdminLayoutWrapper({
   children,

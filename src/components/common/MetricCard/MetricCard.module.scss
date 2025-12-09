@@ -1,0 +1,64 @@
+@use "@/styles/variables" as *;
+
+.metricCard {
+  padding: $spacing-24;
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.title {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-family: $font-secondary;
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin-bottom: $spacing-8;
+  line-height: 1.2;
+}
+
+.icon {
+  color: $primary-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+
+  &.positive {
+    color: $success-color;
+  }
+
+  &.negative {
+    color: $error-color;
+  }
+}
+
+.trendLabel {
+  color: $gray-500;
+}
+

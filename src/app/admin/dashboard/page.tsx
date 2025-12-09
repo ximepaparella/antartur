@@ -2,8 +2,8 @@
 
 import { useDashboardStats } from "@/modules/admin/hooks/useDashboardStats";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
-import { MetricCard } from "@/modules/admin/components/MetricCard/MetricCard";
-import { ChartCard } from "@/modules/admin/components/ChartCard/ChartCard";
+import { MetricCard } from "@/components/common/MetricCard";
+import { ChartCard } from "@/components/common/ChartCard";
 import { Card } from "@/components/common/Card/Card";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";

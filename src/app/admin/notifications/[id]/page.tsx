@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
 import { Card } from "@/components/common/Card/Card";
-import { StatusBadge } from "@/modules/admin/components/StatusBadge/StatusBadge";
+import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
 import styles from "./page.module.scss";
 

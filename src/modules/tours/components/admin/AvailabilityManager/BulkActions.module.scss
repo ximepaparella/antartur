@@ -1,0 +1,104 @@
+@use "@/styles/variables" as *;
+
+.bulkActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  padding: $spacing-16;
+  background: $white;
+  border: 2px solid $primary-color;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.1);
+}
+
+.rangeButton {
+  align-self: flex-start;
+}
+
+.rangeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.rangeInputs {
+  display: flex;
+  gap: $spacing-12;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.rangeActions {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.selectionInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-12;
+  background: $gray-50;
+  border-radius: 6px;
+}
+
+.selectedCount {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+}
+
+.error {
+  padding: $spacing-12;
+  background: $error-bg;
+  color: $error-color;
+  border-radius: 6px;
+  font-size: $font-size-14;
+  text-align: center;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-16;
+}
+
+.actionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  padding: $spacing-12;
+  background: $gray-50;
+  border-radius: 6px;
+}
+
+.actionTitle {
+  font-family: $font-secondary;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+  color: $gray-600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.actionForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+@media (min-width: 768px) {
+  .actionForm {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+

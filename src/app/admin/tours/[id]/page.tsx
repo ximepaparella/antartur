@@ -5,8 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
 import { Card } from "@/components/common/Card/Card";
 import { Button } from "@/components/common/Button/Button";
-import { TourForm } from "@/modules/admin/components/TourForm/TourForm";
-import { TourPreview } from "@/modules/admin/components/TourPreview/TourPreview";
+import { TourForm } from "@/modules/tours/components/admin/TourForm";
+import { TourPreview } from "@/modules/tours/components/admin/TourPreview";
 import styles from "./page.module.scss";
 
 interface TourFullData {

@@ -1,0 +1,217 @@
+@use "@/styles/variables" as *;
+
+.dayCell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100px;
+  padding: $spacing-12;
+  background: $white;
+  border: 2px solid $gray-200;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.03);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  &.otherMonth {
+    opacity: 0.3;
+    background: $gray-50;
+    border-color: $gray-100;
+  }
+
+  &.today {
+    border-color: $primary-color;
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    background: rgba($primary-color, 0.05);
+  }
+
+  &.past {
+    background: $gray-50;
+    opacity: 0.5;
+    border-color: $gray-200;
+  }
+
+  &.empty {
+    background: $white;
+    border-color: $gray-200;
+  }
+
+  &.available {
+    background: linear-gradient(135deg, rgba($success-color, 0.1) 0%, rgba($success-color, 0.05) 100%);
+    border-color: rgba($success-color, 0.4);
+    
+    &:hover:not(:disabled) {
+      border-color: $success-color;
+      background: linear-gradient(135deg, rgba($success-color, 0.15) 0%, rgba($success-color, 0.08) 100%);
+    }
+  }
+
+  &.low {
+    background: linear-gradient(135deg, rgba($warning-border, 0.12) 0%, rgba($warning-border, 0.06) 100%);
+    border-color: rgba($warning-border, 0.5);
+    
+    &:hover:not(:disabled) {
+      border-color: $warning-border;
+      background: linear-gradient(135deg, rgba($warning-border, 0.18) 0%, rgba($warning-border, 0.1) 100%);
+    }
+  }
+
+  &.full {
+    background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba($error-color, 0.05) 100%);
+    border-color: rgba($error-color, 0.4);
+    
+    &:hover:not(:disabled) {
+      border-color: $error-color;
+      background: linear-gradient(135deg, rgba($error-color, 0.15) 0%, rgba($error-color, 0.08) 100%);
+    }
+  }
+
+  &.inactive {
+    background: $gray-100;
+    border-color: $gray-300;
+    opacity: 0.7;
+  }
+
+  &.disabledDay {
+    background: repeating-linear-gradient(
+      45deg,
+      $gray-50,
+      $gray-50 10px,
+      $gray-100 10px,
+      $gray-100 20px
+    );
+    border-color: $gray-300;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    border-width: 3px;
+    background: rgba($primary-color, 0.1);
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    
+    &:hover:not(:disabled) {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.15);
+    }
+  }
+}
+
+.dayNumber {
+  font-family: $font-secondary;
+  font-size: $font-size-16;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin-bottom: $spacing-4;
+  line-height: 1;
+}
+
+.departureInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-8;
+  margin-top: auto;
+  width: 100%;
+}
+
+.time {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  font-family: $font-secondary;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  padding: $spacing-4 $spacing-8;
+  background: rgba($white, 0.8);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.seats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-4;
+  font-family: $font-secondary;
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  color: $gray-600;
+  padding: $spacing-4 $spacing-8;
+  background: rgba($white, 0.9);
+  border-radius: 4px;
+  width: 100%;
+  backdrop-filter: blur(4px);
+  
+  span {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.addHint {
+  margin-top: auto;
+  font-size: $font-size-24;
+  color: $gray-300;
+  font-weight: $font-weight-light;
+  transition: color 0.2s ease;
+  
+  .dayCell:hover:not(:disabled) & {
+    color: $primary-color;
+  }
+}
+
+.deleteButton {
+  position: absolute;
+  top: $spacing-4;
+  right: $spacing-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba($error-color, 0.9);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: $white;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+
+  .dayCell:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: $error-color;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba($error-color, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.deleteButtonAlwaysVisible {
+  opacity: 1;
+}
+

@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useDataTable } from "@/modules/admin/hooks/useDataTable";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
-import { DataTable } from "@/modules/admin/components/DataTable/DataTable";
-import { StatusBadge } from "@/modules/admin/components/StatusBadge/StatusBadge";
+import { DataTable } from "@/components/common/DataTable";
+import { StatusBadge } from "@/components/common/StatusBadge";
 import type { TableColumn } from "@/components/common/Table/Table";
-import type { FilterConfig } from "@/modules/admin/components/FiltersBar/FiltersBar";
+import type { FilterConfig } from "@/components/common/FiltersBar";
 import styles from "./page.module.scss";
 
 interface Order {
