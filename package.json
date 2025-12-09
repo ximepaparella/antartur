@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "node -e \"const v=process.version.match(/v(\\d+)/)[1];if(parseInt(v)<20){console.error('❌ Node.js 20+ required. Current: '+process.version);process.exit(1)}\" && prisma generate && next build",
+    "build:safe": "source ~/.nvm/nvm.sh && nvm use 20 && prisma generate && next build",
     "start": "node .next/standalone/server.js",
     "start:dev": "next start",
     "lint": "next lint",
