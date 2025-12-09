@@ -185,10 +185,21 @@ class AdminApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete tour: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to delete tour: ${response.statusText}`);
     }
 
-    return response.json();
+    // El endpoint DELETE devuelve 204 No Content, así que retornamos éxito sin parsear JSON
+    if (response.status === 204) {
+      return { success: true };
+    }
+
+    // Si hay contenido, intentar parsear JSON
+    try {
+      return await response.json();
+    } catch {
+      return { success: true };
+    }
   }
 
   /**
