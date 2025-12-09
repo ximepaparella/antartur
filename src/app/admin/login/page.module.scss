@@ -1,0 +1,68 @@
+@use "@/styles/variables" as *;
+
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  padding: $spacing-24;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 400px;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: $spacing-48;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-32;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  margin-bottom: $spacing-8;
+}
+
+.subtitle {
+  font-size: $font-size-16;
+  color: $gray-600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.errorMessage {
+  padding: $spacing-12;
+  background: $error-bg;
+  border: 1px solid $error-border;
+  border-radius: 8px;
+  color: $error-text;
+  font-size: $font-size-14;
+  text-align: center;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: $spacing-8;
+}
+
+.footer {
+  margin-top: $spacing-32;
+  text-align: center;
+}
+
+.helpText {
+  font-size: $font-size-12;
+  color: $gray-500;
+}
+

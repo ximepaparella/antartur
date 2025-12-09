@@ -1,0 +1,183 @@
+@use "@/styles/variables" as *;
+
+.iconPicker {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  position: relative;
+}
+
+.label {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $spacing-12 $spacing-16;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &:disabled {
+    background: $gray-50;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.open {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+}
+
+.selectedValue {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  color: $gray-700;
+}
+
+.placeholder {
+  color: $gray-400;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  color: $gray-500;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    color: $error-color;
+    background: $error-bg;
+  }
+}
+
+.chevron {
+  color: $gray-500;
+  transition: transform 0.2s ease;
+
+  .open & {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: $spacing-4;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  padding: $spacing-12;
+  border-bottom: 1px solid $gray-100;
+  gap: $spacing-8;
+}
+
+.searchIcon {
+  color: $gray-400;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: $font-size-14;
+  color: $gray-700;
+
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-4;
+  padding: $spacing-8;
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.iconOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-4;
+  padding: $spacing-8;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  color: $gray-600;
+
+  &:hover {
+    background: $gray-50;
+    color: $primary-color;
+  }
+
+  &.selected {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+.iconLabel {
+  font-size: $font-size-12;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $spacing-24;
+  color: $gray-500;
+  font-size: $font-size-14;
+}
+

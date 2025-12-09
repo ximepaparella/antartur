@@ -1,0 +1,32 @@
+@use "@/styles/variables" as *;
+
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background: $gray-50;
+}
+
+.contentWrapper {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding: $spacing-32;
+  margin-top: 70px;
+  min-height: calc(100vh - 70px);
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    margin-left: 0;
+  }
+
+  .main {
+    padding: $spacing-16;
+  }
+}
+

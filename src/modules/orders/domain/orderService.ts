@@ -359,12 +359,21 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       return;
     }
 
-    const passengers = booking.passengers || [];
-    const passengerList = passengers.map((p) => ({
-      firstName: p.firstName,
-      lastName: p.lastName,
-      type: p.type,
-    }));
+  const passengers = booking.passengers || [];
+  const passengerList = passengers.map((p) => ({
+    firstName: p.firstName,
+    lastName: p.lastName,
+    type: p.type,
+    birthDate: p.birthDate ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0]) : null,
+    documentType: p.documentType || null,
+    documentNumber: p.documentNumber || null,
+    nationality: p.nationality || null,
+    email: p.email || null,
+    phone: p.phone || null,
+    restrictions: (p.restrictions && typeof p.restrictions === 'object' && !Array.isArray(p.restrictions)) 
+      ? p.restrictions as Record<string, any> 
+      : null,
+  }));
 
     const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
     const startTime = booking.startTimeSnapshot || departure.startTime;
@@ -378,6 +387,7 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       tourName: booking.tourNameSnapshot || tour.name,
       departureDate,
       startTime,
+      meetingPoint: booking.meetingPointSnapshot || null,
       numAdults: booking.numAdults,
       numChildren: booking.numChildren,
       totalAmount: Number(order.totalAmount),
@@ -665,11 +675,19 @@ export async function sendOrderEmails(order: {
     numChildren: number;
     departureDateSnapshot?: Date | string;
     startTimeSnapshot?: string;
+    meetingPointSnapshot?: string | null;
     tourNameSnapshot?: string;
     passengers?: Array<{
       firstName: string;
       lastName: string;
       type: string;
+      birthDate?: Date | string | null;
+      documentType?: string | null;
+      documentNumber?: string | null;
+      nationality?: string | null;
+      email?: string | null;
+      phone?: string | null;
+      restrictions?: any;
     }>;
     tourDeparture?: {
       departureDate: Date;
@@ -701,6 +719,17 @@ export async function sendOrderEmails(order: {
     firstName: p.firstName,
     lastName: p.lastName,
     type: p.type,
+    birthDate: p.birthDate 
+      ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0])
+      : null,
+    documentType: p.documentType || null,
+    documentNumber: p.documentNumber || null,
+    nationality: p.nationality || null,
+    email: p.email || null,
+    phone: p.phone || null,
+    restrictions: (p.restrictions && typeof p.restrictions === 'object' && !Array.isArray(p.restrictions)) 
+      ? p.restrictions as Record<string, any> 
+      : null,
   }));
 
   const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
@@ -756,6 +785,7 @@ export async function sendOrderEmails(order: {
       tourName: booking.tourNameSnapshot || tour.name,
       departureDate,
       startTime,
+      meetingPoint: booking.meetingPointSnapshot || null,
       numAdults: booking.numAdults,
       numChildren: booking.numChildren,
       totalAmount: Number(order.totalAmount),

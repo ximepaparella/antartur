@@ -6,6 +6,72 @@ import { z } from "zod";
 import { paginationSchema, commonFiltersSchema, idSchema, slugSchema, currencyCodeSchema, priceSchema } from "@/lib/validation/schemas";
 
 /**
+ * Schema para imagen de tour
+ */
+export const tourImageSchema = z.object({
+  id: z.string().optional(),
+  imageType: z.enum(["FEATURED", "HERO", "GALLERY"]),
+  url: z.string().min(1),
+  altText: z.string().min(1),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Schema para timeline item
+ */
+export const timelineItemSchema = z.object({
+  id: z.string().optional(),
+  timeLabel: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Schema para featured info
+ */
+export const featuredInfoSchema = z.object({
+  id: z.string().optional(),
+  icon: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Schema para testimonial
+ */
+export const testimonialSchema = z.object({
+  id: z.string().optional(),
+  text: z.string().min(1),
+  author: z.string().min(1),
+  avatar: z.string().min(1),
+  country: z.string().min(1),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Schema para quick info item
+ */
+export const quickInfoItemSchema = z.object({
+  id: z.string().optional(),
+  icon: z.string().min(1),
+  label: z.string().min(1),
+  value: z.string().min(1),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Schema para precio de tour
+ */
+export const tourPriceSchema = z.object({
+  id: z.string().optional(),
+  currency: z.string().min(1),
+  priceAdult: z.coerce.number().min(0),
+  priceChild: z.coerce.number().min(0),
+});
+
+/**
  * Schema para crear un Tour
  */
 export const createTourSchema = z.object({
@@ -28,11 +94,64 @@ export const createTourSchema = z.object({
 
 export type CreateTourInput = z.infer<typeof createTourSchema>;
 
+// Helper para convertir valores vacíos a null antes de la coerción numérica
+const nullableNumber = z.preprocess(
+  (val) => (val === "" || val === null || val === undefined ? null : val),
+  z.coerce.number().int().min(0).nullable()
+);
+
 /**
- * Schema para actualizar un Tour
+ * Schema para actualizar un Tour (incluye relaciones)
+ * Todos los campos son opcionales para update parcial
+ * Campos nullable: los que son nullable en Prisma schema (String?)
  */
-export const updateTourSchema = createTourSchema.partial().extend({
+export const updateTourSchema = z.object({
   slug: slugSchema.optional(),
+  name: z.string().min(1).max(200).optional(),
+  subtitle: z.string().max(300).optional().nullable(), // nullable en Prisma
+  category: z.string().optional(),
+  difficulty: z.string().optional(),
+  durationHours: z.coerce.number().int().positive().optional(),
+  featuredImage: z.string().optional(),
+  heroImage: z.string().optional(),
+  shortDescription: z.string().optional(),
+  longDescription: z.string().optional(),
+  restrictionText: z.string().optional(), // NOT nullable en Prisma
+  isActive: z.boolean().optional(),
+  // Restricciones - nullable en Prisma (con preprocess para valores vacíos)
+  minAge: nullableNumber.optional(),
+  minPassengers: nullableNumber.optional(),
+  // Relaciones opcionales para actualización
+  images: z.array(tourImageSchema).optional(),
+  timelineItems: z.array(timelineItemSchema).optional(),
+  featuredInfos: z.array(featuredInfoSchema).optional(),
+  testimonials: z.array(testimonialSchema).optional(),
+  quickInfoItems: z.array(quickInfoItemSchema).optional(),
+  // Precios
+  prices: z.array(tourPriceSchema).optional(),
+  // SEO fields - nullable en Prisma
+  metaTitle: z.string().max(200).optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  canonicalUrl: z.string().optional().nullable(),
+  ogImage: z.string().optional().nullable(),
+  // CTA fields - nullable en Prisma
+  ctaLabel: z.string().optional().nullable(),
+  ctaHref: z.string().optional().nullable(),
+  // Alternative pricing - nullable en Prisma
+  alternativeText: z.string().optional().nullable(),
+  alternativePrice: z.string().optional().nullable(),
+  // Timeline note - nullable en Prisma
+  timelineImportantNote: z.string().optional().nullable(),
+  // Hero subheadline - nullable en Prisma
+  heroSubheadline: z.string().optional().nullable(),
+  // Weekdays - boolean con default true en Prisma
+  mondayAvailable: z.boolean().optional(),
+  tuesdayAvailable: z.boolean().optional(),
+  wednesdayAvailable: z.boolean().optional(),
+  thursdayAvailable: z.boolean().optional(),
+  fridayAvailable: z.boolean().optional(),
+  saturdayAvailable: z.boolean().optional(),
+  sundayAvailable: z.boolean().optional(),
 });
 
 export type UpdateTourInput = z.infer<typeof updateTourSchema>;

@@ -1,0 +1,36 @@
+@use "@/styles/variables" as *;
+
+.badge {
+  display: inline-block;
+  padding: $spacing-4 $spacing-12;
+  border-radius: 12px;
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.success {
+  background: $success-bg;
+  color: $success-color;
+  border: 1px solid $success-border;
+}
+
+.warning {
+  background: $warning-bg;
+  color: $warning-text;
+  border: 1px solid $warning-border;
+}
+
+.error {
+  background: $error-bg;
+  color: $error-text;
+  border: 1px solid $error-border;
+}
+
+.default {
+  background: $gray-100;
+  color: $gray-700;
+  border: 1px solid $gray-200;
+}
+

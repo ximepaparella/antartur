@@ -111,7 +111,16 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
   const { id } = await context.params;
   const body = await request.json();
-  const data = { ...body, tourId: id };
+  // Convertir 'date' a 'departureDate' si viene como 'date' (compatibilidad con frontend)
+  const data = { 
+    ...body, 
+    tourId: id,
+    departureDate: body.departureDate || body.date,
+  };
+  // Eliminar 'date' si existe para evitar conflictos
+  if (data.date) {
+    delete (data as any).date;
+  }
 
   const availability = await controller.create(data);
   return createdResponse(availability);

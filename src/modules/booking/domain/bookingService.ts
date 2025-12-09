@@ -33,8 +33,21 @@ export class BookingService {
       throw new NotFoundError("Order", orderId);
     }
 
-    const bookings = await bookingRepository.findAll(orderId);
-    return bookings;
+    const result = await bookingRepository.findAll(orderId);
+    return result.data;
+  }
+
+  /**
+   * Listar bookings con paginación y filtros
+   */
+  async listBookings(params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    orderId?: string;
+  }) {
+    const { page = 1, limit = 10, status, orderId } = params;
+    return bookingRepository.findAll(orderId, status, page, limit);
   }
 
   /**

@@ -1,0 +1,91 @@
+@use "@/styles/variables" as *;
+
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: $primary-color;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  padding: $spacing-24;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logoText {
+  font-family: $font-secondary;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  color: $white;
+  margin: 0 0 $spacing-4 0;
+}
+
+.logoSubtext {
+  font-size: $font-size-12;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav {
+  flex: 1;
+  padding: $spacing-16 0;
+  overflow-y: auto;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  margin: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  padding: $spacing-12 $spacing-24;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: $font-size-16;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: $white;
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: $white;
+    border-left-color: $tertiary-color;
+    font-weight: $font-weight-medium;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+}
+

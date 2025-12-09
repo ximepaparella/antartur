@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Work_Sans, Roboto } from "next/font/google";
-import { Header } from "@/modules/layout/components/Header/Header";
-import { Footer } from "@/modules/layout/components/Footer/Footer";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoundaryClient";
 import { Providers } from "@/components/providers/Providers";
 import "@/styles/globals.scss";
@@ -65,9 +64,7 @@ export default function RootLayout({
       <body>
         <ErrorBoundaryClient>
           <Providers>
-            <Header />
-            {children}
-            <Footer />
+            <ConditionalLayout>{children}</ConditionalLayout>
           </Providers>
         </ErrorBoundaryClient>
       </body>

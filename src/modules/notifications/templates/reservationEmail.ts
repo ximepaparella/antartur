@@ -10,6 +10,7 @@ export interface ReservationEmailData {
   tourName: string;
   departureDate: string;
   startTime: string;
+  meetingPoint?: string | null;
   numAdults: number;
   numChildren: number;
   totalAmount: number;
@@ -18,6 +19,13 @@ export interface ReservationEmailData {
     firstName: string;
     lastName: string;
     type: string;
+    birthDate?: string | null;
+    documentType?: string | null;
+    documentNumber?: string | null;
+    nationality?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    restrictions?: Record<string, any> | null;
   }>;
   additionals?: Array<{
     name: string;
@@ -92,6 +100,14 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
                     <span style="color: #333333;">${data.startTime}</span>
                   </td>
                 </tr>
+                ${data.meetingPoint ? `
+                <tr>
+                  <td style="padding-bottom: 10px;">
+                    <strong style="color: #1a1a1a;">Punto de encuentro:</strong>
+                    <span style="color: #333333;">${data.meetingPoint}</span>
+                  </td>
+                </tr>
+                ` : ""}
                 <tr>
                   <td style="padding-bottom: 10px;">
                     <strong style="color: #1a1a1a;">Pasajeros:</strong>
@@ -117,13 +133,80 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
               <!-- Passengers List -->
               <h2 style="color: #1a1a1a; font-size: 20px; margin: 30px 0 15px 0;">Pasajeros</h2>
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
-                ${data.passengers.map((passenger, index) => `
+                ${data.passengers.map((passenger, index) => {
+                  const calculateAge = (birthDate: string | null | undefined): number | null => {
+                    if (!birthDate) return null;
+                    const birth = new Date(birthDate);
+                    const today = new Date();
+                    let age = today.getFullYear() - birth.getFullYear();
+                    const monthDiff = today.getMonth() - birth.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                      age--;
+                    }
+                    return age;
+                  };
+                  
+                  const age = calculateAge(passenger.birthDate);
+                  const typeLabel = passenger.type === "ADULT" ? "Adulto" : 
+                                   passenger.type === "CHILD" ? "Niño" : "Infante";
+                  const ageText = age !== null ? `, ${age} años` : "";
+                  const documentText = passenger.documentType && passenger.documentNumber 
+                    ? `, ${passenger.documentType} ${passenger.documentNumber}` : "";
+                  const nationalityText = passenger.nationality ? `, ${passenger.nationality}` : "";
+                  
+                  const formatRestrictions = (restrictions: Record<string, any> | null | undefined): string => {
+                    if (!restrictions) return "";
+                    const parts: string[] = [];
+                    
+                    // Restricciones alimentarias (foodRestrictions)
+                    if (restrictions.foodRestrictions) {
+                      const foodRestrictions = restrictions.foodRestrictions;
+                      const foodParts: string[] = [];
+                      if (foodRestrictions.vegetariano) foodParts.push("Vegetariano");
+                      if (foodRestrictions.vegano) foodParts.push("Vegano");
+                      if (foodRestrictions.celiaco) foodParts.push("Celiaco");
+                      if (foodRestrictions.alergias) {
+                        foodParts.push(`Alergias${foodRestrictions.alergiasDetalle ? `: ${foodRestrictions.alergiasDetalle}` : ""}`);
+                      }
+                      if (foodParts.length > 0) {
+                        parts.push(`Restricciones alimentarias: ${foodParts.join(", ")}`);
+                      }
+                    }
+                    
+                    // Embarazo
+                    if (restrictions.pregnant) {
+                      parts.push("Embarazada");
+                    }
+                    
+                    // Problemas de salud/columna
+                    if (restrictions.healthIssues) {
+                      parts.push("Problemas de columna/salud");
+                    }
+                    
+                    // Compatibilidad con formato antiguo (por si acaso)
+                    if (restrictions.dietary) parts.push(`Dietarias: ${restrictions.dietary}`);
+                    if (restrictions.medical) parts.push(`Médicas: ${restrictions.medical}`);
+                    if (restrictions.mobility) parts.push(`Movilidad: ${restrictions.mobility}`);
+                    if (restrictions.other) parts.push(`Otras: ${restrictions.other}`);
+                    
+                    return parts.length > 0 ? parts.join("; ") : "";
+                  };
+                  
+                  const restrictionsText = formatRestrictions(passenger.restrictions);
+                  
+                  return `
                 <tr>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">
-                    <strong>${index + 1}.</strong> ${passenger.firstName} ${passenger.lastName} (${passenger.type})
+                  <td style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                    <strong>${index + 1}.</strong> ${passenger.firstName} ${passenger.lastName} (${typeLabel}${ageText})
+                    ${documentText ? `<br><span style="color: #666; font-size: 14px;">Documento: ${documentText.substring(2)}</span>` : ""}
+                    ${nationalityText ? `<br><span style="color: #666; font-size: 14px;">Nacionalidad: ${nationalityText.substring(2)}</span>` : ""}
+                    ${passenger.email ? `<br><span style="color: #666; font-size: 14px;">Email: ${passenger.email}</span>` : ""}
+                    ${passenger.phone ? `<br><span style="color: #666; font-size: 14px;">Teléfono: ${passenger.phone}</span>` : ""}
+                    ${restrictionsText ? `<br><span style="color: #d32f2f; font-size: 14px;"><strong>Restricciones:</strong> ${restrictionsText}</span>` : ""}
                   </td>
                 </tr>
-                `).join("")}
+                `;
+                }).join("")}
               </table>
               
               <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
@@ -167,7 +250,72 @@ Detalles:
 ${data.additionals && data.additionals.length > 0 ? `- Adicionales: ${data.additionals.map(a => a.name).join(", ")}\n` : ""}- Total: ${data.currency === "USD" ? "$" : "$"} ${data.totalAmount.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 
 Pasajeros:
-${data.passengers.map((p, i) => `${i + 1}. ${p.firstName} ${p.lastName} (${p.type})`).join("\n")}
+${data.passengers.map((p, i) => {
+  const calculateAge = (birthDate: string | null | undefined): number | null => {
+    if (!birthDate) return null;
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+  
+  const age = calculateAge(p.birthDate);
+  const typeLabel = p.type === "ADULT" ? "Adulto" : p.type === "CHILD" ? "Niño" : "Infante";
+  const ageText = age !== null ? `, ${age} años` : "";
+  const documentText = p.documentType && p.documentNumber ? `, ${p.documentType} ${p.documentNumber}` : "";
+  const nationalityText = p.nationality ? `, ${p.nationality}` : "";
+  
+  const formatRestrictions = (restrictions: Record<string, any> | null | undefined): string => {
+    if (!restrictions) return "";
+    const parts: string[] = [];
+    
+    // Restricciones alimentarias (foodRestrictions)
+    if (restrictions.foodRestrictions) {
+      const foodRestrictions = restrictions.foodRestrictions;
+      const foodParts: string[] = [];
+      if (foodRestrictions.vegetariano) foodParts.push("Vegetariano");
+      if (foodRestrictions.vegano) foodParts.push("Vegano");
+      if (foodRestrictions.celiaco) foodParts.push("Celiaco");
+      if (foodRestrictions.alergias) {
+        foodParts.push(`Alergias${foodRestrictions.alergiasDetalle ? `: ${foodRestrictions.alergiasDetalle}` : ""}`);
+      }
+      if (foodParts.length > 0) {
+        parts.push(`Restricciones alimentarias: ${foodParts.join(", ")}`);
+      }
+    }
+    
+    // Embarazo
+    if (restrictions.pregnant) {
+      parts.push("Embarazada");
+    }
+    
+    // Problemas de salud/columna
+    if (restrictions.healthIssues) {
+      parts.push("Problemas de columna/salud");
+    }
+    
+    // Compatibilidad con formato antiguo (por si acaso)
+    if (restrictions.dietary) parts.push(`Dietarias: ${restrictions.dietary}`);
+    if (restrictions.medical) parts.push(`Médicas: ${restrictions.medical}`);
+    if (restrictions.mobility) parts.push(`Movilidad: ${restrictions.mobility}`);
+    if (restrictions.other) parts.push(`Otras: ${restrictions.other}`);
+    
+    return parts.length > 0 ? parts.join("; ") : "";
+  };
+  
+  const restrictionsText = formatRestrictions(p.restrictions);
+  let passengerInfo = `${i + 1}. ${p.firstName} ${p.lastName} (${typeLabel}${ageText})`;
+  if (documentText) passengerInfo += `\n   Documento: ${documentText.substring(2)}`;
+  if (nationalityText) passengerInfo += `\n   Nacionalidad: ${nationalityText.substring(2)}`;
+  if (p.email) passengerInfo += `\n   Email: ${p.email}`;
+  if (p.phone) passengerInfo += `\n   Teléfono: ${p.phone}`;
+  if (restrictionsText) passengerInfo += `\n   Restricciones: ${restrictionsText}`;
+  return passengerInfo;
+}).join("\n\n")}
 
 Si tienes alguna pregunta, contacta a agencias@antartur.tur.ar
 

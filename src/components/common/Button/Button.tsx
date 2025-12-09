@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./Button.module.scss";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline";
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline" | "danger";
 export type ButtonSize = "small" | "medium" | "large";
 
 interface ButtonBaseProps {
@@ -39,11 +39,12 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 /**
  * Componente Button genérico reutilizable
  * 
- * Soporta cuatro variantes:
+ * Soporta cinco variantes:
  * - `primary`: Fondo con color primario y texto blanco
  * - `secondary`: Fondo transparente con borde blanco y texto blanco
  * - `tertiary`: Fondo con color terciario y texto blanco
  * - `outline`: Fondo transparente con borde y texto en color primario
+ * - `danger`: Fondo rojo para acciones destructivas
  * 
  * Puede renderizarse como botón (`<button>`) o como link (`<Link>` de Next.js).
  * 

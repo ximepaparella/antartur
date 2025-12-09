@@ -1,0 +1,64 @@
+@use "@/styles/variables" as *;
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tourTitle {
+  font-family: $font-roboto;
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-24 0;
+  line-height: $line-height-tight;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-32;
+  gap: $spacing-16;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-12;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: $spacing-48;
+  color: $gray-600;
+}
+
+.error {
+  color: $error-color;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+}
+
+.preview {
+  border: 2px solid $gray-200;
+  border-radius: 8px;
+  padding: $spacing-24;
+  background: $white;
+  min-height: 600px;
+}
+

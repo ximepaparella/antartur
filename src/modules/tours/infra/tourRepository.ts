@@ -2,7 +2,7 @@
  * Repositorio para acceso a datos de Tours usando Prisma
  */
 
-import type { CreateTourInput, UpdateTourInput } from "../domain/types";
+import type { CreateTourInput, UpdateTourBasicInput } from "../domain/types";
 import { prisma } from "@/lib/db";
 
 export class TourRepository {
@@ -190,7 +190,7 @@ export class TourRepository {
     });
   }
 
-  async update(id: string, data: UpdateTourInput) {
+  async update(id: string, data: UpdateTourBasicInput) {
     return prisma.tour.update({
       where: { id },
       data,

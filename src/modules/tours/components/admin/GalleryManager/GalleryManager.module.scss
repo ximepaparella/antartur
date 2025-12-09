@@ -1,0 +1,229 @@
+@use "@/styles/variables" as *;
+
+.galleryManager {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  padding: $spacing-24;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-16;
+}
+
+.title {
+  font-family: $font-secondary;
+  font-size: $font-size-18;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+  margin: 0;
+}
+
+.uploadControls {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.fileInput {
+  display: none;
+}
+
+.error {
+  font-size: $font-size-14;
+  color: $error-color;
+  padding: $spacing-12;
+  background: $error-bg;
+  border-radius: 6px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-48;
+  background: $gray-50;
+  border: 2px dashed $gray-200;
+  border-radius: 8px;
+  gap: $spacing-16;
+
+  p {
+    color: $gray-500;
+    margin: 0;
+  }
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: $spacing-16;
+}
+
+.imageCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: $gray-50;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.dragging {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-color: $primary-color;
+  }
+}
+
+.dragHandle {
+  position: absolute;
+  top: $spacing-8;
+  left: $spacing-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba($white, 0.9);
+  border: none;
+  border-radius: 4px;
+  cursor: grab;
+  color: $gray-500;
+  z-index: 2;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $white;
+    color: $primary-color;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.imagePreview {
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.imageInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-8 $spacing-12;
+  background: $white;
+  border-top: 1px solid $gray-100;
+}
+
+.altText {
+  font-size: $font-size-12;
+  color: $gray-600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
+}
+
+.order {
+  font-size: $font-size-12;
+  color: $gray-400;
+  font-weight: $font-weight-medium;
+}
+
+.imageActions {
+  position: absolute;
+  top: $spacing-8;
+  right: $spacing-8;
+  display: flex;
+  gap: $spacing-4;
+  z-index: 2;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba($white, 0.9);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: $gray-600;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $white;
+    color: $primary-color;
+  }
+
+  &.removeBtn:hover {
+    color: $error-color;
+  }
+}
+
+.hint {
+  font-size: $font-size-12;
+  color: $gray-500;
+  text-align: center;
+  margin: 0;
+}
+
+// Edit Modal
+.editModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $overlay-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.editContent {
+  background: $white;
+  padding: $spacing-24;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  h4 {
+    font-family: $font-secondary;
+    font-size: $font-size-18;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 $spacing-16 0;
+    color: $gray-700;
+  }
+}
+
+.editActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-8;
+  margin-top: $spacing-16;
+}
+

@@ -7,13 +7,50 @@ import type { CreateBookingInput } from "../domain/types";
 import { prisma } from "@/lib/db";
 
 export class BookingRepository {
-  async findAll(orderId?: string) {
-    return prisma.booking.findMany({
-      where: orderId ? { orderId } : undefined,
-      include: {
-        passengers: true,
-      },
-    });
+  async findAll(orderId?: string, status?: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const where: Record<string, unknown> = {};
+    
+    if (orderId) {
+      where.orderId = orderId;
+    }
+    if (status) {
+      where.status = status;
+    }
+
+    const [bookings, total] = await Promise.all([
+      prisma.booking.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          passengers: true,
+          order: {
+            select: {
+              id: true,
+              code: true,
+            },
+          },
+          tourDeparture: {
+            include: {
+              tour: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      prisma.booking.count({ where }),
+    ]);
+
+    return { data: bookings, total, page, limit };
   }
 
   async findById(id: string) {

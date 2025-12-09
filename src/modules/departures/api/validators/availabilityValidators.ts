@@ -12,7 +12,7 @@ export const createAvailabilitySchema = z.object({
   tourId: idSchema,
   departureDate: dateSchema,
   startTime: timeSchema,
-  endTime: timeSchema.optional(),
+  endTime: timeSchema.optional().nullable(),
   seatsTotal: z.coerce.number().int().positive("Seats total must be positive"),
   isActive: z.boolean().default(true),
 });

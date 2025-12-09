@@ -1,0 +1,323 @@
+@use "@/styles/variables" as *;
+
+.availabilityManager {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+  padding: $spacing-24;
+  background: $white;
+  border-radius: $spacing-12;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid $gray-100;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: $spacing-16;
+}
+
+.title {
+  font-family: $font-secondary;
+  font-size: $font-size-20;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-16;
+  padding: $spacing-8 $spacing-16;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-100;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-600;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+
+  &.available {
+    background: $tertiary-color;
+  }
+
+  &.low {
+    background: $warning-border;
+  }
+
+  &.full {
+    background: $error-color;
+  }
+
+  &.inactive {
+    background: $gray-400;
+  }
+}
+
+.calendarNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-32;
+  padding: $spacing-16 $spacing-24;
+  background: linear-gradient(135deg, $gray-50 0%, $white 100%);
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+}
+
+.monthYear {
+  font-family: $font-secondary;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  margin: 0;
+  min-width: 240px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.error {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $error-color;
+  padding: $spacing-16;
+  background: $error-bg;
+  border: 1px solid rgba($error-color, 0.2);
+  border-radius: $spacing-8;
+  text-align: center;
+}
+
+.loading {
+  text-align: center;
+  padding: $spacing-48;
+  color: $gray-500;
+  font-family: $font-secondary;
+  font-size: $font-size-16;
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  background: linear-gradient(180deg, $gray-50 0%, rgba($gray-50, 0.5) 100%);
+  padding: $spacing-20;
+  border-radius: $spacing-12;
+  border: 1px solid $gray-200;
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-8;
+  margin-bottom: $spacing-8;
+}
+
+.weekDay {
+  text-align: center;
+  font-family: $font-secondary;
+  font-size: $font-size-12;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  padding: $spacing-12;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: $white;
+  border-radius: $spacing-4;
+  border: 1px solid $gray-100;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-8;
+}
+
+// Modal
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $overlay-bg-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-16;
+}
+
+.modalContent {
+  background: $white;
+  border-radius: $spacing-12;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-20 $spacing-24;
+  border-bottom: 1px solid $gray-100;
+  background: $gray-50;
+
+  h4 {
+    font-family: $font-secondary;
+    font-size: $font-size-18;
+    font-weight: $font-weight-bold;
+    margin: 0;
+    color: $gray-700;
+  }
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-8;
+  cursor: pointer;
+  color: $gray-500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $white;
+    border-color: $gray-300;
+    color: $gray-700;
+  }
+}
+
+.modalBody {
+  padding: $spacing-24;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-20;
+}
+
+.dateLabel {
+  font-family: $font-secondary;
+  font-size: $font-size-16;
+  color: $primary-color;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+  text-transform: capitalize;
+  padding: $spacing-8 $spacing-12;
+  background: rgba($primary-color, 0.08);
+  border-radius: $spacing-4;
+  display: inline-block;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.seatsInfo {
+  display: flex;
+  gap: $spacing-16;
+  padding: $spacing-16;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-100;
+}
+
+.seatsStat {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  flex: 1;
+  text-align: center;
+
+  span {
+    font-family: $font-secondary;
+    font-size: $font-size-12;
+    font-weight: $font-weight-medium;
+    color: $gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  strong {
+    font-family: $font-secondary;
+    font-size: $font-size-20;
+    font-weight: $font-weight-bold;
+    color: $gray-700;
+  }
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  cursor: pointer;
+  padding: $spacing-8;
+  border-radius: $spacing-4;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $gray-50;
+  }
+
+  input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: $primary-color;
+  }
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-16 $spacing-24;
+  border-top: 1px solid $gray-100;
+  background: $gray-50;
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-12;
+}
+
+.deleteBtn {
+  color: $error-color;
+  border-color: $error-color;
+
+  &:hover {
+    background: $error-bg;
+    border-color: $error-color;
+  }
+}

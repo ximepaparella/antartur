@@ -1,0 +1,93 @@
+@use "@/styles/variables" as *;
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-32;
+  gap: $spacing-16;
+}
+
+.title {
+  font-size: $font-size-32;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-8 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-16;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.label {
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: $font-size-16;
+  color: $gray-700;
+}
+
+.subject {
+  font-size: $font-size-18;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin: 0;
+}
+
+.body {
+  font-size: $font-size-16;
+  color: $gray-700;
+  line-height: 1.6;
+}
+
+.errorMessage {
+  padding: $spacing-16;
+  background: $error-bg;
+  border: 1px solid $error-border;
+  border-radius: 8px;
+  color: $error-text;
+
+  p {
+    margin: 0 0 $spacing-16 0;
+  }
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: $spacing-48;
+  color: $gray-600;
+}
+
+.error {
+  color: $error-color;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+}
+
