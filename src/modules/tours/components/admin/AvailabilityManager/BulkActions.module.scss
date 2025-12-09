@@ -3,12 +3,12 @@
 .bulkActions {
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
-  padding: $spacing-16;
-  background: $white;
+  gap: $spacing-20;
+  padding: $spacing-20;
+  background: linear-gradient(135deg, rgba($primary-color, 0.03) 0%, $white 100%);
   border: 2px solid $primary-color;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba($primary-color, 0.1);
+  border-radius: $spacing-12;
+  box-shadow: 0 4px 16px rgba($primary-color, 0.12);
 }
 
 .rangeButton {
@@ -19,6 +19,10 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-12;
+  padding: $spacing-16;
+  background: $white;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
 }
 
 .rangeInputs {
@@ -37,50 +41,58 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-12;
-  background: $gray-50;
-  border-radius: 6px;
+  padding: $spacing-16;
+  background: rgba($primary-color, 0.08);
+  border-radius: $spacing-8;
+  border: 1px solid rgba($primary-color, 0.2);
 }
 
 .selectedCount {
   font-family: $font-secondary;
-  font-size: $font-size-14;
-  font-weight: $font-weight-semibold;
-  color: $gray-700;
+  font-size: $font-size-16;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
 }
 
 .error {
-  padding: $spacing-12;
+  padding: $spacing-16;
   background: $error-bg;
   color: $error-color;
-  border-radius: 6px;
+  border: 1px solid rgba($error-color, 0.2);
+  border-radius: $spacing-8;
+  font-family: $font-secondary;
   font-size: $font-size-14;
+  font-weight: $font-weight-medium;
   text-align: center;
 }
 
 .actionsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: $spacing-16;
 }
 
 .actionGroup {
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
-  padding: $spacing-12;
-  background: $gray-50;
-  border-radius: 6px;
+  gap: $spacing-12;
+  padding: $spacing-16;
+  background: $white;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .actionTitle {
   font-family: $font-secondary;
   font-size: $font-size-12;
-  font-weight: $font-weight-semibold;
-  color: $gray-600;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   margin: 0;
+  padding-bottom: $spacing-8;
+  border-bottom: 1px solid $gray-100;
 }
 
 .actionButtons {
@@ -92,13 +104,24 @@
 .actionForm {
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
+  gap: $spacing-12;
 }
 
 @media (min-width: 768px) {
   .actionForm {
     flex-direction: row;
     align-items: flex-end;
+    flex-wrap: wrap;
+    
+    > *:not(button) {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    > button {
+      flex: 0 0 auto;
+      min-width: 120px;
+      max-width: 150px;
+    }
   }
 }
-

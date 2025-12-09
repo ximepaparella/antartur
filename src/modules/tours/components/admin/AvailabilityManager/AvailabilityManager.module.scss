@@ -6,8 +6,9 @@
   gap: $spacing-24;
   padding: $spacing-24;
   background: $white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: $spacing-12;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid $gray-100;
 }
 
 .header {
@@ -20,8 +21,8 @@
 
 .title {
   font-family: $font-secondary;
-  font-size: $font-size-18;
-  font-weight: $font-weight-semibold;
+  font-size: $font-size-20;
+  font-weight: $font-weight-bold;
   color: $gray-700;
   margin: 0;
 }
@@ -30,23 +31,30 @@
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-16;
+  padding: $spacing-8 $spacing-16;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-100;
 }
 
 .legendItem {
   display: flex;
   align-items: center;
-  gap: $spacing-4;
-  font-size: $font-size-12;
+  gap: $spacing-8;
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
   color: $gray-600;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 
   &.available {
-    background: $success-color;
+    background: $tertiary-color;
   }
 
   &.low {
@@ -58,7 +66,7 @@
   }
 
   &.inactive {
-    background: $gray-300;
+    background: $gray-400;
   }
 }
 
@@ -66,30 +74,33 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: $spacing-24;
-  padding: $spacing-16;
-  background: $white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  gap: $spacing-32;
+  padding: $spacing-16 $spacing-24;
+  background: linear-gradient(135deg, $gray-50 0%, $white 100%);
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
 }
 
 .monthYear {
   font-family: $font-secondary;
-  font-size: $font-size-20;
-  font-weight: $font-weight-semibold;
-  color: $gray-700;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
   margin: 0;
-  min-width: 220px;
+  min-width: 240px;
   text-align: center;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 
 .error {
+  font-family: $font-secondary;
   font-size: $font-size-14;
+  font-weight: $font-weight-medium;
   color: $error-color;
-  padding: $spacing-12;
+  padding: $spacing-16;
   background: $error-bg;
-  border-radius: 6px;
+  border: 1px solid rgba($error-color, 0.2);
+  border-radius: $spacing-8;
   text-align: center;
 }
 
@@ -97,16 +108,18 @@
   text-align: center;
   padding: $spacing-48;
   color: $gray-500;
+  font-family: $font-secondary;
+  font-size: $font-size-16;
 }
 
 .calendar {
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
-  background: $gray-50;
-  padding: $spacing-16;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  gap: $spacing-12;
+  background: linear-gradient(180deg, $gray-50 0%, rgba($gray-50, 0.5) 100%);
+  padding: $spacing-20;
+  border-radius: $spacing-12;
+  border: 1px solid $gray-200;
 }
 
 .weekDays {
@@ -114,30 +127,27 @@
   grid-template-columns: repeat(7, 1fr);
   gap: $spacing-8;
   margin-bottom: $spacing-8;
-  padding: 0 $spacing-4;
 }
 
 .weekDay {
   text-align: center;
   font-family: $font-secondary;
   font-size: $font-size-12;
-  font-weight: $font-weight-semibold;
-  color: $gray-600;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
   padding: $spacing-12;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: $gray-50;
-  border-radius: 6px;
+  letter-spacing: 1px;
+  background: $white;
+  border-radius: $spacing-4;
+  border: 1px solid $gray-100;
 }
 
 .daysGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: $spacing-8;
-  padding: 0 $spacing-4;
 }
-
-// Day Cell styles moved to DayCell.module.scss
 
 // Modal
 .modal {
@@ -146,19 +156,20 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: $overlay-bg;
+  background: $overlay-bg-dark;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: $spacing-16;
 }
 
 .modalContent {
   background: $white;
-  border-radius: 12px;
+  border-radius: $spacing-12;
   width: 100%;
-  max-width: 450px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 480px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
   overflow: hidden;
 }
 
@@ -166,13 +177,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-16 $spacing-24;
+  padding: $spacing-20 $spacing-24;
   border-bottom: 1px solid $gray-100;
+  background: $gray-50;
 
   h4 {
     font-family: $font-secondary;
     font-size: $font-size-18;
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
     margin: 0;
     color: $gray-700;
   }
@@ -182,16 +194,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: transparent;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-8;
   cursor: pointer;
   color: $gray-500;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: $gray-100;
+    background: $white;
+    border-color: $gray-300;
     color: $gray-700;
   }
 }
@@ -200,32 +214,39 @@
   padding: $spacing-24;
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
+  gap: $spacing-20;
 }
 
 .dateLabel {
-  font-size: $font-size-14;
+  font-family: $font-secondary;
+  font-size: $font-size-16;
   color: $primary-color;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   margin: 0;
   text-transform: capitalize;
+  padding: $spacing-8 $spacing-12;
+  background: rgba($primary-color, 0.08);
+  border-radius: $spacing-4;
+  display: inline-block;
 }
 
 .formRow {
   display: flex;
+  flex-direction: column;
   gap: $spacing-16;
 
   > * {
-    flex: 1;
+    width: 100%;
   }
 }
 
 .seatsInfo {
   display: flex;
   gap: $spacing-16;
-  padding: $spacing-12;
+  padding: $spacing-16;
   background: $gray-50;
-  border-radius: 6px;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-100;
 }
 
 .seatsStat {
@@ -236,12 +257,18 @@
   text-align: center;
 
   span {
+    font-family: $font-secondary;
     font-size: $font-size-12;
+    font-weight: $font-weight-medium;
     color: $gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   strong {
-    font-size: $font-size-16;
+    font-family: $font-secondary;
+    font-size: $font-size-20;
+    font-weight: $font-weight-bold;
     color: $gray-700;
   }
 }
@@ -249,15 +276,25 @@
 .checkboxLabel {
   display: flex;
   align-items: center;
-  gap: $spacing-8;
+  gap: $spacing-12;
+  font-family: $font-secondary;
   font-size: $font-size-14;
+  font-weight: $font-weight-medium;
   color: $gray-700;
   cursor: pointer;
+  padding: $spacing-8;
+  border-radius: $spacing-4;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $gray-50;
+  }
 
   input {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
+    accent-color: $primary-color;
   }
 }
 
@@ -272,7 +309,7 @@
 
 .modalActions {
   display: flex;
-  gap: $spacing-8;
+  gap: $spacing-12;
 }
 
 .deleteBtn {
@@ -281,6 +318,6 @@
 
   &:hover {
     background: $error-bg;
+    border-color: $error-color;
   }
 }
-

@@ -105,6 +105,22 @@
   }
 }
 
+.buttonDanger {
+  background-color: $error-color;
+  color: $white;
+  border: 2px solid $error-color;
+  font-weight: 400;
+  
+  &:hover:not(:disabled) {
+    background-color: color.adjust($error-color, $lightness: -10%);
+    border-color: color.adjust($error-color, $lightness: -10%);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 // ============================================
 // SIZES
 // ============================================

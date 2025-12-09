@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
+import { Select } from "@/components/common/Select/Select";
 import { DayCell } from "./DayCell";
 import { BulkActions } from "./BulkActions";
 import styles from "./AvailabilityManager.module.scss";
@@ -15,6 +16,19 @@ const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
+
+// Generar opciones de horarios (cada hora en punto y y media, de 6:00 a 23:30)
+const generateTimeOptions = () => {
+  const options: Array<{ value: string; label: string }> = [];
+  for (let hour = 6; hour < 24; hour++) {
+    const hourStr = hour.toString().padStart(2, "0");
+    options.push({ value: `${hourStr}:00`, label: `${hourStr}:00` });
+    options.push({ value: `${hourStr}:30`, label: `${hourStr}:30` });
+  }
+  return options;
+};
+
+const TIME_OPTIONS = generateTimeOptions();
 
 export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: AvailabilityManagerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -229,10 +243,14 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   const handleSave = async () => {
     if (!selectedDate) return;
 
-    // Validar que el día de la semana esté disponible
+    // Advertir si el día de la semana está deshabilitado, pero permitir crear manualmente
     if (isWeekdayDisabled(selectedDate)) {
-      setError("Este día de la semana no está disponible para este tour");
-      return;
+      const confirmed = confirm(
+        "Este día de la semana está marcado como no disponible para este tour. ¿Deseas crear disponibilidad de todas formas?"
+      );
+      if (!confirmed) {
+        return;
+      }
     }
 
     setIsSaving(true);
@@ -248,7 +266,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             startTime: formStartTime,
-            endTime: formEndTime || null,
+            endTime: formEndTime && formEndTime.trim() ? formEndTime : null,
             seatsTotal: formSeatsTotal,
             isActive: formIsActive,
           }),
@@ -264,9 +282,9 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            date: dateStr,
+            departureDate: dateStr,
             startTime: formStartTime,
-            endTime: formEndTime || null,
+            endTime: formEndTime && formEndTime.trim() ? formEndTime : null,
             seatsTotal: formSeatsTotal,
           }),
         });
@@ -364,96 +382,150 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
       }
 
       // Procesar cada fecha
-      for (const date of dates) {
-        // Validar que el día de la semana esté disponible (excepto para disable)
-        if (action !== "disable" && isWeekdayDisabled(date)) {
-          continue; // Saltar días no disponibles
-        }
+      const errors: string[] = [];
+      let successCount = 0;
 
+      for (const date of dates) {
+        // Advertir pero permitir crear disponibilidad incluso si el día está deshabilitado
+        // (similar a la creación manual)
         const dateStr = date.toISOString().split("T")[0];
         const departure = getDepartureForDate(date);
 
-        if (action === "enable" || action === "disable") {
-          if (departure) {
-            await fetch(`/api/availability/${departure.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...departure,
-                isActive: action === "enable",
-              }),
-            });
+        try {
+          if (action === "enable" || action === "disable") {
+            if (departure) {
+              const response = await fetch(`/api/availability/${departure.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  ...departure,
+                  isActive: action === "enable",
+                }),
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
           } else if (action === "enable") {
             // Crear nueva disponibilidad si no existe
-            await fetch(`/api/tours/${tourId}/availability`, {
+            const response = await fetch(`/api/tours/${tourId}/availability`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                date: dateStr,
+                departureDate: dateStr,
                 startTime: "09:00",
                 seatsTotal: 20,
               }),
             });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            }
+          } else if (action === "setSeats") {
+            const seats = params.seats as number;
+            if (departure) {
+              const response = await fetch(`/api/availability/${departure.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  ...departure,
+                  seatsTotal: seats,
+                }),
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            } else {
+              // Crear nueva disponibilidad
+              const response = await fetch(`/api/tours/${tourId}/availability`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  departureDate: dateStr,
+                  startTime: "09:00",
+                  seatsTotal: seats,
+                }),
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            }
+          } else if (action === "setTime") {
+            const { startTime, endTime } = params;
+            if (departure) {
+              const response = await fetch(`/api/availability/${departure.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  ...departure,
+                  startTime,
+                  endTime: endTime || null,
+                }),
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            } else {
+              // Crear nueva disponibilidad
+              const response = await fetch(`/api/tours/${tourId}/availability`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  departureDate: dateStr,
+                  startTime,
+                  endTime: endTime || null,
+                  seatsTotal: 20,
+                }),
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            }
+          } else if (action === "delete") {
+            if (departure) {
+              const response = await fetch(`/api/availability/${departure.id}`, {
+                method: "DELETE",
+              });
+              const result = await response.json();
+              if (!result.success) {
+                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+              } else {
+                successCount++;
+              }
+            }
           }
-        } else if (action === "setSeats") {
-          const seats = params.seats as number;
-          if (departure) {
-            await fetch(`/api/availability/${departure.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...departure,
-                seatsTotal: seats,
-              }),
-            });
-          } else {
-            // Crear nueva disponibilidad
-            await fetch(`/api/tours/${tourId}/availability`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                date: dateStr,
-                startTime: "09:00",
-                seatsTotal: seats,
-              }),
-            });
-          }
-        } else if (action === "setTime") {
-          const { startTime, endTime } = params;
-          if (departure) {
-            await fetch(`/api/availability/${departure.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...departure,
-                startTime,
-                endTime: endTime || null,
-              }),
-            });
-          } else {
-            // Crear nueva disponibilidad
-            await fetch(`/api/tours/${tourId}/availability`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                date: dateStr,
-                startTime,
-                endTime: endTime || null,
-                seatsTotal: 20,
-              }),
-            });
-          }
-        } else if (action === "delete") {
-          if (departure) {
-            await fetch(`/api/availability/${departure.id}`, {
-              method: "DELETE",
-            });
-          }
+        } catch (err) {
+          errors.push(`${dateStr}: ${err instanceof Error ? err.message : "Error de conexión"}`);
         }
       }
 
+      // Recargar departures después de todas las operaciones
       await fetchDepartures();
       setSelectedDates([]);
+
+      // Mostrar mensaje de resultado
+      if (errors.length > 0) {
+        setError(`${successCount} día(s) procesado(s) correctamente. Errores: ${errors.join(", ")}`);
+      } else if (successCount > 0) {
+        setError(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error en acción masiva");
     } finally {
@@ -569,20 +641,39 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
               </p>
 
               <div className={styles.formRow}>
-                <Input
+                <Select
                   label="Hora inicio"
-                  type="time"
                   value={formStartTime}
                   onChange={(e) => setFormStartTime(e.target.value)}
-                  disabled={disabled}
+                  disabled={disabled || isSaving}
+                  options={[
+                    { value: "", label: "Seleccionar..." },
+                    ...TIME_OPTIONS,
+                  ]}
+                  required
                 />
-                <Input
+                <Select
                   label="Hora fin (opcional)"
-                  type="time"
                   value={formEndTime}
                   onChange={(e) => setFormEndTime(e.target.value)}
-                  disabled={disabled}
+                  disabled={disabled || isSaving}
+                  options={[
+                    { value: "", label: "Sin hora fin" },
+                    ...TIME_OPTIONS,
+                  ]}
                 />
+                {!disabled && (
+                  <div style={{ marginTop: '8px' }}>
+                    <Button 
+                      variant="primary" 
+                      onClick={handleSave} 
+                      disabled={isSaving || !formStartTime}
+                    >
+                      <Save size={16} />
+                      {isSaving ? "Guardando..." : "Guardar"}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <Input
@@ -642,10 +733,6 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                 <div className={styles.modalActions}>
                   <Button variant="outline" onClick={handleCloseModal} disabled={isSaving}>
                     Cancelar
-                  </Button>
-                  <Button variant="primary" onClick={handleSave} disabled={isSaving}>
-                    <Save size={16} />
-                    {isSaving ? "Guardando..." : "Guardar"}
                   </Button>
                 </div>
               </div>

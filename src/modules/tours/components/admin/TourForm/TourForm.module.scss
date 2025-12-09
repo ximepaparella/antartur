@@ -8,32 +8,36 @@
 
 .tabs {
   display: flex;
-  gap: $spacing-8;
+  gap: $spacing-4;
   border-bottom: 2px solid $gray-200;
   overflow-x: auto;
+  padding-bottom: 0;
 }
 
 .tab {
   font-family: $font-secondary;
-  padding: $spacing-12 $spacing-16;
+  padding: $spacing-12 $spacing-20;
   border: none;
   background: transparent;
   font-size: $font-size-14;
-  font-weight: $font-weight-medium;
-  color: $gray-600;
+  font-weight: $font-weight-semibold;
+  color: $gray-500;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   margin-bottom: -2px;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  border-radius: $spacing-4 $spacing-4 0 0;
 
   &:hover {
-    color: $gray-900;
+    color: $gray-700;
+    background: $gray-50;
   }
 
   &.active {
     color: $primary-color;
     border-bottom-color: $primary-color;
+    background: rgba($primary-color, 0.05);
   }
 }
 
@@ -41,10 +45,92 @@
   min-height: 400px;
 }
 
+// Grid de 2 columnas para formularios
 .formGrid {
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+}
+
+// En desktop, usar 2 columnas
+@media (min-width: 768px) {
+  .formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-20;
+  }
+  
+  // Items que deben ocupar todo el ancho
+  .formGrid > *:only-child,
+  .formGrid > .fullWidth {
+    grid-column: 1 / -1;
+  }
+}
+
+// Clase para items que deben ocupar todo el ancho
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+// Layout de una columna para pestañas como CONTENIDO y SEO
+.singleColumnLayout {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-20;
+}
+
+// Sección de categoría con múltiple selección
+.categorySection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.categoryLabel {
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-semibold;
+  color: $gray-700;
+}
+
+.categoryCheckboxes {
+  display: flex;
+  gap: $spacing-12;
+  flex-wrap: wrap;
+}
+
+.categoryCheckbox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  font-family: $font-secondary;
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  cursor: pointer;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-8;
+  transition: all 0.2s ease;
+  background: $white;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+    accent-color: $primary-color;
+  }
+
+  input[type="checkbox"]:checked + span {
+    color: $primary-color;
+    font-weight: $font-weight-semibold;
+  }
 }
 
 .checkbox {
@@ -56,14 +142,26 @@
     display: flex;
     align-items: center;
     gap: $spacing-8;
+    font-family: $font-secondary;
     font-size: $font-size-14;
+    font-weight: $font-weight-medium;
     color: $gray-700;
     cursor: pointer;
+    padding: $spacing-8 $spacing-12;
+    border: 1px solid $gray-200;
+    border-radius: $spacing-4;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.05);
+    }
 
     input[type="checkbox"] {
       width: 18px;
       height: 18px;
       cursor: pointer;
+      accent-color: $primary-color;
     }
   }
 }
@@ -73,21 +171,22 @@
   justify-content: flex-end;
   gap: $spacing-12;
   padding-top: $spacing-24;
-  border-top: 1px solid $gray-200;
+  border-top: 2px solid $gray-200;
+  margin-top: $spacing-8;
 }
 
 .priceSection {
-  padding: $spacing-16;
+  padding: $spacing-20;
   border: 1px solid $gray-200;
-  border-radius: 8px;
+  border-radius: $spacing-8;
   background: $gray-50;
 }
 
 .sectionTitle {
   font-family: $font-secondary;
-  font-size: $font-size-16;
-  font-weight: $font-weight-semibold;
-  color: $gray-900;
+  font-size: $font-size-18;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
   margin: 0 0 $spacing-16 0;
 }
 
@@ -97,10 +196,33 @@
   gap: $spacing-16;
 }
 
+// Pestaña de relaciones con mejor separación visual
 .relationsTab {
   display: flex;
   flex-direction: column;
   gap: $spacing-32;
+}
+
+// Card contenedor para cada sección de relaciones
+.relationSection {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: $spacing-12;
+  padding: $spacing-24;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.relationSectionTitle {
+  font-family: $font-secondary;
+  font-size: $font-size-18;
+  font-weight: $font-weight-bold;
+  color: $primary-color;
+  margin: 0 0 $spacing-20 0;
+  padding-bottom: $spacing-12;
+  border-bottom: 2px solid $gray-100;
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
 }
 
 .timelineItem,
@@ -113,10 +235,25 @@
   gap: $spacing-12;
 }
 
+// En desktop, algunos items pueden usar 2 columnas
+@media (min-width: 768px) {
+  .featuredInfoItem,
+  .quickInfoItem {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: $spacing-16;
+    align-items: start;
+    
+    > *:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
 .imagePreview {
   margin-top: $spacing-8;
   border: 1px solid $gray-200;
-  border-radius: 8px;
+  border-radius: $spacing-8;
   overflow: hidden;
   max-width: 300px;
 
@@ -142,9 +279,13 @@
 
 .noIdMessage {
   color: $gray-600;
+  font-family: $font-secondary;
   font-size: $font-size-14;
   text-align: center;
-  padding: $spacing-24;
+  padding: $spacing-32;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px dashed $gray-200;
 }
 
 .weekdaysCard {
@@ -160,7 +301,7 @@
 
 .weekdaysGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: $spacing-12;
 }
 
@@ -174,16 +315,18 @@
     gap: $spacing-8;
     font-family: $font-secondary;
     font-size: $font-size-14;
+    font-weight: $font-weight-medium;
     color: $gray-700;
     cursor: pointer;
-    padding: $spacing-8 $spacing-12;
+    padding: $spacing-12 $spacing-16;
     border: 1px solid $gray-200;
-    border-radius: 6px;
+    border-radius: $spacing-8;
     transition: all 0.2s ease;
     width: 100%;
+    background: $white;
 
     &:hover {
-      background: $gray-50;
+      background: rgba($primary-color, 0.05);
       border-color: $primary-color;
     }
 
@@ -192,13 +335,12 @@
       height: 18px;
       cursor: pointer;
       margin: 0;
+      accent-color: $primary-color;
     }
 
-    input[type="checkbox"]:checked + span,
-    input[type="checkbox"]:checked {
-      border-color: $primary-color;
-      background: rgba($primary-color, 0.1);
+    input[type="checkbox"]:checked + span {
+      color: $primary-color;
+      font-weight: $font-weight-semibold;
     }
   }
 }
-

@@ -20,16 +20,25 @@ export default function AdminLoginPage() {
     setError("");
     setIsLoading(true);
 
-    // Small delay to show loading state
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    try {
+      // Small delay to show loading state
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-    const success = login(email, password);
+      const success = login(email, password);
 
-    if (success) {
-      router.push("/admin/dashboard");
-      router.refresh();
-    } else {
-      setError("Credenciales inválidas. Por favor, intenta nuevamente.");
+      if (success) {
+        // Reset loading state
+        setIsLoading(false);
+        // Small delay to ensure sessionStorage is set and state is updated
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        // Redirect to dashboard
+        router.replace("/admin/dashboard");
+      } else {
+        setError("Credenciales inválidas. Por favor, intenta nuevamente.");
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError("Error al iniciar sesión. Por favor, intenta nuevamente.");
       setIsLoading(false);
     }
   };

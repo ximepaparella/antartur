@@ -1,4 +1,5 @@
 @use "@/styles/variables" as *;
+@use "sass:color";
 
 .dayCell {
   position: relative;
@@ -6,19 +7,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 100px;
+  min-height: 110px;
   padding: $spacing-12;
   background: $white;
   border: 2px solid $gray-200;
-  border-radius: 8px;
+  border-radius: $spacing-8;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not(.disabled) {
     border-color: $primary-color;
-    background: rgba($primary-color, 0.03);
-    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    background: rgba($primary-color, 0.05);
+    box-shadow: 0 6px 16px rgba($primary-color, 0.2);
     transform: translateY(-2px);
   }
 
@@ -34,13 +35,13 @@
     &:hover {
       border-color: $gray-200;
       background: $white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
       transform: none;
     }
   }
 
   &.otherMonth {
-    opacity: 0.3;
+    opacity: 0.35;
     background: $gray-50;
     border-color: $gray-100;
   }
@@ -48,8 +49,8 @@
   &.today {
     border-color: $primary-color;
     border-width: 3px;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
-    background: rgba($primary-color, 0.05);
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    background: rgba($primary-color, 0.08);
   }
 
   &.past {
@@ -61,35 +62,49 @@
   &.empty {
     background: $white;
     border-color: $gray-200;
+    
+    &:hover:not(:disabled):not(.disabled) {
+      border-color: $tertiary-color;
+      background: rgba($tertiary-color, 0.05);
+    }
   }
 
+  // Estado disponible - Verde más vibrante
   &.available {
-    background: linear-gradient(135deg, rgba($success-color, 0.1) 0%, rgba($success-color, 0.05) 100%);
-    border-color: rgba($success-color, 0.4);
+    background: linear-gradient(145deg, rgba($tertiary-color, 0.18) 0%, rgba($tertiary-color, 0.08) 100%);
+    border-color: $tertiary-color;
+    box-shadow: 0 2px 6px rgba($tertiary-color, 0.15);
     
-    &:hover:not(:disabled) {
-      border-color: $success-color;
-      background: linear-gradient(135deg, rgba($success-color, 0.15) 0%, rgba($success-color, 0.08) 100%);
+    &:hover:not(:disabled):not(.disabled) {
+      border-color: $tertiary-color;
+      background: linear-gradient(145deg, rgba($tertiary-color, 0.25) 0%, rgba($tertiary-color, 0.12) 100%);
+      box-shadow: 0 6px 16px rgba($tertiary-color, 0.25);
     }
   }
 
+  // Estado pocos cupos - Amarillo/naranja más visible
   &.low {
-    background: linear-gradient(135deg, rgba($warning-border, 0.12) 0%, rgba($warning-border, 0.06) 100%);
-    border-color: rgba($warning-border, 0.5);
+    background: linear-gradient(145deg, rgba($warning-border, 0.2) 0%, rgba($warning-border, 0.1) 100%);
+    border-color: $warning-border;
+    box-shadow: 0 2px 6px rgba($warning-border, 0.15);
     
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled):not(.disabled) {
       border-color: $warning-border;
-      background: linear-gradient(135deg, rgba($warning-border, 0.18) 0%, rgba($warning-border, 0.1) 100%);
+      background: linear-gradient(145deg, rgba($warning-border, 0.28) 0%, rgba($warning-border, 0.15) 100%);
+      box-shadow: 0 6px 16px rgba($warning-border, 0.25);
     }
   }
 
+  // Estado completo - Rojo más vibrante
   &.full {
-    background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba($error-color, 0.05) 100%);
-    border-color: rgba($error-color, 0.4);
+    background: linear-gradient(145deg, rgba($error-color, 0.15) 0%, rgba($error-color, 0.08) 100%);
+    border-color: rgba($error-color, 0.6);
+    box-shadow: 0 2px 6px rgba($error-color, 0.12);
     
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled):not(.disabled) {
       border-color: $error-color;
-      background: linear-gradient(135deg, rgba($error-color, 0.15) 0%, rgba($error-color, 0.08) 100%);
+      background: linear-gradient(145deg, rgba($error-color, 0.22) 0%, rgba($error-color, 0.12) 100%);
+      box-shadow: 0 6px 16px rgba($error-color, 0.2);
     }
   }
 
@@ -103,34 +118,36 @@
     background: repeating-linear-gradient(
       45deg,
       $gray-50,
-      $gray-50 10px,
-      $gray-100 10px,
-      $gray-100 20px
+      $gray-50 8px,
+      $gray-100 8px,
+      $gray-100 16px
     );
     border-color: $gray-300;
     opacity: 0.5;
     cursor: not-allowed;
   }
 
+  // Estado seleccionado - Azul primario más visible
   &.selected {
     border-color: $primary-color;
     border-width: 3px;
-    background: rgba($primary-color, 0.1);
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    background: rgba($primary-color, 0.15);
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.2), 0 4px 12px rgba($primary-color, 0.15);
     
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled):not(.disabled) {
       border-color: $primary-color;
-      background: rgba($primary-color, 0.15);
+      background: rgba($primary-color, 0.2);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.25), 0 6px 16px rgba($primary-color, 0.2);
     }
   }
 }
 
 .dayNumber {
   font-family: $font-secondary;
-  font-size: $font-size-16;
+  font-size: $font-size-18;
   font-weight: $font-weight-bold;
   color: $gray-700;
-  margin-bottom: $spacing-4;
+  margin-bottom: $spacing-8;
   line-height: 1;
 }
 
@@ -138,23 +155,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-8;
   margin-top: auto;
   width: 100%;
-}
-
-.time {
-  display: flex;
-  align-items: center;
-  gap: $spacing-4;
-  font-family: $font-secondary;
-  font-size: $font-size-12;
-  font-weight: $font-weight-semibold;
-  color: $gray-700;
-  padding: $spacing-4 $spacing-8;
-  background: rgba($white, 0.8);
-  border-radius: 4px;
-  backdrop-filter: blur(4px);
 }
 
 .seats {
@@ -163,29 +165,31 @@
   justify-content: center;
   gap: $spacing-4;
   font-family: $font-secondary;
-  font-size: $font-size-12;
+  font-size: $font-size-14;
   font-weight: $font-weight-medium;
   color: $gray-600;
   padding: $spacing-4 $spacing-8;
-  background: rgba($white, 0.9);
-  border-radius: 4px;
+  background: rgba($white, 0.95);
+  border-radius: $spacing-4;
   width: 100%;
-  backdrop-filter: blur(4px);
+  border: 1px solid rgba($gray-200, 0.5);
   
   span {
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
+    color: $gray-700;
   }
 }
 
 .addHint {
   margin-top: auto;
-  font-size: $font-size-24;
+  font-size: $font-size-28;
   color: $gray-300;
   font-weight: $font-weight-light;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   
-  .dayCell:hover:not(:disabled) & {
-    color: $primary-color;
+  .dayCell:hover:not(:disabled):not(.disabled) & {
+    color: $tertiary-color;
+    transform: scale(1.1);
   }
 }
 
@@ -196,26 +200,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: rgba($error-color, 0.9);
+  width: 26px;
+  height: 26px;
+  background: $error-color;
   border: none;
-  border-radius: 4px;
+  border-radius: $spacing-4;
   cursor: pointer;
   color: $white;
   opacity: 0;
   transition: all 0.2s ease;
   z-index: 10;
-  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba($error-color, 0.3);
 
   .dayCell:hover:not(.disabled) & {
     opacity: 1;
   }
 
   &:hover {
-    background: $error-color;
+    background: color.adjust($error-color, $lightness: -8%);
     transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba($error-color, 0.4);
+    box-shadow: 0 4px 12px rgba($error-color, 0.4);
   }
 
   &:active {
@@ -244,4 +248,3 @@
     cursor: not-allowed;
   }
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Users, Trash2 } from "lucide-react";
+import { Users, Trash2 } from "lucide-react";
 import type { Departure } from "@/modules/tours/types/admin";
 import styles from "./DayCell.module.scss";
 
@@ -68,18 +68,12 @@ export function DayCell({
       <span className={styles.dayNumber}>{dayNumber}</span>
       
       {departure && (
-        <>
-          <div className={styles.departureInfo}>
-            <div className={styles.time}>
-              <Clock size={12} />
-              <span>{departure.startTime}</span>
-            </div>
-            <div className={styles.seats}>
-              <Users size={12} />
-              <span>{seatsAvailable}/{departure.seatsTotal}</span>
-            </div>
+        <div className={styles.departureInfo}>
+          <div className={styles.seats}>
+            <Users size={14} />
+            <span>{seatsAvailable}/{departure.seatsTotal}</span>
           </div>
-        </>
+        </div>
       )}
 
       {!departure && isCurrentMonth && !isPast && !isWeekdayDisabled && (
@@ -105,7 +99,7 @@ export function DayCell({
           isWeekdayDisabled
             ? "Este día no está disponible para este tour"
             : departure
-            ? `${departure.startTime} - ${seatsAvailable} cupos disponibles`
+            ? `${seatsAvailable} cupos disponibles`
             : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
         }
       >
@@ -118,7 +112,7 @@ export function DayCell({
             isWeekdayDisabled
               ? "Este día no está disponible para este tour"
               : departure
-              ? `${departure.startTime} - ${seatsAvailable} cupos disponibles`
+              ? `${seatsAvailable} cupos disponibles`
               : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
           }
         >
@@ -154,7 +148,7 @@ export function DayCell({
         isWeekdayDisabled
           ? "Este día no está disponible para este tour"
           : departure
-          ? `${departure.startTime} - ${seatsAvailable} cupos disponibles`
+          ? `${seatsAvailable} cupos disponibles`
           : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
       }
     >

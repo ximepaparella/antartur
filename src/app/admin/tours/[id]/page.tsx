@@ -35,6 +35,14 @@ interface TourFullData {
   timelineImportantNote: string | null;
   minAge: number | null;
   minPassengers: number | null;
+  // Weekdays
+  mondayAvailable: boolean;
+  tuesdayAvailable: boolean;
+  wednesdayAvailable: boolean;
+  thursdayAvailable: boolean;
+  fridayAvailable: boolean;
+  saturdayAvailable: boolean;
+  sundayAvailable: boolean;
   images?: Array<{
     id: string;
     imageType: string;
@@ -118,20 +126,58 @@ export default function AdminTourDetailPage() {
     if (!tour) return;
 
     try {
-      const response = await adminApiClient.updateTour(tour.id, formData);
+      // Limpiar el payload: eliminar campos que no deben enviarse
+      const { id, ...cleanFormData } = formData;
+      
+      // Asegurar que los weekdays se incluyan explícitamente en el payload
+      // Los weekdays siempre deben estar presentes en el payload
+      const payload: any = {
+        ...cleanFormData,
+        mondayAvailable: cleanFormData.mondayAvailable ?? tour.mondayAvailable ?? true,
+        tuesdayAvailable: cleanFormData.tuesdayAvailable ?? tour.tuesdayAvailable ?? true,
+        wednesdayAvailable: cleanFormData.wednesdayAvailable ?? tour.wednesdayAvailable ?? true,
+        thursdayAvailable: cleanFormData.thursdayAvailable ?? tour.thursdayAvailable ?? true,
+        fridayAvailable: cleanFormData.fridayAvailable ?? tour.fridayAvailable ?? true,
+        saturdayAvailable: cleanFormData.saturdayAvailable ?? tour.saturdayAvailable ?? true,
+        sundayAvailable: cleanFormData.sundayAvailable ?? tour.sundayAvailable ?? true,
+      };
+
+      // Eliminar arrays vacíos para evitar problemas de validación
+      if (payload.images && Array.isArray(payload.images) && payload.images.length === 0) {
+        delete payload.images;
+      }
+      if (payload.timelineItems && Array.isArray(payload.timelineItems) && payload.timelineItems.length === 0) {
+        delete payload.timelineItems;
+      }
+      if (payload.featuredInfos && Array.isArray(payload.featuredInfos) && payload.featuredInfos.length === 0) {
+        delete payload.featuredInfos;
+      }
+      if (payload.testimonials && Array.isArray(payload.testimonials) && payload.testimonials.length === 0) {
+        delete payload.testimonials;
+      }
+      if (payload.quickInfoItems && Array.isArray(payload.quickInfoItems) && payload.quickInfoItems.length === 0) {
+        delete payload.quickInfoItems;
+      }
+      if (payload.prices && Array.isArray(payload.prices) && payload.prices.length === 0) {
+        delete payload.prices;
+      }
+
+      console.log("Saving payload:", payload);
+
+      const response = await adminApiClient.updateTour(tour.id, payload);
       if (response.success) {
         setIsEditing(false);
         setShowPreview(false);
-        if (response.data) {
-          setTour(response.data as TourFullData);
-        }
-        // Recargar datos completos
+        // Recargar datos completos para obtener los weekdays actualizados
         const refreshResponse = await adminApiClient.getTourById(tour.id);
         if (refreshResponse.success && refreshResponse.data) {
           setTour(refreshResponse.data as TourFullData);
         }
+      } else {
+        alert("Error al guardar: " + (response.error || "Unknown error"));
       }
     } catch (err) {
+      console.error("Error saving tour:", err);
       alert("Error al guardar: " + (err instanceof Error ? err.message : "Unknown error"));
     }
   };
@@ -166,6 +212,10 @@ export default function AdminTourDetailPage() {
 
   return (
     <div className={styles.page}>
+      {tour && (
+        <h1 className={styles.tourTitle}>{tour.name}</h1>
+      )}
+      
       <div className={styles.header}>
         <Button variant="outline" onClick={() => router.push("/admin/tours")}>
           ← Volver

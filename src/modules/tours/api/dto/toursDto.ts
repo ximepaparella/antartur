@@ -72,6 +72,14 @@ export interface TourResponse {
   // Restricciones
   minAge: number | null;
   minPassengers: number | null;
+  // Weekdays
+  mondayAvailable: boolean;
+  tuesdayAvailable: boolean;
+  wednesdayAvailable: boolean;
+  thursdayAvailable: boolean;
+  fridayAvailable: boolean;
+  saturdayAvailable: boolean;
+  sundayAvailable: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -193,6 +201,14 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     // Restricciones
     minAge: tour.minAge,
     minPassengers: tour.minPassengers,
+    // Weekdays
+    mondayAvailable: tour.mondayAvailable ?? true,
+    tuesdayAvailable: tour.tuesdayAvailable ?? true,
+    wednesdayAvailable: tour.wednesdayAvailable ?? true,
+    thursdayAvailable: tour.thursdayAvailable ?? true,
+    fridayAvailable: tour.fridayAvailable ?? true,
+    saturdayAvailable: tour.saturdayAvailable ?? true,
+    sundayAvailable: tour.sundayAvailable ?? true,
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),
   };

@@ -116,6 +116,7 @@ export class DepartureService {
     const departure = await departureRepository.create({
       ...data,
       departureDate: new Date(data.departureDate),
+      endTime: data.endTime || null,
     });
 
     return departure;

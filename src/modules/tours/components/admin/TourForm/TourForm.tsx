@@ -20,7 +20,18 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
   useEffect(() => {
     if (tour) {
-      setFormData(tour);
+      // Asegurar que los weekdays tengan valores explícitos al inicializar
+      // Los weekdays ahora vienen del backend, pero usamos defaults si no están presentes
+      setFormData({
+        ...tour,
+        mondayAvailable: tour.mondayAvailable ?? true,
+        tuesdayAvailable: tour.tuesdayAvailable ?? true,
+        wednesdayAvailable: tour.wednesdayAvailable ?? true,
+        thursdayAvailable: tour.thursdayAvailable ?? true,
+        fridayAvailable: tour.fridayAvailable ?? true,
+        saturdayAvailable: tour.saturdayAvailable ?? true,
+        sundayAvailable: tour.sundayAvailable ?? true,
+      });
     }
   }, [tour]);
 
@@ -36,7 +47,140 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    
+    // Filtrar items vacíos de las relaciones antes de guardar
+    const cleanedFormData = { ...formData };
+    
+    // Asegurar que las imágenes featured y hero estén en el array images
+    const images: any[] = cleanedFormData.images || [];
+    const hasFeatured = images.some((img: any) => img.imageType === "FEATURED");
+    const hasHero = images.some((img: any) => img.imageType === "HERO");
+    
+    if (cleanedFormData.featuredImage && !hasFeatured) {
+      images.push({
+        imageType: "FEATURED",
+        url: cleanedFormData.featuredImage,
+        altText: cleanedFormData.name || "Featured image",
+        sortOrder: 0,
+      });
+    }
+    
+    if (cleanedFormData.heroImage && !hasHero) {
+      images.push({
+        imageType: "HERO",
+        url: cleanedFormData.heroImage,
+        altText: cleanedFormData.name || "Hero image",
+        sortOrder: 1,
+      });
+    }
+    
+    // Filtrar images con campos vacíos (permitir altText vacío si hay URL válida)
+    cleanedFormData.images = images.filter(
+      (item: any) => item.imageType && item.url
+    ).map((item: any) => ({
+      ...item,
+      altText: item.altText || item.url.split('/').pop() || 'Imagen', // Asegurar altText
+    }));
+    
+    // Filtrar quickInfoItems con campos vacíos
+    if (cleanedFormData.quickInfoItems) {
+      cleanedFormData.quickInfoItems = cleanedFormData.quickInfoItems.filter(
+        (item: any) => item.icon && item.label && item.value
+      );
+    }
+    
+    // Filtrar timelineItems con campos vacíos
+    if (cleanedFormData.timelineItems) {
+      cleanedFormData.timelineItems = cleanedFormData.timelineItems.filter(
+        (item: any) => item.timeLabel && item.title && item.description
+      );
+    }
+    
+    // Filtrar featuredInfos con campos vacíos
+    if (cleanedFormData.featuredInfos) {
+      cleanedFormData.featuredInfos = cleanedFormData.featuredInfos.filter(
+        (item: any) => item.icon && item.title && item.description
+      );
+    }
+    
+    // Filtrar testimonials con campos vacíos - solo incluir si TODOS los campos requeridos están completos
+    if (cleanedFormData.testimonials) {
+      const invalidTestimonials: number[] = [];
+      cleanedFormData.testimonials.forEach((item: any, index: number) => {
+        // Validar que todos los campos requeridos estén completos
+        const isValid = (
+          item.text && 
+          item.text.trim() && 
+          item.author && 
+          item.author.trim() &&
+          item.avatar &&
+          item.avatar.trim() &&
+          item.country &&
+          item.country.trim()
+        );
+        if (!isValid) {
+          invalidTestimonials.push(index + 1);
+        }
+      });
+
+      if (invalidTestimonials.length > 0) {
+        alert(
+          `Los siguientes testimonials no se guardarán porque faltan campos requeridos (texto, autor, avatar o país): ${invalidTestimonials.join(", ")}. ` +
+          `Recuerda que el avatar es obligatorio.`
+        );
+      }
+
+      cleanedFormData.testimonials = cleanedFormData.testimonials.filter(
+        (item: any) => {
+          // Todos los campos requeridos deben tener valores no vacíos
+          return (
+            item.text && 
+            item.text.trim() && 
+            item.author && 
+            item.author.trim() &&
+            item.avatar &&
+            item.avatar.trim() &&
+            item.country &&
+            item.country.trim()
+          );
+        }
+      );
+    }
+    
+    // Asegurar que los campos de weekdays estén explícitamente definidos
+    // Los weekdays siempre deben estar presentes en el payload
+    cleanedFormData.mondayAvailable = cleanedFormData.mondayAvailable ?? true;
+    cleanedFormData.tuesdayAvailable = cleanedFormData.tuesdayAvailable ?? true;
+    cleanedFormData.wednesdayAvailable = cleanedFormData.wednesdayAvailable ?? true;
+    cleanedFormData.thursdayAvailable = cleanedFormData.thursdayAvailable ?? true;
+    cleanedFormData.fridayAvailable = cleanedFormData.fridayAvailable ?? true;
+    cleanedFormData.saturdayAvailable = cleanedFormData.saturdayAvailable ?? true;
+    cleanedFormData.sundayAvailable = cleanedFormData.sundayAvailable ?? true;
+    
+    // Eliminar campos que no deben enviarse en el update
+    const { id, departures, createdAt, updatedAt, ...dataToSave } = cleanedFormData;
+    
+    // Asegurar que los arrays solo se envíen si tienen elementos válidos
+    if (dataToSave.images && dataToSave.images.length === 0) {
+      delete dataToSave.images;
+    }
+    if (dataToSave.timelineItems && dataToSave.timelineItems.length === 0) {
+      delete dataToSave.timelineItems;
+    }
+    if (dataToSave.featuredInfos && dataToSave.featuredInfos.length === 0) {
+      delete dataToSave.featuredInfos;
+    }
+    if (dataToSave.testimonials && dataToSave.testimonials.length === 0) {
+      delete dataToSave.testimonials;
+    }
+    if (dataToSave.quickInfoItems && dataToSave.quickInfoItems.length === 0) {
+      delete dataToSave.quickInfoItems;
+    }
+    if (dataToSave.prices && dataToSave.prices.length === 0) {
+      delete dataToSave.prices;
+    }
+    
+    onSave(dataToSave);
   };
 
   const updateField = (field: string, value: any) => {
@@ -95,27 +239,48 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 onChange={(e) => updateField("subtitle", e.target.value)}
                 disabled={!isEditing}
               />
-              <Select
-                label="Categoría"
-                value={formData.category || ""}
-                onChange={(e) => updateField("category", e.target.value)}
-                disabled={!isEditing}
-                options={[
-                  { value: "summer", label: "Verano" },
-                  { value: "winter", label: "Invierno" },
-                  { value: "all-year", label: "Todo el año" },
-                ]}
-                required
-              />
+              <div className={styles.categorySection}>
+                <label className={styles.categoryLabel}>Categoría *</label>
+                <div className={styles.categoryCheckboxes}>
+                  {[
+                    { value: "winter", label: "Invierno" },
+                    { value: "summer", label: "Verano" },
+                  ].map((cat) => {
+                    const categories = (formData.category || "").split(",").filter(Boolean);
+                    const isChecked = categories.includes(cat.value);
+                    return (
+                      <label key={cat.value} className={styles.categoryCheckbox}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            let newCategories = [...categories];
+                            if (e.target.checked) {
+                              if (!newCategories.includes(cat.value)) {
+                                newCategories.push(cat.value);
+                              }
+                            } else {
+                              newCategories = newCategories.filter(c => c !== cat.value);
+                            }
+                            updateField("category", newCategories.join(","));
+                          }}
+                          disabled={!isEditing}
+                        />
+                        <span>{cat.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
               <Select
                 label="Dificultad"
                 value={formData.difficulty || ""}
                 onChange={(e) => updateField("difficulty", e.target.value)}
                 disabled={!isEditing}
                 options={[
-                  { value: "Baja", label: "Baja" },
-                  { value: "Media", label: "Media" },
-                  { value: "Alta", label: "Alta" },
+                  { value: "bajo", label: "Bajo" },
+                  { value: "medio", label: "Medio" },
+                  { value: "dificil", label: "Difícil" },
                 ]}
                 required
               />
@@ -237,7 +402,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
         {activeTab === "content" && (
           <Card title="Contenido">
-            <div className={styles.formGrid}>
+            <div className={styles.singleColumnLayout}>
               <Textarea
                 label="Descripción Corta"
                 value={formData.shortDescription || ""}
@@ -303,7 +468,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
         {activeTab === "seo" && (
           <Card title="SEO">
-            <div className={styles.formGrid}>
+            <div className={styles.singleColumnLayout}>
               <Input
                 label="Meta Title"
                 value={formData.metaTitle || ""}
@@ -444,238 +609,254 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
         {activeTab === "relations" && (
           <div className={styles.relationsTab}>
-            <ArrayFieldManager
-              title="Timeline Items"
-              items={formData.timelineItems || []}
-              onAdd={() => {
-                const newItem = {
+            <section className={styles.relationSection}>
+              <h3 className={styles.relationSectionTitle}>📋 Timeline Items</h3>
+              <ArrayFieldManager
+                title=""
+                items={formData.timelineItems || []}
+                onAdd={() => {
+                  const newItem = {
+                    id: `temp-${Date.now()}`,
+                    timeLabel: "",
+                    title: "",
+                    description: "",
+                    sortOrder: (formData.timelineItems?.length || 0),
+                  };
+                  updateField("timelineItems", [...(formData.timelineItems || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.timelineItems || [])];
+                  updated[index] = item;
+                  updateField("timelineItems", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.timelineItems || []).filter((_: any, i: number) => i !== index);
+                  updateField("timelineItems", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.timelineItem}>
+                    <Input
+                      label="Hora"
+                      value={item.timeLabel || ""}
+                      onChange={(e) => onUpdate({ ...item, timeLabel: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Ej: 9:00 AM"
+                    />
+                    <Input
+                      label="Título"
+                      value={item.title || ""}
+                      onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                    />
+                    <Textarea
+                      label="Descripción"
+                      value={item.description || ""}
+                      onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      rows={3}
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
                   id: `temp-${Date.now()}`,
                   timeLabel: "",
                   title: "",
                   description: "",
-                  sortOrder: (formData.timelineItems?.length || 0),
-                };
-                updateField("timelineItems", [...(formData.timelineItems || []), newItem]);
-              }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.timelineItems || [])];
-                updated[index] = item;
-                updateField("timelineItems", updated);
-              }}
-              onDelete={(index) => {
-                const filtered = (formData.timelineItems || []).filter((_: any, i: number) => i !== index);
-                updateField("timelineItems", filtered);
-              }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
-                <div className={styles.timelineItem}>
-                  <Input
-                    label="Hora"
-                    value={item.timeLabel || ""}
-                    onChange={(e) => onUpdate({ ...item, timeLabel: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="Ej: 9:00 AM"
-                  />
-                  <Input
-                    label="Título"
-                    value={item.title || ""}
-                    onChange={(e) => onUpdate({ ...item, title: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                  />
-                  <Textarea
-                    label="Descripción"
-                    value={item.description || ""}
-                    onChange={(e) => onUpdate({ ...item, description: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    rows={3}
-                  />
-                </div>
-              )}
-              getDefaultItem={() => ({
-                id: `temp-${Date.now()}`,
-                timeLabel: "",
-                title: "",
-                description: "",
-                sortOrder: formData.timelineItems?.length || 0,
-              })}
-              disabled={!isEditing}
-            />
+                  sortOrder: formData.timelineItems?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
+            </section>
 
-            <ArrayFieldManager
-              title="Featured Info Items"
-              items={formData.featuredInfos || []}
-              onAdd={() => {
-                const newItem = {
+            <section className={styles.relationSection}>
+              <h3 className={styles.relationSectionTitle}>⭐ Featured Info Items</h3>
+              <ArrayFieldManager
+                title=""
+                items={formData.featuredInfos || []}
+                onAdd={() => {
+                  const newItem = {
+                    id: `temp-${Date.now()}`,
+                    icon: "",
+                    title: "",
+                    description: "",
+                    sortOrder: (formData.featuredInfos?.length || 0),
+                  };
+                  updateField("featuredInfos", [...(formData.featuredInfos || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.featuredInfos || [])];
+                  updated[index] = item;
+                  updateField("featuredInfos", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.featuredInfos || []).filter((_: any, i: number) => i !== index);
+                  updateField("featuredInfos", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.featuredInfoItem}>
+                    <IconPicker
+                      label="Icono"
+                      value={item.icon || ""}
+                      onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Seleccionar icono"
+                    />
+                    <Input
+                      label="Título"
+                      value={item.title || ""}
+                      onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                    />
+                    <Textarea
+                      label="Descripción"
+                      value={item.description || ""}
+                      onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      rows={2}
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
                   id: `temp-${Date.now()}`,
                   icon: "",
                   title: "",
                   description: "",
-                  sortOrder: (formData.featuredInfos?.length || 0),
-                };
-                updateField("featuredInfos", [...(formData.featuredInfos || []), newItem]);
-              }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.featuredInfos || [])];
-                updated[index] = item;
-                updateField("featuredInfos", updated);
-              }}
-              onDelete={(index) => {
-                const filtered = (formData.featuredInfos || []).filter((_: any, i: number) => i !== index);
-                updateField("featuredInfos", filtered);
-              }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
-                <div className={styles.featuredInfoItem}>
-                  <IconPicker
-                    label="Icono"
-                    value={item.icon || ""}
-                    onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="Seleccionar icono"
-                  />
-                  <Input
-                    label="Título"
-                    value={item.title || ""}
-                    onChange={(e) => onUpdate({ ...item, title: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                  />
-                  <Textarea
-                    label="Descripción"
-                    value={item.description || ""}
-                    onChange={(e) => onUpdate({ ...item, description: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    rows={2}
-                  />
-                </div>
-              )}
-              getDefaultItem={() => ({
-                id: `temp-${Date.now()}`,
-                icon: "",
-                title: "",
-                description: "",
-                sortOrder: formData.featuredInfos?.length || 0,
-              })}
-              disabled={!isEditing}
-            />
+                  sortOrder: formData.featuredInfos?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
+            </section>
 
-            <ArrayFieldManager
-              title="Testimonials"
-              items={formData.testimonials || []}
-              onAdd={() => {
-                const newItem = {
+            <section className={styles.relationSection}>
+              <h3 className={styles.relationSectionTitle}>💬 Testimonials</h3>
+              <ArrayFieldManager
+                title=""
+                items={formData.testimonials || []}
+                onAdd={() => {
+                  const newItem = {
+                    id: `temp-${Date.now()}`,
+                    text: "",
+                    author: "",
+                    avatar: "",
+                    country: "",
+                    sortOrder: (formData.testimonials?.length || 0),
+                  };
+                  updateField("testimonials", [...(formData.testimonials || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.testimonials || [])];
+                  updated[index] = item;
+                  updateField("testimonials", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.testimonials || []).filter((_: any, i: number) => i !== index);
+                  updateField("testimonials", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.testimonialItem}>
+                    <Textarea
+                      label="Texto del Testimonio *"
+                      value={item.text || ""}
+                      onChange={(e) => onUpdate({ ...item, text: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      rows={3}
+                      required
+                    />
+                    <Input
+                      label="Autor *"
+                      value={item.author || ""}
+                      onChange={(e) => onUpdate({ ...item, author: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      required
+                    />
+                    <Input
+                      label="Avatar (URL) *"
+                      value={item.avatar || ""}
+                      onChange={(e) => onUpdate({ ...item, avatar: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="URL de la imagen del avatar (obligatorio)"
+                      required
+                    />
+                    <Input
+                      label="País *"
+                      value={item.country || ""}
+                      onChange={(e) => onUpdate({ ...item, country: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      required
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
                   id: `temp-${Date.now()}`,
                   text: "",
                   author: "",
                   avatar: "",
                   country: "",
-                  sortOrder: (formData.testimonials?.length || 0),
-                };
-                updateField("testimonials", [...(formData.testimonials || []), newItem]);
-              }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.testimonials || [])];
-                updated[index] = item;
-                updateField("testimonials", updated);
-              }}
-              onDelete={(index) => {
-                const filtered = (formData.testimonials || []).filter((_: any, i: number) => i !== index);
-                updateField("testimonials", filtered);
-              }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
-                <div className={styles.testimonialItem}>
-                  <Textarea
-                    label="Texto del Testimonio"
-                    value={item.text || ""}
-                    onChange={(e) => onUpdate({ ...item, text: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    rows={3}
-                  />
-                  <Input
-                    label="Autor"
-                    value={item.author || ""}
-                    onChange={(e) => onUpdate({ ...item, author: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                  />
-                  <Input
-                    label="Avatar (URL)"
-                    value={item.avatar || ""}
-                    onChange={(e) => onUpdate({ ...item, avatar: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="URL de la imagen del avatar"
-                  />
-                  <Input
-                    label="País"
-                    value={item.country || ""}
-                    onChange={(e) => onUpdate({ ...item, country: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                  />
-                </div>
-              )}
-              getDefaultItem={() => ({
-                id: `temp-${Date.now()}`,
-                text: "",
-                author: "",
-                avatar: "",
-                country: "",
-                sortOrder: formData.testimonials?.length || 0,
-              })}
-              disabled={!isEditing}
-            />
+                  sortOrder: formData.testimonials?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
+            </section>
 
-            <ArrayFieldManager
-              title="QuickInfo Items"
-              items={formData.quickInfoItems || []}
-              onAdd={() => {
-                const newItem = {
+            <section className={styles.relationSection}>
+              <h3 className={styles.relationSectionTitle}>ℹ️ QuickInfo Items</h3>
+              <ArrayFieldManager
+                title=""
+                items={formData.quickInfoItems || []}
+                onAdd={() => {
+                  const newItem = {
+                    id: `temp-${Date.now()}`,
+                    icon: "",
+                    label: "",
+                    value: "",
+                    sortOrder: (formData.quickInfoItems?.length || 0),
+                  };
+                  updateField("quickInfoItems", [...(formData.quickInfoItems || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.quickInfoItems || [])];
+                  updated[index] = item;
+                  updateField("quickInfoItems", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.quickInfoItems || []).filter((_: any, i: number) => i !== index);
+                  updateField("quickInfoItems", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.quickInfoItem}>
+                    <IconPicker
+                      label="Icono"
+                      value={item.icon || ""}
+                      onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Seleccionar icono"
+                    />
+                    <Input
+                      label="Label"
+                      value={item.label || ""}
+                      onChange={(e) => onUpdate({ ...item, label: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Ej: Duración"
+                    />
+                    <Input
+                      label="Valor"
+                      value={item.value || ""}
+                      onChange={(e) => onUpdate({ ...item, value: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Ej: 4 horas"
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
                   id: `temp-${Date.now()}`,
                   icon: "",
                   label: "",
                   value: "",
-                  sortOrder: (formData.quickInfoItems?.length || 0),
-                };
-                updateField("quickInfoItems", [...(formData.quickInfoItems || []), newItem]);
-              }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.quickInfoItems || [])];
-                updated[index] = item;
-                updateField("quickInfoItems", updated);
-              }}
-              onDelete={(index) => {
-                const filtered = (formData.quickInfoItems || []).filter((_: any, i: number) => i !== index);
-                updateField("quickInfoItems", filtered);
-              }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
-                <div className={styles.quickInfoItem}>
-                  <IconPicker
-                    label="Icono"
-                    value={item.icon || ""}
-                    onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="Seleccionar icono"
-                  />
-                  <Input
-                    label="Label"
-                    value={item.label || ""}
-                    onChange={(e) => onUpdate({ ...item, label: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="Ej: Duración"
-                  />
-                  <Input
-                    label="Valor"
-                    value={item.value || ""}
-                    onChange={(e) => onUpdate({ ...item, value: e.target.value })}
-                    disabled={!isEditingItem || !isEditing}
-                    placeholder="Ej: 4 horas"
-                  />
-                </div>
-              )}
-              getDefaultItem={() => ({
-                id: `temp-${Date.now()}`,
-                icon: "",
-                label: "",
-                value: "",
-                sortOrder: formData.quickInfoItems?.length || 0,
-              })}
-              disabled={!isEditing}
-            />
+                  sortOrder: formData.quickInfoItems?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
+            </section>
           </div>
         )}
 

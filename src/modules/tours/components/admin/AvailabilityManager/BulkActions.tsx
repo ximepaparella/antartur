@@ -3,8 +3,22 @@
 import React, { useState } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
+import { Select } from "@/components/common/Select/Select";
 import { Calendar, X, CheckSquare, Square, Trash2, Users, Clock, Power, PowerOff } from "lucide-react";
 import styles from "./BulkActions.module.scss";
+
+// Generar opciones de horarios (cada hora en punto y y media, de 6:00 a 23:30)
+const generateTimeOptions = () => {
+  const options: Array<{ value: string; label: string }> = [];
+  for (let hour = 6; hour < 24; hour++) {
+    const hourStr = hour.toString().padStart(2, "0");
+    options.push({ value: `${hourStr}:00`, label: `${hourStr}:00` });
+    options.push({ value: `${hourStr}:30`, label: `${hourStr}:30` });
+  }
+  return options;
+};
+
+const TIME_OPTIONS = generateTimeOptions();
 
 interface BulkActionsProps {
   selectedDates: Date[];
@@ -255,7 +269,7 @@ export function BulkActions({
               <h5 className={styles.actionTitle}>Estado</h5>
               <div className={styles.actionButtons}>
                 <Button
-                  variant="outline"
+                  variant="primary"
                   onClick={handleBulkEnable}
                   disabled={disabled || isProcessing}
                   size="small"
@@ -286,7 +300,7 @@ export function BulkActions({
                   disabled={disabled || isProcessing}
                 />
                 <Button
-                  variant="outline"
+                  variant="primary"
                   onClick={handleBulkSetSeats}
                   disabled={disabled || isProcessing || !bulkSeats}
                   size="small"
@@ -300,24 +314,28 @@ export function BulkActions({
             <div className={styles.actionGroup}>
               <h5 className={styles.actionTitle}>Horario</h5>
               <div className={styles.actionForm}>
-                <Input
-                  type="time"
+                <Select
                   value={bulkStartTime}
                   onChange={(e) => setBulkStartTime(e.target.value)}
                   disabled={disabled || isProcessing}
-                  placeholder="Inicio"
+                  options={[
+                    { value: "", label: "Seleccionar..." },
+                    ...TIME_OPTIONS,
+                  ]}
                 />
-                <Input
-                  type="time"
+                <Select
                   value={bulkEndTime}
                   onChange={(e) => setBulkEndTime(e.target.value)}
                   disabled={disabled || isProcessing}
-                  placeholder="Fin (opcional)"
+                  options={[
+                    { value: "", label: "Sin hora fin" },
+                    ...TIME_OPTIONS,
+                  ]}
                 />
                 <Button
-                  variant="outline"
+                  variant="primary"
                   onClick={handleBulkSetTime}
-                  disabled={disabled || isProcessing}
+                  disabled={disabled || isProcessing || !bulkStartTime}
                   size="small"
                 >
                   <Clock size={14} />
@@ -329,7 +347,7 @@ export function BulkActions({
             <div className={styles.actionGroup}>
               <h5 className={styles.actionTitle}>Eliminar</h5>
               <Button
-                variant="outline"
+                variant="danger"
                 onClick={handleBulkDelete}
                 disabled={disabled || isProcessing}
                 size="small"

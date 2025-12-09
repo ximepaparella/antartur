@@ -143,15 +143,152 @@ export class TourService {
       }
     }
 
-    const updatedTour = await tourRepository.update(id, data);
+    // Separar campos de relaciones de campos del tour
+    const { 
+      images, 
+      timelineItems, 
+      featuredInfos, 
+      testimonials, 
+      quickInfoItems,
+      prices,
+      ...tourFields 
+    } = data;
+
+    // Usar una transacción para actualizar todo
+    await prisma.$transaction(async (tx) => {
+      // 1. Actualizar campos del tour
+      if (Object.keys(tourFields).length > 0) {
+        await tx.tour.update({
+          where: { id },
+          data: tourFields,
+        });
+      }
+
+      // 2. Actualizar imágenes si se proporcionan
+      if (images !== undefined) {
+        // Eliminar imágenes existentes
+        await tx.tourImage.deleteMany({ where: { tourId: id } });
+        // Crear nuevas imágenes
+        if (images.length > 0) {
+          await tx.tourImage.createMany({
+            data: images.map((img, index) => ({
+              tourId: id,
+              imageType: img.imageType as "FEATURED" | "HERO" | "GALLERY",
+              url: img.url,
+              altText: img.altText,
+              sortOrder: img.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 3. Actualizar timeline items si se proporcionan
+      if (timelineItems !== undefined) {
+        await tx.tourTimelineItem.deleteMany({ where: { tourId: id } });
+        if (timelineItems.length > 0) {
+          await tx.tourTimelineItem.createMany({
+            data: timelineItems.map((item, index) => ({
+              tourId: id,
+              timeLabel: item.timeLabel,
+              title: item.title,
+              description: item.description,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 4. Actualizar featured infos si se proporcionan
+      if (featuredInfos !== undefined) {
+        await tx.tourFeaturedInfo.deleteMany({ where: { tourId: id } });
+        if (featuredInfos.length > 0) {
+          await tx.tourFeaturedInfo.createMany({
+            data: featuredInfos.map((item, index) => ({
+              tourId: id,
+              icon: item.icon,
+              title: item.title,
+              description: item.description,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 5. Actualizar testimonials si se proporcionan
+      if (testimonials !== undefined) {
+        await tx.tourTestimonial.deleteMany({ where: { tourId: id } });
+        if (testimonials.length > 0) {
+          await tx.tourTestimonial.createMany({
+            data: testimonials.map((item, index) => ({
+              tourId: id,
+              text: item.text,
+              author: item.author,
+              avatar: item.avatar,
+              country: item.country,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 6. Actualizar quick info items si se proporcionan
+      if (quickInfoItems !== undefined) {
+        await tx.tourQuickInfoItem.deleteMany({ where: { tourId: id } });
+        if (quickInfoItems.length > 0) {
+          await tx.tourQuickInfoItem.createMany({
+            data: quickInfoItems.map((item, index) => ({
+              tourId: id,
+              icon: item.icon,
+              label: item.label,
+              value: item.value,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 7. Actualizar precios si se proporcionan
+      if (prices !== undefined) {
+        for (const price of prices) {
+          // Buscar precio existente por currency
+          const existingPrice = await tx.tourPrice.findFirst({
+            where: {
+              tourId: id,
+              currency: price.currency,
+            },
+          });
+
+          if (existingPrice) {
+            // Actualizar precio existente
+            await tx.tourPrice.update({
+              where: { id: existingPrice.id },
+              data: {
+                priceAdult: price.priceAdult,
+                priceChild: price.priceChild,
+              },
+            });
+          } else {
+            // Crear nuevo precio
+            await tx.tourPrice.create({
+              data: {
+                tourId: id,
+                currency: price.currency,
+                priceAdult: price.priceAdult,
+                priceChild: price.priceChild,
+              },
+            });
+          }
+        }
+      }
+    });
     
-    // Obtener tour completo con precios para la respuesta
-    const tourWithPrices = await tourRepository.findById(updatedTour.id, false, false, true);
-    if (!tourWithPrices) {
-      throw new NotFoundError("Tour", updatedTour.id);
+    // Obtener tour completo con todas las relaciones para la respuesta
+    const tourComplete = await tourRepository.findById(id, true, false, true, true, true);
+    if (!tourComplete) {
+      throw new NotFoundError("Tour", id);
     }
     
-    return tourWithPrices;
+    return tourComplete;
   }
 
   /**
