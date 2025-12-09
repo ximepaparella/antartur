@@ -63,6 +63,80 @@ export function DayCell({
 
   const isDisabled = disabled || isPast || isWeekdayDisabled;
 
+  const dayCellContent = (
+    <>
+      <span className={styles.dayNumber}>{dayNumber}</span>
+      
+      {departure && (
+        <>
+          <div className={styles.departureInfo}>
+            <div className={styles.time}>
+              <Clock size={12} />
+              <span>{departure.startTime}</span>
+            </div>
+            <div className={styles.seats}>
+              <Users size={12} />
+              <span>{seatsAvailable}/{departure.seatsTotal}</span>
+            </div>
+          </div>
+        </>
+      )}
+
+      {!departure && isCurrentMonth && !isPast && !isWeekdayDisabled && (
+        <div className={styles.addHint}>+</div>
+      )}
+    </>
+  );
+
+  // Si hay un botón de eliminar, usar un div contenedor para evitar botones anidados
+  if (departure && onDelete) {
+    return (
+      <div
+        className={`
+          ${styles.dayCell}
+          ${!isCurrentMonth ? styles.otherMonth : ""}
+          ${isToday ? styles.today : ""}
+          ${isPast ? styles.past : ""}
+          ${isSelected ? styles.selected : ""}
+          ${getStatusClass()}
+          ${isDisabled ? styles.disabled : ""}
+        `}
+        title={
+          isWeekdayDisabled
+            ? "Este día no está disponible para este tour"
+            : departure
+            ? `${departure.startTime} - ${seatsAvailable} cupos disponibles`
+            : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
+        }
+      >
+        <button
+          type="button"
+          className={styles.dayCellButton}
+          onClick={handleClick}
+          disabled={isDisabled}
+          title={
+            isWeekdayDisabled
+              ? "Este día no está disponible para este tour"
+              : departure
+              ? `${departure.startTime} - ${seatsAvailable} cupos disponibles`
+              : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
+          }
+        >
+          {dayCellContent}
+        </button>
+        <button
+          type="button"
+          className={`${styles.deleteButton} ${styles.deleteButtonAlwaysVisible}`}
+          onClick={handleDelete}
+          title="Eliminar disponibilidad"
+        >
+          <Trash2 size={12} />
+        </button>
+      </div>
+    );
+  }
+
+  // Si no hay botón de eliminar, usar el botón directamente
   return (
     <button
       type="button"
@@ -84,36 +158,7 @@ export function DayCell({
           : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
       }
     >
-      <span className={styles.dayNumber}>{dayNumber}</span>
-      
-      {departure && (
-        <>
-          <div className={styles.departureInfo}>
-            <div className={styles.time}>
-              <Clock size={12} />
-              <span>{departure.startTime}</span>
-            </div>
-            <div className={styles.seats}>
-              <Users size={12} />
-              <span>{seatsAvailable}/{departure.seatsTotal}</span>
-            </div>
-          </div>
-          {onDelete && (
-            <button
-              type="button"
-              className={`${styles.deleteButton} ${styles.deleteButtonAlwaysVisible}`}
-              onClick={handleDelete}
-              title="Eliminar disponibilidad"
-            >
-              <Trash2 size={12} />
-            </button>
-          )}
-        </>
-      )}
-
-      {!departure && isCurrentMonth && !isPast && !isWeekdayDisabled && (
-        <div className={styles.addHint}>+</div>
-      )}
+      {dayCellContent}
     </button>
   );
 }

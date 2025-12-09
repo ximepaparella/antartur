@@ -27,6 +27,18 @@
     opacity: 0.4;
   }
 
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    
+    &:hover {
+      border-color: $gray-200;
+      background: $white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transform: none;
+    }
+  }
+
   &.otherMonth {
     opacity: 0.3;
     background: $gray-50;
@@ -196,7 +208,7 @@
   z-index: 10;
   backdrop-filter: blur(4px);
 
-  .dayCell:hover & {
+  .dayCell:hover:not(.disabled) & {
     opacity: 1;
   }
 
@@ -213,5 +225,23 @@
 
 .deleteButtonAlwaysVisible {
   opacity: 1;
+}
+
+.dayCellButton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 

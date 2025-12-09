@@ -10,7 +10,7 @@ import { ArrayFieldManager } from "@/components/common/ArrayFieldManager";
 import { ImagePicker } from "@/modules/tours/components/admin/ImagePicker";
 import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
-import { AvailabilityManager } from "../AvailabilityManager";
+import { AvailabilityManager } from "@/modules/tours/components/admin/AvailabilityManager";
 import type { TourFormProps, TabType } from "@/modules/tours/types/admin";
 import styles from "./TourForm.module.scss";
 

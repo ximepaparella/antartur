@@ -284,7 +284,6 @@ export function BulkActions({
                   onChange={(e) => setBulkSeats(e.target.value)}
                   placeholder="Cupos"
                   disabled={disabled || isProcessing}
-                  compact
                 />
                 <Button
                   variant="outline"
@@ -306,7 +305,6 @@ export function BulkActions({
                   value={bulkStartTime}
                   onChange={(e) => setBulkStartTime(e.target.value)}
                   disabled={disabled || isProcessing}
-                  compact
                   placeholder="Inicio"
                 />
                 <Input
@@ -314,7 +312,6 @@ export function BulkActions({
                   value={bulkEndTime}
                   onChange={(e) => setBulkEndTime(e.target.value)}
                   disabled={disabled || isProcessing}
-                  compact
                   placeholder="Fin (opcional)"
                 />
                 <Button
@@ -332,7 +329,7 @@ export function BulkActions({
             <div className={styles.actionGroup}>
               <h5 className={styles.actionTitle}>Eliminar</h5>
               <Button
-                variant="danger"
+                variant="outline"
                 onClick={handleBulkDelete}
                 disabled={disabled || isProcessing}
                 size="small"
