@@ -249,6 +249,20 @@ export class TourService {
 
       // 7. Actualizar precios si se proporcionan
       if (prices !== undefined) {
+        // Obtener currencies del payload
+        const incomingCurrencies = prices.map(p => p.currency);
+        
+        // Eliminar currencies que no están en el payload
+        await tx.tourPrice.deleteMany({
+          where: {
+            tourId: id,
+            currency: {
+              notIn: incomingCurrencies,
+            },
+          },
+        });
+
+        // Crear o actualizar precios del payload
         for (const price of prices) {
           // Buscar precio existente por currency
           const existingPrice = await tx.tourPrice.findFirst({

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { adminApiClient } from "../lib/adminApiClient";
 
-interface DashboardStats {
+export interface DashboardStats {
   tours: {
     total: number;
     active: number;

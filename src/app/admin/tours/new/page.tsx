@@ -61,7 +61,7 @@ export default function AdminTourCreatePage() {
       if (response.success && response.data) {
         router.push(`/admin/tours/${response.data.id}`);
       } else {
-        setError(response.error || "Error al crear tour");
+        setError("Error al crear tour");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");

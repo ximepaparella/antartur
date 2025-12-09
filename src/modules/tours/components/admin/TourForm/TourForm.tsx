@@ -12,11 +12,21 @@ import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
 import { AvailabilityManager } from "../AvailabilityManager";
 import type { TourFormProps, TabType } from "@/modules/tours/types/admin";
+import type { TourFormData, TourImage, QuickInfoItem, TimelineItem, FeaturedInfo, Testimonial, TourPrice } from "./types";
+import {
+  sanitizeImages,
+  filterQuickInfoItems,
+  filterTimelineItems,
+  filterFeaturedInfos,
+  validateTestimonials,
+  filterTestimonials,
+  removeEmptyArrays,
+} from "./helpers/tourFormValidation";
 import styles from "./TourForm.module.scss";
 
 export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
   const [activeTab, setActiveTab] = useState<TabType>("basic");
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<TourFormData>({});
 
   useEffect(() => {
     if (tour) {
@@ -76,8 +86,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     
     // Filtrar images con campos vacíos (permitir altText vacío si hay URL válida)
     cleanedFormData.images = images.filter(
-      (item: any) => item.imageType && item.url
-    ).map((item: any) => ({
+      (item) => item.imageType && item.url
+    ).map((item) => ({
       ...item,
       altText: item.altText || item.url.split('/').pop() || 'Imagen', // Asegurar altText
     }));
@@ -85,28 +95,28 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     // Filtrar quickInfoItems con campos vacíos
     if (cleanedFormData.quickInfoItems) {
       cleanedFormData.quickInfoItems = cleanedFormData.quickInfoItems.filter(
-        (item: any) => item.icon && item.label && item.value
+        (item: QuickInfoItem) => item.icon && item.label && item.value
       );
     }
     
     // Filtrar timelineItems con campos vacíos
     if (cleanedFormData.timelineItems) {
       cleanedFormData.timelineItems = cleanedFormData.timelineItems.filter(
-        (item: any) => item.timeLabel && item.title && item.description
+        (item: TimelineItem) => item.timeLabel && item.title && item.description
       );
     }
     
     // Filtrar featuredInfos con campos vacíos
     if (cleanedFormData.featuredInfos) {
       cleanedFormData.featuredInfos = cleanedFormData.featuredInfos.filter(
-        (item: any) => item.icon && item.title && item.description
+        (item: FeaturedInfo) => item.icon && item.title && item.description
       );
     }
     
     // Filtrar testimonials con campos vacíos - solo incluir si TODOS los campos requeridos están completos
     if (cleanedFormData.testimonials) {
       const invalidTestimonials: number[] = [];
-      cleanedFormData.testimonials.forEach((item: any, index: number) => {
+      cleanedFormData.testimonials.forEach((item: Testimonial, index: number) => {
         // Validar que todos los campos requeridos estén completos
         const isValid = (
           item.text && 
@@ -131,7 +141,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
       }
 
       cleanedFormData.testimonials = cleanedFormData.testimonials.filter(
-        (item: any) => {
+        (item: Testimonial) => {
           // Todos los campos requeridos deben tener valores no vacíos
           return (
             item.text && 
@@ -146,16 +156,6 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         }
       );
     }
-    
-    // Asegurar que los campos de weekdays estén explícitamente definidos
-    // Los weekdays siempre deben estar presentes en el payload
-    cleanedFormData.mondayAvailable = cleanedFormData.mondayAvailable ?? true;
-    cleanedFormData.tuesdayAvailable = cleanedFormData.tuesdayAvailable ?? true;
-    cleanedFormData.wednesdayAvailable = cleanedFormData.wednesdayAvailable ?? true;
-    cleanedFormData.thursdayAvailable = cleanedFormData.thursdayAvailable ?? true;
-    cleanedFormData.fridayAvailable = cleanedFormData.fridayAvailable ?? true;
-    cleanedFormData.saturdayAvailable = cleanedFormData.saturdayAvailable ?? true;
-    cleanedFormData.sundayAvailable = cleanedFormData.sundayAvailable ?? true;
     
     // Eliminar campos que no deben enviarse en el update
     const { id, departures, createdAt, updatedAt, ...dataToSave } = cleanedFormData;
@@ -183,20 +183,20 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     onSave(dataToSave);
   };
 
-  const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const updateField = <K extends keyof TourFormData>(field: K, value: TourFormData[K]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Helper para obtener imágenes de galería
-  const getGalleryImages = () => {
+  const getGalleryImages = (): TourImage[] => {
     return (formData.images || [])
-      .filter((img: any) => img.imageType === "GALLERY")
-      .map((img: any, index: number) => ({ ...img, sortOrder: index }));
+      .filter((img) => img.imageType === "GALLERY")
+      .map((img, index) => ({ ...img, sortOrder: index }));
   };
 
   // Helper para actualizar imágenes de galería
-  const updateGalleryImages = (galleryImages: any[]) => {
-    const otherImages = (formData.images || []).filter((img: any) => img.imageType !== "GALLERY");
+  const updateGalleryImages = (galleryImages: TourImage[]) => {
+    const otherImages = (formData.images || []).filter((img) => img.imageType !== "GALLERY");
     updateField("images", [...otherImages, ...galleryImages]);
   };
 
@@ -507,11 +507,11 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Adulto (ARS)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "ARS")?.priceAdult || ""
+                      formData.prices?.find((p: TourPrice) => p.currency === "ARS")?.priceAdult || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: any) => p.currency === "ARS");
+                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
                       if (arsIndex >= 0) {
                         const updated = [...prices];
                         updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
@@ -534,7 +534,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: any) => p.currency === "ARS");
+                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
                       if (arsIndex >= 0) {
                         const updated = [...prices];
                         updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
@@ -559,11 +559,11 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Adulto (USD)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "USD")?.priceAdult || ""
+                      formData.prices?.find((p: TourPrice) => p.currency === "USD")?.priceAdult || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: any) => p.currency === "USD");
+                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
                       if (usdIndex >= 0) {
                         const updated = [...prices];
                         updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
@@ -586,7 +586,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: any) => p.currency === "USD");
+                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
                       if (usdIndex >= 0) {
                         const updated = [...prices];
                         updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
@@ -630,7 +630,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   updateField("timelineItems", updated);
                 }}
                 onDelete={(index) => {
-                  const filtered = (formData.timelineItems || []).filter((_: any, i: number) => i !== index);
+                  const filtered = (formData.timelineItems || []).filter((_, i: number) => i !== index);
                   updateField("timelineItems", filtered);
                 }}
                 renderItem={(item, index, isEditingItem, onUpdate) => (
@@ -689,7 +689,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   updateField("featuredInfos", updated);
                 }}
                 onDelete={(index) => {
-                  const filtered = (formData.featuredInfos || []).filter((_: any, i: number) => i !== index);
+                  const filtered = (formData.featuredInfos || []).filter((_, i: number) => i !== index);
                   updateField("featuredInfos", filtered);
                 }}
                 renderItem={(item, index, isEditingItem, onUpdate) => (
@@ -749,7 +749,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   updateField("testimonials", updated);
                 }}
                 onDelete={(index) => {
-                  const filtered = (formData.testimonials || []).filter((_: any, i: number) => i !== index);
+                  const filtered = (formData.testimonials || []).filter((_, i: number) => i !== index);
                   updateField("testimonials", filtered);
                 }}
                 renderItem={(item, index, isEditingItem, onUpdate) => (
@@ -819,7 +819,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   updateField("quickInfoItems", updated);
                 }}
                 onDelete={(index) => {
-                  const filtered = (formData.quickInfoItems || []).filter((_: any, i: number) => i !== index);
+                  const filtered = (formData.quickInfoItems || []).filter((_, i: number) => i !== index);
                   updateField("quickInfoItems", filtered);
                 }}
                 renderItem={(item, index, isEditingItem, onUpdate) => (

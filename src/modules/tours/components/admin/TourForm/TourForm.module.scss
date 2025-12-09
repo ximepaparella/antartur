@@ -300,9 +300,14 @@
 }
 
 .weekdaysGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: $spacing-12;
+  
+  > * {
+    flex: 1 1 130px;
+    min-width: 130px;
+  }
 }
 
 .weekdayCheckbox {

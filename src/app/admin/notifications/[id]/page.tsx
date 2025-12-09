@@ -2,33 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import type { NotificationResponse } from "@/modules/notifications/api/dto/notificationsDto";
+import type { NotificationStatus } from "@/components/common/StatusBadge";
 import { Card } from "@/components/common/Card/Card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
 import styles from "./page.module.scss";
-
-interface Notification {
-  id: string;
-  type: "EMAIL" | "WHATSAPP";
-  recipient: string;
-  templateKey: string;
-  subject: string | null;
-  body: string | null;
-  status: string;
-  sentAt: string | null;
-  errorMessage: string | null;
-  retryCount: number;
-  maxRetries: number;
-  createdAt: string;
-}
 
 export default function AdminNotificationDetailPage() {
   const params = useParams();
   const router = useRouter();
   const notificationId = params.id as string;
 
-  const [notification, setNotification] = useState<Notification | null>(null);
+  const [notification, setNotification] = useState<NotificationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +28,7 @@ export default function AdminNotificationDetailPage() {
         if (response.success && response.data) {
           setNotification(response.data);
         } else {
-          setError(response.error || "Failed to fetch notification");
+          setError("Failed to fetch notification");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -86,7 +74,7 @@ export default function AdminNotificationDetailPage() {
         </Button>
         <div>
           <h1 className={styles.title}>Notificación #{notification.id.substring(0, 8)}</h1>
-          <StatusBadge status={notification.status as any} />
+          <StatusBadge status={notification.status as NotificationStatus} />
         </div>
       </div>
 
@@ -109,7 +97,7 @@ export default function AdminNotificationDetailPage() {
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Estado:</span>
-              <StatusBadge status={notification.status as any} />
+              <StatusBadge status={notification.status as "PENDING" | "SENT" | "ERROR"} />
             </div>
             {notification.sentAt && (
               <div className={styles.infoItem}>
@@ -125,12 +113,6 @@ export default function AdminNotificationDetailPage() {
                 </span>
               </div>
             )}
-            <div className={styles.infoItem}>
-              <span className={styles.label}>Reintentos:</span>
-              <span className={styles.value}>
-                {notification.retryCount} / {notification.maxRetries}
-              </span>
-            </div>
           </div>
         </Card>
 
@@ -144,7 +126,7 @@ export default function AdminNotificationDetailPage() {
           <Card title="Contenido">
             <div
               className={styles.body}
-              dangerouslySetInnerHTML={{ __html: notification.body }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(notification.body) }}
             />
           </Card>
         )}
@@ -153,11 +135,6 @@ export default function AdminNotificationDetailPage() {
           <Card title="Error">
             <div className={styles.errorMessage}>
               <p>{notification.errorMessage}</p>
-              {notification.status === "ERROR" && notification.retryCount < notification.maxRetries && (
-                <Button variant="primary" onClick={handleRetry}>
-                  Reintentar envío
-                </Button>
-              )}
             </div>
           </Card>
         )}

@@ -108,7 +108,7 @@ export default function AdminToursPage() {
       limit,
       category: filters?.category || undefined,
       isActive:
-        filters?.isActive !== undefined
+        filters?.isActive && filters.isActive !== ""
           ? filters.isActive === "true"
           : undefined,
     });
@@ -163,7 +163,7 @@ export default function AdminToursPage() {
         // Recargar la tabla
         refetch();
       } else {
-        alert(`Error al eliminar: ${response.error || "Error desconocido"}`);
+        alert(`Error al eliminar: Error desconocido`);
       }
     } catch (err) {
       alert(`Error al eliminar: ${err instanceof Error ? err.message : "Error desconocido"}`);

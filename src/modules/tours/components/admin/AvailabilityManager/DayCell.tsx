@@ -43,6 +43,28 @@ export function DayCell({
     return styles.available;
   };
 
+  const getCellClassName = (includeDisabled = false) => {
+    return `
+      ${styles.dayCell}
+      ${!isCurrentMonth ? styles.otherMonth : ""}
+      ${isToday ? styles.today : ""}
+      ${isPast ? styles.past : ""}
+      ${isSelected ? styles.selected : ""}
+      ${getStatusClass()}
+      ${includeDisabled && isDisabled ? styles.disabled : ""}
+    `.trim();
+  };
+
+  const getTitleText = () => {
+    if (isWeekdayDisabled) {
+      return "Este día no está disponible para este tour";
+    }
+    if (departure) {
+      return `${seatsAvailable} cupos disponibles`;
+    }
+    return "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)";
+  };
+
   const handleClick = (e: React.MouseEvent) => {
     if (disabled || isPast || isWeekdayDisabled) return;
     // No abrir modal si se hace click en el botón de eliminar
@@ -82,39 +104,22 @@ export function DayCell({
     </>
   );
 
+  const titleText = getTitleText();
+  const cellClassName = getCellClassName();
+
   // Si hay un botón de eliminar, usar un div contenedor para evitar botones anidados
   if (departure && onDelete) {
     return (
       <div
-        className={`
-          ${styles.dayCell}
-          ${!isCurrentMonth ? styles.otherMonth : ""}
-          ${isToday ? styles.today : ""}
-          ${isPast ? styles.past : ""}
-          ${isSelected ? styles.selected : ""}
-          ${getStatusClass()}
-          ${isDisabled ? styles.disabled : ""}
-        `}
-        title={
-          isWeekdayDisabled
-            ? "Este día no está disponible para este tour"
-            : departure
-            ? `${seatsAvailable} cupos disponibles`
-            : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
-        }
+        className={getCellClassName(true)}
+        title={titleText}
       >
         <button
           type="button"
           className={styles.dayCellButton}
           onClick={handleClick}
           disabled={isDisabled}
-          title={
-            isWeekdayDisabled
-              ? "Este día no está disponible para este tour"
-              : departure
-              ? `${seatsAvailable} cupos disponibles`
-              : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
-          }
+          title={titleText}
         >
           {dayCellContent}
         </button>
@@ -134,23 +139,10 @@ export function DayCell({
   return (
     <button
       type="button"
-      className={`
-        ${styles.dayCell}
-        ${!isCurrentMonth ? styles.otherMonth : ""}
-        ${isToday ? styles.today : ""}
-        ${isPast ? styles.past : ""}
-        ${isSelected ? styles.selected : ""}
-        ${getStatusClass()}
-      `}
+      className={cellClassName}
       onClick={handleClick}
       disabled={isDisabled}
-      title={
-        isWeekdayDisabled
-          ? "Este día no está disponible para este tour"
-          : departure
-          ? `${seatsAvailable} cupos disponibles`
-          : "Click para agregar disponibilidad (Ctrl/Cmd para selección múltiple)"
-      }
+      title={titleText}
     >
       {dayCellContent}
     </button>

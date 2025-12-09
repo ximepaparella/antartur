@@ -3,23 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useDataTable } from "@/modules/admin/hooks/useDataTable";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import type { OrderResponse } from "@/modules/orders/api/dto/ordersDto";
+import type { OrderStatus } from "@/components/common/StatusBadge";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { TableColumn } from "@/components/common/Table/Table";
 import type { FilterConfig } from "@/components/common/FiltersBar";
 import styles from "./page.module.scss";
 
-interface Order {
-  id: string;
-  code: string;
-  customerName: string;
-  customerEmail: string;
-  type: "RESERVATION" | "ENQUIRY";
-  status: string;
-  totalAmount: number;
-  currency: string;
-  createdAt: string;
-}
+type Order = OrderResponse;
 
 const columns: TableColumn<Order>[] = [
   {
@@ -43,7 +35,7 @@ const columns: TableColumn<Order>[] = [
   {
     key: "status",
     label: "Estado",
-    render: (value) => <StatusBadge status={value as any} />,
+    render: (value) => <StatusBadge status={value as OrderStatus} />,
   },
   {
     key: "totalAmount",
@@ -140,8 +132,9 @@ export default function AdminOrdersPage() {
       }
 
       return {
-        ...response,
+        success: response.success,
         data: filteredData,
+        meta: response.meta,
       };
     },
     initialPage: 1,

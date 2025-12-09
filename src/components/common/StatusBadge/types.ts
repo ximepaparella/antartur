@@ -1,8 +1,9 @@
 export type OrderStatus = "PENDING_PAYMENT" | "PAID" | "CANCELLED" | "EXPIRED" | "COMPLETED";
 export type BookingStatus = "HELD" | "CONFIRMED";
+export type PaymentStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 export type NotificationStatus = "PENDING" | "SENT" | "ERROR";
 
-export type Status = OrderStatus | BookingStatus | NotificationStatus;
+export type Status = OrderStatus | BookingStatus | PaymentStatus | NotificationStatus;
 
 export interface StatusBadgeProps {
   status: Status;
@@ -19,6 +20,9 @@ export const statusLabels: Record<string, string> = {
   // Booking Status
   HELD: "Reservada",
   CONFIRMED: "Confirmada",
+  // Payment Status
+  PROCESSING: "Procesando",
+  FAILED: "Fallido",
   // Notification Status
   PENDING: "Pendiente",
   SENT: "Enviada",
@@ -35,6 +39,9 @@ export const statusVariants: Record<string, string> = {
   // Booking Status
   HELD: "warning",
   CONFIRMED: "success",
+  // Payment Status
+  PROCESSING: "warning",
+  FAILED: "error",
   // Notification Status
   PENDING: "warning",
   SENT: "success",
