@@ -3,6 +3,7 @@
 .page {
   max-width: 1200px;
   margin: 0 auto;
+  padding: $spacing-24;
 }
 
 .header {
@@ -51,33 +52,189 @@
   color: $gray-700;
 }
 
-.bookingsList,
+// Booking Cards
+.bookingCard {
+  padding: $spacing-24;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+  margin-bottom: $spacing-16;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.bookingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-16;
+  padding-bottom: $spacing-16;
+  border-bottom: 1px solid $gray-200;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-20;
+    font-weight: $font-weight-bold;
+    color: $gray-700;
+  }
+}
+
+.bookingDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  margin-bottom: $spacing-24;
+}
+
+.detailRow {
+  display: flex;
+  gap: $spacing-16;
+}
+
+.detailLabel {
+  font-weight: $font-weight-semibold;
+  color: $gray-600;
+  min-width: 150px;
+}
+
+.detailValue {
+  color: $gray-700;
+}
+
+// Passengers Section
+.passengersSection {
+  margin-top: $spacing-24;
+  padding-top: $spacing-24;
+  border-top: 2px solid $gray-200;
+}
+
+.passengersTitle {
+  font-size: $font-size-18;
+  font-weight: $font-weight-bold;
+  color: $gray-700;
+  margin: 0 0 $spacing-16 0;
+}
+
+.passengersList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.passengerCard {
+  padding: $spacing-16;
+  background: $white;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+}
+
+.passengerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-12;
+  padding-bottom: $spacing-12;
+  border-bottom: 1px solid $gray-100;
+
+  h5 {
+    margin: 0;
+    font-size: $font-size-16;
+    font-weight: $font-weight-semibold;
+    color: $gray-700;
+  }
+}
+
+.passengerType {
+  padding: $spacing-4 $spacing-8;
+  background: $primary-color;
+  color: $white;
+  border-radius: $spacing-4;
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+}
+
+.passengerDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-12;
+}
+
+.passengerDetail {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.passengerLabel {
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.passengerValue {
+  font-size: $font-size-14;
+  color: $gray-700;
+}
+
+// Payments
 .paymentsList {
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
 }
 
-.bookingItem,
-.paymentItem {
+.paymentCard {
+  padding: $spacing-20;
+  background: $gray-50;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+}
+
+.paymentHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-16;
-  background: $gray-50;
-  border-radius: 8px;
+  margin-bottom: $spacing-16;
+  padding-bottom: $spacing-16;
+  border-bottom: 1px solid $gray-200;
 
   h4 {
-    margin: 0 0 $spacing-4 0;
-    font-size: $font-size-16;
+    margin: 0;
+    font-size: $font-size-18;
+    font-weight: $font-weight-semibold;
     color: $gray-700;
   }
+}
 
-  p {
-    margin: $spacing-4 0;
-    font-size: $font-size-14;
-    color: $gray-600;
-  }
+.paymentDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-12;
+}
+
+.paymentDetail {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.paymentLabel {
+  font-size: $font-size-12;
+  font-weight: $font-weight-medium;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.paymentValue {
+  font-size: $font-size-14;
+  color: $gray-700;
+  font-weight: $font-weight-semibold;
 }
 
 .loading,
@@ -94,4 +251,3 @@
   gap: $spacing-16;
   align-items: center;
 }
-

@@ -14,8 +14,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "calendar" },
   { href: "/admin/tours", label: "Tours", icon: "map-route" },
-  { href: "/admin/orders", label: "Órdenes", icon: "credit-card" },
-  { href: "/admin/bookings", label: "Reservas", icon: "book-a" },
+  { href: "/admin/orders", label: "Órdenes y Reservas", icon: "credit-card" },
   { href: "/admin/notifications", label: "Notificaciones", icon: "email" },
 ];
 

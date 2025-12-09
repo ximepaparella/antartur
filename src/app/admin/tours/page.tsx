@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDataTable } from "@/modules/admin/hooks/useDataTable";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
+import { Trash2 } from "lucide-react";
 import type { TableColumn } from "@/components/common/Table/Table";
 import type { FilterConfig } from "@/components/common/FiltersBar";
 import styles from "./page.module.scss";
@@ -19,7 +20,7 @@ interface Tour {
   slug: string;
 }
 
-const columns: TableColumn<Tour>[] = [
+const getColumns = (onDelete: (tourId: string, tourName: string) => void, deletingId: string | null): TableColumn<Tour>[] => [
   {
     key: "name",
     label: "Nombre",
@@ -44,6 +45,23 @@ const columns: TableColumn<Tour>[] = [
     key: "slug",
     label: "Slug",
     render: (value) => <span className={styles.slug}>{value}</span>,
+  },
+  {
+    key: "actions",
+    label: "Acciones",
+    align: "right",
+    render: (_, row) => (
+      <div onClick={(e) => e.stopPropagation()}>
+        <Button
+          variant="danger"
+          size="small"
+          onClick={() => onDelete(row.id, row.name)}
+          disabled={deletingId === row.id}
+        >
+          <Trash2 size={16} />
+        </Button>
+      </div>
+    ),
   },
 ];
 
@@ -78,6 +96,7 @@ const filterConfigs: FilterConfig[] = [
 
 export default function AdminToursPage() {
   const router = useRouter();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchTours = useCallback(async ({ page, limit, filters }: {
     page: number;
@@ -121,6 +140,7 @@ export default function AdminToursPage() {
     handleLimitChange,
     handleFilterChange,
     clearFilters,
+    refetch,
   } = useDataTable<Tour>({
     fetchData: fetchTours,
     initialPage: 1,
@@ -130,6 +150,29 @@ export default function AdminToursPage() {
   const handleRowClick = (tour: Tour) => {
     router.push(`/admin/tours/${tour.id}`);
   };
+
+  const handleDelete = useCallback(async (tourId: string, tourName: string) => {
+    if (!confirm(`¿Estás seguro de eliminar el tour "${tourName}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      setDeletingId(tourId);
+      const response = await adminApiClient.deleteTour(tourId);
+      if (response.success) {
+        // Recargar la tabla
+        refetch();
+      } else {
+        alert(`Error al eliminar: ${response.error || "Error desconocido"}`);
+      }
+    } catch (err) {
+      alert(`Error al eliminar: ${err instanceof Error ? err.message : "Error desconocido"}`);
+    } finally {
+      setDeletingId(null);
+    }
+  }, [refetch]);
+
+  const columns = getColumns(handleDelete, deletingId);
 
   return (
     <div className={styles.page}>
