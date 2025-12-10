@@ -72,6 +72,15 @@ export const tourPriceSchema = z.object({
 });
 
 /**
+ * Schema para restricción de tour
+ */
+export const tourRestrictionSchema = z.object({
+  id: z.string().optional(),
+  text: z.string().min(1, "El texto de la restricción es requerido"),
+  sortOrder: z.coerce.number().int().min(0).default(0),
+});
+
+/**
  * Schema para crear un Tour
  */
 export const createTourSchema = z.object({
@@ -127,6 +136,8 @@ export const updateTourSchema = z.object({
   featuredInfos: z.array(featuredInfoSchema).optional(),
   testimonials: z.array(testimonialSchema).optional(),
   quickInfoItems: z.array(quickInfoItemSchema).optional(),
+  // Restricciones
+  restrictions: z.array(tourRestrictionSchema).optional(),
   // Precios
   prices: z.array(tourPriceSchema).optional(),
   // SEO fields - nullable en Prisma

@@ -142,8 +142,12 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
     quickInfo: {
       price: arsPrice ? `$${Number(arsPrice.priceAdult).toLocaleString("es-AR")}` : "",
       items: quickInfoItems,
-      restriction: tour.restrictionText || undefined,
-      alternative: tour.alternativeText && tour.alternativePrice
+      restrictions: ("restrictions" in tour && tour.restrictions)
+        ? tour.restrictions.map((r) => r.text)
+        : (tour.restrictionText ? [tour.restrictionText] : undefined),
+      alternative: (tour.alternativeText && tour.alternativePrice && 
+                    tour.alternativeText !== "Consultar precio" && 
+                    tour.alternativePrice !== "Consultar")
         ? {
             text: tour.alternativeText,
             price: tour.alternativePrice,

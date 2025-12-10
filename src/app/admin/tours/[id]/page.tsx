@@ -86,6 +86,11 @@ interface TourFullData {
     priceAdult: number;
     priceChild: number;
   }>;
+  restrictions?: Array<{
+    id: string;
+    text: string;
+    sortOrder: number;
+  }>;
 }
 
 export default function AdminTourDetailPage() {
@@ -158,6 +163,10 @@ export default function AdminTourDetailPage() {
       }
       if (payload.quickInfoItems && Array.isArray(payload.quickInfoItems) && payload.quickInfoItems.length === 0) {
         delete payload.quickInfoItems;
+      }
+      // Si las restricciones llegan como array vacío, enviarlas para borrar en backend
+      if (payload.restrictions && Array.isArray(payload.restrictions) && payload.restrictions.length === 0) {
+        payload.restrictions = [];
       }
       if (payload.prices && Array.isArray(payload.prices) && payload.prices.length === 0) {
         delete payload.prices;

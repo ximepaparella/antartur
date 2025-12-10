@@ -82,6 +82,10 @@ export interface CreateTourDto {
     avatar: string;
     country: string;
   }>;
+  restrictions?: Array<{
+    text: string;
+    sortOrder?: number;
+  }>;
   additionals?: Array<{
     additionalId: string;
     name: string;

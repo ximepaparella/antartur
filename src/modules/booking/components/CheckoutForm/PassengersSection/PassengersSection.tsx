@@ -55,6 +55,7 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
       <PassengerActions
         onAddAdult={() => onAddPassenger(true)}
         onAddChild={() => onAddPassenger(false)}
+        minAge={minAge}
       />
     </Card>
   );

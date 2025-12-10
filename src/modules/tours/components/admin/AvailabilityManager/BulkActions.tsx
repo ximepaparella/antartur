@@ -313,8 +313,9 @@ export function BulkActions({
 
             <div className={styles.actionGroup}>
               <h5 className={styles.actionTitle}>Horario</h5>
-              <div className={styles.actionForm}>
+              <div className={styles.actionForm} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <Select
+                  label="Hora inicio"
                   value={bulkStartTime}
                   onChange={(e) => setBulkStartTime(e.target.value)}
                   disabled={disabled || isProcessing}
@@ -324,6 +325,7 @@ export function BulkActions({
                   ]}
                 />
                 <Select
+                  label="Hora fin (opcional)"
                   value={bulkEndTime}
                   onChange={(e) => setBulkEndTime(e.target.value)}
                   disabled={disabled || isProcessing}

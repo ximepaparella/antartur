@@ -41,6 +41,12 @@ export interface Testimonial {
   country: string;
 }
 
+export interface Restriction {
+  id?: string;
+  text: string;
+  sortOrder?: number;
+}
+
 export interface TourFormData {
   id?: string;
   name?: string;
@@ -83,6 +89,7 @@ export interface TourFormData {
   timelineItems?: TimelineItem[];
   featuredInfos?: FeaturedInfo[];
   testimonials?: Testimonial[];
+  restrictions?: Restriction[];
   // Internal fields (not sent to API)
   departures?: unknown[];
   createdAt?: string;

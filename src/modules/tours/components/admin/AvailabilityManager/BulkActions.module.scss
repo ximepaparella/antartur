@@ -107,21 +107,11 @@
   gap: $spacing-12;
 }
 
-@media (min-width: 768px) {
-  .actionForm {
-    flex-direction: row;
-    align-items: flex-end;
-    flex-wrap: wrap;
+// Para la sección de Horario, mantener siempre en columna
+.actionGroup:has(.actionForm[style*="flex-direction: column"]) .actionForm {
+  flex-direction: column !important;
     
-    > *:not(button) {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    > button {
-      flex: 0 0 auto;
-      min-width: 120px;
-      max-width: 150px;
-    }
+  > * {
+    width: 100%;
   }
 }

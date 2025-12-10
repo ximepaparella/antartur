@@ -46,7 +46,7 @@ export interface QuickInfoItem {
 export interface TourQuickInfo {
   price: string;
   items: QuickInfoItem[];
-  restriction?: string;
+  restrictions?: string[];
   alternative?: {
     text: string;
     price: string;

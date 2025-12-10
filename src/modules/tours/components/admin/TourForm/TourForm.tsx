@@ -8,11 +8,12 @@ import { Textarea } from "@/components/common/Textarea/Textarea";
 import { Select } from "@/components/common/Select/Select";
 import { ArrayFieldManager } from "@/components/common/ArrayFieldManager";
 import { ImagePicker } from "@/modules/tours/components/admin/ImagePicker";
+import { AvatarPicker } from "@/modules/tours/components/admin/AvatarPicker/AvatarPicker";
 import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
 import { AvailabilityManager } from "../AvailabilityManager";
 import type { TourFormProps, TabType } from "@/modules/tours/types/admin";
-import type { TourFormData, TourImage, QuickInfoItem, TimelineItem, FeaturedInfo, Testimonial, TourPrice } from "./types";
+import type { TourFormData, TourImage, QuickInfoItem, TimelineItem, FeaturedInfo, Testimonial, TourPrice, Restriction } from "./types";
 import {
   sanitizeImages,
   filterQuickInfoItems,
@@ -22,6 +23,7 @@ import {
   filterTestimonials,
   removeEmptyArrays,
 } from "./helpers/tourFormValidation";
+import { generateSlug } from "@/lib/utils/slug";
 import styles from "./TourForm.module.scss";
 
 export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
@@ -41,18 +43,34 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         fridayAvailable: tour.fridayAvailable ?? true,
         saturdayAvailable: tour.saturdayAvailable ?? true,
         sundayAvailable: tour.sundayAvailable ?? true,
+        // Valores por defecto para campos no configurables
+        timelineImportantNote: tour.timelineImportantNote || "Itinerario a modo informativo, puede variar de acuerdo a las condiciones climáticas y al grupo.",
+        alternativeText: tour.alternativeText || "Consultar precio",
+        alternativePrice: tour.alternativePrice || "Consultar",
+        ctaLabel: tour.ctaLabel || "RESERVAR",
+        ctaHref: tour.ctaHref || "",
+        // OG Image usa heroImage por default
+        ogImage: tour.ogImage || tour.heroImage || "",
       });
     }
   }, [tour]);
+
+  // Auto-generar slug cuando cambie el nombre (solo para tours nuevos o si el slug está vacío)
+  useEffect(() => {
+    if (formData.name && (!formData.slug || !tour?.id)) {
+      const newSlug = generateSlug(formData.name);
+      if (newSlug && newSlug !== formData.slug) {
+        setFormData((prev) => ({ ...prev, slug: newSlug }));
+      }
+    }
+  }, [formData.name, formData.slug, tour?.id]);
 
   const tabs: Array<{ id: TabType; label: string }> = [
     { id: "basic", label: "Información Básica" },
     { id: "images", label: "Imágenes" },
     { id: "content", label: "Contenido" },
-    { id: "seo", label: "SEO" },
-    { id: "pricing", label: "Precios" },
-    { id: "relations", label: "Relaciones" },
     { id: "availability", label: "Disponibilidad" },
+    { id: "grid", label: "Tour Grid" },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -156,9 +174,27 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         }
       );
     }
+
+    // Filtrar restrictions con campos vacíos
+    if (cleanedFormData.restrictions) {
+      cleanedFormData.restrictions = cleanedFormData.restrictions.filter(
+        (item: Restriction) => item.text && item.text.trim()
+      );
+    }
     
     // Eliminar campos que no deben enviarse en el update
     const { id, departures, createdAt, updatedAt, ...dataToSave } = cleanedFormData;
+    
+    // Asegurar valores por defecto para campos no configurables
+    dataToSave.timelineImportantNote = dataToSave.timelineImportantNote || "Itinerario a modo informativo, puede variar de acuerdo a las condiciones climáticas y al grupo.";
+    dataToSave.alternativeText = dataToSave.alternativeText || "Consultar precio";
+    dataToSave.alternativePrice = dataToSave.alternativePrice || "Consultar";
+    dataToSave.ctaLabel = dataToSave.ctaLabel || "RESERVAR";
+    dataToSave.ctaHref = dataToSave.ctaHref || "";
+    // OG Image usa heroImage por default
+    if (!dataToSave.ogImage && formData.heroImage) {
+      dataToSave.ogImage = formData.heroImage;
+    }
     
     // Asegurar que los arrays solo se envíen si tienen elementos válidos
     if (dataToSave.images && dataToSave.images.length === 0) {
@@ -175,6 +211,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     }
     if (dataToSave.quickInfoItems && dataToSave.quickInfoItems.length === 0) {
       delete dataToSave.quickInfoItems;
+    }
+    // Si el array de restricciones queda vacío, enviarlo como [] para que el backend elimine las existentes
+    if (dataToSave.restrictions && dataToSave.restrictions.length === 0) {
+      dataToSave.restrictions = [];
     }
     if (dataToSave.prices && dataToSave.prices.length === 0) {
       delete dataToSave.prices;
@@ -220,69 +260,12 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
           <Card title="Información Básica">
             <div className={styles.formGrid}>
               <Input
-                label="Nombre"
-                value={formData.name || ""}
-                onChange={(e) => updateField("name", e.target.value)}
-                disabled={!isEditing}
-                required
-              />
-              <Input
                 label="Slug"
                 value={formData.slug || ""}
                 onChange={(e) => updateField("slug", e.target.value)}
-                disabled={!isEditing}
+                disabled={true}
                 required
-              />
-              <Input
-                label="Subtítulo"
-                value={formData.subtitle || ""}
-                onChange={(e) => updateField("subtitle", e.target.value)}
-                disabled={!isEditing}
-              />
-              <div className={styles.categorySection}>
-                <label className={styles.categoryLabel}>Categoría *</label>
-                <div className={styles.categoryCheckboxes}>
-                  {[
-                    { value: "winter", label: "Invierno" },
-                    { value: "summer", label: "Verano" },
-                  ].map((cat) => {
-                    const categories = (formData.category || "").split(",").filter(Boolean);
-                    const isChecked = categories.includes(cat.value);
-                    return (
-                      <label key={cat.value} className={styles.categoryCheckbox}>
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => {
-                            let newCategories = [...categories];
-                            if (e.target.checked) {
-                              if (!newCategories.includes(cat.value)) {
-                                newCategories.push(cat.value);
-                              }
-                            } else {
-                              newCategories = newCategories.filter(c => c !== cat.value);
-                            }
-                            updateField("category", newCategories.join(","));
-                          }}
-                          disabled={!isEditing}
-                        />
-                        <span>{cat.label}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-              <Select
-                label="Dificultad"
-                value={formData.difficulty || ""}
-                onChange={(e) => updateField("difficulty", e.target.value)}
-                disabled={!isEditing}
-                options={[
-                  { value: "bajo", label: "Bajo" },
-                  { value: "medio", label: "Medio" },
-                  { value: "dificil", label: "Difícil" },
-                ]}
-                required
+                placeholder="Se genera automáticamente desde el nombre"
               />
               <Input
                 label="Duración (horas)"
@@ -317,6 +300,86 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   Tour activo
                 </label>
               </div>
+              <div className={styles.categorySection}>
+                <label className={styles.categoryLabel}>Categoría *</label>
+                <div className={styles.categoryCheckboxes}>
+                  {[
+                    { value: "winter", label: "Invierno" },
+                    { value: "summer", label: "Verano" },
+                  ].map((cat) => {
+                    const categories = (formData.category || "").split(",").filter(Boolean);
+                    const isChecked = categories.includes(cat.value);
+                    return (
+                      <label key={cat.value} className={styles.categoryCheckbox}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            let newCategories = [...categories];
+                            if (e.target.checked) {
+                              if (!newCategories.includes(cat.value)) {
+                                newCategories.push(cat.value);
+                              }
+                            } else {
+                              newCategories = newCategories.filter(c => c !== cat.value);
+                            }
+                            updateField("category", newCategories.join(","));
+                          }}
+                          disabled={!isEditing}
+                        />
+                        <span>{cat.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.restrictionsSection}>
+              <h4 className={styles.sectionTitle}>Restricciones</h4>
+              <p className={styles.sectionDescription}>
+                Agrega las restricciones que se mostrarán en el tour.
+              </p>
+              <ArrayFieldManager
+                title=""
+                items={formData.restrictions || []}
+                onAdd={() => {
+                  const newItem: Restriction = {
+                    id: `temp-${Date.now()}`,
+                    text: "",
+                    sortOrder: (formData.restrictions?.length || 0),
+                  };
+                  updateField("restrictions", [...(formData.restrictions || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.restrictions || [])];
+                  updated[index] = item;
+                  updateField("restrictions", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.restrictions || []).filter((_, i: number) => i !== index);
+                  updateField("restrictions", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.restrictionItem}>
+                    <Textarea
+                      label={`Restricción ${index + 1} *`}
+                      value={item.text || ""}
+                      onChange={(e) => onUpdate({ ...item, text: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      rows={2}
+                      required
+                      placeholder="Ej: Edad mínima 12 años"
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
+                  id: `temp-${Date.now()}`,
+                  text: "",
+                  sortOrder: formData.restrictions?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
             </div>
             
             <div className={styles.weekdaysCard}>
@@ -349,6 +412,162 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 </div>
               </Card>
             </div>
+
+            <div className={styles.priceSection}>
+              <Card title="Precios">
+                <div className={styles.formGrid}>
+                  <div className={styles.priceSection}>
+                    <h4 className={styles.sectionTitle}>Precio ARS</h4>
+                    <div className={styles.priceRow}>
+                      <Input
+                        label="Precio Adulto (ARS)"
+                        type="number"
+                        value={
+                          formData.prices?.find((p: TourPrice) => p.currency === "ARS")?.priceAdult || ""
+                        }
+                        onChange={(e) => {
+                          const prices = formData.prices || [];
+                          const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
+                          if (arsIndex >= 0) {
+                            const updated = [...prices];
+                            updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
+                            updateField("prices", updated);
+                          } else {
+                            updateField("prices", [
+                              ...prices,
+                              { currency: "ARS", priceAdult: Number(e.target.value), priceChild: 0 },
+                            ]);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        placeholder="0"
+                      />
+                      <Input
+                        label="Precio Niño (ARS)"
+                        type="number"
+                        value={
+                          formData.prices?.find((p: any) => p.currency === "ARS")?.priceChild || ""
+                        }
+                        onChange={(e) => {
+                          const prices = formData.prices || [];
+                          const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
+                          if (arsIndex >= 0) {
+                            const updated = [...prices];
+                            updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
+                            updateField("prices", updated);
+                          } else {
+                            updateField("prices", [
+                              ...prices,
+                              { currency: "ARS", priceAdult: 0, priceChild: Number(e.target.value) },
+                            ]);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.priceSection}>
+                    <h4 className={styles.sectionTitle}>Precio USD</h4>
+                    <div className={styles.priceRow}>
+                      <Input
+                        label="Precio Adulto (USD)"
+                        type="number"
+                        value={
+                          formData.prices?.find((p: TourPrice) => p.currency === "USD")?.priceAdult || ""
+                        }
+                        onChange={(e) => {
+                          const prices = formData.prices || [];
+                          const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
+                          if (usdIndex >= 0) {
+                            const updated = [...prices];
+                            updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
+                            updateField("prices", updated);
+                          } else {
+                            updateField("prices", [
+                              ...prices,
+                              { currency: "USD", priceAdult: Number(e.target.value), priceChild: 0 },
+                            ]);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        placeholder="0"
+                      />
+                      <Input
+                        label="Precio Niño (USD)"
+                        type="number"
+                        value={
+                          formData.prices?.find((p: any) => p.currency === "USD")?.priceChild || ""
+                        }
+                        onChange={(e) => {
+                          const prices = formData.prices || [];
+                          const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
+                          if (usdIndex >= 0) {
+                            const updated = [...prices];
+                            updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
+                            updateField("prices", updated);
+                          } else {
+                            updateField("prices", [
+                              ...prices,
+                              { currency: "USD", priceAdult: 0, priceChild: Number(e.target.value) },
+                            ]);
+                          }
+                        }}
+                        disabled={!isEditing}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </Card>
+        )}
+
+        {activeTab === "grid" && (
+          <Card title="Tour Grid">
+            <p className={styles.sectionDescription}>
+              Estos campos afectan cómo se ve el tour en el grid/listado de tours.
+            </p>
+            <div className={styles.formGrid}>
+                <ImagePicker
+                label="Imagen Featured (Card)"
+                  value={formData.featuredImage || ""}
+                  onChange={(url) => updateField("featuredImage", url)}
+                tourSlug={formData.slug || generateSlug(formData.name || "") || "default"}
+                  imageType="featured"
+                  disabled={!isEditing}
+                />
+              <Input
+                label="Nombre (Título)"
+                value={formData.name || ""}
+                onChange={(e) => updateField("name", e.target.value)}
+                disabled={!isEditing}
+                required
+                placeholder="Título que aparece en la card del grid"
+              />
+              <Input
+                label="Subtítulo"
+                value={formData.subtitle || ""}
+                onChange={(e) => updateField("subtitle", e.target.value)}
+                disabled={!isEditing}
+                placeholder="Subtítulo que aparece en hover de la card"
+              />
+              <Select
+                label="Dificultad"
+                value={formData.difficulty || ""}
+                onChange={(e) => updateField("difficulty", e.target.value)}
+                disabled={!isEditing}
+                options={[
+                  { value: "", label: "Seleccionar..." },
+                  { value: "bajo", label: "Bajo" },
+                  { value: "medio", label: "Medio" },
+                  { value: "dificil", label: "Difícil" },
+                ]}
+                required
+              />
+            </div>
           </Card>
         )}
 
@@ -357,18 +576,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
             <Card title="Imágenes Principales">
               <div className={styles.imagePickersGrid}>
                 <ImagePicker
-                  label="Imagen Featured (Card)"
-                  value={formData.featuredImage || ""}
-                  onChange={(url) => updateField("featuredImage", url)}
-                  tourSlug={formData.slug || "default"}
-                  imageType="featured"
-                  disabled={!isEditing}
-                />
-                <ImagePicker
                   label="Imagen Hero"
                   value={formData.heroImage || ""}
                   onChange={(url) => updateField("heroImage", url)}
-                  tourSlug={formData.slug || "default"}
+                  tourSlug={formData.slug || generateSlug(formData.name || "") || "default"}
                   imageType="hero"
                   disabled={!isEditing}
                 />
@@ -381,20 +592,13 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   disabled={!isEditing}
                   placeholder="Texto que aparece sobre el hero"
                 />
-                <Input
-                  label="OG Image URL (SEO)"
-                  value={formData.ogImage || ""}
-                  onChange={(e) => updateField("ogImage", e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="URL de la imagen para redes sociales"
-                />
               </div>
             </Card>
 
             <GalleryManager
               images={getGalleryImages()}
               onChange={updateGalleryImages}
-              tourSlug={formData.slug || "default"}
+              tourSlug={formData.slug || generateSlug(formData.name || "") || "default"}
               disabled={!isEditing}
             />
           </div>
@@ -419,257 +623,71 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 rows={8}
                 required
               />
-              <Textarea
-                label="Texto de Restricciones"
-                value={formData.restrictionText || ""}
-                onChange={(e) => updateField("restrictionText", e.target.value)}
-                disabled={!isEditing}
-                rows={4}
-                required
-              />
-              <Textarea
-                label="Nota Importante del Timeline"
-                value={formData.timelineImportantNote || ""}
-                onChange={(e) => updateField("timelineImportantNote", e.target.value)}
-                disabled={!isEditing}
-                rows={3}
-              />
-              <Input
-                label="Texto Alternativo de Precio"
-                value={formData.alternativeText || ""}
-                onChange={(e) => updateField("alternativeText", e.target.value)}
-                disabled={!isEditing}
-                placeholder="Ej: Consultar precio"
-              />
-              <Input
-                label="Precio Alternativo"
-                value={formData.alternativePrice || ""}
-                onChange={(e) => updateField("alternativePrice", e.target.value)}
-                disabled={!isEditing}
-                placeholder="Ej: Consultar"
-              />
-              <Input
-                label="CTA Label"
-                value={formData.ctaLabel || ""}
-                onChange={(e) => updateField("ctaLabel", e.target.value)}
-                disabled={!isEditing}
-                placeholder="Ej: RESERVAR"
-              />
-              <Input
-                label="CTA Href"
-                value={formData.ctaHref || ""}
-                onChange={(e) => updateField("ctaHref", e.target.value)}
-                disabled={!isEditing}
-                placeholder="Ej: #booking"
-              />
             </div>
-          </Card>
-        )}
 
-        {activeTab === "seo" && (
-          <Card title="SEO">
             <div className={styles.singleColumnLayout}>
-              <Input
-                label="Meta Title"
-                value={formData.metaTitle || ""}
-                onChange={(e) => updateField("metaTitle", e.target.value)}
-                disabled={!isEditing}
-                placeholder="Título para SEO (máx 60 caracteres)"
-                maxLength={60}
-              />
-              <Textarea
-                label="Meta Description"
-                value={formData.metaDescription || ""}
-                onChange={(e) => updateField("metaDescription", e.target.value)}
-                disabled={!isEditing}
-                rows={3}
-                placeholder="Descripción para SEO (máx 160 caracteres)"
-                maxLength={160}
-              />
-              <Input
-                label="Canonical URL"
-                value={formData.canonicalUrl || ""}
-                onChange={(e) => updateField("canonicalUrl", e.target.value)}
-                disabled={!isEditing}
-                placeholder="URL canónica"
-              />
-            </div>
-          </Card>
-        )}
-
-        {activeTab === "pricing" && (
-          <Card title="Precios">
-            <div className={styles.formGrid}>
-              <div className={styles.priceSection}>
-                <h4 className={styles.sectionTitle}>Precio ARS</h4>
-                <div className={styles.priceRow}>
-                  <Input
-                    label="Precio Adulto (ARS)"
-                    type="number"
-                    value={
-                      formData.prices?.find((p: TourPrice) => p.currency === "ARS")?.priceAdult || ""
-                    }
-                    onChange={(e) => {
-                      const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
-                      if (arsIndex >= 0) {
-                        const updated = [...prices];
-                        updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
-                        updateField("prices", updated);
-                      } else {
-                        updateField("prices", [
-                          ...prices,
-                          { currency: "ARS", priceAdult: Number(e.target.value), priceChild: 0 },
-                        ]);
-                      }
-                    }}
-                    disabled={!isEditing}
-                    placeholder="0"
-                  />
-                  <Input
-                    label="Precio Niño (ARS)"
-                    type="number"
-                    value={
-                      formData.prices?.find((p: any) => p.currency === "ARS")?.priceChild || ""
-                    }
-                    onChange={(e) => {
-                      const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
-                      if (arsIndex >= 0) {
-                        const updated = [...prices];
-                        updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
-                        updateField("prices", updated);
-                      } else {
-                        updateField("prices", [
-                          ...prices,
-                          { currency: "ARS", priceAdult: 0, priceChild: Number(e.target.value) },
-                        ]);
-                      }
-                    }}
-                    disabled={!isEditing}
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-
-              <div className={styles.priceSection}>
-                <h4 className={styles.sectionTitle}>Precio USD</h4>
-                <div className={styles.priceRow}>
-                  <Input
-                    label="Precio Adulto (USD)"
-                    type="number"
-                    value={
-                      formData.prices?.find((p: TourPrice) => p.currency === "USD")?.priceAdult || ""
-                    }
-                    onChange={(e) => {
-                      const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
-                      if (usdIndex >= 0) {
-                        const updated = [...prices];
-                        updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
-                        updateField("prices", updated);
-                      } else {
-                        updateField("prices", [
-                          ...prices,
-                          { currency: "USD", priceAdult: Number(e.target.value), priceChild: 0 },
-                        ]);
-                      }
-                    }}
-                    disabled={!isEditing}
-                    placeholder="0"
-                  />
-                  <Input
-                    label="Precio Niño (USD)"
-                    type="number"
-                    value={
-                      formData.prices?.find((p: any) => p.currency === "USD")?.priceChild || ""
-                    }
-                    onChange={(e) => {
-                      const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
-                      if (usdIndex >= 0) {
-                        const updated = [...prices];
-                        updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
-                        updateField("prices", updated);
-                      } else {
-                        updateField("prices", [
-                          ...prices,
-                          { currency: "USD", priceAdult: 0, priceChild: Number(e.target.value) },
-                        ]);
-                      }
-                    }}
-                    disabled={!isEditing}
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        {activeTab === "relations" && (
-          <div className={styles.relationsTab}>
-            <section className={styles.relationSection}>
-              <h3 className={styles.relationSectionTitle}>📋 Timeline Items</h3>
+              <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>Información Destacada</h3>
               <ArrayFieldManager
                 title=""
-                items={formData.timelineItems || []}
+                items={formData.quickInfoItems || []}
                 onAdd={() => {
                   const newItem = {
                     id: `temp-${Date.now()}`,
-                    timeLabel: "",
-                    title: "",
-                    description: "",
-                    sortOrder: (formData.timelineItems?.length || 0),
+                    icon: "",
+                    label: "",
+                    value: "",
+                    sortOrder: (formData.quickInfoItems?.length || 0),
                   };
-                  updateField("timelineItems", [...(formData.timelineItems || []), newItem]);
+                  updateField("quickInfoItems", [...(formData.quickInfoItems || []), newItem]);
                 }}
                 onUpdate={(index, item) => {
-                  const updated = [...(formData.timelineItems || [])];
+                  const updated = [...(formData.quickInfoItems || [])];
                   updated[index] = item;
-                  updateField("timelineItems", updated);
+                  updateField("quickInfoItems", updated);
                 }}
                 onDelete={(index) => {
-                  const filtered = (formData.timelineItems || []).filter((_, i: number) => i !== index);
-                  updateField("timelineItems", filtered);
+                  const filtered = (formData.quickInfoItems || []).filter((_, i: number) => i !== index);
+                  updateField("quickInfoItems", filtered);
                 }}
                 renderItem={(item, index, isEditingItem, onUpdate) => (
-                  <div className={styles.timelineItem}>
-                    <Input
-                      label="Hora"
-                      value={item.timeLabel || ""}
-                      onChange={(e) => onUpdate({ ...item, timeLabel: e.target.value })}
+                  <div className={styles.quickInfoItem}>
+                    <IconPicker
+                      label="Icono"
+                      value={item.icon || ""}
+                      onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
                       disabled={!isEditingItem || !isEditing}
-                      placeholder="Ej: 9:00 AM"
+                      placeholder="Seleccionar icono"
                     />
                     <Input
-                      label="Título"
-                      value={item.title || ""}
-                      onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                      label="Texto"
+                      value={item.label || ""}
+                      onChange={(e) => onUpdate({ ...item, label: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
+                      placeholder="Ej: Duración"
                     />
-                    <Textarea
-                      label="Descripción"
-                      value={item.description || ""}
-                      onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                    <Input
+                      label="Valor"
+                      value={item.value || ""}
+                      onChange={(e) => onUpdate({ ...item, value: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
-                      rows={3}
+                      placeholder="Ej: 4 horas"
                     />
                   </div>
                 )}
                 getDefaultItem={() => ({
                   id: `temp-${Date.now()}`,
-                  timeLabel: "",
-                  title: "",
-                  description: "",
-                  sortOrder: formData.timelineItems?.length || 0,
+                  icon: "",
+                  label: "",
+                  value: "",
+                  sortOrder: formData.quickInfoItems?.length || 0,
                 })}
                 disabled={!isEditing}
               />
-            </section>
+              </section>
 
-            <section className={styles.relationSection}>
-              <h3 className={styles.relationSectionTitle}>⭐ Featured Info Items</h3>
+              <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>Información relevante</h3>
               <ArrayFieldManager
                 title=""
                 items={formData.featuredInfos || []}
@@ -725,10 +743,69 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 })}
                 disabled={!isEditing}
               />
-            </section>
+              </section>
 
-            <section className={styles.relationSection}>
-              <h3 className={styles.relationSectionTitle}>💬 Testimonials</h3>
+              <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>Itinerario</h3>
+              <ArrayFieldManager
+                title=""
+                items={formData.timelineItems || []}
+                onAdd={() => {
+                  const newItem = {
+                    id: `temp-${Date.now()}`,
+                    timeLabel: "",
+                    title: "",
+                    description: "",
+                    sortOrder: (formData.timelineItems?.length || 0),
+                  };
+                  updateField("timelineItems", [...(formData.timelineItems || []), newItem]);
+                }}
+                onUpdate={(index, item) => {
+                  const updated = [...(formData.timelineItems || [])];
+                  updated[index] = item;
+                  updateField("timelineItems", updated);
+                }}
+                onDelete={(index) => {
+                  const filtered = (formData.timelineItems || []).filter((_, i: number) => i !== index);
+                  updateField("timelineItems", filtered);
+                }}
+                renderItem={(item, index, isEditingItem, onUpdate) => (
+                  <div className={styles.timelineItem}>
+                    <Input
+                      label="Hora"
+                      value={item.timeLabel || ""}
+                      onChange={(e) => onUpdate({ ...item, timeLabel: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      placeholder="Ej: 9:00 AM"
+                    />
+                    <Input
+                      label="Título"
+                      value={item.title || ""}
+                      onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                    />
+                    <Textarea
+                      label="Descripción"
+                      value={item.description || ""}
+                      onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                      disabled={!isEditingItem || !isEditing}
+                      rows={3}
+                    />
+                  </div>
+                )}
+                getDefaultItem={() => ({
+                  id: `temp-${Date.now()}`,
+                  timeLabel: "",
+                  title: "",
+                  description: "",
+                  sortOrder: formData.timelineItems?.length || 0,
+                })}
+                disabled={!isEditing}
+              />
+              </section>
+
+              <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>Testimonios</h3>
               <ArrayFieldManager
                 title=""
                 items={formData.testimonials || []}
@@ -755,7 +832,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 renderItem={(item, index, isEditingItem, onUpdate) => (
                   <div className={styles.testimonialItem}>
                     <Textarea
-                      label="Texto del Testimonio *"
+                      label="Texto del Testimonio"
                       value={item.text || ""}
                       onChange={(e) => onUpdate({ ...item, text: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
@@ -763,22 +840,21 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       required
                     />
                     <Input
-                      label="Autor *"
+                      label="Autor"
                       value={item.author || ""}
                       onChange={(e) => onUpdate({ ...item, author: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
                       required
                     />
-                    <Input
-                      label="Avatar (URL) *"
+                    <AvatarPicker
+                      label="Avatar"
                       value={item.avatar || ""}
-                      onChange={(e) => onUpdate({ ...item, avatar: e.target.value })}
+                      onChange={(url) => onUpdate({ ...item, avatar: url })}
                       disabled={!isEditingItem || !isEditing}
-                      placeholder="URL de la imagen del avatar (obligatorio)"
-                      required
+                      placeholder="Sube una imagen o ingresa una URL"
                     />
                     <Input
-                      label="País *"
+                      label="País"
                       value={item.country || ""}
                       onChange={(e) => onUpdate({ ...item, country: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
@@ -796,68 +872,37 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 })}
                 disabled={!isEditing}
               />
-            </section>
+              </section>
 
-            <section className={styles.relationSection}>
-              <h3 className={styles.relationSectionTitle}>ℹ️ QuickInfo Items</h3>
-              <ArrayFieldManager
-                title=""
-                items={formData.quickInfoItems || []}
-                onAdd={() => {
-                  const newItem = {
-                    id: `temp-${Date.now()}`,
-                    icon: "",
-                    label: "",
-                    value: "",
-                    sortOrder: (formData.quickInfoItems?.length || 0),
-                  };
-                  updateField("quickInfoItems", [...(formData.quickInfoItems || []), newItem]);
-                }}
-                onUpdate={(index, item) => {
-                  const updated = [...(formData.quickInfoItems || [])];
-                  updated[index] = item;
-                  updateField("quickInfoItems", updated);
-                }}
-                onDelete={(index) => {
-                  const filtered = (formData.quickInfoItems || []).filter((_, i: number) => i !== index);
-                  updateField("quickInfoItems", filtered);
-                }}
-                renderItem={(item, index, isEditingItem, onUpdate) => (
-                  <div className={styles.quickInfoItem}>
-                    <IconPicker
-                      label="Icono"
-                      value={item.icon || ""}
-                      onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
-                      disabled={!isEditingItem || !isEditing}
-                      placeholder="Seleccionar icono"
-                    />
-                    <Input
-                      label="Label"
-                      value={item.label || ""}
-                      onChange={(e) => onUpdate({ ...item, label: e.target.value })}
-                      disabled={!isEditingItem || !isEditing}
-                      placeholder="Ej: Duración"
-                    />
-                    <Input
-                      label="Valor"
-                      value={item.value || ""}
-                      onChange={(e) => onUpdate({ ...item, value: e.target.value })}
-                      disabled={!isEditingItem || !isEditing}
-                      placeholder="Ej: 4 horas"
-                    />
-                  </div>
-                )}
-                getDefaultItem={() => ({
-                  id: `temp-${Date.now()}`,
-                  icon: "",
-                  label: "",
-                  value: "",
-                  sortOrder: formData.quickInfoItems?.length || 0,
-                })}
+              <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>SEO</h3>
+              <Input
+                label="Meta Title"
+                value={formData.metaTitle || ""}
+                onChange={(e) => updateField("metaTitle", e.target.value)}
                 disabled={!isEditing}
+                placeholder="Título para SEO (máx 60 caracteres)"
+                maxLength={60}
               />
-            </section>
-          </div>
+              <Textarea
+                label="Meta Description"
+                value={formData.metaDescription || ""}
+                onChange={(e) => updateField("metaDescription", e.target.value)}
+                disabled={!isEditing}
+                rows={3}
+                placeholder="Descripción para SEO (máx 160 caracteres)"
+                maxLength={160}
+              />
+              <Input
+                label="Canonical URL"
+                value={formData.canonicalUrl || ""}
+                onChange={(e) => updateField("canonicalUrl", e.target.value)}
+                disabled={!isEditing}
+                placeholder="URL canónica"
+              />
+              </section>
+            </div>
+          </Card>
         )}
 
         {activeTab === "availability" && formData.id && (

@@ -137,7 +137,7 @@ export default async function TourPage({ params }: TourPageProps) {
           tourId={fullTour.card.id}
           price={fullTour.quickInfo.price}
           items={fullTour.quickInfo.items}
-          restriction={fullTour.quickInfo.restriction}
+          restrictions={fullTour.quickInfo.restrictions}
           alternative={fullTour.quickInfo.alternative}
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
@@ -183,7 +183,10 @@ export default async function TourPage({ params }: TourPageProps) {
               additionals={fullTour.booking?.additionals}
               minAge={fullTour.restrictions?.minAge}
               minPassengers={fullTour.restrictions?.minPassengers}
-              restrictionText={fullTour.quickInfo?.restriction}
+              restrictions={fullTour.quickInfo?.restrictions}
+              restrictionText={fullTour.quickInfo?.restrictions && fullTour.quickInfo.restrictions.length > 0 
+                ? fullTour.quickInfo.restrictions.join(". ") 
+                : undefined}
             />
           </div>
         </Banner>

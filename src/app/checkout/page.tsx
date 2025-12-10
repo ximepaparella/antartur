@@ -12,6 +12,7 @@ import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
 import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useCheckoutFlow } from "@/modules/booking/hooks/useCheckoutFlow";
+import { Message } from "@/components/common/Message";
 import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
@@ -57,6 +58,7 @@ export default function CheckoutPage() {
   const [restriction, setRestriction] = useState("");
   const [hasPregnancyRestriction, setHasPregnancyRestriction] = useState(false);
   const [hasHealthRestriction, setHasHealthRestriction] = useState(false);
+  const [tourMinAge, setTourMinAge] = useState<number | null>(null);
 
   useEffect(() => {
     if (bookingData?.tourId) {
@@ -72,6 +74,7 @@ export default function CheckoutPage() {
               tourRestriction.toLowerCase().includes("dolencias") ||
               tourRestriction.toLowerCase().includes("salud")
             );
+            setTourMinAge(tour.minAge ?? null);
           }
         })
         .catch((error) => {
@@ -163,6 +166,7 @@ export default function CheckoutPage() {
                 ref={checkoutFormRef}
                 hasPregnancyRestriction={hasPregnancyRestriction}
                 hasHealthRestriction={hasHealthRestriction}
+                minAge={tourMinAge}
                 onCheckoutComplete={onCheckoutComplete}
                 onRestrictionViolationsChange={handleRestrictionViolationsChange}
                 onPassengersChange={handlePassengersChange}

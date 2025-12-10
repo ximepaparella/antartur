@@ -19,10 +19,10 @@ export function TourPreview({ tourData }: TourPreviewProps) {
   const heroImage = tourData.heroImage || "";
   const galleryImages =
     tourData.images
-      ?.filter((img: any) => img.imageType === "GALLERY")
+      ?.filter((img: any) => img.imageType === "GALLERY" && img.url && img.url.trim() !== "")
       .map((img: any) => ({
         id: img.id || `gallery-${Math.random()}`,
-        url: img.url,
+        src: img.url,
         alt: img.altText || tourData.name,
       })) || [];
 
@@ -34,7 +34,8 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // QuickInfo items - asegurar formato correcto
   const quickInfoItems =
-    tourData.quickInfoItems?.map((item: any) => ({
+    tourData.quickInfoItems?.map((item: any, index: number) => ({
+      id: item.id || `quickinfo-${index}-${Date.now()}`,
       icon: item.icon || "info",
       label: item.label || "",
       value: item.value || "",
@@ -42,7 +43,8 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // Featured Info - asegurar formato correcto
   const featuredInfoItems =
-    tourData.featuredInfos?.map((item: any) => ({
+    tourData.featuredInfos?.map((item: any, index: number) => ({
+      id: item.id || `featured-${index}-${Date.now()}`,
       icon: item.icon || "info",
       title: item.title || "",
       description: item.description || "",
@@ -65,6 +67,10 @@ export function TourPreview({ tourData }: TourPreviewProps) {
       avatar: item.avatar || "",
       country: item.country || "",
     })) || [];
+
+  // Restrictions - asegurar formato correcto
+  const restrictions =
+    tourData.restrictions?.map((item: any) => item.text || "").filter(Boolean) || [];
 
   return (
     <div className={styles.preview}>
@@ -89,13 +95,13 @@ export function TourPreview({ tourData }: TourPreviewProps) {
         </div>
 
         {/* QuickInfo Section */}
-        {(quickInfoItems.length > 0 || arsPrice || tourData.restrictionText) && (
+        {(quickInfoItems.length > 0 || arsPrice || restrictions.length > 0) && (
           <div className={styles.previewSection}>
             <TourQuickInfo
               tourId={tourData.id || "preview"}
               price={priceText}
               items={quickInfoItems}
-              restriction={tourData.restrictionText || ""}
+              restrictions={restrictions.length > 0 ? restrictions : undefined}
               alternative={
                 tourData.alternativeText && tourData.alternativePrice
                   ? { text: tourData.alternativeText, price: tourData.alternativePrice }
@@ -113,7 +119,12 @@ export function TourPreview({ tourData }: TourPreviewProps) {
           <div className={styles.previewSection}>
             <TourInfo
               title="AVENTURA Y PAISAJES ÚNICOS"
-              paragraphs={tourData.longDescription || tourData.shortDescription || ""}
+              paragraphs={
+                (tourData.longDescription || tourData.shortDescription || "")
+                  .split('\n')
+                  .filter(p => p.trim().length > 0)
+                  .map(p => p.trim())
+              }
             />
           </div>
         )}

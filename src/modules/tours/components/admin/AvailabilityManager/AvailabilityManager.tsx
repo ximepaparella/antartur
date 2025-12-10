@@ -671,9 +671,10 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                 })}
               </p>
 
-              <div className={styles.formRow}>
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
                 <Select
-                  label="Hora inicio"
+                    label="Hora inicio *"
                   value={formStartTime}
                   onChange={(e) => setFormStartTime(e.target.value)}
                   disabled={disabled || isSaving}
@@ -683,6 +684,8 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                   ]}
                   required
                 />
+                </div>
+                <div style={{ flex: 1 }}>
                 <Select
                   label="Hora fin (opcional)"
                   value={formEndTime}
@@ -693,18 +696,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                     ...TIME_OPTIONS,
                   ]}
                 />
-                {!disabled && (
-                  <div style={{ marginTop: '8px' }}>
-                    <Button 
-                      variant="primary" 
-                      onClick={handleSave} 
-                      disabled={isSaving || !formStartTime}
-                    >
-                      <Save size={16} />
-                      {isSaving ? "Guardando..." : "Guardar"}
-                    </Button>
                   </div>
-                )}
               </div>
 
               <Input
@@ -764,6 +756,14 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                 <div className={styles.modalActions}>
                   <Button variant="outline" onClick={handleCloseModal} disabled={isSaving}>
                     Cancelar
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    onClick={handleSave} 
+                    disabled={isSaving || !formStartTime}
+                  >
+                    <Save size={16} />
+                    {isSaving ? "Guardando..." : "Guardar"}
                   </Button>
                 </div>
               </div>
