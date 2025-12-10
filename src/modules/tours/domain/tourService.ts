@@ -4,12 +4,14 @@
  */
 
 import { TourRepository } from "../infra/tourRepository";
+import { TourRestrictionRepository } from "../infra/tourRestrictionRepository";
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
 import { prisma } from "@/lib/db";
 import type { ListToursQuery, CreateTourInput, UpdateTourInput } from "../api/validators/toursValidators";
 
 const tourRepository = new TourRepository();
+const restrictionRepository = new TourRestrictionRepository();
 
 export class TourService {
   /**
@@ -150,6 +152,7 @@ export class TourService {
       featuredInfos, 
       testimonials, 
       quickInfoItems,
+      restrictions,
       prices,
       ...tourFields 
     } = data;
@@ -247,8 +250,38 @@ export class TourService {
         }
       }
 
-      // 7. Actualizar precios si se proporcionan
+      // 7. Actualizar restricciones si se proporcionan
+      if (restrictions !== undefined) {
+        // Eliminar restricciones existentes
+        await tx.tourRestriction.deleteMany({ where: { tourId: id } });
+        // Crear nuevas restricciones
+        if (restrictions.length > 0) {
+          await tx.tourRestriction.createMany({
+            data: restrictions.map((item, index) => ({
+              tourId: id,
+              text: item.text,
+              sortOrder: item.sortOrder ?? index,
+            })),
+          });
+        }
+      }
+
+      // 8. Actualizar precios si se proporcionan
       if (prices !== undefined) {
+        // Obtener currencies del payload
+        const incomingCurrencies = prices.map(p => p.currency);
+        
+        // Eliminar currencies que no están en el payload
+        await tx.tourPrice.deleteMany({
+          where: {
+            tourId: id,
+            currency: {
+              notIn: incomingCurrencies,
+            },
+          },
+        });
+
+        // Crear o actualizar precios del payload
         for (const price of prices) {
           // Buscar precio existente por currency
           const existingPrice = await tx.tourPrice.findFirst({

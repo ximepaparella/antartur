@@ -1,13 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
 import { Card } from "@/components/common/Card/Card";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
 import { Textarea } from "@/components/common/Textarea/Textarea";
 import { Select } from "@/components/common/Select/Select";
+import { ImagePicker } from "@/modules/tours/components/admin/ImagePicker";
+import { generateSlug } from "@/lib/utils/slug";
 import styles from "./page.module.scss";
 
 export default function AdminTourCreatePage() {
@@ -22,18 +24,26 @@ export default function AdminTourCreatePage() {
     heroImage: "",
     shortDescription: "",
     longDescription: "",
-    restrictionText: "",
     isActive: true,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
+  // Auto-generar slug cuando cambie el nombre
+  useEffect(() => {
+    if (formData.name) {
+      const newSlug = generateSlug(formData.name);
+      if (newSlug && newSlug !== formData.slug) {
+        setFormData((prev) => ({ ...prev, slug: newSlug }));
+      }
+    }
+  }, [formData.name]);
+
   const validateForm = () => {
     const errors: string[] = [];
     
     if (!formData.name.trim()) errors.push("Nombre es requerido");
-    if (!formData.slug.trim()) errors.push("Slug es requerido");
     if (!formData.category) errors.push("Categoría es requerida");
     if (!formData.difficulty) errors.push("Dificultad es requerida");
     if (!formData.durationHours || formData.durationHours <= 0) errors.push("Duración debe ser mayor a 0");
@@ -57,11 +67,17 @@ export default function AdminTourCreatePage() {
     setError(null);
 
     try {
-      const response = await adminApiClient.createTour(formData);
+      // Asegurar que el slug esté generado antes de enviar
+      const dataToSend = {
+        ...formData,
+        slug: formData.slug || generateSlug(formData.name),
+      };
+      
+      const response = await adminApiClient.createTour(dataToSend);
       if (response.success && response.data) {
         router.push(`/admin/tours/${response.data.id}`);
       } else {
-        setError(response.error || "Error al crear tour");
+        setError("Error al crear tour");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -70,15 +86,6 @@ export default function AdminTourCreatePage() {
     }
   };
 
-  // Auto-generate slug from name
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  };
 
   return (
     <div className={styles.page}>
@@ -92,26 +99,11 @@ export default function AdminTourCreatePage() {
       <Card title="Información Básica">
         <form onSubmit={handleSubmit} className={styles.form}>
           <Input
-            label="Nombre"
+            label="Nombre *"
             value={formData.name}
-            onChange={(e) => {
-              const name = e.target.value;
-              setFormData({ 
-                ...formData, 
-                name,
-                slug: formData.slug || generateSlug(name)
-              });
-            }}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
-          />
-          <Input
-            label="Slug"
-            value={formData.slug}
-            onChange={(e) =>
-              setFormData({ ...formData, slug: e.target.value })
-            }
-            required
-            placeholder="url-amigable-del-tour"
+            placeholder="Nombre del tour"
           />
           <div className={styles.categorySection}>
             <label className={styles.categoryLabel}>Categoría *</label>
@@ -172,23 +164,19 @@ export default function AdminTourCreatePage() {
             required
             min={1}
           />
-          <Input
-            label="Imagen Destacada (URL)"
+          <ImagePicker
+            label="Imagen Featured (Card) *"
             value={formData.featuredImage}
-            onChange={(e) =>
-              setFormData({ ...formData, featuredImage: e.target.value })
-            }
-            required
-            placeholder="/imagenes/tour-destacada.jpg o https://..."
+            onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+            tourSlug={formData.slug || generateSlug(formData.name || "") || "default"}
+            imageType="featured"
           />
-          <Input
-            label="Imagen Hero (URL)"
+          <ImagePicker
+            label="Imagen Hero *"
             value={formData.heroImage}
-            onChange={(e) =>
-              setFormData({ ...formData, heroImage: e.target.value })
-            }
-            required
-            placeholder="/imagenes/tour-hero.jpg o https://..."
+            onChange={(url) => setFormData({ ...formData, heroImage: url })}
+            tourSlug={formData.slug || generateSlug(formData.name || "") || "default"}
+            imageType="hero"
           />
           <Textarea
             label="Descripción Corta"

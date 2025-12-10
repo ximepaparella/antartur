@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDataTable } from "@/modules/admin/hooks/useDataTable";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import type { NotificationResponse } from "@/modules/notifications/api/dto/notificationsDto";
+import type { NotificationStatus } from "@/components/common/StatusBadge";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { MetricCard } from "@/components/common/MetricCard";
@@ -11,19 +13,7 @@ import type { TableColumn } from "@/components/common/Table/Table";
 import type { FilterConfig } from "@/components/common/FiltersBar";
 import styles from "./page.module.scss";
 
-interface Notification {
-  id: string;
-  type: "EMAIL" | "WHATSAPP";
-  recipient: string;
-  templateKey: string;
-  status: string;
-  sentAt: string | null;
-  errorMessage: string | null;
-  retryCount: number;
-  createdAt: string;
-}
-
-const columns: TableColumn<Notification>[] = [
+const columns: TableColumn<NotificationResponse>[] = [
   {
     key: "type",
     label: "Tipo",
@@ -47,7 +37,7 @@ const columns: TableColumn<Notification>[] = [
   {
     key: "status",
     label: "Estado",
-    render: (value) => <StatusBadge status={value as any} />,
+    render: (value) => <StatusBadge status={value as NotificationStatus} />,
   },
   {
     key: "sentAt",
@@ -63,11 +53,6 @@ const columns: TableColumn<Notification>[] = [
         minute: "2-digit",
       });
     },
-  },
-  {
-    key: "retryCount",
-    label: "Reintentos",
-    align: "center",
   },
 ];
 
@@ -123,7 +108,7 @@ export default function AdminNotificationsPage() {
     handleFilterChange,
     clearFilters,
     refetch,
-  } = useDataTable<Notification>({
+  } = useDataTable<NotificationResponse>({
     fetchData: async ({ page, limit, filters }) => {
       const response = await adminApiClient.getNotifications({
         page,
@@ -153,15 +138,16 @@ export default function AdminNotificationsPage() {
       }
 
       return {
-        ...response,
+        success: response.success,
         data: filteredData,
+        meta: response.meta,
       };
     },
     initialPage: 1,
     initialLimit: 25,
   });
 
-  const handleRowClick = (notification: Notification) => {
+  const handleRowClick = (notification: NotificationResponse) => {
     router.push(`/admin/notifications/${notification.id}`);
   };
 

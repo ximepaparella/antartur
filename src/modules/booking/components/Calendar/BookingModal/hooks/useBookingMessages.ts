@@ -33,19 +33,20 @@ export function useBookingMessages({
   return useMemo(() => {
     const messages: BookingMessage[] = [];
 
-    // Mensajes informativos (siempre visibles)
+    // Restricciones en rojo
     if (restrictionText) {
       messages.push({
         id: "restriction",
-        variant: "info",
+        variant: "alert",
         content: restrictionText,
       });
     }
 
+    // Advertencias: edad mínima y mínimo de pasajeros
     if (minAge) {
       messages.push({
         id: "minAge",
-        variant: "info",
+        variant: "warning",
         content: `Edad mínima requerida: ${minAge} años`,
       });
     }
@@ -53,29 +54,22 @@ export function useBookingMessages({
     if (minPassengers) {
       messages.push({
         id: "minPassengers",
-        variant: "info",
+        variant: "warning",
         content: `Mínimo de pasajeros requeridos: ${minPassengers}`,
       });
     }
 
-    // Mensajes de validación (solo si hay error)
-    if (minPassengers && totalPassengers < minPassengers) {
-      messages.push({
-        id: "violatesMinPassengers",
-        variant: "warning",
-        content: `Este tour requiere un mínimo de ${minPassengers} pasajero${minPassengers > 1 ? "s" : ""}`,
-      });
-    }
-
+    // Si supera disponibilidad, solo un warning
     if (exceedsAvailability) {
       messages.push({
         id: "exceedsAvailability",
         variant: "warning",
-        content: "La cantidad de pasajeros supera la disponibilidad. Puede continuar y enviar una consulta de disponibilidad a nuestro equipo.",
+        content: "La cantidad de pasajeros supera la disponibilidad. Puedes continuar y enviar una consulta a nuestro equipo.",
       });
     }
 
+    // No repetir más mensajes
     return messages;
-  }, [restrictionText, minAge, minPassengers, totalPassengers, exceedsAvailability]);
+  }, [restrictionText, minAge, minPassengers, exceedsAvailability]);
 }
 

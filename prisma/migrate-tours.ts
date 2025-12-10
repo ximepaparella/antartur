@@ -124,6 +124,12 @@ async function main() {
       // Extraer durationHours
       const durationHours = extractDurationHours(quickInfo?.items);
 
+      // Tomar restricciones como texto legacy
+      const restrictionText =
+        quickInfo?.restrictions && quickInfo.restrictions.length > 0
+          ? quickInfo.restrictions.join(". ")
+          : "";
+
       // Crear tour básico
       const tour = await prisma.tour.create({
         data: {
@@ -138,7 +144,7 @@ async function main() {
           heroSubheadline: hero?.subheadline,
           shortDescription: description?.short || tourCard.subtitle || "",
           longDescription: description?.long?.join("\n\n") || "",
-          restrictionText: quickInfo?.restriction || "",
+          restrictionText,
           isActive: true,
           // SEO
           metaTitle: seo?.metaTitle,

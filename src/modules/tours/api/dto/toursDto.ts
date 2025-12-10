@@ -12,6 +12,7 @@ import type {
   TourFeaturedInfo,
   TourTestimonial,
   TourQuickInfoItem,
+  TourRestriction,
   TourAdditional,
   TourAdditionalPrice,
 } from "@prisma/client";
@@ -35,6 +36,7 @@ export type TourWithRelations = PrismaTour & {
   featuredInfos?: TourFeaturedInfo[];
   testimonials?: TourTestimonial[];
   quickInfoItems?: TourQuickInfoItem[];
+  restrictions?: TourRestriction[];
 };
 
 /**
@@ -101,6 +103,7 @@ export interface TourFullResponse extends TourWithImagesResponse {
   featuredInfos?: FeaturedInfoResponse[];
   testimonials?: TestimonialResponse[];
   quickInfoItems?: QuickInfoItemResponse[];
+  restrictions?: RestrictionResponse[];
 }
 
 /**
@@ -162,6 +165,16 @@ export interface QuickInfoItemResponse {
   icon: string;
   label: string;
   value: string;
+  sortOrder: number;
+}
+
+/**
+ * DTO de respuesta para TourRestriction
+ */
+export interface RestrictionResponse {
+  id: string;
+  tourId: string;
+  text: string;
   sortOrder: number;
 }
 
@@ -305,6 +318,18 @@ export function toQuickInfoItemResponse(item: TourQuickInfoItem): QuickInfoItemR
 }
 
 /**
+ * Transforma un TourRestriction a RestrictionResponse
+ */
+export function toRestrictionResponse(item: TourRestriction): RestrictionResponse {
+  return {
+    id: item.id,
+    tourId: item.tourId,
+    text: item.text,
+    sortOrder: item.sortOrder,
+  };
+}
+
+/**
  * Transforma un Tour completo a TourFullResponse
  */
 export function toTourFullResponse(tour: TourWithRelations): TourFullResponse {
@@ -316,6 +341,7 @@ export function toTourFullResponse(tour: TourWithRelations): TourFullResponse {
     featuredInfos: tour.featuredInfos?.map(toFeaturedInfoResponse),
     testimonials: tour.testimonials?.map(toTestimonialResponse),
     quickInfoItems: tour.quickInfoItems?.map(toQuickInfoItemResponse),
+    restrictions: tour.restrictions?.map(toRestrictionResponse),
   };
 }
 

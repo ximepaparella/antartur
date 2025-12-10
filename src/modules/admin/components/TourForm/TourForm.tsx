@@ -11,11 +11,11 @@ import { ImagePicker } from "@/modules/tours/components/admin/ImagePicker";
 import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
 import { AvailabilityManager } from "@/modules/tours/components/admin/AvailabilityManager";
-import type { TourFormProps, TabType } from "@/modules/tours/types/admin";
+import type { TourFormProps } from "@/modules/tours/types/admin";
 import styles from "./TourForm.module.scss";
 
 export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("basic");
+  const [activeTab, setActiveTab] = useState<string>("basic");
   const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
@@ -24,13 +24,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     }
   }, [tour]);
 
-  const tabs: Array<{ id: TabType; label: string }> = [
+  const tabs: Array<{ id: string; label: string }> = [
     { id: "basic", label: "Información Básica" },
     { id: "images", label: "Imágenes" },
     { id: "content", label: "Contenido" },
-    { id: "seo", label: "SEO" },
-    { id: "pricing", label: "Precios" },
-    { id: "relations", label: "Relaciones" },
     { id: "availability", label: "Disponibilidad" },
   ];
 

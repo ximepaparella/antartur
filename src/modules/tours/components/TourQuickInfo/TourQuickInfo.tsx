@@ -23,8 +23,8 @@ interface TourQuickInfoProps {
   price: string;
   /** Items de información rápida (duración, dificultad, etc.) */
   items: QuickInfoItem[];
-  /** Restricción o advertencia opcional */
-  restriction?: string;
+  /** Restricciones o advertencias opcionales */
+  restrictions?: string[];
   /** Alternativa opcional (otro tour relacionado) */
   alternative?: {
     text: string;
@@ -47,7 +47,7 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   tourId,
   price,
   items,
-  restriction,
+  restrictions,
   alternative,
   ctaLabel,
   ctaHref,
@@ -134,16 +134,16 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
                 </div>
               </li>
             ))}
-            {restriction && (
-              <li className={`${styles.item} ${styles.itemFullWidth}`}>
+            {restrictions && restrictions.length > 0 && restrictions.map((restriction, index) => (
+              <li key={`restriction-${index}`} className={`${styles.item} ${styles.itemFullWidth}`}>
                 <Icon name="info" size={24} className={styles.icon} />
                 <div className={styles.itemContent}>
                   <span className={styles.itemValue}>{restriction}</span>
                 </div>
               </li>
-            )}
+            ))}
             {alternative && alternativePrice && (
-              <li className={styles.item}>
+              <li key="alternative" className={styles.item}>
                 <Icon name="map-route" size={24} className={styles.icon} />
                 <div className={`${styles.itemContent} ${styles.itemContentRow}`}>
                   <span className={styles.itemValue}>{alternative.text}</span>

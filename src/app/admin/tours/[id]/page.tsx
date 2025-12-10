@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import type { UpdateTourDto } from "@/modules/admin/lib/types";
 import { Card } from "@/components/common/Card/Card";
 import { Button } from "@/components/common/Button/Button";
 import { TourForm } from "@/modules/tours/components/admin/TourForm";
@@ -85,6 +86,11 @@ interface TourFullData {
     priceAdult: number;
     priceChild: number;
   }>;
+  restrictions?: Array<{
+    id: string;
+    text: string;
+    sortOrder: number;
+  }>;
 }
 
 export default function AdminTourDetailPage() {
@@ -106,7 +112,7 @@ export default function AdminTourDetailPage() {
         if (response.success && response.data) {
           setTour(response.data as TourFullData);
         } else {
-          setError(response.error || "Failed to fetch tour");
+          setError("Failed to fetch tour");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -131,7 +137,7 @@ export default function AdminTourDetailPage() {
       
       // Asegurar que los weekdays se incluyan explícitamente en el payload
       // Los weekdays siempre deben estar presentes en el payload
-      const payload: any = {
+      const payload: UpdateTourDto = {
         ...cleanFormData,
         mondayAvailable: cleanFormData.mondayAvailable ?? tour.mondayAvailable ?? true,
         tuesdayAvailable: cleanFormData.tuesdayAvailable ?? tour.tuesdayAvailable ?? true,
@@ -158,11 +164,13 @@ export default function AdminTourDetailPage() {
       if (payload.quickInfoItems && Array.isArray(payload.quickInfoItems) && payload.quickInfoItems.length === 0) {
         delete payload.quickInfoItems;
       }
+      // Si las restricciones llegan como array vacío, enviarlas para borrar en backend
+      if (payload.restrictions && Array.isArray(payload.restrictions) && payload.restrictions.length === 0) {
+        payload.restrictions = [];
+      }
       if (payload.prices && Array.isArray(payload.prices) && payload.prices.length === 0) {
         delete payload.prices;
       }
-
-      console.log("Saving payload:", payload);
 
       const response = await adminApiClient.updateTour(tour.id, payload);
       if (response.success) {
@@ -174,7 +182,7 @@ export default function AdminTourDetailPage() {
           setTour(refreshResponse.data as TourFullData);
         }
       } else {
-        alert("Error al guardar: " + (response.error || "Unknown error"));
+        alert("Error al guardar: Unknown error");
       }
     } catch (err) {
       console.error("Error saving tour:", err);

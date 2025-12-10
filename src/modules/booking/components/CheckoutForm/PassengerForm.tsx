@@ -7,6 +7,7 @@ import { Button } from "@/components/common/Button/Button";
 import { Icon } from "@/components/icons/Icon";
 import type { Passenger } from "@/lib/types/order";
 import { calculateAge, validateMinAge } from "@/lib/utils/pricing";
+import { validatePassengerAge } from "@/lib/utils/passengerValidation";
 import styles from "./CheckoutForm.module.scss";
 
 interface PassengerFormProps {
@@ -90,10 +91,22 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     });
   };
 
-  // Generar opciones de años para fecha de nacimiento
+  // Generar opciones de años para fecha de nacimiento (limitadas por rango de edad)
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
-  const yearOptions = years.map((year) => ({ value: year.toString(), label: year.toString() }));
+  const effectiveAdultMinAge = minAge ?? 18; // Adulto depende del tour (15-18), default 18
+  const adultMaxAge = 100;
+  const childMaxAge = 17;
+
+  const years = Array.from({ length: adultMaxAge + 1 }, (_, i) => currentYear - i);
+  const filteredYears = years.filter((year) => {
+    const age = currentYear - year;
+    if (isAdult) {
+      return age >= effectiveAdultMinAge && age <= adultMaxAge;
+    }
+    // Niños: siempre menores de 18, edad no negativa
+    return age >= 0 && age <= childMaxAge;
+  });
+  const yearOptions = filteredYears.map((year) => ({ value: year.toString(), label: year.toString() }));
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const monthOptions = months.map((month) => ({
@@ -151,6 +164,33 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     if (!minAge || passengerAge === null) return false;
     return !validateMinAge(passengerAge, minAge);
   }, [passengerAge, minAge]);
+
+  // Validar edad según tipo de pasajero (adulto depende de minAge, niño < 18)
+  const ageValidationError = useMemo(() => {
+    if (!passenger.fechaNacimiento || passengerAge === null) return null;
+
+    // Adultos: respetar minAge del tour (15-18) y tope 100
+    if (isAdult) {
+      if (passengerAge < effectiveAdultMinAge) {
+        return `La edad mínima para adultos en este tour es ${effectiveAdultMinAge} años.`;
+      }
+      if (passengerAge > adultMaxAge) {
+        return `La edad máxima permitida es ${adultMaxAge} años.`;
+      }
+      if (!minAge || effectiveAdultMinAge >= 18) {
+        const validation = validatePassengerAge(passengerAge, true);
+        return validation.valid ? null : validation.error || null;
+      }
+      return null;
+    }
+
+    // Niños: se bloquean solo si minAge >= 15 (solo adultos)
+    if (minAge && minAge >= 15) {
+      return "Este tour no admite pasajeros menores de edad.";
+    }
+    const validation = validatePassengerAge(passengerAge, false);
+    return validation.valid ? null : validation.error || null;
+  }, [adultMaxAge, effectiveAdultMinAge, isAdult, minAge, passenger.fechaNacimiento, passengerAge]);
 
   const handleDateChange = (type: "year" | "month" | "day", value: string) => {
     // Calcular los nuevos valores usando el estado actual + el nuevo valor
@@ -277,6 +317,11 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           {ageViolatesMinAge && minAge && passengerAge !== null && (
             <span className={styles.errorMessage}>
               La edad mínima requerida para este tour es {minAge} años. Este pasajero tiene {passengerAge} años.
+            </span>
+          )}
+          {ageValidationError && (
+            <span className={styles.errorMessage}>
+              {ageValidationError}
             </span>
           )}
         </div>

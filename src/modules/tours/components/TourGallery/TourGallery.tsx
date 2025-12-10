@@ -116,7 +116,9 @@ export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
               transform: transformValue,
             }}
           >
-            {images.map((image, index) => (
+            {images.map((image, index) => {
+              if (!image.src || image.src.trim() === "") return null;
+              return (
               <div 
                 key={image.id} 
                 className={styles.slide} 
@@ -133,7 +135,8 @@ export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
                   blurDataURL={image.blurDataURL}
                 />
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         

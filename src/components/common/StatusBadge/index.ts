@@ -1,3 +1,3 @@
 export { StatusBadge } from "./StatusBadge";
-export type { StatusBadgeProps, Status, OrderStatus, BookingStatus, NotificationStatus } from "./types";
+export type { StatusBadgeProps, Status, OrderStatus, BookingStatus, PaymentStatus, NotificationStatus } from "./types";
 

@@ -3,62 +3,22 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import type { OrderFullResponse, BookingResponse, PassengerResponse, PaymentResponse } from "@/modules/orders/api/dto/ordersDto";
+import { calculateAge } from "@/lib/utils/pricing";
+import { formatRestrictions } from "@/modules/notifications/utils/formatRestrictions";
 import { Card } from "@/components/common/Card/Card";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import type { OrderStatus, BookingStatus, PaymentStatus } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
 import styles from "./page.module.scss";
 
-interface Passenger {
-  id: string;
-  firstName: string;
-  lastName: string;
-  type: string;
-  birthDate?: string | null;
-  documentType?: string | null;
-  documentNumber?: string | null;
-  nationality?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  restrictions?: Record<string, any> | null;
-}
-
-interface Booking {
-  id: string;
-  tourNameSnapshot: string;
-  departureDateSnapshot: string;
-  startTimeSnapshot: string;
-  meetingPointSnapshot?: string | null;
-  numAdults: number;
-  numChildren: number;
-  status: string;
+// Use DTO types directly
+type Passenger = PassengerResponse;
+type Booking = BookingResponse & {
   passengers?: Passenger[];
-}
-
-interface Payment {
-  id: string;
-  provider: string;
-  amount: number;
-  status: string;
-  paidAt?: string | null;
-  providerPaymentId?: string | null;
-  transactionId?: string | null;
-}
-
-interface Order {
-  id: string;
-  code: string;
-  type: "RESERVATION" | "ENQUIRY";
-  status: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  currency: string;
-  totalAmount: number;
-  notes?: string | null;
-  createdAt: string;
-  bookings?: Booking[];
-  payments?: Payment[];
-}
+};
+type Payment = PaymentResponse;
+type Order = OrderFullResponse;
 
 export default function AdminOrderDetailPage() {
   const params = useParams();
@@ -77,7 +37,7 @@ export default function AdminOrderDetailPage() {
         if (response.success && response.data) {
           setOrder(response.data);
         } else {
-          setError(response.error || "Failed to fetch order");
+          setError("Failed to fetch order");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -117,55 +77,7 @@ export default function AdminOrderDetailPage() {
     }).format(amount);
   };
 
-  const calculateAge = (birthDate: string | null | undefined): number | null => {
-    if (!birthDate) return null;
-    const birth = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
-  };
 
-  const formatRestrictions = (restrictions: Record<string, any> | null | undefined): string => {
-    if (!restrictions) return "Ninguna";
-    const parts: string[] = [];
-    
-    // Restricciones alimentarias (foodRestrictions)
-    if (restrictions.foodRestrictions) {
-      const foodRestrictions = restrictions.foodRestrictions;
-      const foodParts: string[] = [];
-      if (foodRestrictions.vegetariano) foodParts.push("Vegetariano");
-      if (foodRestrictions.vegano) foodParts.push("Vegano");
-      if (foodRestrictions.celiaco) foodParts.push("Celiaco");
-      if (foodRestrictions.alergias) {
-        foodParts.push(`Alergias${foodRestrictions.alergiasDetalle ? `: ${foodRestrictions.alergiasDetalle}` : ""}`);
-      }
-      if (foodParts.length > 0) {
-        parts.push(`Restricciones alimentarias: ${foodParts.join(", ")}`);
-      }
-    }
-    
-    // Embarazo
-    if (restrictions.pregnant) {
-      parts.push("Embarazada");
-    }
-    
-    // Problemas de salud/columna
-    if (restrictions.healthIssues) {
-      parts.push("Problemas de columna/salud");
-    }
-    
-    // Compatibilidad con formato antiguo (por si acaso)
-    if (restrictions.dietary) parts.push(`Dietarias: ${restrictions.dietary}`);
-    if (restrictions.medical) parts.push(`Médicas: ${restrictions.medical}`);
-    if (restrictions.mobility) parts.push(`Movilidad: ${restrictions.mobility}`);
-    if (restrictions.other) parts.push(`Otras: ${restrictions.other}`);
-    
-    return parts.length > 0 ? parts.join("; ") : "Ninguna";
-  };
 
   return (
     <div className={styles.page}>
@@ -175,7 +87,7 @@ export default function AdminOrderDetailPage() {
         </Button>
         <div>
           <h1 className={styles.title}>Orden {order.code}</h1>
-          <StatusBadge status={order.status as any} />
+          <StatusBadge status={order.status as OrderStatus} />
         </div>
       </div>
 
@@ -190,12 +102,12 @@ export default function AdminOrderDetailPage() {
             <div className={styles.infoItem}>
               <span className={styles.label}>Tipo:</span>
               <span className={styles.value}>
-                {order.type === "RESERVATION" ? "Reserva" : "Consulta"}
+                {order.type === "RESERVATION" ? "Reserva" : order.type === "ENQUIRY" ? "Consulta" : order.type}
               </span>
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Estado:</span>
-              <StatusBadge status={order.status as any} />
+              <StatusBadge status={order.status as OrderStatus} />
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Cliente:</span>
@@ -237,11 +149,11 @@ export default function AdminOrderDetailPage() {
         {/* Reservas con información completa */}
         {order.bookings && order.bookings.length > 0 && (
           <Card title="Reservas">
-            {order.bookings.map((booking: Booking) => (
+            {order.bookings?.map((booking) => (
               <div key={booking.id} className={styles.bookingCard}>
                 <div className={styles.bookingHeader}>
                   <h3>{booking.tourNameSnapshot || "Tour"}</h3>
-                  <StatusBadge status={booking.status as any} />
+                  <StatusBadge status={booking.status as BookingStatus} />
                 </div>
                 
                 <div className={styles.bookingDetails}>
@@ -279,7 +191,7 @@ export default function AdminOrderDetailPage() {
                     <h4 className={styles.passengersTitle}>Pasajeros</h4>
                     <div className={styles.passengersList}>
                       {booking.passengers.map((passenger: Passenger) => {
-                        const age = calculateAge(passenger.birthDate);
+                        const age = passenger.birthDate ? calculateAge(passenger.birthDate) : null;
                         return (
                           <div key={passenger.id} className={styles.passengerCard}>
                             <div className={styles.passengerHeader}>
@@ -335,7 +247,7 @@ export default function AdminOrderDetailPage() {
                               <div className={styles.passengerDetail}>
                                 <span className={styles.passengerLabel}>Restricciones:</span>
                                 <span className={styles.passengerValue}>
-                                  {formatRestrictions(passenger.restrictions)}
+                                  {formatRestrictions(passenger.restrictions) || "Ninguna"}
                                 </span>
                               </div>
                             </div>
@@ -354,14 +266,14 @@ export default function AdminOrderDetailPage() {
         {order.payments && order.payments.length > 0 && (
           <Card title="Pagos">
             <div className={styles.paymentsList}>
-              {order.payments.map((payment: Payment) => (
+              {order.payments?.map((payment) => (
                 <div key={payment.id} className={styles.paymentCard}>
                   <div className={styles.paymentHeader}>
                     <h4>{payment.provider === "PAYPAL" ? "PayPal" : 
                           payment.provider === "PAYWAY" ? "Payway" : 
                           payment.provider === "TRANSFER" ? "Transferencia Bancaria" : 
                           payment.provider}</h4>
-                    <StatusBadge status={payment.status as any} />
+                    <StatusBadge status={payment.status as PaymentStatus} />
                   </div>
                   <div className={styles.paymentDetails}>
                     <div className={styles.paymentDetail}>
@@ -386,12 +298,6 @@ export default function AdminOrderDetailPage() {
                       <div className={styles.paymentDetail}>
                         <span className={styles.paymentLabel}>ID de Proveedor:</span>
                         <span className={styles.paymentValue}>{payment.providerPaymentId}</span>
-                      </div>
-                    )}
-                    {payment.transactionId && (
-                      <div className={styles.paymentDetail}>
-                        <span className={styles.paymentLabel}>ID de Transacción:</span>
-                        <span className={styles.paymentValue}>{payment.transactionId}</span>
                       </div>
                     )}
                   </div>

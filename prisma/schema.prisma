@@ -134,18 +134,19 @@ model Tour {
   wednesdayAvailable Boolean @default(true)
   thursdayAvailable  Boolean @default(true)
   fridayAvailable    Boolean @default(true)
-  saturdayAvailable Boolean @default(true)
+  saturdayAvailable  Boolean @default(true)
   sundayAvailable    Boolean @default(true)
 
   // Relaciones
-  images        TourImage[]
-  departures    TourDeparture[]
-  prices        TourPrice[]
-  additionals   TourAdditional[]
-  timelineItems TourTimelineItem[]
-  featuredInfos TourFeaturedInfo[]
-  testimonials  TourTestimonial[]
+  images         TourImage[]
+  departures     TourDeparture[]
+  prices         TourPrice[]
+  additionals    TourAdditional[]
+  timelineItems  TourTimelineItem[]
+  featuredInfos  TourFeaturedInfo[]
+  testimonials   TourTestimonial[]
   quickInfoItems TourQuickInfoItem[]
+  restrictions   TourRestriction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -156,21 +157,21 @@ model Tour {
 }
 
 model TourPrice {
-  id         String   @id @default(cuid())
+  id         String  @id @default(cuid())
   tourId     String
-  currency   String   @db.VarChar(3)
-  priceAdult Decimal  @db.Decimal(10, 2)
-  priceChild Decimal  @db.Decimal(10, 2)
+  currency   String  @db.VarChar(3)
+  priceAdult Decimal @db.Decimal(10, 2)
+  priceChild Decimal @db.Decimal(10, 2)
 
   // Nuevos campos para sistema de rangos de edad
-  priceInfantFree Boolean @default(false) // 0-3 años gratis
+  priceInfantFree Boolean        @default(false) // 0-3 años gratis
   childAgeRange   String? // ej: "4-11" o "0-11"
   childPriceType  ChildPriceType @default(FULL_CHILD_PRICE) // Tipo de precio para menores
-  infantMaxAge    Int     @default(3) // Edad máxima para considerar "infant"
+  infantMaxAge    Int            @default(3) // Edad máxima para considerar "infant"
 
   // Relaciones
-  tour         Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
-  currencyRef  Currency @relation(fields: [currency], references: [code])
+  tour        Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  currencyRef Currency @relation(fields: [currency], references: [code])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -222,12 +223,12 @@ model TourDeparture {
 }
 
 model TourTimelineItem {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   tourId      String
-  timeLabel   String  // ej: "9:00 AM"
+  timeLabel   String // ej: "9:00 AM"
   title       String
-  description String  @db.Text
-  sortOrder   Int     @default(0)
+  description String @db.Text
+  sortOrder   Int    @default(0)
 
   // Relaciones
   tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
@@ -240,12 +241,12 @@ model TourTimelineItem {
 }
 
 model TourFeaturedInfo {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   tourId      String
-  icon        String  // ej: "clock", "difficulty", "family", etc.
+  icon        String // ej: "clock", "difficulty", "family", etc.
   title       String
-  description String  @db.Text
-  sortOrder   Int     @default(0)
+  description String @db.Text
+  sortOrder   Int    @default(0)
 
   // Relaciones
   tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
@@ -258,13 +259,13 @@ model TourFeaturedInfo {
 }
 
 model TourTestimonial {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   tourId    String
-  text      String  @db.Text
+  text      String @db.Text
   author    String
   avatar    String
   country   String
-  sortOrder Int     @default(0)
+  sortOrder Int    @default(0)
 
   // Relaciones
   tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
@@ -277,12 +278,12 @@ model TourTestimonial {
 }
 
 model TourQuickInfoItem {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   tourId    String
-  icon      String  // ej: "clock", "difficulty", "family", etc.
+  icon      String // ej: "clock", "difficulty", "family", etc.
   label     String
   value     String
-  sortOrder Int     @default(0)
+  sortOrder Int    @default(0)
 
   // Relaciones
   tour Tour @relation(fields: [tourId], references: [id], onDelete: Cascade)
@@ -294,17 +295,31 @@ model TourQuickInfoItem {
   @@index([tourId, sortOrder])
 }
 
+model TourRestriction {
+  id        String @id @default(cuid())
+  tourId    String
+  text      String @db.Text
+  sortOrder Int    @default(0)
+  tour      Tour   @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tourId])
+  @@index([tourId, sortOrder])
+}
+
 model TourAdditional {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   tourId      String
-  name        String   // ej: "Con Canoas"
-  description String?  @db.Text
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
+  name        String // ej: "Con Canoas"
+  description String? @db.Text
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
 
   // Relaciones
-  tour    Tour                @relation(fields: [tourId], references: [id], onDelete: Cascade)
-  prices  TourAdditionalPrice[]
+  tour   Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  prices TourAdditionalPrice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -315,15 +330,15 @@ model TourAdditional {
 }
 
 model TourAdditionalPrice {
-  id                String   @id @default(cuid())
-  tourAdditionalId  String
-  currency          String   @db.VarChar(3)
-  priceAdult        Decimal  @db.Decimal(10, 2)
-  priceChild        Decimal  @db.Decimal(10, 2)
+  id               String  @id @default(cuid())
+  tourAdditionalId String
+  currency         String  @db.VarChar(3)
+  priceAdult       Decimal @db.Decimal(10, 2)
+  priceChild       Decimal @db.Decimal(10, 2)
 
   // Relaciones
   tourAdditional TourAdditional @relation(fields: [tourAdditionalId], references: [id], onDelete: Cascade)
-  currencyRef    Currency        @relation(fields: [currency], references: [code])
+  currencyRef    Currency       @relation(fields: [currency], references: [code])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

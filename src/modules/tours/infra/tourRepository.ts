@@ -60,6 +60,11 @@ export class TourRepository {
               orderBy: { sortOrder: "asc" },
             }
           : false,
+        restrictions: includeContent
+          ? {
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
       },
     });
   }
@@ -120,6 +125,11 @@ export class TourRepository {
               orderBy: { sortOrder: "asc" },
             }
           : false,
+        restrictions: includeContent
+          ? {
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
       },
     });
   }
@@ -176,6 +186,11 @@ export class TourRepository {
             }
           : false,
         quickInfoItems: includeContent
+          ? {
+              orderBy: { sortOrder: "asc" },
+            }
+          : false,
+        restrictions: includeContent
           ? {
               orderBy: { sortOrder: "asc" },
             }

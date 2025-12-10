@@ -49,8 +49,10 @@ interface BannerBookingProps {
   minAge?: number | null;
   /** Mínimo de pasajeros requeridos */
   minPassengers?: number | null;
-  /** Texto de restricciones del tour */
+  /** Texto de restricciones del tour (legacy - usar restrictions si está disponible) */
   restrictionText?: string | null;
+  /** Array de restricciones del tour */
+  restrictions?: string[];
 }
 
 const defaultSteps: BookingStep[] = [
@@ -98,6 +100,7 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
   minAge,
   minPassengers,
   restrictionText,
+  restrictions,
 }) => {
   const { currency } = useCurrency();
   
@@ -135,7 +138,7 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
             additionals={additionals}
             minAge={minAge}
             minPassengers={minPassengers}
-            restrictionText={restrictionText}
+            restrictionText={restrictions && restrictions.length > 0 ? restrictions.join(". ") : restrictionText}
           />
         ) : null}
       </div>

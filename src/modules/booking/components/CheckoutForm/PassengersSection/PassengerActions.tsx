@@ -8,6 +8,7 @@ import styles from "../CheckoutForm.module.scss";
 interface PassengerActionsProps {
   onAddAdult: () => void;
   onAddChild: () => void;
+  minAge?: number | null;
 }
 
 /**
@@ -16,6 +17,7 @@ interface PassengerActionsProps {
 export const PassengerActions: React.FC<PassengerActionsProps> = ({
   onAddAdult,
   onAddChild,
+  minAge,
 }) => {
   return (
     <div className={styles.passengersActions}>
@@ -28,6 +30,7 @@ export const PassengerActions: React.FC<PassengerActionsProps> = ({
                 <Icon name="users" size={16} aria-hidden="true" />
                 Agregar adulto
               </Button>
+              {(!minAge || minAge < 15) && (
               <Button
                 size="small"
                 variant="outline"
@@ -37,6 +40,7 @@ export const PassengerActions: React.FC<PassengerActionsProps> = ({
                 <Icon name="users" size={16} aria-hidden="true" />
                 Agregar niño
               </Button>
+              )}
     </div>
   );
 };

@@ -81,6 +81,12 @@ export interface QuickInfoItemInput {
   sortOrder?: number;
 }
 
+export interface TourRestrictionInput {
+  id?: string;
+  text: string;
+  sortOrder?: number;
+}
+
 /**
  * Input para actualizar solo campos básicos del tour (para el repositorio)
  */
@@ -135,6 +141,7 @@ export interface UpdateTourInput extends UpdateTourBasicInput {
   featuredInfos?: FeaturedInfoInput[];
   testimonials?: TestimonialInput[];
   quickInfoItems?: QuickInfoItemInput[];
+  restrictions?: TourRestrictionInput[];
   // Precios
   prices?: TourPriceInput[];
 }

@@ -44,12 +44,19 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     saturdayAvailable: true,
     sundayAvailable: true,
   });
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Cargar días disponibles del tour si no se pasaron como prop
   useEffect(() => {
     if (!tourWeekdays) {
+      setLoadError(null);
       fetch(`/api/tours/${tourId}`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch tour: ${res.statusText}`);
+          }
+          return res.json();
+        })
         .then(data => {
           if (data.success && data.data) {
             setWeekdays({
@@ -61,10 +68,15 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
               saturdayAvailable: data.data.saturdayAvailable ?? true,
               sundayAvailable: data.data.sundayAvailable ?? true,
             });
+            setLoadError(null);
+          } else {
+            throw new Error(data.error || "Failed to load tour weekdays");
           }
         })
-        .catch(() => {
-          // Si falla, usar valores por defecto (todos disponibles)
+        .catch((error) => {
+          console.error("Error loading tour weekdays:", error);
+          setLoadError(error instanceof Error ? error.message : "Error al cargar días disponibles del tour");
+          // Mantener valores por defecto (todos disponibles) después del error
         });
     }
   }, [tourId, tourWeekdays]);
@@ -355,6 +367,138 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     }
   };
 
+  // Helper para procesar una acción bulk en una fecha específica
+  const processBulkAction = async (
+    action: string,
+    date: Date,
+    departure: Departure | null,
+    params: Record<string, any>
+  ): Promise<{ success: boolean; error?: string }> => {
+    const dateStr = date.toISOString().split("T")[0];
+
+    try {
+      // Handlers para cada tipo de acción
+      const actionHandlers: Record<string, () => Promise<Response>> = {
+        enable: () => {
+          if (departure) {
+            return fetch(`/api/availability/${departure.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...departure,
+                isActive: true,
+              }),
+            });
+          } else {
+            // Crear nueva disponibilidad
+            return fetch(`/api/tours/${tourId}/availability`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                departureDate: dateStr,
+                startTime: "09:00",
+                seatsTotal: 20,
+              }),
+            });
+          }
+        },
+        disable: () => {
+          if (!departure) {
+            throw new Error("No existe disponibilidad para deshabilitar");
+          }
+          return fetch(`/api/availability/${departure.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...departure,
+              isActive: false,
+            }),
+          });
+        },
+        setSeats: () => {
+          const seats = params.seats as number;
+          if (departure) {
+            return fetch(`/api/availability/${departure.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...departure,
+                seatsTotal: seats,
+              }),
+            });
+          } else {
+            // Crear nueva disponibilidad
+            return fetch(`/api/tours/${tourId}/availability`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                departureDate: dateStr,
+                startTime: "09:00",
+                seatsTotal: seats,
+              }),
+            });
+          }
+        },
+        setTime: () => {
+          const { startTime, endTime } = params;
+          if (departure) {
+            return fetch(`/api/availability/${departure.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...departure,
+                startTime,
+                endTime: endTime || null,
+              }),
+            });
+          } else {
+            // Crear nueva disponibilidad
+            return fetch(`/api/tours/${tourId}/availability`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                departureDate: dateStr,
+                startTime,
+                endTime: endTime || null,
+                seatsTotal: 20,
+              }),
+            });
+          }
+        },
+        delete: () => {
+          if (!departure) {
+            throw new Error("No existe disponibilidad para eliminar");
+          }
+          return fetch(`/api/availability/${departure.id}`, {
+            method: "DELETE",
+          });
+        },
+      };
+
+      const handler = actionHandlers[action];
+      if (!handler) {
+        throw new Error(`Acción desconocida: ${action}`);
+      }
+
+      const response = await handler();
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        return {
+          success: false,
+          error: result.error || `Error ${response.statusText}`,
+        };
+      }
+
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Error de conexión",
+      };
+    }
+  };
+
   // Handlers para acciones masivas
   const handleBulkAction = async (action: string, params: Record<string, any>) => {
     setIsSaving(true);
@@ -386,133 +530,15 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
       let successCount = 0;
 
       for (const date of dates) {
-        // Advertir pero permitir crear disponibilidad incluso si el día está deshabilitado
-        // (similar a la creación manual)
         const dateStr = date.toISOString().split("T")[0];
         const departure = getDepartureForDate(date);
-
-        try {
-          if (action === "enable" || action === "disable") {
-            if (departure) {
-              const response = await fetch(`/api/availability/${departure.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...departure,
-                  isActive: action === "enable",
-                }),
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-          } else if (action === "enable") {
-            // Crear nueva disponibilidad si no existe
-            const response = await fetch(`/api/tours/${tourId}/availability`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                departureDate: dateStr,
-                startTime: "09:00",
-                seatsTotal: 20,
-              }),
-            });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            }
-          } else if (action === "setSeats") {
-            const seats = params.seats as number;
-            if (departure) {
-              const response = await fetch(`/api/availability/${departure.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...departure,
-                  seatsTotal: seats,
-                }),
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            } else {
-              // Crear nueva disponibilidad
-              const response = await fetch(`/api/tours/${tourId}/availability`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  departureDate: dateStr,
-                  startTime: "09:00",
-                  seatsTotal: seats,
-                }),
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            }
-          } else if (action === "setTime") {
-            const { startTime, endTime } = params;
-            if (departure) {
-              const response = await fetch(`/api/availability/${departure.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...departure,
-                  startTime,
-                  endTime: endTime || null,
-                }),
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            } else {
-              // Crear nueva disponibilidad
-              const response = await fetch(`/api/tours/${tourId}/availability`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  departureDate: dateStr,
-                  startTime,
-                  endTime: endTime || null,
-                  seatsTotal: 20,
-                }),
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            }
-          } else if (action === "delete") {
-            if (departure) {
-              const response = await fetch(`/api/availability/${departure.id}`, {
-                method: "DELETE",
-              });
-              const result = await response.json();
-              if (!result.success) {
-                errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
-              } else {
-                successCount++;
-              }
-            }
-          }
-        } catch (err) {
-          errors.push(`${dateStr}: ${err instanceof Error ? err.message : "Error de conexión"}`);
+        
+        const result = await processBulkAction(action, date, departure ?? null, params);
+        
+        if (result.success) {
+          successCount++;
+        } else {
+          errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
         }
       }
 
@@ -537,6 +563,11 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
 
   return (
     <div className={styles.availabilityManager}>
+      {loadError && (
+        <div className={styles.errorMessage} style={{ padding: "12px", marginBottom: "16px", backgroundColor: "#fee", color: "#c33", borderRadius: "4px" }}>
+          <strong>Error:</strong> {loadError}
+        </div>
+      )}
       <div className={styles.header}>
         <h3 className={styles.title}>Gestión de Disponibilidad</h3>
         <div className={styles.legend}>
@@ -640,9 +671,10 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                 })}
               </p>
 
-              <div className={styles.formRow}>
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
                 <Select
-                  label="Hora inicio"
+                    label="Hora inicio *"
                   value={formStartTime}
                   onChange={(e) => setFormStartTime(e.target.value)}
                   disabled={disabled || isSaving}
@@ -652,6 +684,8 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                   ]}
                   required
                 />
+                </div>
+                <div style={{ flex: 1 }}>
                 <Select
                   label="Hora fin (opcional)"
                   value={formEndTime}
@@ -662,18 +696,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                     ...TIME_OPTIONS,
                   ]}
                 />
-                {!disabled && (
-                  <div style={{ marginTop: '8px' }}>
-                    <Button 
-                      variant="primary" 
-                      onClick={handleSave} 
-                      disabled={isSaving || !formStartTime}
-                    >
-                      <Save size={16} />
-                      {isSaving ? "Guardando..." : "Guardar"}
-                    </Button>
                   </div>
-                )}
               </div>
 
               <Input
@@ -733,6 +756,14 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                 <div className={styles.modalActions}>
                   <Button variant="outline" onClick={handleCloseModal} disabled={isSaving}>
                     Cancelar
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    onClick={handleSave} 
+                    disabled={isSaving || !formStartTime}
+                  >
+                    <Save size={16} />
+                    {isSaving ? "Guardando..." : "Guardar"}
                   </Button>
                 </div>
               </div>

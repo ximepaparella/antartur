@@ -3,6 +3,8 @@
  */
 
 import { getSiteUrl } from "../utils/siteUrl";
+import { calculateAge } from "@/lib/utils/pricing";
+import { formatRestrictions } from "../utils/formatRestrictions";
 
 export interface PaymentConfirmationEmailData {
   orderCode: string;
@@ -124,63 +126,13 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
                 <h3 style="color: #2c5f7c; font-size: 16px; margin: 0 0 15px 0;">Pasajeros:</h3>
                 <div style="background-color: #f9f9f9; border-left: 4px solid #2c5f7c; padding: 15px; margin-bottom: 10px;">
                   ${data.passengers.map((p, index) => {
-                    const calculateAge = (birthDate: string | null | undefined): number | null => {
-                      if (!birthDate) return null;
-                      const birth = new Date(birthDate);
-                      const today = new Date();
-                      let age = today.getFullYear() - birth.getFullYear();
-                      const monthDiff = today.getMonth() - birth.getMonth();
-                      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-                        age--;
-                      }
-                      return age;
-                    };
-                    
-                    const age = calculateAge(p.birthDate);
+                    const age = p.birthDate ? calculateAge(p.birthDate) : null;
                     const typeLabel = p.type === "ADULT" ? "Adulto" : 
                                      p.type === "CHILD" ? "Niño" : "Infante";
                     const ageText = age !== null ? `, ${age} años` : "";
                     const documentText = p.documentType && p.documentNumber 
                       ? `<br><span style="color: #666; font-size: 13px;">Documento: ${p.documentType} ${p.documentNumber}</span>` : "";
                     const nationalityText = p.nationality ? `<br><span style="color: #666; font-size: 13px;">Nacionalidad: ${p.nationality}</span>` : "";
-                    
-                    const formatRestrictions = (restrictions: Record<string, any> | null | undefined): string => {
-                      if (!restrictions) return "";
-                      const parts: string[] = [];
-                      
-                      // Restricciones alimentarias (foodRestrictions)
-                      if (restrictions.foodRestrictions) {
-                        const foodRestrictions = restrictions.foodRestrictions;
-                        const foodParts: string[] = [];
-                        if (foodRestrictions.vegetariano) foodParts.push("Vegetariano");
-                        if (foodRestrictions.vegano) foodParts.push("Vegano");
-                        if (foodRestrictions.celiaco) foodParts.push("Celiaco");
-                        if (foodRestrictions.alergias) {
-                          foodParts.push(`Alergias${foodRestrictions.alergiasDetalle ? `: ${foodRestrictions.alergiasDetalle}` : ""}`);
-                        }
-                        if (foodParts.length > 0) {
-                          parts.push(`Restricciones alimentarias: ${foodParts.join(", ")}`);
-                        }
-                      }
-                      
-                      // Embarazo
-                      if (restrictions.pregnant) {
-                        parts.push("Embarazada");
-                      }
-                      
-                      // Problemas de salud/columna
-                      if (restrictions.healthIssues) {
-                        parts.push("Problemas de columna/salud");
-                      }
-                      
-                      // Compatibilidad con formato antiguo (por si acaso)
-                      if (restrictions.dietary) parts.push(`Dietarias: ${restrictions.dietary}`);
-                      if (restrictions.medical) parts.push(`Médicas: ${restrictions.medical}`);
-                      if (restrictions.mobility) parts.push(`Movilidad: ${restrictions.mobility}`);
-                      if (restrictions.other) parts.push(`Otras: ${restrictions.other}`);
-                      
-                      return parts.length > 0 ? parts.join("; ") : "";
-                    };
                     
                     const restrictionsText = formatRestrictions(p.restrictions);
                     
@@ -255,62 +207,11 @@ ${data.transactionId ? `- ID de Transacción: ${data.transactionId}` : ""}
 - Total Pagado: ${currencySymbol} ${formattedAmount} ${data.currency}
 
 ${data.passengers.length > 0 ? `Pasajeros:\n${data.passengers.map((p, i) => {
-  const calculateAge = (birthDate: string | null | undefined): number | null => {
-    if (!birthDate) return null;
-    const birth = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
-  };
-  
-  const age = calculateAge(p.birthDate);
+  const age = p.birthDate ? calculateAge(p.birthDate) : null;
   const typeLabel = p.type === "ADULT" ? "Adulto" : p.type === "CHILD" ? "Niño" : "Infante";
   const ageText = age !== null ? `, ${age} años` : "";
   const documentText = p.documentType && p.documentNumber ? `\n   Documento: ${p.documentType} ${p.documentNumber}` : "";
   const nationalityText = p.nationality ? `\n   Nacionalidad: ${p.nationality}` : "";
-  
-  const formatRestrictions = (restrictions: Record<string, any> | null | undefined): string => {
-    if (!restrictions) return "";
-    const parts: string[] = [];
-    
-    // Restricciones alimentarias (foodRestrictions)
-    if (restrictions.foodRestrictions) {
-      const foodRestrictions = restrictions.foodRestrictions;
-      const foodParts: string[] = [];
-      if (foodRestrictions.vegetariano) foodParts.push("Vegetariano");
-      if (foodRestrictions.vegano) foodParts.push("Vegano");
-      if (foodRestrictions.celiaco) foodParts.push("Celiaco");
-      if (foodRestrictions.alergias) {
-        foodParts.push(`Alergias${foodRestrictions.alergiasDetalle ? `: ${foodRestrictions.alergiasDetalle}` : ""}`);
-      }
-      if (foodParts.length > 0) {
-        parts.push(`Restricciones alimentarias: ${foodParts.join(", ")}`);
-      }
-    }
-    
-    // Embarazo
-    if (restrictions.pregnant) {
-      parts.push("Embarazada");
-    }
-    
-    // Problemas de salud/columna
-    if (restrictions.healthIssues) {
-      parts.push("Problemas de columna/salud");
-    }
-    
-    // Compatibilidad con formato antiguo (por si acaso)
-    if (restrictions.dietary) parts.push(`Dietarias: ${restrictions.dietary}`);
-    if (restrictions.medical) parts.push(`Médicas: ${restrictions.medical}`);
-    if (restrictions.mobility) parts.push(`Movilidad: ${restrictions.mobility}`);
-    if (restrictions.other) parts.push(`Otras: ${restrictions.other}`);
-    
-    return parts.length > 0 ? parts.join("; ") : "";
-  };
-  
   const restrictionsText = formatRestrictions(p.restrictions);
   let passengerInfo = `${i + 1}. ${p.firstName} ${p.lastName} (${typeLabel}${ageText})`;
   if (documentText) passengerInfo += documentText;

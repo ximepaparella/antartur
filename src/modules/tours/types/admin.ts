@@ -7,7 +7,7 @@ export interface TourFormProps {
   onCancel: () => void;
 }
 
-export type TabType = "basic" | "images" | "content" | "seo" | "pricing" | "relations" | "availability";
+export type TabType = "basic" | "grid" | "images" | "content" | "availability";
 
 export interface TourPreviewProps {
   tourData: any;
