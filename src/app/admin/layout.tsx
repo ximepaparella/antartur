@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAdminAuth } from "@/modules/admin/hooks/useAdminAuth";
 import { AdminLayout } from "@/modules/admin/components/layout/AdminLayout";
@@ -13,26 +13,35 @@ export default function AdminLayoutWrapper({
   const { isAuthenticated, isLoading } = useAdminAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    if (!isLoading) {
-      // Allow access to login page without authentication
-      if (pathname === "/admin/login") {
-        // If already authenticated, redirect to dashboard
-        if (isAuthenticated) {
-          router.push("/admin/dashboard");
-        }
-        return;
-      }
+    // Prevenir múltiples redirecciones
+    if (isLoading || hasRedirected.current) return;
 
-      // Protect all other admin routes
-      if (!isAuthenticated) {
-        router.push("/admin/login");
+    // Permitir acceso a login sin autenticación
+    if (pathname === "/admin/login") {
+      // Si ya está autenticado, redirigir a dashboard
+      if (isAuthenticated) {
+        hasRedirected.current = true;
+        router.replace("/admin/dashboard");
       }
+      return;
+    }
+
+    // Proteger todas las demás rutas admin
+    if (!isAuthenticated) {
+      hasRedirected.current = true;
+      router.replace("/admin/login");
     }
   }, [isAuthenticated, isLoading, pathname, router]);
 
-  // Show loading state
+  // Reset redirect flag cuando cambia el pathname
+  useEffect(() => {
+    hasRedirected.current = false;
+  }, [pathname]);
+
+  // Mostrar estado de carga
   if (isLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
@@ -41,14 +50,14 @@ export default function AdminLayoutWrapper({
     );
   }
 
-  // Don't show layout on login page
+  // No mostrar layout en página de login
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 
-  // Show layout for authenticated users
+  // Mostrar layout para usuarios autenticados
   if (!isAuthenticated) {
-    return null; // Will redirect
+    return null; // Se redirigirá
   }
 
   return <AdminLayout>{children}</AdminLayout>;

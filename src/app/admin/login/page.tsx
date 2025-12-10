@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent } from "react";
 import { useAdminAuth } from "@/modules/admin/hooks/useAdminAuth";
 import { Input } from "@/components/common/Input/Input";
 import { Button } from "@/components/common/Button/Button";
@@ -12,15 +11,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated } = useAdminAuth();
-  const router = useRouter();
-
-  // Auto-redirect si ya está autenticado
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/admin/dashboard");
-    }
-  }, [isAuthenticated, router]);
+  const { login } = useAdminAuth();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,24 +19,11 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      // Small delay to show loading state
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       const success = login(email, password);
 
       if (success) {
-        // Reset loading state
-        setIsLoading(false);
-        // Small delay to ensure sessionStorage is set and state is updated
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        // Redirect to dashboard - usar push para forzar navegación
-        router.push("/admin/dashboard");
-        // Fallback con window.location si router no funciona
-        setTimeout(() => {
-          if (window.location.pathname === "/admin/login") {
-            window.location.href = "/admin/dashboard";
-          }
-        }, 200);
+        // Redirección simple y directa
+        window.location.href = "/admin/dashboard";
       } else {
         setError("Credenciales inválidas. Por favor, intenta nuevamente.");
         setIsLoading(false);
