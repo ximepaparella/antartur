@@ -30,7 +30,7 @@ export const PassengerActions: React.FC<PassengerActionsProps> = ({
                 <Icon name="users" size={16} aria-hidden="true" />
                 Agregar adulto
               </Button>
-              {!minAge && (
+              {(!minAge || minAge < 15) && (
               <Button
                 size="small"
                 variant="outline"

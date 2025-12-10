@@ -266,14 +266,22 @@ class AdminApiClient {
 
     // El endpoint DELETE devuelve 204 No Content, así que retornamos éxito sin parsear JSON
     if (response.status === 204) {
-      return { success: true };
+      return {
+        success: true,
+        data: undefined as void,
+        timestamp: new Date().toISOString(),
+      };
     }
 
     // Si hay contenido, intentar parsear JSON
     try {
       return await response.json();
     } catch {
-      return { success: true };
+      return {
+        success: true,
+        data: undefined as void,
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 

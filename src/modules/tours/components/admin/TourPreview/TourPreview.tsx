@@ -122,8 +122,8 @@ export function TourPreview({ tourData }: TourPreviewProps) {
               paragraphs={
                 (tourData.longDescription || tourData.shortDescription || "")
                   .split('\n')
-                  .filter(p => p.trim().length > 0)
-                  .map(p => p.trim())
+                  .filter((p: string) => p.trim().length > 0)
+                  .map((p: string) => p.trim())
               }
             />
           </div>

@@ -533,7 +533,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
         const dateStr = date.toISOString().split("T")[0];
         const departure = getDepartureForDate(date);
         
-        const result = await processBulkAction(action, date, departure, params);
+        const result = await processBulkAction(action, date, departure ?? null, params);
         
         if (result.success) {
           successCount++;

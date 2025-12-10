@@ -16,7 +16,7 @@ async function main() {
   const tours = await prisma.tour.findMany({
     where: {
       restrictionText: {
-        not: null,
+        not: "",
       },
     },
     select: {

@@ -184,8 +184,8 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
       return null;
     }
 
-    // Niños: si minAge está definido, no deberían agregarse menores
-    if (minAge) {
+    // Niños: se bloquean solo si minAge >= 15 (solo adultos)
+    if (minAge && minAge >= 15) {
       return "Este tour no admite pasajeros menores de edad.";
     }
     const validation = validatePassengerAge(passengerAge, false);

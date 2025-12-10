@@ -35,7 +35,7 @@ export function useDashboardStats() {
       if (response.success && response.data) {
         setStats(response.data);
       } else {
-        setError(response.error || "Failed to fetch stats");
+        setError("Failed to fetch stats");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");

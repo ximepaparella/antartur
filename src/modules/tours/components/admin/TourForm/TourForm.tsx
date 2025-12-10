@@ -228,10 +228,14 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
   };
 
   // Helper para obtener imágenes de galería
-  const getGalleryImages = (): TourImage[] => {
+  const getGalleryImages = (): any[] => {
     return (formData.images || [])
       .filter((img) => img.imageType === "GALLERY")
-      .map((img, index) => ({ ...img, sortOrder: index }));
+      .map((img, index) => ({
+        ...img,
+        id: img.id || `gallery-${index}-${Date.now()}`,
+        sortOrder: index,
+      }));
   };
 
   // Helper para actualizar imágenes de galería
@@ -368,9 +372,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       onChange={(e) => onUpdate({ ...item, text: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
                       rows={2}
-                      required
+                required
                       placeholder="Ej: Edad mínima 12 años"
-                    />
+              />
                   </div>
                 )}
                 getDefaultItem={() => ({
@@ -401,8 +405,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       <label>
                         <input
                           type="checkbox"
-                          checked={formData[day.key] ?? true}
-                          onChange={(e) => updateField(day.key, e.target.checked)}
+                          checked={(formData as any)[day.key] ?? true}
+                          onChange={(e) => updateField(day.key as keyof TourFormData, e.target.checked as any)}
                           disabled={!isEditing}
                         />
                         <span>{day.label}</span>
@@ -414,111 +418,111 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
             </div>
 
             <div className={styles.priceSection}>
-              <Card title="Precios">
-                <div className={styles.formGrid}>
-                  <div className={styles.priceSection}>
-                    <h4 className={styles.sectionTitle}>Precio ARS</h4>
-                    <div className={styles.priceRow}>
-                      <Input
-                        label="Precio Adulto (ARS)"
-                        type="number"
-                        value={
-                          formData.prices?.find((p: TourPrice) => p.currency === "ARS")?.priceAdult || ""
-                        }
-                        onChange={(e) => {
-                          const prices = formData.prices || [];
-                          const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
-                          if (arsIndex >= 0) {
-                            const updated = [...prices];
-                            updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
-                            updateField("prices", updated);
-                          } else {
-                            updateField("prices", [
-                              ...prices,
-                              { currency: "ARS", priceAdult: Number(e.target.value), priceChild: 0 },
-                            ]);
-                          }
-                        }}
-                        disabled={!isEditing}
-                        placeholder="0"
-                      />
-                      <Input
-                        label="Precio Niño (ARS)"
-                        type="number"
-                        value={
-                          formData.prices?.find((p: any) => p.currency === "ARS")?.priceChild || ""
-                        }
-                        onChange={(e) => {
-                          const prices = formData.prices || [];
-                          const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
-                          if (arsIndex >= 0) {
-                            const updated = [...prices];
-                            updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
-                            updateField("prices", updated);
-                          } else {
-                            updateField("prices", [
-                              ...prices,
-                              { currency: "ARS", priceAdult: 0, priceChild: Number(e.target.value) },
-                            ]);
-                          }
-                        }}
-                        disabled={!isEditing}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
+          <Card title="Precios">
+            <div className={styles.formGrid}>
+              <div className={styles.priceSection}>
+                <h4 className={styles.sectionTitle}>Precio ARS</h4>
+                <div className={styles.priceRow}>
+                  <Input
+                    label="Precio Adulto (ARS)"
+                    type="number"
+                    value={
+                      formData.prices?.find((p: TourPrice) => p.currency === "ARS")?.priceAdult || ""
+                    }
+                    onChange={(e) => {
+                      const prices = formData.prices || [];
+                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
+                      if (arsIndex >= 0) {
+                        const updated = [...prices];
+                        updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
+                        updateField("prices", updated);
+                      } else {
+                        updateField("prices", [
+                          ...prices,
+                          { currency: "ARS", priceAdult: Number(e.target.value), priceChild: 0 },
+                        ]);
+                      }
+                    }}
+                    disabled={!isEditing}
+                    placeholder="0"
+                  />
+                  <Input
+                    label="Precio Niño (ARS)"
+                    type="number"
+                    value={
+                      formData.prices?.find((p: any) => p.currency === "ARS")?.priceChild || ""
+                    }
+                    onChange={(e) => {
+                      const prices = formData.prices || [];
+                      const arsIndex = prices.findIndex((p: TourPrice) => p.currency === "ARS");
+                      if (arsIndex >= 0) {
+                        const updated = [...prices];
+                        updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
+                        updateField("prices", updated);
+                      } else {
+                        updateField("prices", [
+                          ...prices,
+                          { currency: "ARS", priceAdult: 0, priceChild: Number(e.target.value) },
+                        ]);
+                      }
+                    }}
+                    disabled={!isEditing}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
 
-                  <div className={styles.priceSection}>
-                    <h4 className={styles.sectionTitle}>Precio USD</h4>
-                    <div className={styles.priceRow}>
-                      <Input
-                        label="Precio Adulto (USD)"
-                        type="number"
-                        value={
-                          formData.prices?.find((p: TourPrice) => p.currency === "USD")?.priceAdult || ""
-                        }
-                        onChange={(e) => {
-                          const prices = formData.prices || [];
-                          const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
-                          if (usdIndex >= 0) {
-                            const updated = [...prices];
-                            updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
-                            updateField("prices", updated);
-                          } else {
-                            updateField("prices", [
-                              ...prices,
-                              { currency: "USD", priceAdult: Number(e.target.value), priceChild: 0 },
-                            ]);
-                          }
-                        }}
-                        disabled={!isEditing}
-                        placeholder="0"
-                      />
-                      <Input
-                        label="Precio Niño (USD)"
-                        type="number"
-                        value={
-                          formData.prices?.find((p: any) => p.currency === "USD")?.priceChild || ""
-                        }
-                        onChange={(e) => {
-                          const prices = formData.prices || [];
-                          const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
-                          if (usdIndex >= 0) {
-                            const updated = [...prices];
-                            updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
-                            updateField("prices", updated);
-                          } else {
-                            updateField("prices", [
-                              ...prices,
-                              { currency: "USD", priceAdult: 0, priceChild: Number(e.target.value) },
-                            ]);
-                          }
-                        }}
-                        disabled={!isEditing}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
+              <div className={styles.priceSection}>
+                <h4 className={styles.sectionTitle}>Precio USD</h4>
+                <div className={styles.priceRow}>
+                  <Input
+                    label="Precio Adulto (USD)"
+                    type="number"
+                    value={
+                      formData.prices?.find((p: TourPrice) => p.currency === "USD")?.priceAdult || ""
+                    }
+                    onChange={(e) => {
+                      const prices = formData.prices || [];
+                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
+                      if (usdIndex >= 0) {
+                        const updated = [...prices];
+                        updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
+                        updateField("prices", updated);
+                      } else {
+                        updateField("prices", [
+                          ...prices,
+                          { currency: "USD", priceAdult: Number(e.target.value), priceChild: 0 },
+                        ]);
+                      }
+                    }}
+                    disabled={!isEditing}
+                    placeholder="0"
+                  />
+                  <Input
+                    label="Precio Niño (USD)"
+                    type="number"
+                    value={
+                      formData.prices?.find((p: any) => p.currency === "USD")?.priceChild || ""
+                    }
+                    onChange={(e) => {
+                      const prices = formData.prices || [];
+                      const usdIndex = prices.findIndex((p: TourPrice) => p.currency === "USD");
+                      if (usdIndex >= 0) {
+                        const updated = [...prices];
+                        updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
+                        updateField("prices", updated);
+                      } else {
+                        updateField("prices", [
+                          ...prices,
+                          { currency: "USD", priceAdult: 0, priceChild: Number(e.target.value) },
+                        ]);
+                      }
+                    }}
+                    disabled={!isEditing}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
                 </div>
               </Card>
             </div>
@@ -626,11 +630,11 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
             </div>
 
             <div className={styles.singleColumnLayout}>
-              <section className={styles.relationSection}>
+            <section className={styles.relationSection}>
                 <h3 className={styles.relationSectionTitle}>Información Destacada</h3>
               <ArrayFieldManager
                 title=""
-                items={formData.quickInfoItems || []}
+                items={(formData.quickInfoItems as any) || []}
                 onAdd={() => {
                   const newItem = {
                     id: `temp-${Date.now()}`,
@@ -684,13 +688,13 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 })}
                 disabled={!isEditing}
               />
-              </section>
+            </section>
 
-              <section className={styles.relationSection}>
+            <section className={styles.relationSection}>
                 <h3 className={styles.relationSectionTitle}>Información relevante</h3>
               <ArrayFieldManager
                 title=""
-                items={formData.featuredInfos || []}
+                items={(formData.featuredInfos as any) || []}
                 onAdd={() => {
                   const newItem = {
                     id: `temp-${Date.now()}`,
@@ -743,13 +747,13 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 })}
                 disabled={!isEditing}
               />
-              </section>
+            </section>
 
-              <section className={styles.relationSection}>
+            <section className={styles.relationSection}>
                 <h3 className={styles.relationSectionTitle}>Itinerario</h3>
               <ArrayFieldManager
                 title=""
-                items={formData.timelineItems || []}
+                items={(formData.timelineItems as any) || []}
                 onAdd={() => {
                   const newItem = {
                     id: `temp-${Date.now()}`,
@@ -808,7 +812,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 <h3 className={styles.relationSectionTitle}>Testimonios</h3>
               <ArrayFieldManager
                 title=""
-                items={formData.testimonials || []}
+                items={(formData.testimonials as any) || []}
                 onAdd={() => {
                   const newItem = {
                     id: `temp-${Date.now()}`,
@@ -872,18 +876,18 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 })}
                 disabled={!isEditing}
               />
-              </section>
+            </section>
 
-              <section className={styles.relationSection}>
+            <section className={styles.relationSection}>
                 <h3 className={styles.relationSectionTitle}>SEO</h3>
-              <Input
+                    <Input
                 label="Meta Title"
                 value={formData.metaTitle || ""}
                 onChange={(e) => updateField("metaTitle", e.target.value)}
                 disabled={!isEditing}
                 placeholder="Título para SEO (máx 60 caracteres)"
                 maxLength={60}
-              />
+                    />
               <Textarea
                 label="Meta Description"
                 value={formData.metaDescription || ""}
@@ -900,8 +904,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 disabled={!isEditing}
                 placeholder="URL canónica"
               />
-              </section>
-            </div>
+            </section>
+          </div>
           </Card>
         )}
 
