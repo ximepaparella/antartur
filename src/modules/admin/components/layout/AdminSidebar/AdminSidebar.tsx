@@ -18,6 +18,10 @@ const navItems: NavItem[] = [
   { href: "/admin/notifications", label: "Notificaciones", icon: "email" },
 ];
 
+const settingsItems: NavItem[] = [
+  { href: "/admin/settings/payments", label: "Medios de Pago", icon: "wallet" },
+];
+
 export function AdminSidebar() {
   const pathname = usePathname();
 
@@ -45,6 +49,26 @@ export function AdminSidebar() {
             );
           })}
         </ul>
+
+        <div className={styles.navSection}>
+          <span className={styles.navSectionTitle}>Configuración</span>
+          <ul className={styles.navList}>
+            {settingsItems.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item.href} className={styles.navItem}>
+                  <Link
+                    href={item.href}
+                    className={`${styles.navLink} ${isActive ? styles.active : ""}`}
+                  >
+                    <Icon name={item.icon as any} size={20} />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
     </aside>
   );

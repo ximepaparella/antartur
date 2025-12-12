@@ -6,6 +6,14 @@ import type { PaymentStatus } from "@prisma/client";
 
 export type { PaymentStatus };
 
+// Re-export gateway config types
+export type {
+  PaymentProvider,
+  GatewayConfig,
+  PayPalCredentials,
+  PaywayCredentials,
+} from "./gatewayConfigService";
+
 export interface Payment {
   id: string;
   orderId: string;
@@ -41,5 +49,15 @@ export interface ConfirmPaymentInput {
   currency: string;
   rawRequest?: Record<string, unknown>;
   rawResponse?: Record<string, unknown>;
+}
+
+/**
+ * Método de pago disponible para el checkout
+ * Usado por la API /api/payments/available y el hook useAvailablePaymentMethods
+ */
+export interface AvailablePaymentMethod {
+  provider: string;
+  displayName: string;
+  currency: string;
 }
 

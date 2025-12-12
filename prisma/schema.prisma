@@ -490,3 +490,23 @@ model User {
   // Estructura para futuro sistema de autenticación
   // Campos a agregar cuando se implemente auth
 }
+
+// ============================================
+// PAYMENT GATEWAYS CONFIGURATION
+// ============================================
+
+model PaymentGateway {
+  id          String   @id @default(cuid())
+  provider    String   @unique // "PAYPAL", "PAYWAY"
+  isActive    Boolean  @default(false)
+  isSandbox   Boolean  @default(true)
+  displayName String   // "PayPal", "Payway"
+  currency    String   @db.VarChar(3) // "USD", "ARS"
+  config      Json?    // Configuración adicional no sensible
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([provider])
+  @@index([isActive])
+}

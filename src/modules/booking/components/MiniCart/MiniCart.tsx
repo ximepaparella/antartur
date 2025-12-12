@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import type { PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { useMiniCartPricing } from "./hooks/useMiniCartPricing";
+import { useAvailablePaymentMethods } from "@/modules/booking/hooks/useAvailablePaymentMethods";
 import { OrderSummary } from "./OrderSummary";
 import { PaymentMethods } from "./PaymentMethods";
 import { CheckoutButton } from "./CheckoutButton";
@@ -19,6 +20,7 @@ interface MiniCartProps {
   exceedsAvailability: boolean;
   hasRestrictionViolations?: boolean;
   hasValidationErrors?: boolean;
+  isProcessing?: boolean;
   additionals?: SelectedAdditional[];
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
@@ -38,6 +40,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   exceedsAvailability,
   hasRestrictionViolations = false,
   hasValidationErrors = false,
+  isProcessing = false,
   additionals = [],
   onPaymentMethodChange,
   onSubmit,
@@ -53,6 +56,11 @@ export const MiniCart: React.FC<MiniCartProps> = ({
     additionals,
   });
 
+  // Obtener métodos de pago disponibles (centralizado aquí, no en PaymentMethods)
+  const { methods: availableMethods, isLoading: isLoadingMethods, noMethodsAvailable } = useAvailablePaymentMethods(
+    currentPricing.currencyCode
+  );
+
   // Manejar cambio de método de pago
   const handlePaymentChange = (method: PaymentMethod) => {
     setSelectedPayment(method);
@@ -61,6 +69,9 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
   // Determinar si mostrar blur en métodos de pago
   const showPaymentBlur = hasRestrictionViolations;
+
+  // Determinar si forzar modo consulta (sin métodos de pago disponibles)
+  const forceEnquiryMode = noMethodsAvailable && !exceedsAvailability && !hasRestrictionViolations;
 
   return (
     <div className={styles.miniCart}>
@@ -80,7 +91,8 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
       <PaymentMethods
         selectedPayment={selectedPayment}
-        currencyCode={currentPricing.currencyCode}
+        availableMethods={availableMethods}
+        isLoading={isLoadingMethods}
         showBlur={showPaymentBlur}
         exceedsAvailability={exceedsAvailability}
         hasRestrictionViolations={hasRestrictionViolations}
@@ -91,7 +103,9 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         exceedsAvailability={exceedsAvailability}
         hasRestrictionViolations={hasRestrictionViolations}
         hasValidationErrors={hasValidationErrors}
+        isProcessing={isProcessing}
         selectedPayment={selectedPayment}
+        forceEnquiryMode={forceEnquiryMode}
         onSubmit={onSubmit}
       />
     </div>

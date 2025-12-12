@@ -83,16 +83,37 @@ export function usePaymentRedirect(): UsePaymentRedirectReturn {
         // Redirigir al gateway de pago
         window.location.href = result.data.redirectUrl;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Error al iniciar el proceso de pago";
+        // Extraer mensaje de error detallado
+        let errorMessage = "Error al iniciar el proceso de pago";
+        let errorDetails = "";
+        
+        if (err instanceof Error) {
+          errorMessage = err.message;
+          errorDetails = err.stack || "";
+        } else if (typeof err === "object" && err !== null) {
+          // Intentar extraer mensaje de objetos de error
+          const errObj = err as Record<string, unknown>;
+          if (errObj.message) {
+            errorMessage = String(errObj.message);
+          }
+          errorDetails = JSON.stringify(err);
+        } else if (typeof err === "string") {
+          errorMessage = err;
+        }
+        
         setError(errorMessage);
-        logger.error("Error iniciando pago", err);
+        
+        // Log con más detalle para debugging
+        logger.error("Error iniciando pago", new Error(errorMessage), {
+          paymentMethod: options.paymentMethod,
+          orderId: options.orderId,
+          errorDetails,
+        });
 
-        // Redirigir a página de error
+        // Redirigir a página de error con mensaje más descriptivo
+        const encodedReason = encodeURIComponent(errorMessage);
         router.push(
-          `/checkout/payment-error?orderId=${options.orderId}&reason=${options.paymentMethod}_error`
+          `/checkout/payment-error?orderId=${options.orderId}&reason=${options.paymentMethod}_error&message=${encodedReason}`
         );
       } finally {
         setIsRedirecting(false);

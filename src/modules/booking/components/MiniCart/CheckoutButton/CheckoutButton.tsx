@@ -9,7 +9,9 @@ interface CheckoutButtonProps {
   exceedsAvailability: boolean;
   hasRestrictionViolations: boolean;
   hasValidationErrors: boolean;
+  isProcessing?: boolean;
   selectedPayment: PaymentMethod;
+  forceEnquiryMode?: boolean;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
 }
 
@@ -20,25 +22,41 @@ export const CheckoutButton: React.FC<CheckoutButtonProps> = ({
   exceedsAvailability,
   hasRestrictionViolations,
   hasValidationErrors,
+  isProcessing = false,
   selectedPayment,
+  forceEnquiryMode = false,
   onSubmit,
 }) => {
   // Determinar el estado del checkout
-  const hasProblems = exceedsAvailability || hasRestrictionViolations;
-  const ctaText = hasProblems ? "CONSULTAR DISPONIBILIDAD" : "RESERVAR";
+  // Si no hay métodos de pago disponibles, también es modo consulta
+  const hasProblems = exceedsAvailability || hasRestrictionViolations || forceEnquiryMode;
+  const ctaText = hasProblems ? "ENVIAR CONSULTA" : "RESERVAR";
   
-  // Botón deshabilitado solo si hay errores de validación (permite consulta flow)
-  const isButtonDisabled = hasValidationErrors;
+  // Botón deshabilitado si hay errores de validación o está procesando
+  const isButtonDisabled = hasValidationErrors || isProcessing;
 
   const handleSubmit = () => {
     if (!isButtonDisabled) {
-      // Si hay exceso de disponibilidad sin restricciones, pasar undefined (skip payment)
-      // El tipo PaymentMethod permite undefined según order.ts
-      const paymentMethod: PaymentMethod | undefined = exceedsAvailability && !hasRestrictionViolations 
+      // Si hay problemas (exceso, restricciones o sin métodos de pago), pasar undefined
+      // Esto convertirá la reserva en consulta
+      const paymentMethod: PaymentMethod | undefined = hasProblems 
         ? undefined 
         : selectedPayment;
       onSubmit(paymentMethod);
     }
+  };
+
+  // Texto del botón según el estado
+  const getButtonText = () => {
+    if (isProcessing) {
+      return (
+        <span className={styles.buttonLoading}>
+          <span className={styles.spinner} />
+          Procesando...
+        </span>
+      );
+    }
+    return ctaText;
   };
 
   return (
@@ -48,7 +66,7 @@ export const CheckoutButton: React.FC<CheckoutButtonProps> = ({
       className={styles.submitButton}
       disabled={isButtonDisabled}
     >
-      {ctaText}
+      {getButtonText()}
     </Button>
   );
 };

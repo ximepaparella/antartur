@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard/OrderSummaryCard";
-import { getCompletedOrderData } from "@/lib/utils/orderStorage";
+import { getCompletedOrderData, clearPendingBooking } from "@/lib/utils/orderStorage";
 import { usePaymentVerification } from "@/modules/booking/hooks/usePaymentVerification";
 import styles from "./page.module.scss";
 
 export default function PaywayReturnPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [orderData, setOrderData] = useState<ReturnType<typeof getCompletedOrderData> | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const orderId = searchParams.get("orderId");
-  const paymentId = searchParams.get("payment_id");
   const statusParam = searchParams.get("status");
 
   // Obtener datos de la orden desde sessionStorage
@@ -35,12 +36,40 @@ export default function PaywayReturnPage() {
     retryDelay: 3000,
   });
 
-  // Si Payway retorna status aprobado directamente, considerar éxito inmediato
-  const isDirectSuccess = statusParam === "approved" || statusParam === "completed";
-  const finalStatus = !hasValidParams ? "error" : isDirectSuccess ? "success" : status;
+  // Mapear estados de Payway a nuestros estados
+  const mapPaywayStatus = (paywayStatus: string | null): "success" | "error" | "pending" => {
+    switch (paywayStatus?.toLowerCase()) {
+      case "success":
+      case "approved":
+      case "completed":
+        return "success";
+      case "pending":
+      case "in_process":
+        return "pending";
+      default:
+        return "error";
+    }
+  };
+
+  const paywayStatus = mapPaywayStatus(statusParam);
+  const finalStatus = !hasValidParams ? "error" : paywayStatus === "success" ? "success" : status;
   const finalErrorMessage = !hasValidParams
     ? "Parámetros de Payway incompletos"
+    : paywayStatus === "error" && statusParam
+    ? `El pago fue ${statusParam === "failure" ? "rechazado" : statusParam === "cancelled" ? "cancelado" : "no procesado"}`
     : errorMessage;
+
+  // Redirigir a success si el pago fue exitoso
+  useEffect(() => {
+    if (finalStatus === "success" && !isRedirecting) {
+      setIsRedirecting(true);
+      clearPendingBooking();
+      // Pequeño delay para mostrar mensaje de éxito
+      setTimeout(() => {
+        router.push("/checkout/success");
+      }, 1500);
+    }
+  }, [finalStatus, isRedirecting, router]);
 
   if (finalStatus === "loading") {
     return (

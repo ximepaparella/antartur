@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { Card } from "@/components/common/Card";
 import { Message } from "@/components/common/Message";
 import type { PaymentMethod } from "@/lib/types/order";
-import { getAvailablePaymentMethods } from "../utils/paymentUtils";
 import { PaymentMethodOption } from "./PaymentMethodOption";
 import styles from "../MiniCart.module.scss";
 
 interface PaymentMethodsProps {
   selectedPayment: PaymentMethod;
-  currencyCode: string;
+  availableMethods: PaymentMethod[];
+  isLoading: boolean;
   showBlur: boolean;
   exceedsAvailability: boolean;
   hasRestrictionViolations: boolean;
@@ -19,32 +19,41 @@ interface PaymentMethodsProps {
 
 /**
  * Componente PaymentMethods para mostrar opciones de pago y mensajes de estado
+ * Recibe los métodos disponibles como prop (calculados en MiniCart)
  */
 export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   selectedPayment,
-  currencyCode,
+  availableMethods,
+  isLoading,
   showBlur,
   exceedsAvailability,
   hasRestrictionViolations,
   onPaymentChange,
 }) => {
-  // Filtrar métodos de pago según currency
-  const availableMethods = useMemo(() => {
-    return getAvailablePaymentMethods(currencyCode);
-  }, [currencyCode]);
-
   // Si el método seleccionado no está disponible, seleccionar el primero disponible
   React.useEffect(() => {
-    if (!availableMethods.includes(selectedPayment) && availableMethods.length > 0) {
-      onPaymentChange(availableMethods[0]);
+    if (!isLoading && availableMethods.length > 0) {
+      if (!availableMethods.includes(selectedPayment)) {
+        onPaymentChange(availableMethods[0]);
+      }
     }
-  }, [availableMethods, selectedPayment, onPaymentChange]);
+  }, [availableMethods, selectedPayment, onPaymentChange, isLoading]);
 
   const showPaymentMethods = !exceedsAvailability && !hasRestrictionViolations;
+  const noPaymentMethodsAvailable = !isLoading && availableMethods.length === 0;
 
   return (
     <Card title="Método de pago">
-      {showPaymentMethods && (
+      {/* Loading state */}
+      {isLoading && showPaymentMethods && (
+        <div className={styles.paymentOptions}>
+          <div className={styles.skeletonPaymentOption} />
+          <div className={styles.skeletonPaymentOption} />
+        </div>
+      )}
+
+      {/* Payment methods */}
+      {!isLoading && showPaymentMethods && availableMethods.length > 0 && (
         <div className={`${styles.paymentOptions} ${showBlur ? styles.blurred : ""}`}>
           {availableMethods.map((method) => (
             <PaymentMethodOption
@@ -56,6 +65,15 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
             />
           ))}
         </div>
+      )}
+
+      {/* No payment methods available - will be an enquiry */}
+      {!isLoading && showPaymentMethods && noPaymentMethodsAvailable && (
+        <Message variant="info">
+          <p>
+            No hay métodos de pago disponibles en este momento. Tu solicitud será procesada como una consulta y nuestro equipo se pondrá en contacto contigo para coordinar el pago.
+          </p>
+        </Message>
       )}
 
       {/* Disclaimer siempre visible donde estarían los métodos de pago */}
@@ -77,4 +95,3 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     </Card>
   );
 };
-

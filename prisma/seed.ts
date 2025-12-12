@@ -62,6 +62,41 @@ async function main() {
   // Nota: Ya no se crean tipos de cambio (CurrencyRate) porque cada tour
   // tiene precios individuales por moneda en la tabla TourPrice
 
+  // 2. Crear Payment Gateways
+  console.log("Creating payment gateways...");
+
+  const paypal = await prisma.paymentGateway.upsert({
+    where: { provider: "PAYPAL" },
+    update: {},
+    create: {
+      provider: "PAYPAL",
+      displayName: "PayPal",
+      currency: "USD",
+      isActive: false,
+      isSandbox: true,
+      config: {
+        description: "Pagos en dólares vía PayPal",
+      },
+    },
+  });
+
+  const payway = await prisma.paymentGateway.upsert({
+    where: { provider: "PAYWAY" },
+    update: {},
+    create: {
+      provider: "PAYWAY",
+      displayName: "Payway",
+      currency: "ARS",
+      isActive: false,
+      isSandbox: true,
+      config: {
+        description: "Pagos en pesos vía Payway (Tarjetas de crédito/débito)",
+      },
+    },
+  });
+
+  console.log("✅ Payment gateways created:", { paypal: paypal.provider, payway: payway.provider });
+
   console.log("✅ Seeding completed!");
 }
 

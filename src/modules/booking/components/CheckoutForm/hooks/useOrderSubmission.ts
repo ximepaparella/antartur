@@ -120,8 +120,9 @@ export function useOrderSubmission({
 
       try {
         // Determinar tipo de orden
+        // Es consulta si: excede disponibilidad, tiene restricciones, o no hay método de pago
         const orderType: "reserva" | "consulta" =
-          bookingData.exceedsAvailability || hasRestrictionViolations ? "consulta" : "reserva";
+          bookingData.exceedsAvailability || hasRestrictionViolations || !paymentMethod ? "consulta" : "reserva";
 
         // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
         const pricing: Pricing = bookingData.pricing.currencyCode 

@@ -17,7 +17,7 @@ import styles from "./page.module.scss";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { handleCheckoutComplete } = useCheckoutFlow();
+  const { handleCheckoutComplete, isProcessing, error: checkoutError } = useCheckoutFlow();
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
@@ -188,6 +188,7 @@ export default function CheckoutPage() {
                   exceedsAvailability={bookingData.exceedsAvailability}
                   hasRestrictionViolations={hasRestrictionViolations}
                   hasValidationErrors={hasValidationErrors}
+                  isProcessing={isProcessing}
                   onPaymentMethodChange={handlePaymentMethodChange}
                   onSubmit={handleSubmitFromCart}
                 />
