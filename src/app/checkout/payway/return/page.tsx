@@ -61,14 +61,23 @@ export default function PaywayReturnPage() {
 
   // Redirigir a success si el pago fue exitoso
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout | undefined;
+
     if (finalStatus === "success" && !isRedirecting) {
       setIsRedirecting(true);
       clearPendingBooking();
       // Pequeño delay para mostrar mensaje de éxito
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         router.push("/checkout/success");
       }, 1500);
     }
+
+    // Cleanup: cancelar timeout si el componente se desmonta o el effect se re-ejecuta
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [finalStatus, isRedirecting, router]);
 
   if (finalStatus === "loading") {

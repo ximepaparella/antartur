@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { useMiniCartPricing } from "./hooks/useMiniCartPricing";
 import { useAvailablePaymentMethods } from "@/modules/booking/hooks/useAvailablePaymentMethods";
@@ -45,7 +45,8 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   onPaymentMethodChange,
   onSubmit,
 }) => {
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("transferencia");
+  // Estado del método de pago seleccionado (puede ser undefined si no hay métodos disponibles)
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | undefined>(undefined);
 
   // Calcular precios usando hook
   const { subtotalAdults, subtotalChildren, additionalsSubtotal, total, currentPricing } = useMiniCartPricing({
@@ -60,6 +61,22 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   const { methods: availableMethods, isLoading: isLoadingMethods, noMethodsAvailable } = useAvailablePaymentMethods(
     currentPricing.currencyCode
   );
+
+  // Sincronizar selectedPayment con los métodos disponibles
+  useEffect(() => {
+    if (!isLoadingMethods) {
+      if (availableMethods.length > 0) {
+        // Si hay métodos disponibles y no hay uno seleccionado, o el seleccionado no es válido
+        if (!selectedPayment || !availableMethods.includes(selectedPayment)) {
+          setSelectedPayment(availableMethods[0]);
+          onPaymentMethodChange(availableMethods[0]);
+        }
+      } else {
+        // Si no hay métodos disponibles, limpiar la selección
+        setSelectedPayment(undefined);
+      }
+    }
+  }, [availableMethods, isLoadingMethods, selectedPayment, onPaymentMethodChange]);
 
   // Manejar cambio de método de pago
   const handlePaymentChange = (method: PaymentMethod) => {
@@ -106,6 +123,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         isProcessing={isProcessing}
         selectedPayment={selectedPayment}
         forceEnquiryMode={forceEnquiryMode}
+        noMethodsAvailable={noMethodsAvailable}
         onSubmit={onSubmit}
       />
     </div>

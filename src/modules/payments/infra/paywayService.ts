@@ -97,13 +97,16 @@ export async function createPaywayTransaction(
   // Monto en centavos (Payway usa enteros)
   const amountInCents = Math.round(request.amount * 100);
 
+  // Usar la moneda de la request (default: ARS)
+  const currency = request.currency || "ARS";
+
   // Datos para el checkout de Payway
   // La estructura exacta puede variar según la versión de la API
   const checkoutData = {
     merchant_id: merchantId,
     transaction_id: transactionId,
     amount: amountInCents,
-    currency: "ARS",
+    currency: currency,
     description: `Orden ${request.orderId} - Antartur`,
     customer_email: request.customerEmail,
     customer_name: request.customerName,
@@ -122,7 +125,7 @@ export async function createPaywayTransaction(
     merchant_id: merchantId,
     transaction_id: transactionId,
     amount: amountInCents.toString(),
-    currency: "ARS",
+    currency: currency,
     description: checkoutData.description,
     customer_email: request.customerEmail,
     success_url: checkoutData.success_url,

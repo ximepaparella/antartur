@@ -10,8 +10,9 @@ interface CheckoutButtonProps {
   hasRestrictionViolations: boolean;
   hasValidationErrors: boolean;
   isProcessing?: boolean;
-  selectedPayment: PaymentMethod;
+  selectedPayment: PaymentMethod | undefined;
   forceEnquiryMode?: boolean;
+  noMethodsAvailable?: boolean;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
 }
 
@@ -25,11 +26,12 @@ export const CheckoutButton: React.FC<CheckoutButtonProps> = ({
   isProcessing = false,
   selectedPayment,
   forceEnquiryMode = false,
+  noMethodsAvailable = false,
   onSubmit,
 }) => {
   // Determinar el estado del checkout
   // Si no hay métodos de pago disponibles, también es modo consulta
-  const hasProblems = exceedsAvailability || hasRestrictionViolations || forceEnquiryMode;
+  const hasProblems = exceedsAvailability || hasRestrictionViolations || forceEnquiryMode || noMethodsAvailable;
   const ctaText = hasProblems ? "ENVIAR CONSULTA" : "RESERVAR";
   
   // Botón deshabilitado si hay errores de validación o está procesando
@@ -37,9 +39,9 @@ export const CheckoutButton: React.FC<CheckoutButtonProps> = ({
 
   const handleSubmit = () => {
     if (!isButtonDisabled) {
-      // Si hay problemas (exceso, restricciones o sin métodos de pago), pasar undefined
+      // Si hay problemas o no hay método seleccionado, pasar undefined
       // Esto convertirá la reserva en consulta
-      const paymentMethod: PaymentMethod | undefined = hasProblems 
+      const paymentMethod: PaymentMethod | undefined = hasProblems || !selectedPayment
         ? undefined 
         : selectedPayment;
       onSubmit(paymentMethod);

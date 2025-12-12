@@ -8,7 +8,7 @@ import { PaymentMethodOption } from "./PaymentMethodOption";
 import styles from "../MiniCart.module.scss";
 
 interface PaymentMethodsProps {
-  selectedPayment: PaymentMethod;
+  selectedPayment: PaymentMethod | undefined;
   availableMethods: PaymentMethod[];
   isLoading: boolean;
   showBlur: boolean;
@@ -30,14 +30,7 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   hasRestrictionViolations,
   onPaymentChange,
 }) => {
-  // Si el método seleccionado no está disponible, seleccionar el primero disponible
-  React.useEffect(() => {
-    if (!isLoading && availableMethods.length > 0) {
-      if (!availableMethods.includes(selectedPayment)) {
-        onPaymentChange(availableMethods[0]);
-      }
-    }
-  }, [availableMethods, selectedPayment, onPaymentChange, isLoading]);
+  // La sincronización del método seleccionado se hace en MiniCart
 
   const showPaymentMethods = !exceedsAvailability && !hasRestrictionViolations;
   const noPaymentMethodsAvailable = !isLoading && availableMethods.length === 0;
