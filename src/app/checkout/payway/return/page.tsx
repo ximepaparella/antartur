@@ -36,28 +36,30 @@ export default function PaywayReturnPage() {
     retryDelay: 3000,
   });
 
-  // Mapear estados de Payway a nuestros estados
-  const mapPaywayStatus = (paywayStatus: string | null): "success" | "error" | "pending" => {
+  // Mapear estados de Payway a mensajes de UI (solo para display, NO para lógica)
+  const getPaywayStatusMessage = (paywayStatus: string | null): string | null => {
     switch (paywayStatus?.toLowerCase()) {
-      case "success":
-      case "approved":
-      case "completed":
-        return "success";
+      case "failure":
+        return "El pago fue rechazado";
+      case "cancelled":
+        return "El pago fue cancelado";
       case "pending":
       case "in_process":
-        return "pending";
+        return "El pago está pendiente de confirmación";
       default:
-        return "error";
+        return paywayStatus ? `Estado del provider: ${paywayStatus}` : null;
     }
   };
 
-  const paywayStatus = mapPaywayStatus(statusParam);
-  const finalStatus = !hasValidParams ? "error" : paywayStatus === "success" ? "success" : status;
+  // IMPORTANTE: Confiar SOLO en la verificación del servidor, no en parámetros del provider
+  // El statusParam solo se usa para mensajes de UI, nunca para determinar éxito
+  const finalStatus = !hasValidParams ? "error" : status;
+  
+  // Mensaje de error: priorizar mensaje del servidor, usar mensaje del provider solo como fallback para UI
+  const providerMessage = getPaywayStatusMessage(statusParam);
   const finalErrorMessage = !hasValidParams
     ? "Parámetros de Payway incompletos"
-    : paywayStatus === "error" && statusParam
-    ? `El pago fue ${statusParam === "failure" ? "rechazado" : statusParam === "cancelled" ? "cancelado" : "no procesado"}`
-    : errorMessage;
+    : errorMessage || providerMessage || "Error desconocido al procesar el pago";
 
   // Redirigir a success si el pago fue exitoso
   useEffect(() => {

@@ -58,6 +58,15 @@ function checkGatewayCredentials(provider: string): boolean {
 export const GET = withRateLimitHandler(
   "admin",
   withControllerErrorHandler(async (request: NextRequest, context) => {
+    // TODO: [SECURITY] Add authentication check when auth system is implemented
+    // This endpoint exposes payment gateway configuration and MUST be protected
+    // by admin role verification. Currently relies only on rate limiting.
+    // When auth is available:
+    //   const session = await getServerSession(authOptions);
+    //   if (!session?.user?.role === 'admin') {
+    //     return errorResponse("Unauthorized", 401);
+    //   }
+
     const gateways = await prisma.paymentGateway.findMany({
       orderBy: { provider: "asc" },
     });

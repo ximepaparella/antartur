@@ -183,6 +183,10 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
 export const POST = withRateLimitHandler(
   "admin",
   withControllerErrorHandler(async (request: NextRequest, context) => {
+    // TODO: [SECURITY] Add authentication check when auth system is implemented
+    // This endpoint tests payment gateway credentials and MUST be protected
+    // by admin role verification. See /api/admin/settings/payments/route.ts
+
     const params = await context.params;
     const provider = params.provider;
     const providerUpper = provider.toUpperCase();

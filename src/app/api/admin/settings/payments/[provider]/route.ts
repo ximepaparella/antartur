@@ -83,6 +83,10 @@ function getRequiredCredentials(provider: string): string[] {
 export const GET = withRateLimitHandler(
   "admin",
   withControllerErrorHandler(async (request: NextRequest, context) => {
+    // TODO: [SECURITY] Add authentication check when auth system is implemented
+    // This endpoint exposes payment gateway configuration and MUST be protected
+    // by admin role verification. See /api/admin/settings/payments/route.ts
+
     const params = await context.params;
     const provider = params.provider;
     const providerUpper = provider.toUpperCase();
@@ -124,6 +128,10 @@ const updateGatewaySchema = z.object({
 export const PATCH = withRateLimitHandler(
   "admin",
   withControllerErrorHandler(async (request: NextRequest, context) => {
+    // TODO: [SECURITY] Add authentication check when auth system is implemented
+    // This endpoint modifies payment gateway configuration and MUST be protected
+    // by admin role verification. See /api/admin/settings/payments/route.ts
+
     const params = await context.params;
     const provider = params.provider;
     const providerUpper = provider.toUpperCase();

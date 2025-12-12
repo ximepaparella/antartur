@@ -170,20 +170,27 @@ export async function verifyPaywayPayment(
 
   const { apiKey, merchantId, environment } = credentials;
 
-  // Verificar la firma del callback
+  // Verificar la firma del callback - REQUERIDA para validar autenticidad
   const receivedSignature = queryParams.signature;
   const dataToVerify = `${queryParams.transaction_id}${queryParams.status}${queryParams.amount || ""}`;
   const expectedSignature = generateSignature(dataToVerify, apiKey);
 
-  if (receivedSignature && receivedSignature !== expectedSignature) {
-    logger.warn("Payway signature mismatch", {
+  // Fail closed: firma ausente o incorrecta es inválida
+  const signatureMissing = !receivedSignature;
+  const signatureMismatch = receivedSignature !== expectedSignature;
+
+  if (signatureMissing || signatureMismatch) {
+    logger.warn("Payway signature validation failed", {
       transactionId,
-      received: receivedSignature,
+      reason: signatureMissing ? "missing" : "mismatch",
+      received: receivedSignature || "(not provided)",
     });
     return {
       success: false,
       status: "invalid_signature",
-      message: "La firma de la transacción no es válida",
+      message: signatureMissing 
+        ? "Firma de transacción ausente" 
+        : "La firma de la transacción no es válida",
     };
   }
 

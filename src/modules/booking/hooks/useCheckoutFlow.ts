@@ -3,7 +3,7 @@
  * Encapsula la lógica de guardar datos y redirigir según tipo de orden y método de pago
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Order } from "@/lib/types/order";
 import { calculateOrderTotal } from "@/lib/utils/pricing";
@@ -24,6 +24,14 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
   const router = useRouter();
   const { initiatePayment, isRedirecting, error: paymentError } = usePaymentRedirect();
   const [isNavigating, setIsNavigating] = useState(false);
+  
+  // Ref para evitar stale closure en finally block
+  const isRedirectingRef = useRef(isRedirecting);
+  
+  // Mantener ref sincronizado con el state
+  useEffect(() => {
+    isRedirectingRef.current = isRedirecting;
+  }, [isRedirecting]);
 
   const handleCheckoutComplete = useCallback(
     async (order: Order) => {
@@ -79,13 +87,13 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
           }
         }
       } finally {
-        // Solo resetear si no estamos redirigiendo a un gateway externo
-        if (!isRedirecting) {
+        // Usar ref para evitar stale closure - leer valor actual
+        if (!isRedirectingRef.current) {
           setIsNavigating(false);
         }
       }
     },
-    [router, initiatePayment, isRedirecting]
+    [router, initiatePayment]
   );
 
   // Combinar estados de procesamiento

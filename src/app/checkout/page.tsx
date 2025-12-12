@@ -159,6 +159,12 @@ export default function CheckoutPage() {
     <RouteErrorBoundary>
       <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
+        {/* Mostrar error de checkout si existe */}
+        {checkoutError && (
+          <div className={styles.errorBanner}>
+            <Message variant="alert">{checkoutError}</Message>
+          </div>
+        )}
         <FeatureErrorBoundary featureName="reserva">
           <div className={styles.checkoutPage}>
             <div className={styles.leftColumn}>

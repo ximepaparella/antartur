@@ -8,6 +8,17 @@ import { logger } from "@/lib/services/logger";
 
 export type PaymentProvider = "PAYPAL" | "PAYWAY";
 
+/** Lista de providers válidos para validación en runtime */
+const VALID_PROVIDERS: readonly PaymentProvider[] = ["PAYPAL", "PAYWAY"] as const;
+
+/**
+ * Valida si un string es un PaymentProvider válido
+ * Fail-closed: valores desconocidos retornan false
+ */
+function isValidProvider(value: string): value is PaymentProvider {
+  return VALID_PROVIDERS.includes(value as PaymentProvider);
+}
+
 export interface GatewayConfig {
   provider: PaymentProvider;
   displayName: string;
@@ -58,13 +69,19 @@ export async function getGatewayConfig(provider: PaymentProvider): Promise<Gatew
       return null;
     }
 
+    // Validar que el provider en BD sea válido (fail-closed)
+    if (!isValidProvider(gateway.provider)) {
+      logger.error(`Invalid provider value in database: ${gateway.provider}`);
+      return null;
+    }
+
     return {
-      provider: gateway.provider as PaymentProvider,
+      provider: gateway.provider,
       displayName: gateway.displayName,
       isActive: gateway.isActive,
       isSandbox: gateway.isSandbox,
       currency: gateway.currency,
-      hasCredentials: checkCredentials(gateway.provider as PaymentProvider),
+      hasCredentials: checkCredentials(gateway.provider),
       config: gateway.config as Record<string, unknown> | null,
     };
   } catch (error) {
@@ -83,8 +100,16 @@ export async function getActiveGateways(): Promise<GatewayConfig[]> {
     });
 
     return gateways
-      .filter((gateway) => checkCredentials(gateway.provider as PaymentProvider))
+      // Validar provider antes de procesar (fail-closed)
+      .filter((gateway) => {
+        if (!isValidProvider(gateway.provider)) {
+          logger.error(`Invalid provider value in database: ${gateway.provider}`);
+          return false;
+        }
+        return checkCredentials(gateway.provider);
+      })
       .map((gateway) => ({
+        // Safe cast - ya validamos con isValidProvider
         provider: gateway.provider as PaymentProvider,
         displayName: gateway.displayName,
         isActive: gateway.isActive,
