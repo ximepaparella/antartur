@@ -31,13 +31,24 @@ export function getAuthToken(): string | null {
  */
 export function createAuthHeaders(additionalHeaders: HeadersInit = {}): HeadersInit {
   const token = getAuthToken();
-  const headers: HeadersInit = {
-    ...additionalHeaders,
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  
+  // Convertir additionalHeaders a Record si es necesario
+  const baseHeaders: Record<string, string> = {};
+  if (additionalHeaders instanceof Headers) {
+    additionalHeaders.forEach((value, key) => {
+      baseHeaders[key] = value;
+    });
+  } else if (Array.isArray(additionalHeaders)) {
+    additionalHeaders.forEach(([key, value]) => {
+      baseHeaders[key] = value;
+    });
+  } else {
+    Object.assign(baseHeaders, additionalHeaders);
   }
 
-  return headers;
+  if (token) {
+    baseHeaders.Authorization = `Bearer ${token}`;
+  }
+
+  return baseHeaders;
 }

@@ -91,7 +91,6 @@ import {
   Flashlight,
   Binoculars,
   Shirt,
-  Boot,
   // Información y comunicación
   AlertTriangle,
   CheckCircle,
@@ -109,7 +108,6 @@ import {
   Lock,
   Key,
   LifeBuoy,
-  FirstAid,
   // Otros
   Star,
   Award,
@@ -122,7 +120,6 @@ import {
   Home,
   Building,
   Landmark,
-  Parking,
 } from "lucide-react";
 
 /**
@@ -226,7 +223,6 @@ export type IconName =
   | "flashlight"
   | "binoculars"
   | "shirt"
-  | "boot"
   // Información y comunicación
   | "alert-triangle"
   | "check-circle"
@@ -244,7 +240,6 @@ export type IconName =
   | "lock"
   | "key"
   | "life-buoy"
-  | "first-aid"
   // Otros
   | "star"
   | "award"
@@ -256,8 +251,7 @@ export type IconName =
   | "bookmark"
   | "home"
   | "building"
-  | "landmark"
-  | "parking";
+  | "landmark";
 
 export type IconProps = {
   /** Nombre del icono a mostrar */
@@ -372,7 +366,6 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   flashlight: Flashlight,
   binoculars: Binoculars,
   shirt: Shirt,
-  boot: Boot,
   // Información y comunicación
   "alert-triangle": AlertTriangle,
   "check-circle": CheckCircle,
@@ -390,7 +383,6 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   lock: Lock,
   key: Key,
   "life-buoy": LifeBuoy,
-  "first-aid": FirstAid,
   // Otros
   star: Star,
   award: Award,
@@ -403,7 +395,6 @@ const iconMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   home: Home,
   building: Building,
   landmark: Landmark,
-  parking: Parking,
 };
 
 /**
