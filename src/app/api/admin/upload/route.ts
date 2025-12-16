@@ -132,8 +132,15 @@ async function handlePost(request: NextRequest) {
     );
   } catch (error) {
     console.error("Error uploading file:", error);
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+    const errorDetails = error instanceof Error ? error.stack : String(error);
+    console.error("Error details:", errorDetails);
     return NextResponse.json(
-      { success: false, error: "Error al subir el archivo" },
+      { 
+        success: false, 
+        error: "Error al subir el archivo",
+        details: process.env.NODE_ENV === "development" ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
