@@ -42,12 +42,17 @@ import { NotificationsController } from "@/modules/notifications/api/controllers
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new NotificationsController();
 
-export const GET = withRateLimitHandler("notifications", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const notification = await controller.getById(id);
-  return successResponse(notification);
-}));
+// GET requiere autenticación de admin
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const notification = await controller.getById(id);
+    return successResponse(notification);
+  })),
+  { roles: ["ADMIN"] }
+);
 

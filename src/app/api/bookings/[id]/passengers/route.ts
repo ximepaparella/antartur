@@ -43,12 +43,17 @@ import { PassengersController } from "@/modules/passengers/api/controllers/passe
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new PassengersController();
 
-export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const passengers = await controller.getByBookingId(id);
-  return successResponse(passengers);
-}));
+// GET requiere autenticación de admin
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const passengers = await controller.getByBookingId(id);
+    return successResponse(passengers);
+  })),
+  { roles: ["ADMIN"] }
+);
 

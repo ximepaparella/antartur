@@ -3,8 +3,19 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+/** Número de rondas de salt para bcrypt */
+const SALT_ROUNDS = 12;
+
+/**
+ * Genera un hash seguro de una contraseña
+ */
+async function hashPassword(plainPassword: string): Promise<string> {
+  return bcrypt.hash(plainPassword, SALT_ROUNDS);
+}
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -61,6 +72,63 @@ async function main() {
 
   // Nota: Ya no se crean tipos de cambio (CurrencyRate) porque cada tour
   // tiene precios individuales por moneda en la tabla TourPrice
+
+  // 2. Crear Payment Gateways
+  console.log("Creating payment gateways...");
+
+  const paypal = await prisma.paymentGateway.upsert({
+    where: { provider: "PAYPAL" },
+    update: {},
+    create: {
+      provider: "PAYPAL",
+      displayName: "PayPal",
+      currency: "USD",
+      isActive: false,
+      isSandbox: true,
+      config: {
+        description: "Pagos en dólares vía PayPal",
+      },
+    },
+  });
+
+  const payway = await prisma.paymentGateway.upsert({
+    where: { provider: "PAYWAY" },
+    update: {},
+    create: {
+      provider: "PAYWAY",
+      displayName: "Payway",
+      currency: "ARS",
+      isActive: false,
+      isSandbox: true,
+      config: {
+        description: "Pagos en pesos vía Payway (Tarjetas de crédito/débito)",
+      },
+    },
+  });
+
+  console.log("✅ Payment gateways created:", { paypal: paypal.provider, payway: payway.provider });
+
+  // 3. Crear usuario administrador
+  console.log("Creating admin user...");
+
+  const adminPasswordHash = await hashPassword("admin123");
+  
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@antartur.com" },
+    update: {
+      // Actualizar password si el usuario ya existe
+      passwordHash: adminPasswordHash,
+    },
+    create: {
+      email: "admin@antartur.com",
+      passwordHash: adminPasswordHash,
+      name: "Administrador",
+      role: "ADMIN",
+      isActive: true,
+    },
+  });
+
+  console.log("✅ Admin user created:", { id: adminUser.id, email: adminUser.email });
 
   console.log("✅ Seeding completed!");
 }

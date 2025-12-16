@@ -483,10 +483,59 @@ model Notification {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  role         UserRole  @default(ADMIN)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  
+  // Refresh tokens para sesiones
+  refreshTokens RefreshToken[]
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  // Estructura para futuro sistema de autenticación
-  // Campos a agregar cuando se implemente auth
+  @@index([email])
+  @@index([role, isActive])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+}
+
+// ============================================
+// PAYMENT GATEWAYS CONFIGURATION
+// ============================================
+
+model PaymentGateway {
+  id          String   @id @default(cuid())
+  provider    String   @unique // "PAYPAL", "PAYWAY"
+  isActive    Boolean  @default(false)
+  isSandbox   Boolean  @default(true)
+  displayName String   // "PayPal", "Payway"
+  currency    String   @db.VarChar(3) // "USD", "ARS"
+  config      Json?    // Configuración adicional no sensible
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([provider])
+  @@index([isActive])
 }

@@ -32,11 +32,15 @@ import { AdminController } from "@/modules/orders/api/controllers/adminControlle
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new AdminController();
 
-export const GET = withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
-  const stats = await controller.getStats();
-  return successResponse(stats);
-}));
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const stats = await controller.getStats();
+    return successResponse(stats);
+  })),
+  { roles: ["ADMIN"] }
+);
 

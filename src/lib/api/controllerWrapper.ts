@@ -12,6 +12,9 @@ import {
   UnauthorizedError,
   ForbiddenError,
   ConflictError,
+  AuthenticationError,
+  TokenExpiredError,
+  InvalidTokenError,
 } from "./errorHandler";
 
 type RouteContext = {
@@ -27,13 +30,15 @@ type ControllerHandler = (
  * Wrapper que maneja errores automáticamente en controllers
  * Convierte errores de dominio a respuestas HTTP apropiadas
  */
-export function withControllerErrorHandler(handler: ControllerHandler) {
+export function withControllerErrorHandler(handler: ControllerHandler): ControllerHandler {
   return async (
     request: NextRequest,
-    context: RouteContext = { params: Promise.resolve({}) }
+    context: RouteContext
   ): Promise<NextResponse | Response> => {
+    // Ensure context has params (for routes that don't have params)
+    const safeContext = context || { params: Promise.resolve({}) };
     try {
-      return await handler(request, context);
+      return await handler(request, safeContext);
     } catch (error) {
       // Log del error
       logger.error("Controller error", error, {
@@ -106,6 +111,39 @@ export function withControllerErrorHandler(handler: ControllerHandler) {
             code: "CONFLICT",
           },
           { status: 409 }
+        );
+      }
+
+      if (error instanceof AuthenticationError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+            code: "AUTHENTICATION_FAILED",
+          },
+          { status: 401 }
+        );
+      }
+
+      if (error instanceof TokenExpiredError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+            code: "TOKEN_EXPIRED",
+          },
+          { status: 401 }
+        );
+      }
+
+      if (error instanceof InvalidTokenError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+            code: "INVALID_TOKEN",
+          },
+          { status: 401 }
         );
       }
 

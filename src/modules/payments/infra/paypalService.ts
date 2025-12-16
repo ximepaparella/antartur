@@ -1,8 +1,10 @@
 /**
  * Servicio de PayPal para crear órdenes de pago y obtener URLs de redirect
+ * Integrado con gatewayConfigService para leer configuración desde BD
  */
 
 import { logger } from "@/lib/services/logger";
+import { getPayPalCredentials, isGatewayAvailable } from "../domain/gatewayConfigService";
 
 // Lazy load PayPal SDK to avoid bundling issues
 // PayPal SDK is a CommonJS module that needs to be loaded dynamically
@@ -18,29 +20,30 @@ async function getPayPalModule() {
 
 /**
  * Configura el entorno de PayPal (sandbox o live)
+ * Ahora usa la configuración de la BD para determinar el modo
  */
 async function environment() {
   const paypal = await getPayPalModule();
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-  const mode = process.env.PAYPAL_MODE || "sandbox";
+  const credentials = await getPayPalCredentials();
 
-  if (!clientId || !clientSecret) {
-    logger.error("PayPal credentials not configured", {
-      hasClientId: !!clientId,
-      hasClientSecret: !!clientSecret,
-      mode,
+  if (!credentials) {
+    logger.error("PayPal credentials not available", {
+      reason: "Gateway may be inactive or credentials not configured",
     });
     throw new Error(
-      "PayPal credentials not configured. Please set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET environment variables."
+      "PayPal payment gateway is not available. Please ensure it is active and credentials are configured."
     );
   }
 
-  // Validar que las credenciales no sean valores por defecto o vacíos
+  const { clientId, clientSecret, mode } = credentials;
+
+  // Validar que las credenciales no sean valores vacíos
   if (clientId.trim() === "" || clientSecret.trim() === "") {
     logger.error("PayPal credentials are empty strings");
     throw new Error("PayPal credentials are empty. Please configure valid PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.");
   }
+
+  logger.info("PayPal environment configured", { mode });
 
   if (mode === "live") {
     return new paypal.core.LiveEnvironment(clientId, clientSecret);
@@ -55,6 +58,13 @@ async function environment() {
 async function client() {
   const paypal = await getPayPalModule();
   return new paypal.core.PayPalHttpClient(await environment());
+}
+
+/**
+ * Verifica si PayPal está disponible para procesar pagos
+ */
+export async function isPayPalAvailable(): Promise<boolean> {
+  return isGatewayAvailable("PAYPAL");
 }
 
 export interface CreatePayPalOrderRequest {
@@ -76,9 +86,14 @@ export interface CreatePayPalOrderResponse {
 export async function createPayPalOrder(
   request: CreatePayPalOrderRequest
 ): Promise<CreatePayPalOrderResponse> {
+  // Verificar que el gateway esté disponible
+  const available = await isPayPalAvailable();
+  if (!available) {
+    throw new Error("PayPal payment gateway is not available. Please contact support.");
+  }
+
   const paypalClient = await client();
   const paypal = await getPayPalModule();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar";
 
   const orderRequest = new paypal.orders.OrdersCreateRequest();
   orderRequest.prefer("return=representation");
@@ -144,6 +159,7 @@ export async function createPayPalOrder(
 
 /**
  * Captura un pago de PayPal después de que el usuario aprueba
+ * Nota: No verificamos disponibilidad aquí porque el pago ya fue iniciado
  */
 export async function capturePayPalOrder(paypalOrderId: string): Promise<{
   success: boolean;

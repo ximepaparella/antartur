@@ -1,26 +1,10 @@
 /**
  * Utilidades para métodos de pago
+ * Solo contiene helpers de UI (iconos, descripciones)
+ * La lógica de métodos disponibles está en useAvailablePaymentMethods hook
  */
 
 import type { PaymentMethod } from "@/lib/types/order";
-
-/**
- * Métodos de pago disponibles por defecto (ARS)
- */
-export const AVAILABLE_PAYMENT_METHODS: PaymentMethod[] = ["transferencia", "payway"];
-
-/**
- * Obtiene los métodos de pago disponibles según la moneda
- */
-export function getAvailablePaymentMethods(currencyCode: string): PaymentMethod[] {
-  if (currencyCode === "USD") {
-    // Solo PayPal para USD
-    return ["paypal"];
-  } else {
-    // Payway y Transferencia para ARS (y otras monedas)
-    return ["payway", "transferencia"];
-  }
-}
 
 /**
  * Obtiene el icono correspondiente a un método de pago

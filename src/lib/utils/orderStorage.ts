@@ -173,7 +173,20 @@ export interface CompletedOrderData {
   children: number;
   passengers: Array<{
     nombreCompleto: string;
+    fechaNacimiento?: string;
+    documento?: string;
+    direccion?: string;
+    telefono?: string;
     esAdulto: boolean;
+    embarazada?: boolean;
+    problemasColumnaSalud?: boolean;
+    restriccionesAlimentarias?: {
+      vegetariano?: boolean;
+      vegano?: boolean;
+      celiaco?: boolean;
+      alergias?: boolean;
+      alergiasDetalle?: string;
+    };
   }>;
 }
 

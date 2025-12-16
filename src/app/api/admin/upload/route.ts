@@ -32,11 +32,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
+import { withAuth } from "@/lib/auth";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE(request: NextRequest) {
+async function handleDelete(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const imageUrl = searchParams.get("url");
@@ -172,4 +173,8 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+// Proteger endpoints con autenticación (solo ADMIN)
+export const POST = withAuth(handlePost, { roles: ["ADMIN"] });
+export const DELETE = withAuth(handleDelete, { roles: ["ADMIN"] });
 

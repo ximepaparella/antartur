@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard/OrderSummaryCard";
-import { getCompletedOrderData } from "@/lib/utils/orderStorage";
+import { getCompletedOrderData, clearPendingBooking } from "@/lib/utils/orderStorage";
 import { usePaymentVerification } from "@/modules/booking/hooks/usePaymentVerification";
 import styles from "./page.module.scss";
 
 export default function PaywayReturnPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [orderData, setOrderData] = useState<ReturnType<typeof getCompletedOrderData> | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const orderId = searchParams.get("orderId");
-  const paymentId = searchParams.get("payment_id");
   const statusParam = searchParams.get("status");
 
   // Obtener datos de la orden desde sessionStorage
@@ -35,12 +36,51 @@ export default function PaywayReturnPage() {
     retryDelay: 3000,
   });
 
-  // Si Payway retorna status aprobado directamente, considerar éxito inmediato
-  const isDirectSuccess = statusParam === "approved" || statusParam === "completed";
-  const finalStatus = !hasValidParams ? "error" : isDirectSuccess ? "success" : status;
+  // Mapear estados de Payway a mensajes de UI (solo para display, NO para lógica)
+  const getPaywayStatusMessage = (paywayStatus: string | null): string | null => {
+    switch (paywayStatus?.toLowerCase()) {
+      case "failure":
+        return "El pago fue rechazado";
+      case "cancelled":
+        return "El pago fue cancelado";
+      case "pending":
+      case "in_process":
+        return "El pago está pendiente de confirmación";
+      default:
+        return paywayStatus ? `Estado del provider: ${paywayStatus}` : null;
+    }
+  };
+
+  // IMPORTANTE: Confiar SOLO en la verificación del servidor, no en parámetros del provider
+  // El statusParam solo se usa para mensajes de UI, nunca para determinar éxito
+  const finalStatus = !hasValidParams ? "error" : status;
+  
+  // Mensaje de error: priorizar mensaje del servidor, usar mensaje del provider solo como fallback para UI
+  const providerMessage = getPaywayStatusMessage(statusParam);
   const finalErrorMessage = !hasValidParams
     ? "Parámetros de Payway incompletos"
-    : errorMessage;
+    : errorMessage || providerMessage || "Error desconocido al procesar el pago";
+
+  // Redirigir a success si el pago fue exitoso
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | undefined;
+
+    if (finalStatus === "success" && !isRedirecting) {
+      setIsRedirecting(true);
+      clearPendingBooking();
+      // Pequeño delay para mostrar mensaje de éxito
+      timeoutId = setTimeout(() => {
+        router.push("/checkout/success");
+      }, 1500);
+    }
+
+    // Cleanup: cancelar timeout si el componente se desmonta o el effect se re-ejecuta
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [finalStatus, isRedirecting, router]);
 
   if (finalStatus === "loading") {
     return (

@@ -547,6 +547,15 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
             )}
           </>
         )}
+        
+        {/* Leyenda sobre declaración jurada - solo mostrar si hay restricciones de embarazo o salud */}
+        {(hasPregnancyRestriction || hasHealthRestriction) && (
+          <div className={styles.legalNotice}>
+            <p className={styles.legalNoticeText}>
+              <strong>IMPORTANTE:</strong> EL DÍA DE LA EXCURSION FIRMARÁ LA DECLARACIÓN JURADA DE SALUD Y RECONOCIMIENTO DE RESPONSABILIDAD Y RIESGOS.
+            </p>
+          </div>
+        )}
         </div>
       )}
     </div>

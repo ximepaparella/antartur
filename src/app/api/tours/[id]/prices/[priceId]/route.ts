@@ -70,24 +70,33 @@ import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, noContentResponse } from "@/lib/api/response";
 import { idSchema } from "@/lib/validation/schemas";
+import { withAuth } from "@/lib/auth";
 
 const controller = new TourPricesController();
 
-export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { priceId } = await context.params;
-  idSchema.parse(priceId);
-  const body = await request.json();
-  const { validateBody } = await import("@/lib/validation/schemas");
-  const { updateTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
-  const data = validateBody(updateTourPriceSchema, body);
-  const updatedPrice = await controller.update(priceId, data);
-  return successResponse(updatedPrice);
-}));
+// PUT requiere autenticación de admin
+export const PUT = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { priceId } = await context.params;
+    idSchema.parse(priceId);
+    const body = await request.json();
+    const { validateBody } = await import("@/lib/validation/schemas");
+    const { updateTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
+    const data = validateBody(updateTourPriceSchema, body);
+    const updatedPrice = await controller.update(priceId, data);
+    return successResponse(updatedPrice);
+  })),
+  { roles: ["ADMIN"] }
+);
 
-export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { priceId } = await context.params;
-  idSchema.parse(priceId);
-  await controller.delete(priceId);
-  return noContentResponse();
-}));
+// DELETE requiere autenticación de admin
+export const DELETE = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { priceId } = await context.params;
+    idSchema.parse(priceId);
+    await controller.delete(priceId);
+    return noContentResponse();
+  })),
+  { roles: ["ADMIN"] }
+);
 

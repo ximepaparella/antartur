@@ -106,17 +106,26 @@ import { NotificationsController } from "@/modules/notifications/api/controllers
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { createdResponse, paginatedResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new NotificationsController();
 
-export const GET = withRateLimitHandler("read", withControllerErrorHandler(async (request, context) => {
-  const result = await controller.list(request);
-  return paginatedResponse(result.data, result.meta);
-}));
+// GET requiere autenticación de admin
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const result = await controller.list(request);
+    return paginatedResponse(result.data, result.meta);
+  })),
+  { roles: ["ADMIN"] }
+);
 
-export const POST = withRateLimitHandler("notifications", withControllerErrorHandler(async (request, context) => {
-  const body = await request.json();
-  const notification = await controller.create(body);
-  return createdResponse(notification);
-}));
+// POST requiere autenticación de admin
+export const POST = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const body = await request.json();
+    const notification = await controller.create(body);
+    return createdResponse(notification);
+  })),
+  { roles: ["ADMIN"] }
+);
 

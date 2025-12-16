@@ -42,14 +42,19 @@ import { OrdersController } from "@/modules/orders/api/controllers/ordersControl
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new OrdersController();
 
-export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const body = await request.json();
+// PUT requiere autenticación de admin
+export const PUT = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
 
-  const order = await controller.updateStatus(id, body);
-  return successResponse(order);
-}));
+    const order = await controller.updateStatus(id, body);
+    return successResponse(order);
+  })),
+  { roles: ["ADMIN"] }
+);
 

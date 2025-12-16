@@ -7,6 +7,7 @@ import { Input } from "@/components/common/Input/Input";
 import { Select } from "@/components/common/Select/Select";
 import { DayCell } from "./DayCell";
 import { BulkActions } from "./BulkActions";
+import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
 import styles from "./AvailabilityManager.module.scss";
 
 import type { AvailabilityManagerProps, Departure } from "@/modules/tours/types/admin";
@@ -50,7 +51,9 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   useEffect(() => {
     if (!tourWeekdays) {
       setLoadError(null);
-      fetch(`/api/tours/${tourId}`)
+      fetch(`/api/tours/${tourId}`, {
+        headers: createAuthHeaders(),
+      })
         .then(res => {
           if (!res.ok) {
             throw new Error(`Failed to fetch tour: ${res.statusText}`);
@@ -275,7 +278,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
         // Update existing
         const response = await fetch(`/api/availability/${selectedDeparture.id}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: createAuthHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             startTime: formStartTime,
             endTime: formEndTime && formEndTime.trim() ? formEndTime : null,
@@ -292,7 +295,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
         // Create new
         const response = await fetch(`/api/tours/${tourId}/availability`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: createAuthHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             departureDate: dateStr,
             startTime: formStartTime,
@@ -336,6 +339,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     try {
       const response = await fetch(`/api/availability/${departureId}`, {
         method: "DELETE",
+        headers: createAuthHeaders(),
       });
 
       // El endpoint DELETE devuelve 204 No Content sin cuerpo
@@ -383,7 +387,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           if (departure) {
             return fetch(`/api/availability/${departure.id}`, {
               method: "PUT",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 ...departure,
                 isActive: true,
@@ -393,7 +397,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
             // Crear nueva disponibilidad
             return fetch(`/api/tours/${tourId}/availability`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 departureDate: dateStr,
                 startTime: "09:00",
@@ -408,7 +412,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           }
           return fetch(`/api/availability/${departure.id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: createAuthHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({
               ...departure,
               isActive: false,
@@ -420,7 +424,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           if (departure) {
             return fetch(`/api/availability/${departure.id}`, {
               method: "PUT",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 ...departure,
                 seatsTotal: seats,
@@ -430,7 +434,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
             // Crear nueva disponibilidad
             return fetch(`/api/tours/${tourId}/availability`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 departureDate: dateStr,
                 startTime: "09:00",
@@ -444,7 +448,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           if (departure) {
             return fetch(`/api/availability/${departure.id}`, {
               method: "PUT",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 ...departure,
                 startTime,
@@ -455,7 +459,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
             // Crear nueva disponibilidad
             return fetch(`/api/tours/${tourId}/availability`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 departureDate: dateStr,
                 startTime,
@@ -471,6 +475,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           }
           return fetch(`/api/availability/${departure.id}`, {
             method: "DELETE",
+            headers: createAuthHeaders(),
           });
         },
       };

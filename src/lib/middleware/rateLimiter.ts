@@ -40,6 +40,11 @@ export const rateLimitConfigs = {
     points: 50,
     duration: 3600, // 1 hora
   },
+  auth: {
+    points: 5,
+    duration: 900, // 15 minutos
+    blockDuration: 1800, // 30 minutos de bloqueo si excede
+  },
 } as const;
 
 /**

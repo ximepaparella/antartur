@@ -77,6 +77,22 @@
   }
 }
 
+.navSection {
+  margin-top: $spacing-24;
+  padding-top: $spacing-16;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navSectionTitle {
+  display: block;
+  padding: $spacing-8 $spacing-24;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 240px;
