@@ -111,8 +111,9 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 }));
 
 // POST requiere autenticación de admin
+// Usar rate limit "admin" en lugar de "write" para operaciones bulk de admin
 export const POST = withAuth(
-  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
     const { id } = await context.params;
     const body = await request.json();
     // Convertir 'date' a 'departureDate' si viene como 'date' (compatibilidad con frontend)

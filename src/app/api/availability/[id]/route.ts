@@ -102,8 +102,9 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
 }));
 
 // PUT requiere autenticación de admin
+// Usar rate limit "admin" en lugar de "write" para operaciones bulk de admin
 export const PUT = withAuth(
-  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
     const { id } = await context.params;
     const body = await request.json();
     const availability = await controller.update(id, body);
@@ -113,8 +114,9 @@ export const PUT = withAuth(
 );
 
 // DELETE requiere autenticación de admin
+// Usar rate limit "admin" en lugar de "write" para operaciones bulk de admin
 export const DELETE = withAuth(
-  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
     const { id } = await context.params;
     await controller.delete(id);
     return noContentResponse();
