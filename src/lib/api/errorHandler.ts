@@ -71,6 +71,36 @@ export class BadRequestError extends ApiError {
 }
 
 /**
+ * Error de autenticación - credenciales inválidas
+ */
+export class AuthenticationError extends ApiError {
+  constructor(message: string = "Invalid credentials") {
+    super(message, 401, "AUTHENTICATION_FAILED");
+    this.name = "AuthenticationError";
+  }
+}
+
+/**
+ * Error de token expirado
+ */
+export class TokenExpiredError extends ApiError {
+  constructor(message: string = "Token expired") {
+    super(message, 401, "TOKEN_EXPIRED");
+    this.name = "TokenExpiredError";
+  }
+}
+
+/**
+ * Error de token inválido
+ */
+export class InvalidTokenError extends ApiError {
+  constructor(message: string = "Invalid token") {
+    super(message, 401, "INVALID_TOKEN");
+    this.name = "InvalidTokenError";
+  }
+}
+
+/**
  * Formatea un error según RFC 7807
  */
 export function formatError(error: unknown): {

@@ -6,6 +6,7 @@ import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
 import { MiniCart } from "@/modules/booking/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
+import { LoadingOverlay } from "@/components/common/LoadingOverlay/LoadingOverlay";
 import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
 import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
@@ -18,6 +19,7 @@ import styles from "./page.module.scss";
 export default function CheckoutPage() {
   const router = useRouter();
   const { handleCheckoutComplete, isProcessing, error: checkoutError } = useCheckoutFlow();
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const [bookingData, setBookingData] = useState<{
     tourId: string;
     tourTitle: string;
@@ -37,6 +39,11 @@ export default function CheckoutPage() {
   
   // Ref para acceder a CheckoutForm
   const checkoutFormRef = React.useRef<CheckoutFormRef>(null);
+  
+  // Callback para sincronizar estado de submit del formulario
+  const handleSubmittingChange = useCallback((isSubmitting: boolean) => {
+    setIsFormSubmitting(isSubmitting);
+  }, []);
 
   useEffect(() => {
     const pending = getPendingBooking();
@@ -66,14 +73,52 @@ export default function CheckoutPage() {
       toursClient.client.getBySlug(bookingData.tourId, { includeContent: true })
         .then((tour) => {
           if (tour) {
-            const tourRestriction = tour.restrictionText || "";
-            setRestriction(tourRestriction);
-            setHasPregnancyRestriction(tourRestriction.toLowerCase().includes("embarazada"));
-            setHasHealthRestriction(
-              tourRestriction.toLowerCase().includes("columna") ||
-              tourRestriction.toLowerCase().includes("dolencias") ||
-              tourRestriction.toLowerCase().includes("salud")
+            // Concatenar todas las restricciones: restrictionText (legacy) + restrictions (array)
+            const restrictionParts: string[] = [];
+            if (tour.restrictionText) {
+              restrictionParts.push(tour.restrictionText);
+            }
+            if (tour.restrictions && Array.isArray(tour.restrictions)) {
+              tour.restrictions.forEach((r: { text: string }) => {
+                if (r.text) {
+                  restrictionParts.push(r.text);
+                }
+              });
+            }
+            const allRestrictions = restrictionParts.join(" ");
+            const restrictionLower = allRestrictions.toLowerCase();
+            setRestriction(allRestrictions);
+            
+            // Detectar restricciones de embarazo con múltiples variantes
+            const pregnancyKeywords = [
+              "embarazada",
+              "embarazo",
+              "gestante",
+              "gestación",
+              "embarazadas",
+            ];
+            setHasPregnancyRestriction(
+              pregnancyKeywords.some(keyword => restrictionLower.includes(keyword))
             );
+            
+            // Detectar restricciones de salud/físicas con múltiples variantes
+            const healthKeywords = [
+              "restricciones físicas",
+              "restricciones médicas",
+              "restricciones de salud",
+              "problemas de salud",
+              "dolencias",
+              "columna",
+              "salud",
+              "físicas",
+              "médicas",
+              "discapacidad",
+              "movilidad reducida",
+            ];
+            setHasHealthRestriction(
+              healthKeywords.some(keyword => restrictionLower.includes(keyword))
+            );
+            
             setTourMinAge(tour.minAge ?? null);
           }
         })
@@ -155,8 +200,13 @@ export default function CheckoutPage() {
     );
   }
 
+  // Combinar estados de procesamiento: del formulario y del flujo de checkout
+  const isAnyProcessing = isProcessing || isFormSubmitting;
+
   return (
     <RouteErrorBoundary>
+      {/* Loading overlay que bloquea toda la página - fuera del main para asegurar z-index */}
+      {isAnyProcessing && <LoadingOverlay message="Procesando tu reserva..." />}
       <Hero variant="internal" pageKey="checkout" />
       <main className="mainContainer">
         {/* Mostrar error de checkout si existe */}
@@ -177,6 +227,7 @@ export default function CheckoutPage() {
                 onRestrictionViolationsChange={handleRestrictionViolationsChange}
                 onPassengersChange={handlePassengersChange}
                 onValidationErrorsChange={handleValidationErrorsChange}
+                onSubmittingChange={handleSubmittingChange}
               />
             </div>
             <div className={styles.rightColumn}>

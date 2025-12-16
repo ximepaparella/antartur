@@ -24,6 +24,7 @@
  *                       type: string
  */
 
+import { NextRequest, NextResponse } from "next/server";
 import { AdminController } from "@/modules/orders/api/controllers/adminController";
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
@@ -31,7 +32,31 @@ import { successResponse } from "@/lib/api/response";
 
 const controller = new AdminController();
 
-export const POST = withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+/**
+ * Verifica el secret de cron job
+ * Este endpoint está protegido por CRON_SECRET, no por JWT,
+ * ya que está diseñado para ser llamado por un cron job automatizado.
+ */
+function verifyCronSecret(request: NextRequest): boolean {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error("CRON_SECRET not configured");
+    return false;
+  }
+  
+  const authHeader = request.headers.get("Authorization");
+  return authHeader === `Bearer ${cronSecret}`;
+}
+
+export const POST = withRateLimitHandler("admin", withControllerErrorHandler(async (request: NextRequest, context) => {
+  // Verificar autorización con CRON_SECRET
+  if (!verifyCronSecret(request)) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+  
   const result = await controller.expirePendingOrders();
   return successResponse(result);
 }));

@@ -42,13 +42,18 @@ import { BookingsController } from "@/modules/booking/api/controllers/bookingsCo
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new BookingsController();
 
-export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const body = await request.json();
-  const booking = await controller.updateStatus(id, body);
-  return successResponse(booking);
-}));
+// PUT requiere autenticación de admin
+export const PUT = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
+    const booking = await controller.updateStatus(id, body);
+    return successResponse(booking);
+  })),
+  { roles: ["ADMIN"] }
+);
 

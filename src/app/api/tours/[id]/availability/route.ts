@@ -96,9 +96,11 @@ import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, createdResponse } from "@/lib/api/response";
 import { validateQuery } from "@/lib/validation/schemas";
 import { tourAvailabilityQuerySchema } from "@/modules/departures/api/validators/availabilityValidators";
+import { withAuth } from "@/lib/auth";
 
 const controller = new AvailabilityController();
 
+// GET es público - permite consultar disponibilidad sin autenticación
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const { id } = await context.params;
   const { searchParams } = new URL(request.url);
@@ -108,21 +110,25 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
   return successResponse(availability);
 }));
 
-export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const body = await request.json();
-  // Convertir 'date' a 'departureDate' si viene como 'date' (compatibilidad con frontend)
-  const data = { 
-    ...body, 
-    tourId: id,
-    departureDate: body.departureDate || body.date,
-  };
-  // Eliminar 'date' si existe para evitar conflictos
-  if (data.date) {
-    delete (data as any).date;
-  }
+// POST requiere autenticación de admin
+export const POST = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
+    // Convertir 'date' a 'departureDate' si viene como 'date' (compatibilidad con frontend)
+    const data = { 
+      ...body, 
+      tourId: id,
+      departureDate: body.departureDate || body.date,
+    };
+    // Eliminar 'date' si existe para evitar conflictos
+    if (data.date) {
+      delete (data as any).date;
+    }
 
-  const availability = await controller.create(data);
-  return createdResponse(availability);
-}));
+    const availability = await controller.create(data);
+    return createdResponse(availability);
+  })),
+  { roles: ["ADMIN"] }
+);
 

@@ -15,7 +15,20 @@ interface OrderDetailsProps {
   numChildren: number;
   passengers: Array<{
     nombreCompleto: string;
+    fechaNacimiento?: string;
+    documento?: string;
+    direccion?: string;
+    telefono?: string;
     esAdulto: boolean;
+    embarazada?: boolean;
+    problemasColumnaSalud?: boolean;
+    restriccionesAlimentarias?: {
+      vegetariano?: boolean;
+      vegano?: boolean;
+      celiaco?: boolean;
+      alergias?: boolean;
+      alergiasDetalle?: string;
+    };
   }>;
 }
 
@@ -82,16 +95,89 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
           <div className={styles.passengersSection}>
             <span className={styles.label}>Lista de pasajeros:</span>
             <ul className={styles.passengersList}>
-              {passengers.map((passenger, index) => (
-                <li key={index} className={styles.passengerItem}>
-                  {passenger.nombreCompleto}
-                  {passenger.esAdulto ? (
-                    <span className={styles.passengerType}> (Adulto)</span>
-                  ) : (
-                    <span className={styles.passengerType}> (Menor)</span>
-                  )}
-                </li>
-              ))}
+              {passengers.map((passenger, index) => {
+                // Formatear fecha de nacimiento
+                const formatDate = (dateStr?: string) => {
+                  if (!dateStr) return null;
+                  try {
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString("es-AR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    });
+                  } catch {
+                    return dateStr;
+                  }
+                };
+
+                // Formatear restricciones alimentarias
+                const formatRestrictions = () => {
+                  const restrictions: string[] = [];
+                  if (passenger.restriccionesAlimentarias) {
+                    const r = passenger.restriccionesAlimentarias;
+                    if (r.vegetariano) restrictions.push("Vegetariano");
+                    if (r.vegano) restrictions.push("Vegano");
+                    if (r.celiaco) restrictions.push("Celíaco");
+                    if (r.alergias) {
+                      restrictions.push(
+                        r.alergiasDetalle ? `Alergias: ${r.alergiasDetalle}` : "Alergias"
+                      );
+                    }
+                  }
+                  if (passenger.embarazada) restrictions.push("Embarazada");
+                  if (passenger.problemasColumnaSalud) restrictions.push("Problemas de columna/salud");
+                  return restrictions.length > 0 ? restrictions.join(", ") : null;
+                };
+
+                const restrictionsText = formatRestrictions();
+                const birthDate = formatDate(passenger.fechaNacimiento);
+
+                return (
+                  <li key={index} className={styles.passengerItem}>
+                    <div className={styles.passengerHeader}>
+                      <strong>{passenger.nombreCompleto}</strong>
+                      {passenger.esAdulto ? (
+                        <span className={styles.passengerType}> (Adulto)</span>
+                      ) : (
+                        <span className={styles.passengerType}> (Menor)</span>
+                      )}
+                    </div>
+                    <div className={styles.passengerDetails}>
+                      {birthDate && (
+                        <div className={styles.passengerDetail}>
+                          <span className={styles.detailLabel}>Fecha de nacimiento:</span>
+                          <span className={styles.detailValue}>{birthDate}</span>
+                        </div>
+                      )}
+                      {passenger.documento && (
+                        <div className={styles.passengerDetail}>
+                          <span className={styles.detailLabel}>Documento:</span>
+                          <span className={styles.detailValue}>{passenger.documento}</span>
+                        </div>
+                      )}
+                      {passenger.direccion && (
+                        <div className={styles.passengerDetail}>
+                          <span className={styles.detailLabel}>Dirección:</span>
+                          <span className={styles.detailValue}>{passenger.direccion}</span>
+                        </div>
+                      )}
+                      {passenger.telefono && (
+                        <div className={styles.passengerDetail}>
+                          <span className={styles.detailLabel}>Teléfono:</span>
+                          <span className={styles.detailValue}>{passenger.telefono}</span>
+                        </div>
+                      )}
+                      {restrictionsText && (
+                        <div className={styles.passengerDetail}>
+                          <span className={styles.detailLabel}>Restricciones:</span>
+                          <span className={styles.detailValue}>{restrictionsText}</span>
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

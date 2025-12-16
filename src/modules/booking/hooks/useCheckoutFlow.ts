@@ -56,7 +56,14 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
           children: order.children,
           passengers: order.passengers.map((p) => ({
             nombreCompleto: p.nombreCompleto,
+            fechaNacimiento: p.fechaNacimiento,
+            documento: p.documento,
+            direccion: p.direccion,
+            telefono: p.telefono,
             esAdulto: p.esAdulto,
+            embarazada: p.embarazada,
+            problemasColumnaSalud: p.problemasColumnaSalud,
+            restriccionesAlimentarias: p.restriccionesAlimentarias,
           })),
         };
 

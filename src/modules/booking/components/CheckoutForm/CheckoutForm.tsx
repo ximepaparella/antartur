@@ -28,12 +28,15 @@ interface CheckoutFormProps {
   onPassengersChange?: (adults: number, children: number) => void;
   /** Callback cuando cambia el estado de errores de validación */
   onValidationErrorsChange?: (hasErrors: boolean) => void;
+  /** Callback cuando cambia el estado de envío del formulario */
+  onSubmittingChange?: (isSubmitting: boolean) => void;
 }
 
 export interface CheckoutFormRef {
   submit: (paymentMethod?: PaymentMethod) => void;
   hasRestrictionViolations: boolean;
   hasValidationErrors: boolean;
+  isSubmitting: boolean;
 }
 
 /**
@@ -47,6 +50,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   onRestrictionViolationsChange,
   onPassengersChange,
   onValidationErrorsChange,
+  onSubmittingChange,
 }, ref) => {
   const [passengerToRemove, setPassengerToRemove] = useState<number | null>(null);
   const [isClosingModal, setIsClosingModal] = useState(false);
@@ -91,6 +95,11 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   const { submitOrder, isSubmitting } = useOrderSubmission({
     onCheckoutComplete,
   });
+  
+  // Notificar cambios en el estado de envío
+  useEffect(() => {
+    onSubmittingChange?.(isSubmitting);
+  }, [isSubmitting, onSubmittingChange]);
 
   // Actualizar bookingData cuando cambian los pasajeros
   // Esto asegura que exceedsAvailability se actualice cuando se agregan/quitan pasajeros
@@ -221,8 +230,9 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       submit: handleSubmit,
       hasRestrictionViolations,
       hasValidationErrors,
+      isSubmitting,
     }),
-    [hasRestrictionViolations, handleSubmit, hasValidationErrors]
+    [hasRestrictionViolations, handleSubmit, hasValidationErrors, isSubmitting]
   );
 
   if (isLoading || !bookingData || initialPassengers.length === 0) {

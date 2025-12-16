@@ -34,7 +34,8 @@ export interface PaymentConfirmationEmailData {
 }
 
 export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEmailData): string {
-  const siteUrl = getSiteUrl();
+  const logoUrl = "https://coderoots.tech/_next/image?url=%2Fimages%2Flogo-color-2.svg&w=384&q=75";
+  const primaryColor = "#24384d"; // Azul primario de Antartur
   const formattedAmount = data.totalAmount.toLocaleString("es-AR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -57,65 +58,66 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <!-- Header -->
           <tr>
-            <td style="background-color: #2c5f7c; padding: 30px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Pago Confirmado</h1>
+            <td style="background-color: ${primaryColor}; padding: 30px; text-align: center;">
+              <img src="${logoUrl}" alt="Antartur" style="max-width: 200px; height: auto;" />
+              <h1 style="color: #ffffff; margin: 20px 0 0 0; font-size: 24px;">Pago Confirmado</h1>
             </td>
           </tr>
           
           <!-- Content -->
           <tr>
             <td style="padding: 30px;">
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                 Hola ${data.customerName},
               </p>
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                 ¡Excelente noticia! Hemos recibido tu pago y tu reserva ha sido confirmada.
               </p>
               
               <!-- Order Details -->
-              <div style="background-color: #f9f9f9; border-left: 4px solid #2c5f7c; padding: 20px; margin: 20px 0;">
-                <h2 style="color: #2c5f7c; font-size: 18px; margin: 0 0 15px 0;">Detalles de tu Reserva</h2>
+              <div style="background-color: #f9f9f9; border-left: 4px solid ${primaryColor}; padding: 20px; margin: 20px 0;">
+                <h2 style="color: ${primaryColor}; font-size: 18px; margin: 0 0 15px 0;">Detalles de tu Reserva</h2>
                 <table width="100%" cellpadding="5" cellspacing="0">
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;"><strong>Código de Orden:</strong></td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;"><strong>${data.orderCode}</strong></td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;"><strong>Código de Orden:</strong></td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;"><strong>${data.orderCode}</strong></td>
                   </tr>
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Excursión:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.tourName}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Excursión:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.tourName}</td>
                   </tr>
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Fecha:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.departureDate}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Fecha:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.departureDate}</td>
                   </tr>
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Hora:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.startTime}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Hora:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.startTime}</td>
                   </tr>
                   ${data.meetingPoint ? `
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Punto de encuentro:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.meetingPoint}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Punto de encuentro:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.meetingPoint}</td>
                   </tr>
                   ` : ""}
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Pasajeros:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.numAdults} adultos, ${data.numChildren} menores</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Pasajeros:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.numAdults} adultos, ${data.numChildren} menores</td>
                   </tr>
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">Método de Pago:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${paymentMethodName}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Método de Pago:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${paymentMethodName}</td>
                   </tr>
                   ${data.transactionId ? `
                   <tr>
-                    <td style="color: #666666; font-size: 14px; padding: 5px 0;">ID de Transacción:</td>
-                    <td style="color: #333333; font-size: 14px; padding: 5px 0; text-align: right;">${data.transactionId}</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">ID de Transacción:</td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;">${data.transactionId}</td>
                   </tr>
                   ` : ""}
-                  <tr style="border-top: 2px solid #2c5f7c; margin-top: 10px;">
-                    <td style="color: #2c5f7c; font-size: 16px; font-weight: bold; padding: 10px 0;"><strong>Total Pagado:</strong></td>
-                    <td style="color: #2c5f7c; font-size: 16px; font-weight: bold; padding: 10px 0; text-align: right;"><strong>${currencySymbol} ${formattedAmount} ${data.currency}</strong></td>
+                  <tr style="border-top: 2px solid ${primaryColor}; margin-top: 10px;">
+                    <td style="color: ${primaryColor}; font-size: 16px; font-weight: bold; padding: 10px 0;"><strong>Total Pagado:</strong></td>
+                    <td style="color: ${primaryColor}; font-size: 16px; font-weight: bold; padding: 10px 0; text-align: right;"><strong>${currencySymbol} ${formattedAmount} ${data.currency}</strong></td>
                   </tr>
                 </table>
               </div>
@@ -123,26 +125,26 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
               <!-- Passengers List -->
               ${data.passengers.length > 0 ? `
               <div style="margin: 20px 0;">
-                <h3 style="color: #2c5f7c; font-size: 16px; margin: 0 0 15px 0;">Pasajeros:</h3>
-                <div style="background-color: #f9f9f9; border-left: 4px solid #2c5f7c; padding: 15px; margin-bottom: 10px;">
+                <h3 style="color: ${primaryColor}; font-size: 16px; margin: 0 0 15px 0;">Pasajeros:</h3>
+                <div style="background-color: #f9f9f9; border-left: 4px solid ${primaryColor}; padding: 15px; margin-bottom: 10px;">
                   ${data.passengers.map((p, index) => {
                     const age = p.birthDate ? calculateAge(p.birthDate) : null;
                     const typeLabel = p.type === "ADULT" ? "Adulto" : 
                                      p.type === "CHILD" ? "Niño" : "Infante";
                     const ageText = age !== null ? `, ${age} años` : "";
                     const documentText = p.documentType && p.documentNumber 
-                      ? `<br><span style="color: #666; font-size: 13px;">Documento: ${p.documentType} ${p.documentNumber}</span>` : "";
-                    const nationalityText = p.nationality ? `<br><span style="color: #666; font-size: 13px;">Nacionalidad: ${p.nationality}</span>` : "";
+                      ? `<br><span style="color: ${primaryColor}; font-size: 13px;">Documento: ${p.documentType} ${p.documentNumber}</span>` : "";
+                    const nationalityText = p.nationality ? `<br><span style="color: ${primaryColor}; font-size: 13px;">Nacionalidad: ${p.nationality}</span>` : "";
                     
                     const restrictionsText = formatRestrictions(p.restrictions);
                     
                     return `
                     <div style="padding: 10px 0; border-bottom: ${index < data.passengers.length - 1 ? '1px solid #e0e0e0' : 'none'};">
-                      <strong style="color: #2c5f7c;">${index + 1}.</strong> ${p.firstName} ${p.lastName} (${typeLabel}${ageText})
+                      <strong style="color: ${primaryColor};">${index + 1}.</strong> ${p.firstName} ${p.lastName} (${typeLabel}${ageText})
                       ${documentText}
                       ${nationalityText}
-                      ${p.email ? `<br><span style="color: #666; font-size: 13px;">Email: ${p.email}</span>` : ""}
-                      ${p.phone ? `<br><span style="color: #666; font-size: 13px;">Teléfono: ${p.phone}</span>` : ""}
+                      ${p.email ? `<br><span style="color: ${primaryColor}; font-size: 13px;">Email: ${p.email}</span>` : ""}
+                      ${p.phone ? `<br><span style="color: ${primaryColor}; font-size: 13px;">Teléfono: ${p.phone}</span>` : ""}
                       ${restrictionsText ? `<br><span style="color: #d32f2f; font-size: 13px;"><strong>Restricciones:</strong> ${restrictionsText}</span>` : ""}
                     </div>
                     `;
@@ -151,11 +153,11 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
               </div>
               ` : ""}
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 20px 0;">
                 Tu reserva está confirmada y lista. Te esperamos en la fecha y hora indicadas.
               </p>
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 20px 0;">
                 Si tienes alguna pregunta o necesitas modificar tu reserva, no dudes en contactarnos.
               </p>
             </td>
@@ -163,12 +165,10 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
           
           <!-- Footer -->
           <tr>
-            <td style="background-color: #f9f9f9; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
-              <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
-                <a href="${siteUrl}" style="color: #2c5f7c; text-decoration: none;">${siteUrl}</a>
-              </p>
-              <p style="color: #999999; font-size: 12px; margin: 0;">
-                Este es un email automático, por favor no respondas directamente.
+            <td style="background-color: ${primaryColor}; padding: 30px; text-align: center; color: #ffffff;">
+              <p style="margin: 0 0 10px 0; font-size: 14px;">Antartur - Turismo de Aventura</p>
+              <p style="margin: 0; font-size: 12px; color: #cccccc;">
+                <a href="mailto:agencias@antartur.tur.ar" style="color: #ffffff;">agencias@antartur.tur.ar</a>
               </p>
             </td>
           </tr>

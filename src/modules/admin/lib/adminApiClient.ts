@@ -19,25 +19,23 @@ import type {
 // toursClient tiene estructura diferente, usamos fetch directo
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
-const AUTH_STORAGE_KEY = "admin_auth_session";
+const TOKEN_STORAGE_KEY = "admin_auth_tokens";
 const REQUEST_TIMEOUT_MS = 10000; // 10 seconds
 
 /**
- * Gets authentication token from secure storage
- * Returns a token based on the admin session, or null if not authenticated
+ * Gets JWT access token from localStorage
+ * Returns the access token from the stored auth tokens, or null if not authenticated
  */
 function getAuthToken(): string | null {
   if (typeof window === "undefined") {
-    return null; // Server-side, no access to sessionStorage
+    return null; // Server-side, no access to localStorage
   }
 
   try {
-    const session = sessionStorage.getItem(AUTH_STORAGE_KEY);
-    if (session) {
-      const userData = JSON.parse(session);
-      // Create a simple token based on session (backend should validate this)
-      // In production, this should be a proper JWT token from the backend
-      return btoa(JSON.stringify({ email: userData.email, timestamp: Date.now() }));
+    const tokensStr = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (tokensStr) {
+      const tokens = JSON.parse(tokensStr);
+      return tokens?.accessToken || null;
     }
   } catch (error) {
     console.error("Error getting auth token:", error);

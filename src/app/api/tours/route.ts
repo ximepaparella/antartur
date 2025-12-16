@@ -80,17 +80,23 @@ import { ToursController } from "@/modules/tours/api/controllers/toursController
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new ToursController();
 
+// GET es público - permite ver tours sin autenticación
 export const GET = withRateLimitHandler("read", withControllerErrorHandler(async (request, context) => {
   const result = await controller.list(request);
   return paginatedResponse(result.data, result.meta);
 }));
 
-export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const body = await request.json();
-  const tour = await controller.create(body);
-  return createdResponse(tour);
-}));
+// POST requiere autenticación de admin
+export const POST = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const body = await request.json();
+    const tour = await controller.create(body);
+    return createdResponse(tour);
+  })),
+  { roles: ["ADMIN"] }
+);
 

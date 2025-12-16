@@ -40,6 +40,7 @@ import { successResponse } from "@/lib/api/response";
 import { ValidationError, NotFoundError } from "@/lib/api/errorHandler";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/services/logger";
+import { withAuth } from "@/lib/auth";
 
 const VALID_PROVIDERS = ["PAYPAL", "PAYWAY"] as const;
 
@@ -180,49 +181,48 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
   }
 }
 
-export const POST = withRateLimitHandler(
-  "admin",
-  withControllerErrorHandler(async (request: NextRequest, context) => {
-    // TODO: [SECURITY] Add authentication check when auth system is implemented
-    // This endpoint tests payment gateway credentials and MUST be protected
-    // by admin role verification. See /api/admin/settings/payments/route.ts
+export const POST = withAuth(
+  withRateLimitHandler(
+    "admin",
+    withControllerErrorHandler(async (request: NextRequest, context) => {
+      const params = await context.params;
+      const provider = params.provider;
+      const providerUpper = provider.toUpperCase();
 
-    const params = await context.params;
-    const provider = params.provider;
-    const providerUpper = provider.toUpperCase();
+      if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
+        throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
+      }
 
-    if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
-      throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
-    }
+      // Obtener configuración actual del gateway
+      const gateway = await prisma.paymentGateway.findUnique({
+        where: { provider: providerUpper },
+      });
 
-    // Obtener configuración actual del gateway
-    const gateway = await prisma.paymentGateway.findUnique({
-      where: { provider: providerUpper },
-    });
+      if (!gateway) {
+        throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
+      }
 
-    if (!gateway) {
-      throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
-    }
+      let result: { connected: boolean; message: string; environment: string };
 
-    let result: { connected: boolean; message: string; environment: string };
+      switch (providerUpper) {
+        case "PAYPAL":
+          result = await testPayPalConnection(gateway.isSandbox);
+          break;
+        case "PAYWAY":
+          result = await testPaywayConnection(gateway.isSandbox);
+          break;
+        default:
+          throw new ValidationError(`Test not implemented for provider: ${providerUpper}`);
+      }
 
-    switch (providerUpper) {
-      case "PAYPAL":
-        result = await testPayPalConnection(gateway.isSandbox);
-        break;
-      case "PAYWAY":
-        result = await testPaywayConnection(gateway.isSandbox);
-        break;
-      default:
-        throw new ValidationError(`Test not implemented for provider: ${providerUpper}`);
-    }
+      logger.info("Payment gateway connection test", {
+        provider: providerUpper,
+        ...result,
+      });
 
-    logger.info("Payment gateway connection test", {
-      provider: providerUpper,
-      ...result,
-    });
-
-    return successResponse(result);
-  })
+      return successResponse(result);
+    })
+  ),
+  { roles: ["ADMIN"] }
 );
 

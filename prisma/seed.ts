@@ -3,8 +3,19 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+/** Número de rondas de salt para bcrypt */
+const SALT_ROUNDS = 12;
+
+/**
+ * Genera un hash seguro de una contraseña
+ */
+async function hashPassword(plainPassword: string): Promise<string> {
+  return bcrypt.hash(plainPassword, SALT_ROUNDS);
+}
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -96,6 +107,28 @@ async function main() {
   });
 
   console.log("✅ Payment gateways created:", { paypal: paypal.provider, payway: payway.provider });
+
+  // 3. Crear usuario administrador
+  console.log("Creating admin user...");
+
+  const adminPasswordHash = await hashPassword("admin123");
+  
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@antartur.com" },
+    update: {
+      // Actualizar password si el usuario ya existe
+      passwordHash: adminPasswordHash,
+    },
+    create: {
+      email: "admin@antartur.com",
+      passwordHash: adminPasswordHash,
+      name: "Administrador",
+      role: "ADMIN",
+      isActive: true,
+    },
+  });
+
+  console.log("✅ Admin user created:", { id: adminUser.id, email: adminUser.email });
 
   console.log("✅ Seeding completed!");
 }

@@ -49,11 +49,16 @@ import { BookingsController } from "@/modules/booking/api/controllers/bookingsCo
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { paginatedResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new BookingsController();
 
-export const GET = withRateLimitHandler("read", withControllerErrorHandler(async (request, context) => {
-  const result = await controller.list(request);
-  return paginatedResponse(result.data, result.meta);
-}));
+// GET requiere autenticación de admin
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const result = await controller.list(request);
+    return paginatedResponse(result.data, result.meta);
+  })),
+  { roles: ["ADMIN"] }
+);
 

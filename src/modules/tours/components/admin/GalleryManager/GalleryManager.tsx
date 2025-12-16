@@ -20,6 +20,7 @@ import { Plus, Upload } from "lucide-react";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
 import { SortableImage } from "./SortableImage";
+import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
 import type { GalleryManagerProps, GalleryImage } from "@/modules/tours/types/admin";
 import styles from "./GalleryManager.module.scss";
 
@@ -78,6 +79,7 @@ export function GalleryManager({
 
         const response = await fetch("/api/admin/upload", {
           method: "POST",
+          headers: createAuthHeaders(),
           body: formData,
         });
 
@@ -118,6 +120,7 @@ export function GalleryManager({
       try {
         await fetch(`/api/admin/upload?url=${encodeURIComponent(imageToRemove.url)}`, {
           method: "DELETE",
+          headers: createAuthHeaders(),
         });
       } catch (err) {
         console.error("Error al eliminar archivo:", err);

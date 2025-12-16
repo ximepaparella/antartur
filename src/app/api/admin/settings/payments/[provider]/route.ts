@@ -49,6 +49,7 @@ import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/services/logger";
 import { z } from "zod";
+import { withAuth } from "@/lib/auth";
 
 const VALID_PROVIDERS = ["PAYPAL", "PAYWAY"] as const;
 
@@ -80,42 +81,41 @@ function getRequiredCredentials(provider: string): string[] {
   }
 }
 
-export const GET = withRateLimitHandler(
-  "admin",
-  withControllerErrorHandler(async (request: NextRequest, context) => {
-    // TODO: [SECURITY] Add authentication check when auth system is implemented
-    // This endpoint exposes payment gateway configuration and MUST be protected
-    // by admin role verification. See /api/admin/settings/payments/route.ts
+export const GET = withAuth(
+  withRateLimitHandler(
+    "admin",
+    withControllerErrorHandler(async (request: NextRequest, context) => {
+      const params = await context.params;
+      const provider = params.provider;
+      const providerUpper = provider.toUpperCase();
 
-    const params = await context.params;
-    const provider = params.provider;
-    const providerUpper = provider.toUpperCase();
+      if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
+        throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
+      }
 
-    if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
-      throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
-    }
+      const gateway = await prisma.paymentGateway.findUnique({
+        where: { provider: providerUpper },
+      });
 
-    const gateway = await prisma.paymentGateway.findUnique({
-      where: { provider: providerUpper },
-    });
+      if (!gateway) {
+        throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
+      }
 
-    if (!gateway) {
-      throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
-    }
-
-    return successResponse({
-      id: gateway.id,
-      provider: gateway.provider,
-      displayName: gateway.displayName,
-      isActive: gateway.isActive,
-      isSandbox: gateway.isSandbox,
-      currency: gateway.currency,
-      config: gateway.config,
-      hasCredentials: checkGatewayCredentials(gateway.provider),
-      requiredCredentials: getRequiredCredentials(gateway.provider),
-      updatedAt: gateway.updatedAt,
-    });
-  })
+      return successResponse({
+        id: gateway.id,
+        provider: gateway.provider,
+        displayName: gateway.displayName,
+        isActive: gateway.isActive,
+        isSandbox: gateway.isSandbox,
+        currency: gateway.currency,
+        config: gateway.config,
+        hasCredentials: checkGatewayCredentials(gateway.provider),
+        requiredCredentials: getRequiredCredentials(gateway.provider),
+        updatedAt: gateway.updatedAt,
+      });
+    })
+  ),
+  { roles: ["ADMIN"] }
 );
 
 const updateGatewaySchema = z.object({
@@ -125,66 +125,65 @@ const updateGatewaySchema = z.object({
   config: z.record(z.unknown()).optional(),
 });
 
-export const PATCH = withRateLimitHandler(
-  "admin",
-  withControllerErrorHandler(async (request: NextRequest, context) => {
-    // TODO: [SECURITY] Add authentication check when auth system is implemented
-    // This endpoint modifies payment gateway configuration and MUST be protected
-    // by admin role verification. See /api/admin/settings/payments/route.ts
+export const PATCH = withAuth(
+  withRateLimitHandler(
+    "admin",
+    withControllerErrorHandler(async (request: NextRequest, context) => {
+      const params = await context.params;
+      const provider = params.provider;
+      const providerUpper = provider.toUpperCase();
 
-    const params = await context.params;
-    const provider = params.provider;
-    const providerUpper = provider.toUpperCase();
+      if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
+        throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
+      }
 
-    if (!VALID_PROVIDERS.includes(providerUpper as typeof VALID_PROVIDERS[number])) {
-      throw new ValidationError(`Invalid provider: ${provider}. Must be one of: ${VALID_PROVIDERS.join(", ")}`);
-    }
+      const body = await request.json();
+      const data = validateBody(updateGatewaySchema, body);
 
-    const body = await request.json();
-    const data = validateBody(updateGatewaySchema, body);
+      // Si se intenta activar, verificar que las credenciales estén configuradas
+      if (data.isActive === true && !checkGatewayCredentials(providerUpper)) {
+        throw new ValidationError(
+          `Cannot activate ${providerUpper}: credentials are not configured. Please set the required environment variables: ${getRequiredCredentials(providerUpper).join(", ")}`
+        );
+      }
 
-    // Si se intenta activar, verificar que las credenciales estén configuradas
-    if (data.isActive === true && !checkGatewayCredentials(providerUpper)) {
-      throw new ValidationError(
-        `Cannot activate ${providerUpper}: credentials are not configured. Please set the required environment variables: ${getRequiredCredentials(providerUpper).join(", ")}`
-      );
-    }
+      const gateway = await prisma.paymentGateway.findUnique({
+        where: { provider: providerUpper },
+      });
 
-    const gateway = await prisma.paymentGateway.findUnique({
-      where: { provider: providerUpper },
-    });
+      if (!gateway) {
+        throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
+      }
 
-    if (!gateway) {
-      throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
-    }
+      const updatedGateway = await prisma.paymentGateway.update({
+        where: { provider: providerUpper },
+        data: {
+          ...(data.isActive !== undefined && { isActive: data.isActive }),
+          ...(data.isSandbox !== undefined && { isSandbox: data.isSandbox }),
+          ...(data.displayName !== undefined && { displayName: data.displayName }),
+          ...(data.config !== undefined && { config: data.config as object }),
+        },
+      });
 
-    const updatedGateway = await prisma.paymentGateway.update({
-      where: { provider: providerUpper },
-      data: {
-        ...(data.isActive !== undefined && { isActive: data.isActive }),
-        ...(data.isSandbox !== undefined && { isSandbox: data.isSandbox }),
-        ...(data.displayName !== undefined && { displayName: data.displayName }),
-        ...(data.config !== undefined && { config: data.config as object }),
-      },
-    });
+      logger.info("Payment gateway updated", {
+        provider: providerUpper,
+        isActive: updatedGateway.isActive,
+        isSandbox: updatedGateway.isSandbox,
+      });
 
-    logger.info("Payment gateway updated", {
-      provider: providerUpper,
-      isActive: updatedGateway.isActive,
-      isSandbox: updatedGateway.isSandbox,
-    });
-
-    return successResponse({
-      id: updatedGateway.id,
-      provider: updatedGateway.provider,
-      displayName: updatedGateway.displayName,
-      isActive: updatedGateway.isActive,
-      isSandbox: updatedGateway.isSandbox,
-      currency: updatedGateway.currency,
-      config: updatedGateway.config,
-      hasCredentials: checkGatewayCredentials(updatedGateway.provider),
-      updatedAt: updatedGateway.updatedAt,
-    });
-  })
+      return successResponse({
+        id: updatedGateway.id,
+        provider: updatedGateway.provider,
+        displayName: updatedGateway.displayName,
+        isActive: updatedGateway.isActive,
+        isSandbox: updatedGateway.isSandbox,
+        currency: updatedGateway.currency,
+        config: updatedGateway.config,
+        hasCredentials: checkGatewayCredentials(updatedGateway.provider),
+        updatedAt: updatedGateway.updatedAt,
+      });
+    })
+  ),
+  { roles: ["ADMIN"] }
 );
 

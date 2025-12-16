@@ -19,13 +19,13 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const success = login(email, password);
+      const result = await login(email, password);
 
-      if (success) {
+      if (result.success) {
         // Redirección simple y directa
         window.location.href = "/admin/dashboard";
       } else {
-        setError("Credenciales inválidas. Por favor, intenta nuevamente.");
+        setError(result.error || "Credenciales inválidas. Por favor, intenta nuevamente.");
         setIsLoading(false);
       }
     } catch (err) {

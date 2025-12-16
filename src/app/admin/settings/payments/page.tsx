@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { PaymentGatewayCard, PaymentGatewayData, PendingGatewayCard, PendingGatewayData } from "@/modules/admin/components/PaymentGatewayCard";
 import { Message } from "@/components/common/Message";
+import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
 import styles from "./page.module.scss";
 
 // Gateways pendientes de integración
@@ -38,7 +39,9 @@ export default function PaymentSettingsPage() {
 
   const fetchGateways = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/settings/payments");
+      const response = await fetch("/api/admin/settings/payments", {
+        headers: createAuthHeaders({ "Content-Type": "application/json" }),
+      });
       const data = await response.json();
 
       if (data.success) {
@@ -61,7 +64,7 @@ export default function PaymentSettingsPage() {
     try {
       const response = await fetch(`/api/admin/settings/payments/${provider}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: createAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ isActive }),
       });
 
@@ -89,7 +92,7 @@ export default function PaymentSettingsPage() {
     try {
       const response = await fetch(`/api/admin/settings/payments/${provider}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: createAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ isSandbox }),
       });
 
@@ -116,6 +119,7 @@ export default function PaymentSettingsPage() {
   const handleTestConnection = async (provider: string) => {
     const response = await fetch(`/api/admin/settings/payments/${provider}/test`, {
       method: "POST",
+      headers: createAuthHeaders({ "Content-Type": "application/json" }),
     });
 
     const data = await response.json();

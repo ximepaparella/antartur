@@ -4,6 +4,7 @@ import { useState, useRef, ChangeEvent } from "react";
 import { Upload, X, Image as ImageIcon, Link } from "lucide-react";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
+import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
 import styles from "./AvatarPicker.module.scss";
 
 interface AvatarPickerProps {
@@ -39,6 +40,7 @@ export function AvatarPicker({
 
       const response = await fetch("/api/admin/upload/testimonial", {
         method: "POST",
+        headers: createAuthHeaders(),
         body: formData,
       });
 
@@ -68,6 +70,7 @@ export function AvatarPicker({
       try {
         await fetch(`/api/admin/upload/testimonial?url=${encodeURIComponent(value)}`, {
           method: "DELETE",
+          headers: createAuthHeaders(),
         });
       } catch (err) {
         console.error("Error al eliminar archivo:", err);

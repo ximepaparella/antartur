@@ -35,8 +35,8 @@ export interface ReservationEmailData {
 }
 
 export function generateReservationEmailHTML(data: ReservationEmailData): string {
-  const siteUrl = getSiteUrl();
-  const logoUrl = `${siteUrl}/images/logo-color.svg`;
+  const logoUrl = "https://coderoots.tech/_next/image?url=%2Fimages%2Flogo-color-2.svg&w=384&q=75";
+  const primaryColor = "#24384d"; // Azul primario de Antartur
   const currencySymbol = data.currency === "USD" ? "$" : "$";
   const formattedAmount = `${currencySymbol} ${data.totalAmount.toLocaleString("es-AR", {
     minimumFractionDigits: 2,
@@ -58,7 +58,7 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
           <!-- Header -->
           <tr>
-            <td style="background-color: #1a1a1a; padding: 30px; text-align: center;">
+            <td style="background-color: ${primaryColor}; padding: 30px; text-align: center;">
               <img src="${logoUrl}" alt="Antartur" style="max-width: 200px; height: auto;" />
             </td>
           </tr>
@@ -66,13 +66,13 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
           <!-- Content -->
           <tr>
             <td style="padding: 40px 30px;">
-              <h1 style="color: #1a1a1a; font-size: 24px; margin: 0 0 20px 0;">¡Reserva Confirmada!</h1>
+              <h1 style="color: ${primaryColor}; font-size: 24px; margin: 0 0 20px 0;">¡Reserva Confirmada!</h1>
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                 Hola ${data.customerName},
               </p>
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
                 Tu reserva ha sido confirmada exitosamente. A continuación encontrarás los detalles:
               </p>
               
@@ -80,60 +80,60 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9f9f9; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Código de Orden:</strong>
-                    <span style="color: #333333; font-family: monospace;">${data.orderCode}</span>
+                    <strong style="color: ${primaryColor};">Código de Orden:</strong>
+                    <span style="color: ${primaryColor}; font-family: monospace;">${data.orderCode}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Excursión:</strong>
-                    <span style="color: #333333;">${data.tourName}</span>
+                    <strong style="color: ${primaryColor};">Excursión:</strong>
+                    <span style="color: ${primaryColor};">${data.tourName}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Fecha:</strong>
-                    <span style="color: #333333;">${data.departureDate}</span>
+                    <strong style="color: ${primaryColor};">Fecha:</strong>
+                    <span style="color: ${primaryColor};">${data.departureDate}</span>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Hora de inicio:</strong>
-                    <span style="color: #333333;">${data.startTime}</span>
+                    <strong style="color: ${primaryColor};">Hora de inicio:</strong>
+                    <span style="color: ${primaryColor};">${data.startTime}</span>
                   </td>
                 </tr>
                 ${data.meetingPoint ? `
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Punto de encuentro:</strong>
-                    <span style="color: #333333;">${data.meetingPoint}</span>
+                    <strong style="color: ${primaryColor};">Punto de encuentro:</strong>
+                    <span style="color: ${primaryColor};">${data.meetingPoint}</span>
                   </td>
                 </tr>
                 ` : ""}
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Pasajeros:</strong>
-                    <span style="color: #333333;">${data.numAdults} adulto${data.numAdults !== 1 ? "s" : ""}${data.numChildren > 0 ? `, ${data.numChildren} menor${data.numChildren !== 1 ? "es" : ""}` : ""}</span>
+                    <strong style="color: ${primaryColor};">Pasajeros:</strong>
+                    <span style="color: ${primaryColor};">${data.numAdults} adulto${data.numAdults !== 1 ? "s" : ""}${data.numChildren > 0 ? `, ${data.numChildren} menor${data.numChildren !== 1 ? "es" : ""}` : ""}</span>
                   </td>
                 </tr>
                 ${data.additionals && data.additionals.length > 0 ? `
                 <tr>
                   <td style="padding-bottom: 10px;">
-                    <strong style="color: #1a1a1a;">Adicionales:</strong>
-                    <span style="color: #333333;">${data.additionals.map(a => a.name).join(", ")}</span>
+                    <strong style="color: ${primaryColor};">Adicionales:</strong>
+                    <span style="color: ${primaryColor};">${data.additionals.map(a => a.name).join(", ")}</span>
                   </td>
                 </tr>
                 ` : ""}
                 <tr>
                   <td>
-                    <strong style="color: #1a1a1a; font-size: 18px;">Total:</strong>
-                    <span style="color: #1a1a1a; font-size: 18px; font-weight: bold;">${formattedAmount}</span>
+                    <strong style="color: ${primaryColor}; font-size: 18px;">Total:</strong>
+                    <span style="color: ${primaryColor}; font-size: 18px; font-weight: bold;">${formattedAmount}</span>
                   </td>
                 </tr>
               </table>
               
               <!-- Passengers List -->
-              <h2 style="color: #1a1a1a; font-size: 20px; margin: 30px 0 15px 0;">Pasajeros</h2>
+              <h2 style="color: ${primaryColor}; font-size: 20px; margin: 30px 0 15px 0;">Pasajeros</h2>
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
                 ${data.passengers.map((passenger, index) => {
                   const age = passenger.birthDate ? calculateAge(passenger.birthDate) : null;
@@ -149,11 +149,11 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
                   return `
                 <tr>
                   <td style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
-                    <strong>${index + 1}.</strong> ${passenger.firstName} ${passenger.lastName} (${typeLabel}${ageText})
-                    ${documentText ? `<br><span style="color: #666; font-size: 14px;">Documento: ${documentText.substring(2)}</span>` : ""}
-                    ${nationalityText ? `<br><span style="color: #666; font-size: 14px;">Nacionalidad: ${nationalityText.substring(2)}</span>` : ""}
-                    ${passenger.email ? `<br><span style="color: #666; font-size: 14px;">Email: ${passenger.email}</span>` : ""}
-                    ${passenger.phone ? `<br><span style="color: #666; font-size: 14px;">Teléfono: ${passenger.phone}</span>` : ""}
+                    <strong style="color: ${primaryColor};">${index + 1}.</strong> ${passenger.firstName} ${passenger.lastName} (${typeLabel}${ageText})
+                    ${documentText ? `<br><span style="color: ${primaryColor}; font-size: 14px;">Documento: ${documentText.substring(2)}</span>` : ""}
+                    ${nationalityText ? `<br><span style="color: ${primaryColor}; font-size: 14px;">Nacionalidad: ${nationalityText.substring(2)}</span>` : ""}
+                    ${passenger.email ? `<br><span style="color: ${primaryColor}; font-size: 14px;">Email: ${passenger.email}</span>` : ""}
+                    ${passenger.phone ? `<br><span style="color: ${primaryColor}; font-size: 14px;">Teléfono: ${passenger.phone}</span>` : ""}
                     ${restrictionsText ? `<br><span style="color: #d32f2f; font-size: 14px;"><strong>Restricciones:</strong> ${restrictionsText}</span>` : ""}
                   </td>
                 </tr>
@@ -161,7 +161,7 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
                 }).join("")}
               </table>
               
-              <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
+              <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 30px 0 0 0;">
                 Si tienes alguna pregunta o necesitas modificar tu reserva, no dudes en contactarnos.
               </p>
             </td>
@@ -169,9 +169,9 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
           
           <!-- Footer -->
           <tr>
-            <td style="background-color: #1a1a1a; padding: 30px; text-align: center; color: #ffffff;">
+            <td style="background-color: ${primaryColor}; padding: 30px; text-align: center; color: #ffffff;">
               <p style="margin: 0 0 10px 0; font-size: 14px;">Antartur - Turismo de Aventura</p>
-              <p style="margin: 0; font-size: 12px; color: #999999;">
+              <p style="margin: 0; font-size: 12px; color: #cccccc;">
                 <a href="mailto:agencias@antartur.tur.ar" style="color: #ffffff;">agencias@antartur.tur.ar</a>
               </p>
             </td>

@@ -74,14 +74,20 @@ import { OrdersController } from "@/modules/orders/api/controllers/ordersControl
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, createdResponse, paginatedResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new OrdersController();
 
-export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
-  const result = await controller.list(request);
-  return paginatedResponse(result.data, result.meta);
-}));
+// GET requiere autenticación - listar todas las órdenes es una operación de admin
+export const GET = withAuth(
+  withRateLimitHandler("admin", withControllerErrorHandler(async (request, context) => {
+    const result = await controller.list(request);
+    return paginatedResponse(result.data, result.meta);
+  })),
+  { roles: ["ADMIN"] }
+);
 
+// POST es público - permite crear órdenes desde el checkout sin autenticación
 export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
   const body = await request.json();
   const order = await controller.create(body);

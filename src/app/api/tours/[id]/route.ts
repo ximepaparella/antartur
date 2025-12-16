@@ -81,11 +81,12 @@
 import { ToursController } from "@/modules/tours/api/controllers/toursController";
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { successResponse, noContentResponse } from "@/lib/api/response";
+import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
+import { withAuth } from "@/lib/auth";
 
 const controller = new ToursController();
 
-import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
-
+// GET es público - permite ver detalles de tour sin autenticación
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const { id } = await context.params;
   const { searchParams } = new URL(request.url);
@@ -96,18 +97,35 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
   return successResponse(tour);
 }));
 
-export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const body = await request.json();
-  const tour = await controller.update(id, body);
-  return successResponse(tour);
-}));
+// PUT requiere autenticación de admin
+export const PUT = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
+    const tour = await controller.update(id, body);
+    return successResponse(tour);
+  })),
+  { roles: ["ADMIN"] }
+);
 
-export const PATCH = PUT; // Alias para PATCH
+// PATCH también requiere autenticación de admin
+export const PATCH = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
+    const tour = await controller.update(id, body);
+    return successResponse(tour);
+  })),
+  { roles: ["ADMIN"] }
+);
 
-export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  await controller.delete(id);
-  return noContentResponse();
-}));
+// DELETE requiere autenticación de admin
+export const DELETE = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    await controller.delete(id);
+    return noContentResponse();
+  })),
+  { roles: ["ADMIN"] }
+);
 

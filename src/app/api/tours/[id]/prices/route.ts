@@ -71,9 +71,11 @@ import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, createdResponse } from "@/lib/api/response";
 import { validateQuery } from "@/lib/validation/schemas";
 import { idSchema, currencyCodeSchema } from "@/lib/validation/schemas";
+import { withAuth } from "@/lib/auth";
 
 const controller = new TourPricesController();
 
+// GET es público - permite consultar precios sin autenticación
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const { id: tourId } = await context.params;
   idSchema.parse(tourId);
@@ -91,14 +93,18 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
   return successResponse(prices);
 }));
 
-export const POST = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id: tourId } = await context.params;
-  idSchema.parse(tourId);
-  const body = await request.json();
-  const { validateBody } = await import("@/lib/validation/schemas");
-  const { createTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
-  const data = validateBody(createTourPriceSchema, { ...body, tourId });
-  const newPrice = await controller.create(data);
-  return createdResponse(newPrice);
-}));
+// POST requiere autenticación de admin
+export const POST = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id: tourId } = await context.params;
+    idSchema.parse(tourId);
+    const body = await request.json();
+    const { validateBody } = await import("@/lib/validation/schemas");
+    const { createTourPriceSchema } = await import("@/modules/tours/api/validators/tourPricesValidators");
+    const data = validateBody(createTourPriceSchema, { ...body, tourId });
+    const newPrice = await controller.create(data);
+    return createdResponse(newPrice);
+  })),
+  { roles: ["ADMIN"] }
+);
 

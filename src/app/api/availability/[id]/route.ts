@@ -90,25 +90,35 @@ import { AvailabilityController } from "@/modules/departures/api/controllers/ava
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, noContentResponse } from "@/lib/api/response";
+import { withAuth } from "@/lib/auth";
 
 const controller = new AvailabilityController();
 
+// GET es público - permite consultar disponibilidad sin autenticación
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const { id } = await context.params;
   const availability = await controller.getById(id);
   return successResponse(availability);
 }));
 
-export const PUT = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  const body = await request.json();
-  const availability = await controller.update(id, body);
-  return successResponse(availability);
-}));
+// PUT requiere autenticación de admin
+export const PUT = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    const body = await request.json();
+    const availability = await controller.update(id, body);
+    return successResponse(availability);
+  })),
+  { roles: ["ADMIN"] }
+);
 
-export const DELETE = withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
-  const { id } = await context.params;
-  await controller.delete(id);
-  return noContentResponse();
-}));
+// DELETE requiere autenticación de admin
+export const DELETE = withAuth(
+  withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
+    const { id } = await context.params;
+    await controller.delete(id);
+    return noContentResponse();
+  })),
+  { roles: ["ADMIN"] }
+);
 
