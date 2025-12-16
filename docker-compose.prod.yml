@@ -77,7 +77,8 @@ services:
       - JWT_REFRESH_EXPIRY=${JWT_REFRESH_EXPIRY:-7d}
     volumes:
       # Volumen para imágenes subidas (compartido con nginx)
-      - ./public/images:/app/public/images
+      # Usar :z para permisos SELinux o :rw para lectura/escritura
+      - ./public/images:/app/public/images:rw
     depends_on:
       postgres:
         condition: service_healthy

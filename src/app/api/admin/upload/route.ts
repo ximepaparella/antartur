@@ -86,12 +86,25 @@ async function handlePost(request: NextRequest) {
     const tourDir = path.join(process.cwd(), "public", "images", "tours", tourSlug);
     const galleryDir = path.join(tourDir, "gallery");
 
-    if (!existsSync(tourDir)) {
-      await mkdir(tourDir, { recursive: true });
-    }
+    try {
+      if (!existsSync(tourDir)) {
+        await mkdir(tourDir, { recursive: true, mode: 0o755 });
+      }
 
-    if (imageType === "gallery" && !existsSync(galleryDir)) {
-      await mkdir(galleryDir, { recursive: true });
+      if (imageType === "gallery" && !existsSync(galleryDir)) {
+        await mkdir(galleryDir, { recursive: true, mode: 0o755 });
+      }
+    } catch (mkdirError) {
+      console.error("Error creating directories:", mkdirError);
+      const mkdirErrorMsg = mkdirError instanceof Error ? mkdirError.message : String(mkdirError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Error al crear directorios",
+          details: process.env.NODE_ENV === "development" ? mkdirErrorMsg : undefined
+        },
+        { status: 500 }
+      );
     }
 
     // Generar nombre de archivo
@@ -114,9 +127,22 @@ async function handlePost(request: NextRequest) {
     }
 
     // Guardar archivo
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    try {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      await writeFile(filePath, buffer, { mode: 0o644 });
+    } catch (writeError) {
+      console.error("Error writing file:", writeError);
+      const writeErrorMsg = writeError instanceof Error ? writeError.message : String(writeError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Error al guardar el archivo",
+          details: process.env.NODE_ENV === "development" ? writeErrorMsg : undefined
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
@@ -135,11 +161,17 @@ async function handlePost(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : "Error desconocido";
     const errorDetails = error instanceof Error ? error.stack : String(error);
     console.error("Error details:", errorDetails);
+    
+    // En producción, también loguear el error completo para debugging
+    if (process.env.NODE_ENV === "production") {
+      console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
         error: "Error al subir el archivo",
-        details: process.env.NODE_ENV === "development" ? errorMessage : undefined
+        details: process.env.NODE_ENV === "development" ? errorMessage : "Ver logs del servidor"
       },
       { status: 500 }
     );
