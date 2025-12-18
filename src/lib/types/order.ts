@@ -37,6 +37,8 @@ export interface TimeSlot {
 }
 
 export interface Passenger {
+  /** ID único del pasajero (para identificación estable en React) */
+  id?: string;
   /** Nombre completo del pasajero */
   nombreCompleto: string;
   /** Fecha de nacimiento en formato YYYY-MM-DD */
@@ -59,6 +61,8 @@ export interface Passenger {
   };
   /** Si es adulto */
   esAdulto: boolean;
+  /** Si es infante (0-3 años) */
+  esInfante?: boolean;
   /** Si está embarazada (solo adultos) */
   embarazada?: boolean;
   /** Si tiene problemas de columna o salud (solo adultos) */
@@ -107,6 +111,8 @@ export interface Order {
   adults: number;
   /** Cantidad de niños */
   children: number;
+  /** Cantidad de infantes */
+  infants?: number;
   /** Precios del tour */
   pricing: Pricing;
   /** Horario del tour */

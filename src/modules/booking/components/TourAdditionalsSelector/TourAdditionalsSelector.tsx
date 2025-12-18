@@ -84,8 +84,7 @@ export const TourAdditionalsSelector: React.FC<TourAdditionalsSelectorProps> = (
                   <span className={styles.description}>{additional.description}</span>
                 )}
                 <span className={styles.price}>
-                  + {formatPrice(prices.adult)} / adulto
-                  {prices.child !== prices.adult && `, ${formatPrice(prices.child)} / menor`}
+                  + {formatPrice(prices.adult)}
                 </span>
               </div>
             </label>

@@ -4,7 +4,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import type { Pricing, TimeSlot } from "@/lib/types/order";
+import type { Pricing, TimeSlot, SelectedAdditional } from "@/lib/types/order";
 import { calculateOrderTotal } from "@/lib/utils/pricing";
 import { savePendingBooking } from "@/lib/utils/orderStorage";
 
@@ -30,14 +30,16 @@ export function useBookingFlow({
   const router = useRouter();
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [additionals, setAdditionals] = useState<SelectedAdditional[]>([]);
 
-  // Calcular subtotal
+  // Calcular subtotal (infantes son $0, no afectan el total)
   const subtotal = useMemo(() => {
     if (!pricing) return 0;
-    return calculateOrderTotal(adults, children, pricing);
-  }, [adults, children, pricing]);
+    return calculateOrderTotal(adults, children, pricing, additionals);
+  }, [adults, children, pricing, additionals]);
 
-  // Verificar si excede disponibilidad
+  // Verificar si excede disponibilidad (infantes NO descuentan cupo)
   const exceedsAvailability = useMemo(() => {
     if (!selectedDate || !selectedTimeSlot) return false;
     return adults + children > selectedTimeSlot.available;
@@ -61,12 +63,14 @@ export function useBookingFlow({
       date: selectedDate,
       adults,
       children,
+      infants,
       pricing,
       timeSlot: {
         start: selectedTimeSlot.start,
         end: selectedTimeSlot.end,
       },
       exceedsAvailability: false, // Usar el valor memoizado
+      additionals: additionals.length > 0 ? additionals : undefined,
     };
 
     // Guardar en localStorage
@@ -81,13 +85,17 @@ export function useBookingFlow({
 
     // Redirigir a checkout
     router.push("/checkout");
-  }, [tourId, tourTitle, pricing, selectedDate, selectedTimeSlot, adults, children, exceedsAvailability, router]);
+  }, [tourId, tourTitle, pricing, selectedDate, selectedTimeSlot, adults, children, infants, additionals, exceedsAvailability, router]);
 
   return {
     adults,
     children,
+    infants,
     setAdults,
     setChildren,
+    setInfants,
+    additionals,
+    setAdditionals,
     subtotal,
     exceedsAvailability,
     handleBooking,

@@ -303,3 +303,61 @@
   font-size: $font-size-12;
   color: $gray-500;
 }
+
+// Estilos para BankTransferCard
+.bankDataForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  padding-top: $spacing-12;
+  border-top: 1px solid $gray-200;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.formActions {
+  display: flex;
+  gap: $spacing-12;
+  margin-top: $spacing-8;
+}
+
+.bankDataDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+  padding-top: $spacing-12;
+  border-top: 1px solid $gray-200;
+}
+
+.dataRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-12;
+  background: $gray-50;
+  border-radius: 8px;
+}
+
+.dataLabel {
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  font-size: $font-size-14;
+}
+
+.dataValue {
+  color: $gray-600;
+  font-family: monospace;
+  font-size: $font-size-14;
+  text-align: right;
+  word-break: break-all;
+}
+
+.editButtonWrapper {
+  margin-top: $spacing-8;
+  padding-top: $spacing-12;
+  border-top: 1px solid $gray-200;
+}

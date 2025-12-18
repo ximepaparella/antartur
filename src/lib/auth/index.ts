@@ -25,6 +25,7 @@ export {
   getRefreshTokenExpiryDate,
 } from "./jwt";
 export type { TokenVerificationResult } from "./jwt";
+export { isTokenExpired, decodeTokenWithoutVerification } from "./jwt";
 
 // Middleware
 export { withAuth, getAuthUser, getUserFromRequest } from "./middleware";

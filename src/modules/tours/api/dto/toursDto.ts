@@ -74,6 +74,7 @@ export interface TourResponse {
   // Restricciones
   minAge: number | null;
   minPassengers: number | null;
+  allowsInfants: boolean;
   // Weekdays
   mondayAvailable: boolean;
   tuesdayAvailable: boolean;
@@ -214,6 +215,7 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     // Restricciones
     minAge: tour.minAge,
     minPassengers: tour.minPassengers,
+    allowsInfants: tour.allowsInfants ?? false,
     // Weekdays
     mondayAvailable: tour.mondayAvailable ?? true,
     tuesdayAvailable: tour.tuesdayAvailable ?? true,

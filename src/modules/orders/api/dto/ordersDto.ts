@@ -39,6 +39,25 @@ export interface OrderFullResponse extends OrderWithBookingsResponse {
 }
 
 /**
+ * DTO de respuesta para TourDeparture (opcional, cuando está incluido)
+ */
+export interface TourDepartureResponse {
+  id: string;
+  departureDate: string;
+  startTime: string;
+  endTime: string | null;
+  seatsTotal: number;
+  seatsHeld: number;
+  seatsConfirmed: number;
+  isActive: boolean;
+  tour?: {
+    id: string;
+    slug: string;
+    name: string;
+  };
+}
+
+/**
  * DTO de respuesta para Booking
  */
 export interface BookingResponse {
@@ -57,6 +76,7 @@ export interface BookingResponse {
   startTimeSnapshot: string;
   meetingPointSnapshot: string | null;
   passengers: PassengerResponse[];
+  tourDeparture?: TourDepartureResponse;
   createdAt: string;
   updatedAt: string;
 }
@@ -141,9 +161,37 @@ export function toPassengerResponse(passenger: Passenger): PassengerResponse {
 }
 
 /**
+ * Transforma un TourDeparture de Prisma a TourDepartureResponse
+ */
+export function toTourDepartureResponse(departure: any): TourDepartureResponse | undefined {
+  if (!departure) return undefined;
+  
+  return {
+    id: departure.id,
+    departureDate: departure.departureDate.toISOString().split("T")[0],
+    startTime: departure.startTime,
+    endTime: departure.endTime,
+    seatsTotal: departure.seatsTotal,
+    seatsHeld: departure.seatsHeld,
+    seatsConfirmed: departure.seatsConfirmed,
+    isActive: departure.isActive,
+    tour: departure.tour ? {
+      id: departure.tour.id,
+      slug: departure.tour.slug,
+      name: departure.tour.name,
+    } : undefined,
+  };
+}
+
+/**
  * Transforma un Booking de Prisma a BookingResponse
  */
-export function toBookingResponse(booking: Booking & { passengers?: Passenger[] }): BookingResponse {
+export function toBookingResponse(
+  booking: Booking & { 
+    passengers?: Passenger[];
+    tourDeparture?: any;
+  }
+): BookingResponse {
   return {
     id: booking.id,
     orderId: booking.orderId,
@@ -160,6 +208,7 @@ export function toBookingResponse(booking: Booking & { passengers?: Passenger[] 
     startTimeSnapshot: booking.startTimeSnapshot,
     meetingPointSnapshot: booking.meetingPointSnapshot,
     passengers: booking.passengers?.map(toPassengerResponse) || [],
+    tourDeparture: toTourDepartureResponse(booking.tourDeparture),
     createdAt: booking.createdAt.toISOString(),
     updatedAt: booking.updatedAt.toISOString(),
   };
@@ -187,7 +236,12 @@ export function toPaymentResponse(payment: Payment): PaymentResponse {
  * Transforma un Order con bookings a OrderWithBookingsResponse
  */
 export function toOrderWithBookingsResponse(
-  order: PrismaOrder & { bookings?: (Booking & { passengers?: Passenger[] })[] }
+  order: PrismaOrder & { 
+    bookings?: (Booking & { 
+      passengers?: Passenger[];
+      tourDeparture?: any;
+    })[];
+  }
 ): OrderWithBookingsResponse {
   const base = toOrderResponse(order);
   return {

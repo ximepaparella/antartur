@@ -138,3 +138,40 @@ export function getRefreshTokenExpiryDate(): Date {
   const expirySeconds = getRefreshTokenExpiry();
   return new Date(Date.now() + expirySeconds * 1000);
 }
+
+/**
+ * Decodifica un JWT sin verificar (solo para leer el payload)
+ * Útil para verificar expiración sin hacer una llamada al servidor
+ */
+export function decodeTokenWithoutVerification(token: string): { exp?: number; iat?: number } | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+    
+    // Decodificar el payload (segunda parte)
+    const payload = parts[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    
+    return {
+      exp: decoded.exp,
+      iat: decoded.iat,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Verifica si un token está expirado (sin verificar la firma)
+ */
+export function isTokenExpired(token: string): boolean {
+  const decoded = decodeTokenWithoutVerification(token);
+  if (!decoded || !decoded.exp) {
+    return true; // Si no se puede decodificar, considerar expirado
+  }
+  
+  const now = Math.floor(Date.now() / 1000);
+  return decoded.exp < now;
+}

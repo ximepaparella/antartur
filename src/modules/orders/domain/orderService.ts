@@ -87,7 +87,7 @@ export async function createReservation(input: ReservationInput) {
 
     // 3. Validar mínimo de pasajeros
     if (tour.minPassengers) {
-      const totalSeats = input.numAdults + input.numChildren;
+      const totalSeats = input.numAdults + input.numChildren + (input.numInfants || 0);
       if (!validateMinPassengers(totalSeats, tour.minPassengers)) {
         throw new Error(`This tour requires a minimum of ${tour.minPassengers} passenger${tour.minPassengers > 1 ? "s" : ""}`);
       }
@@ -110,6 +110,7 @@ export async function createReservation(input: ReservationInput) {
     const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
 
     // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
+    // Los infantes NO descuentan cupo, solo adultos y niños
     const totalSeats = input.numAdults + input.numChildren;
     if (!isEnquiry) {
       const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
@@ -644,6 +645,11 @@ export async function getOrderByCode(code: string, includePayments = false) {
       bookings: {
         include: {
           passengers: true,
+          tourDeparture: {
+            include: {
+              tour: true,
+            },
+          },
         },
       },
       ...(includePayments && { payments: true }),

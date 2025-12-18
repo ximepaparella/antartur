@@ -127,6 +127,7 @@ model Tour {
   // Restricciones
   minAge        Int? // Edad mínima permitida
   minPassengers Int? // Mínimo de pasajeros requeridos
+  allowsInfants Boolean @default(false) // Si el tour acepta infantes (0-3 años)
 
   // Días de semana disponibles
   mondayAvailable    Boolean @default(true)
@@ -538,4 +539,22 @@ model PaymentGateway {
 
   @@index([provider])
   @@index([isActive])
+}
+
+// ============================================
+// BANK TRANSFER CONFIGURATION
+// ============================================
+
+model BankTransfer {
+  id           String   @id
+  isActive     Boolean  @default(false)
+  accountName  String   // Nombre del titular de la cuenta
+  accountNumber String  // Número de cuenta
+  bank         String   // Nombre del banco
+  cuit         String   // CUIT del titular
+  cbu          String   // CBU
+  alias        String   // Alias de la cuenta
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

@@ -49,6 +49,8 @@ interface BannerBookingProps {
   minAge?: number | null;
   /** Mínimo de pasajeros requeridos */
   minPassengers?: number | null;
+  /** Si el tour acepta infantes (0-3 años) */
+  allowsInfants?: boolean;
   /** Texto de restricciones del tour (legacy - usar restrictions si está disponible) */
   restrictionText?: string | null;
   /** Array de restricciones del tour */
@@ -99,6 +101,7 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
   additionals,
   minAge,
   minPassengers,
+  allowsInfants,
   restrictionText,
   restrictions,
 }) => {
@@ -138,6 +141,7 @@ export const BannerBooking: React.FC<BannerBookingProps> = ({
             additionals={additionals}
             minAge={minAge}
             minPassengers={minPassengers}
+            allowsInfants={allowsInfants}
             restrictionText={restrictions && restrictions.length > 0 ? restrictions.join(". ") : restrictionText}
           />
         ) : null}

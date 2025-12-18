@@ -118,3 +118,27 @@ export function normalizePagination(page?: string | number, limit?: string | num
   };
 }
 
+/**
+ * Respuesta de error estandarizada
+ */
+export function errorResponse(
+  message: string,
+  code: string,
+  status: number = 400
+): NextResponse<ApiErrorResponse> {
+  return NextResponse.json(
+    {
+      success: false,
+      error: {
+        type: "Error",
+        title: message,
+        status,
+        detail: message,
+        code,
+      },
+      timestamp: new Date().toISOString(),
+    },
+    { status }
+  );
+}
+

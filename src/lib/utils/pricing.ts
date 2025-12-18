@@ -142,6 +142,7 @@ export function calculateSubtotalByAgeRange(
 
 /**
  * Calcula el subtotal de additionals seleccionados
+ * Nota: Los additionals tienen precio único (no por pasajero)
  */
 export function calculateAdditionalsSubtotal(
   additionals: SelectedAdditional[],
@@ -153,10 +154,9 @@ export function calculateAdditionalsSubtotal(
 
   for (const additional of additionals) {
     // Solo sumar si la moneda coincide
+    // El precio es único, no se multiplica por cantidad de pasajeros
     if (additional.currency === pricing.currencyCode) {
-      const adultTotal = adults * additional.priceAdult;
-      const childTotal = children * additional.priceChild;
-      total += adultTotal + childTotal;
+      total += additional.priceAdult; // Usar priceAdult como precio único
     }
   }
 

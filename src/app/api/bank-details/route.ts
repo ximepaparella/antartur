@@ -1,22 +1,35 @@
 /**
- * Endpoint para obtener datos bancarios para transferencias
- * Estos datos son públicos y se muestran en la página de transferencia
+ * API Route pública para obtener datos bancarios
+ * GET: Obtiene los datos bancarios si la transferencia está activa
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/db";
+import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
+import { successResponse, errorResponse } from "@/lib/api/response";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  const bankData = {
-    accountName: process.env.BANK_ACCOUNT_NAME || "Gustavo Adolfo Francisco Giro",
-    accountNumber: process.env.BANK_ACCOUNT_NUMBER || "6893238937",
-    bank: process.env.BANK_NAME || "HSBC",
-    cuit: process.env.BANK_CUIT || "20-20453913-9",
-    cbu: process.env.BANK_CBU || "1500689100068932389378",
-    alias: process.env.BANK_ALIAS || "Antartur",
-  };
+/**
+ * GET /api/bank-details
+ * Obtiene los datos bancarios si la transferencia está activa
+ */
+export const GET = withControllerErrorHandler(async (request: NextRequest) => {
+  const bankTransfer = await prisma.bankTransfer.findFirst({
+    where: { isActive: true },
+  });
 
-  return NextResponse.json(bankData);
-}
+  if (!bankTransfer) {
+    return errorResponse("Bank transfer is not available", "NOT_AVAILABLE", 404);
+  }
 
+  // Retornar solo los datos necesarios (sin id, timestamps, etc.)
+  return successResponse({
+    accountName: bankTransfer.accountName,
+    accountNumber: bankTransfer.accountNumber,
+    bank: bankTransfer.bank,
+    cuit: bankTransfer.cuit,
+    cbu: bankTransfer.cbu,
+    alias: bankTransfer.alias,
+  });
+});

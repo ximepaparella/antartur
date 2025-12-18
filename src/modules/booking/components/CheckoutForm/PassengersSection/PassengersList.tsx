@@ -10,8 +10,11 @@ interface PassengersListProps {
   hasPregnancyRestriction: boolean;
   hasHealthRestriction: boolean;
   minAge?: number | null;
-  onPassengerChange: (index: number, passenger: Passenger) => void;
+  allowsInfants?: boolean;
+  infantMaxAge?: number;
+  onPassengerChange: (index: number, passenger: Passenger, touchedField?: string) => void;
   onPassengerValidate: (index: number) => void;
+  onMarkFieldAsTouched?: (fieldKey: string) => void;
   onPassengerRemove: (index: number) => void;
 }
 
@@ -24,8 +27,11 @@ export const PassengersList: React.FC<PassengersListProps> = ({
   hasPregnancyRestriction,
   hasHealthRestriction,
   minAge,
+  allowsInfants,
+  infantMaxAge,
   onPassengerChange,
   onPassengerValidate,
+  onMarkFieldAsTouched,
   onPassengerRemove,
 }) => {
   return (
@@ -43,21 +49,33 @@ export const PassengersList: React.FC<PassengersListProps> = ({
         // Verificar si este pasajero tiene errores
         const hasErrors = Object.keys(passengerErrors).length > 0;
 
+        // Usar ID único del pasajero como key, o generar uno basado en índice si no existe (para compatibilidad)
+        const passengerKey = passenger.id || `passenger-${index}`;
+
         return (
           <PassengerForm
-            key={index}
+            key={passengerKey}
             passengerNumber={index + 1}
             isAdult={passenger.esAdulto}
+            isInfant={passenger.esInfante ?? false}
             passenger={passenger}
-            onChange={(updated) => onPassengerChange(index, updated)}
+            onChange={(updated, touchedField) => onPassengerChange(index, updated, touchedField)}
             onValidateField={() => onPassengerValidate(index)}
+            onMarkFieldAsTouched={onMarkFieldAsTouched}
+            passengerIndex={index}
             hasPregnancyRestriction={hasPregnancyRestriction}
             hasHealthRestriction={hasHealthRestriction}
             minAge={minAge}
+            allowsInfants={allowsInfants}
+            infantMaxAge={infantMaxAge}
             errors={passengerErrors}
             hasErrors={hasErrors}
             canRemove={passengers.length > 1}
-            onRemove={() => onPassengerRemove(index)}
+            onRemove={() => {
+              // Asegurar que siempre usamos el índice actual del array
+              // El índice se captura en el momento del render, así que es correcto
+              onPassengerRemove(index);
+            }}
           />
         );
       })}

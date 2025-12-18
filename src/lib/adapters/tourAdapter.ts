@@ -216,6 +216,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
             ? tour.additionals.map((add) => {
                 const arsPrice = add.prices.find((p) => p.currency === "ARS");
                 const usdPrice = add.prices.find((p) => p.currency === "USD");
+                // Precio único: usar priceAdult como precio general (priceChild tiene el mismo valor)
                 return {
                   id: add.id,
                   name: add.name,
@@ -223,14 +224,14 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
                   prices: {
                     ARS: arsPrice
                       ? {
-                          adult: Number(arsPrice.priceAdult),
-                          child: Number(arsPrice.priceChild),
+                          adult: Number(arsPrice.priceAdult), // Precio único
+                          child: Number(arsPrice.priceAdult), // Mismo precio (precio único)
                         }
                       : undefined,
                     USD: usdPrice
                       ? {
-                          adult: Number(usdPrice.priceAdult),
-                          child: Number(usdPrice.priceChild),
+                          adult: Number(usdPrice.priceAdult), // Precio único
+                          child: Number(usdPrice.priceAdult), // Mismo precio (precio único)
                         }
                       : undefined,
                   },
@@ -243,6 +244,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
     restrictions: {
       minAge: tour.minAge,
       minPassengers: tour.minPassengers,
+      allowsInfants: tour.allowsInfants ?? false,
     },
   };
 }

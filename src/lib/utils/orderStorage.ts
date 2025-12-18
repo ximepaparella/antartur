@@ -17,9 +17,17 @@ export function savePendingBooking(bookingData: {
   date: string;
   adults: number;
   children: number;
+  infants?: number;
   pricing: { currencyCode: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
+  additionals?: Array<{
+    additionalId: string;
+    name: string;
+    priceAdult: number;
+    priceChild: number;
+    currency: string;
+  }>;
 }): void {
   try {
     localStorage.setItem(PENDING_BOOKING_KEY, JSON.stringify(bookingData));
@@ -32,25 +40,28 @@ export function savePendingBooking(bookingData: {
  * Calcula si excede la disponibilidad basado en la fecha y número de pasajeros
  * Nota: Esta función es síncrona pero necesita datos de la API, por lo que retorna false por defecto
  * La verificación real se hace en el servidor al crear la orden
+ * Los infantes NO descuentan cupo, solo se consideran adultos y niños
  */
 function calculateExceedsAvailability(
   tourId: string,
   date: string,
   timeSlot: { start: string; end: string },
   adults: number,
-  children: number
+  children: number,
+  infants: number = 0 // Los infantes no se usan en el cálculo de disponibilidad
 ): boolean {
   // Esta función ya no puede hacer fetch síncrono desde la API
   // La verificación real se hace en el servidor al crear la orden
   // Retornamos false por defecto para no bloquear la UI
+  // Nota: Los infantes NO descuentan cupo, solo adultos y niños
   return false;
 }
 
 /**
- * Actualiza la cantidad de adultos y niños en la reserva pendiente
+ * Actualiza la cantidad de adultos, niños e infantes en la reserva pendiente
  * También recalcula si excede la disponibilidad
  */
-export function updatePendingBookingPassengers(adults: number, children: number): void {
+export function updatePendingBookingPassengers(adults: number, children: number, infants: number = 0): void {
   try {
     const data = getPendingBooking();
     if (data) {
@@ -60,13 +71,15 @@ export function updatePendingBookingPassengers(adults: number, children: number)
         data.date,
         data.timeSlot,
         adults,
-        children
+        children,
+        infants
       );
       
       savePendingBooking({
         ...data,
         adults,
         children,
+        infants,
         exceedsAvailability,
       });
     }
@@ -84,9 +97,17 @@ export function getPendingBooking(): {
   date: string;
   adults: number;
   children: number;
+  infants?: number;
   pricing: { currencyCode: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
+  additionals?: Array<{
+    additionalId: string;
+    name: string;
+    priceAdult: number;
+    priceChild: number;
+    currency: string;
+  }>;
 } | null {
   try {
     const data = localStorage.getItem(PENDING_BOOKING_KEY);

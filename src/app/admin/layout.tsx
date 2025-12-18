@@ -30,7 +30,7 @@ export default function AdminLayoutWrapper({
     }
 
     // Proteger todas las demás rutas admin
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isLoading) {
       hasRedirected.current = true;
       router.replace("/admin/login");
     }

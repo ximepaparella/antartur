@@ -20,6 +20,7 @@ import { successResponse } from "@/lib/api/response";
 import { getActiveGateways } from "@/modules/payments/domain/gatewayConfigService";
 import { ALWAYS_AVAILABLE_METHODS } from "@/modules/payments/domain/constants";
 import type { AvailablePaymentMethod } from "@/modules/payments/domain/types";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -43,14 +44,29 @@ export async function GET(request: NextRequest) {
     currency: g.currency,
   }));
 
-  // Agregar métodos que no requieren gateway (ej: transferencia para ARS)
-  const alwaysAvailable = ALWAYS_AVAILABLE_METHODS[currency || "ARS"] || [];
+  // Verificar si transferencia bancaria está activa (solo para ARS)
+  if (currency === "ARS" || !currency) {
+    const bankTransfer = await prisma.bankTransfer.findFirst({
+      where: { isActive: true },
+    });
+
+    if (bankTransfer) {
+      availableMethods.push({
+        provider: "transferencia",
+        displayName: "Transferencia Bancaria",
+        currency: "ARS",
+      });
+    }
+  } else {
+    // Para otras monedas, usar métodos siempre disponibles si existen
+    const alwaysAvailable = ALWAYS_AVAILABLE_METHODS[currency] || [];
   for (const method of alwaysAvailable) {
     availableMethods.push({
       provider: method,
       displayName: method === "transferencia" ? "Transferencia Bancaria" : method,
-      currency: currency || "ARS",
+        currency: currency,
     });
+    }
   }
 
   return successResponse({

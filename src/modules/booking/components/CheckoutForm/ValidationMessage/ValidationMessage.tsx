@@ -35,13 +35,13 @@ export const ValidationMessage: React.FC<ValidationMessageProps> = ({
     // Solo hacer scroll si:
     // 1. Cambió de false a true (errores aparecieron)
     // 2. El usuario NO está activamente editando
-    // 3. Pasó suficiente tiempo desde la última edición (3 segundos para estar seguro)
+    // 3. Pasó suficiente tiempo desde la última edición (5 segundos para estar seguro)
     const timeSinceLastEdit = Date.now() - lastEditTimeRef.current;
     const shouldScroll =
       hasValidationErrors &&
       !prevHasValidationErrorsRef.current &&
       validationMessageRef.current &&
-      timeSinceLastEdit > 3000; // Aumentado a 3 segundos para dar más tiempo
+      timeSinceLastEdit > 5000; // Aumentado a 5 segundos para dar más tiempo al usuario
 
     if (shouldScroll) {
       // Solo hacer scroll, NO hacer focus para no sacar al usuario del campo

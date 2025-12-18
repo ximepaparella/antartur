@@ -154,6 +154,7 @@ export interface Tour {
   restrictions?: {
     minAge: number | null;
     minPassengers: number | null;
+    allowsInfants?: boolean;
   };
 }
 

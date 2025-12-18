@@ -36,6 +36,8 @@ export function useCheckoutState({
   const [passengers, setPassengers] = useState<Passenger[]>(initialPassengers);
   const [billingInfo, setBillingInfo] = useState<BillingInfo>(initialBillingInfo);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  // Rastrear qué campos han sido "touched" (visitados por el usuario)
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const isInitialMount = useRef(true);
 
   // Sincronizar pasajeros cuando cambien los iniciales
@@ -68,10 +70,28 @@ export function useCheckoutState({
     [hasPregnancyRestriction, hasHealthRestriction]
   );
 
-  // Validar todo el formulario
+  // Validar todo el formulario (fuerza validación de todos los campos)
   const validateAllFields = useCallback(() => {
     const result = validateAll(billingInfo, passengers, restrictions);
     setErrors(result.errors);
+    // Marcar todos los campos como touched cuando se intenta enviar
+    setTouchedFields((prev) => {
+      const allFields = new Set(prev);
+      // Agregar todos los campos de billing
+      Object.keys(billingInfo).forEach((field) => {
+        allFields.add(`billing.${field}`);
+      });
+      // Agregar todos los campos de todos los pasajeros
+      passengers.forEach((_, index) => {
+        allFields.add(`passenger.${index}.nombreCompleto`);
+        allFields.add(`passenger.${index}.fechaNacimiento`);
+        allFields.add(`passenger.${index}.documento`);
+        allFields.add(`passenger.${index}.direccion`);
+        allFields.add(`passenger.${index}.telefono`);
+        allFields.add(`passenger.${index}.restricciones`);
+      });
+      return allFields;
+    });
     return result.isValid;
   }, [billingInfo, passengers, restrictions]);
 
@@ -98,8 +118,9 @@ export function useCheckoutState({
   );
 
   // Validar un pasajero completo (usado cuando cambia cualquier campo)
+  // Solo valida campos que han sido "touched" o cuando forceAll es true
   const validatePassenger = useCallback(
-    (index: number) => {
+    (index: number, forceAll: boolean = false) => {
       setPassengers((currentPassengers) => {
         const passenger = currentPassengers[index];
         
@@ -122,6 +143,15 @@ export function useCheckoutState({
               restrictions
             );
             
+            // Si no es forceAll, solo mostrar errores en campos touched
+            if (!forceAll) {
+              Object.keys(passengerErrors).forEach((key) => {
+                if (!touchedFields.has(key)) {
+                  delete passengerErrors[key];
+                }
+              });
+            }
+            
             Object.assign(newErrors, passengerErrors);
             return newErrors;
           });
@@ -130,7 +160,7 @@ export function useCheckoutState({
         return currentPassengers;
       });
     },
-    [restrictions]
+    [restrictions, touchedFields]
   );
 
   // Actualizar información de facturación
@@ -177,18 +207,87 @@ export function useCheckoutState({
     [restrictions]
   );
 
+  // Generar ID único para pasajero
+  const generatePassengerId = useCallback(() => {
+    return `passenger-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  }, []);
+
+  // Marcar un campo como "touched" (visitado por el usuario)
+  const markFieldAsTouched = useCallback((fieldKey: string) => {
+    setTouchedFields((prev) => {
+      const updated = new Set(prev);
+      // Si el campo ya estaba touched, no hacer nada
+      if (updated.has(fieldKey)) {
+        return prev;
+      }
+      updated.add(fieldKey);
+      
+      // Si es un campo de pasajero, validar ese campo específico
+      const passengerMatch = fieldKey.match(/^passenger\.(\d+)\.(.+)$/);
+      if (passengerMatch) {
+        const passengerIndex = parseInt(passengerMatch[1]);
+        const field = passengerMatch[2];
+        const passenger = passengers[passengerIndex];
+        
+        if (passenger) {
+          // Validar solo este campo específico
+          setErrors((prevErrors) => {
+            const newErrors = { ...prevErrors };
+            
+            // Limpiar error previo de este campo
+            delete newErrors[fieldKey];
+            
+            // Validar todos los campos del pasajero
+            const passengerErrors = validatePassengerField(
+              passenger,
+              passengerIndex,
+              "",
+              restrictions
+            );
+            
+            // Solo agregar el error del campo touched si existe
+            if (passengerErrors[fieldKey]) {
+              newErrors[fieldKey] = passengerErrors[fieldKey];
+            }
+            
+            return newErrors;
+          });
+        }
+      }
+      
+      return updated;
+    });
+  }, [passengers, restrictions]);
+
   // Reemplazar un pasajero completo (para cambios complejos)
   const replacePassenger = useCallback(
-    (index: number, passenger: Passenger) => {
+    (index: number, passenger: Passenger, touchedField?: string) => {
       setPassengers((prev) => {
         const updated = [...prev];
-        updated[index] = passenger;
+        // Preservar el ID del pasajero si existe
+        const existingPassenger = prev[index];
+        const passengerWithId = existingPassenger?.id 
+          ? { ...passenger, id: existingPassenger.id }
+          : passenger.id 
+            ? passenger 
+            : { ...passenger, id: generatePassengerId() };
+        updated[index] = passengerWithId;
+        
+        // Si se proporciona un campo touched, marcarlo
+        if (touchedField) {
+          const fieldKey = `passenger.${index}.${touchedField}`;
+          setTouchedFields((prevTouched) => {
+            const updatedTouched = new Set(prevTouched);
+            updatedTouched.add(fieldKey);
+            return updatedTouched;
+          });
+        }
         
         // Validar usando el pasajero actualizado del array (no el parámetro)
         // para asegurar que siempre validamos con el estado más reciente
         const passengerToValidate = updated[index];
         
-        // Validar inmediatamente con el estado actualizado
+        // Validar solo campos touched
         setErrors((prevErrors) => {
           const newErrors = { ...prevErrors };
           
@@ -199,7 +298,7 @@ export function useCheckoutState({
             }
           });
           
-          // Revalidar todos los campos del pasajero usando el pasajero del array actualizado
+          // Validar todos los campos del pasajero
           const passengerErrors = validatePassengerField(
             passengerToValidate,
             index,
@@ -207,20 +306,27 @@ export function useCheckoutState({
             restrictions
           );
           
-          Object.assign(newErrors, passengerErrors);
+          // Solo agregar errores de campos que han sido touched
+          Object.keys(passengerErrors).forEach((key) => {
+            if (touchedFields.has(key) || (touchedField && key === `passenger.${index}.${touchedField}`)) {
+              newErrors[key] = passengerErrors[key];
+            }
+          });
+          
           return newErrors;
         });
         
         return updated;
       });
     },
-    [restrictions]
+    [restrictions, touchedFields, generatePassengerId]
   );
 
   // Agregar pasajero
   const addPassenger = useCallback(
-    (isAdult: boolean) => {
+    (isAdult: boolean, isInfant: boolean = false) => {
       const newPassenger: Passenger = {
+        id: generatePassengerId(),
         nombreCompleto: "",
         fechaNacimiento: "",
         documento: "",
@@ -228,6 +334,7 @@ export function useCheckoutState({
         telefono: "",
         tieneRestriccionesAlimentarias: false,
         esAdulto: isAdult,
+        ...(isInfant && { esInfante: true }),
         ...(isAdult && {
           embarazada: undefined,
           problemasColumnaSalud: undefined,
@@ -239,15 +346,16 @@ export function useCheckoutState({
         
         // Actualizar localStorage
         const adults = updated.filter((p) => p.esAdulto).length;
-        const children = updated.filter((p) => !p.esAdulto).length;
-        updatePendingBookingPassengers(adults, children);
+        const children = updated.filter((p) => !p.esAdulto && !p.esInfante).length;
+        const infants = updated.filter((p) => p.esInfante === true).length;
+        updatePendingBookingPassengers(adults, children, infants);
         
         // La notificación se hará en useEffect para evitar setState durante render
         
         return updated;
       });
     },
-    []
+    [generatePassengerId]
   );
 
   // Eliminar pasajero
@@ -258,8 +366,9 @@ export function useCheckoutState({
         
         // Actualizar localStorage
         const adults = updated.filter((p) => p.esAdulto).length;
-        const children = updated.filter((p) => !p.esAdulto).length;
-        updatePendingBookingPassengers(adults, children);
+        const children = updated.filter((p) => !p.esAdulto && !p.esInfante).length;
+        const infants = updated.filter((p) => p.esInfante === true).length;
+        updatePendingBookingPassengers(adults, children, infants);
         
         // La notificación se hará en useEffect para evitar setState durante render
         
@@ -336,6 +445,7 @@ export function useCheckoutState({
     updateBillingInfo,
     updatePassenger,
     replacePassenger,
+    markFieldAsTouched,
     addPassenger,
     removePassenger,
     validateBilling,
