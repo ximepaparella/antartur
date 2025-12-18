@@ -53,10 +53,10 @@ export interface TourAdditional {
   description?: string | null;
   isActive?: boolean;
   sortOrder?: number;
-  prices?: Array<{
-    currency: string;
-    price: number; // Precio general (no por pasajero)
-  }>;
+  prices?: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
 }
 
 export interface TourFormData {

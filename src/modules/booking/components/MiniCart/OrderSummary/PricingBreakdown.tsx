@@ -58,18 +58,18 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
           {additionals
             .filter(additional => additional.currency === currency) // Solo mostrar additionals con la moneda actual
             .map((additional) => (
-              <div key={additional.additionalId} className={styles.summaryRow}>
-                <span className={styles.summaryLabel}>
-                  {additional.name}
-                </span>
-                <span className={styles.summaryValue}>
-                  {formatPriceByCurrency(
+            <div key={additional.additionalId} className={styles.summaryRow}>
+              <span className={styles.summaryLabel}>
+                {additional.name}
+              </span>
+              <span className={styles.summaryValue}>
+                {formatPriceByCurrency(
                     additional.priceAdult, // Precio único (no por pasajero)
-                    currency
-                  )}
-                </span>
-              </div>
-            ))}
+                  currency
+                )}
+              </span>
+            </div>
+          ))}
         </>
       )}
 

@@ -29,9 +29,9 @@ export default function CheckoutSuccessPage() {
         const orderCode = orderCodeFromUrl || completedDataFromStorage?.code;
 
         if (!orderCode) {
-          router.push("/");
+      router.push("/");
           return;
-        }
+    }
 
         // Obtener datos desde la base de datos
         const response = await fetch(`/api/orders/code/${orderCode}?includePayments=true`);
@@ -138,7 +138,7 @@ export default function CheckoutSuccessPage() {
           }, 3000);
         }
       } finally {
-        setIsLoading(false);
+    setIsLoading(false);
       }
     };
 

@@ -10,6 +10,7 @@ import { withAuth } from "@/lib/auth";
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse, errorResponse } from "@/lib/api/response";
+import { getBankTransferDefaultConfig } from "@/lib/config/bankTransfer";
 import { z } from "zod";
 
 const updateBankTransferSchema = z.object({
@@ -38,18 +39,20 @@ export const GET = withAuth(
       // Buscar o crear configuración por defecto
       let bankTransfer = await prisma.bankTransfer.findFirst();
 
-      // Si no existe, crear una con valores por defecto
+      // Si no existe, crear una con valores por defecto vacíos
+      // El admin debe configurar los valores reales desde el dashboard
       if (!bankTransfer) {
+        const defaultConfig = getBankTransferDefaultConfig();
         bankTransfer = await prisma.bankTransfer.create({
           data: {
             id: "default",
             isActive: false,
-            accountName: "Gustavo Adolfo Francisco Giro",
-            accountNumber: "6893238937",
-            bank: "HSBC",
-            cuit: "20-20453913-9",
-            cbu: "1500689100068932389378",
-            alias: "Antartur",
+            accountName: defaultConfig.accountName,
+            accountNumber: defaultConfig.accountNumber,
+            bank: defaultConfig.bank,
+            cuit: defaultConfig.cuit,
+            cbu: defaultConfig.cbu,
+            alias: defaultConfig.alias,
           },
         });
       }
@@ -82,17 +85,19 @@ export const PATCH = withAuth(
       let bankTransfer = await prisma.bankTransfer.findFirst();
 
       if (!bankTransfer) {
-        // Crear nueva configuración
+        // Crear nueva configuración con valores por defecto vacíos como fallback
+        // El admin debe configurar los valores reales desde el dashboard
+        const defaultConfig = getBankTransferDefaultConfig();
         bankTransfer = await prisma.bankTransfer.create({
           data: {
             id: "default",
             isActive: validatedData.isActive ?? false,
-            accountName: validatedData.accountName ?? "Gustavo Adolfo Francisco Giro",
-            accountNumber: validatedData.accountNumber ?? "6893238937",
-            bank: validatedData.bank ?? "HSBC",
-            cuit: validatedData.cuit ?? "20-20453913-9",
-            cbu: validatedData.cbu ?? "1500689100068932389378",
-            alias: validatedData.alias ?? "Antartur",
+            accountName: validatedData.accountName ?? defaultConfig.accountName,
+            accountNumber: validatedData.accountNumber ?? defaultConfig.accountNumber,
+            bank: validatedData.bank ?? defaultConfig.bank,
+            cuit: validatedData.cuit ?? defaultConfig.cuit,
+            cbu: validatedData.cbu ?? defaultConfig.cbu,
+            alias: validatedData.alias ?? defaultConfig.alias,
           },
         });
       } else {

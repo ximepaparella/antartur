@@ -4,7 +4,6 @@
 
 import { z } from "zod";
 import { paginationSchema, commonFiltersSchema, idSchema, slugSchema, currencyCodeSchema, priceSchema } from "@/lib/validation/schemas";
-import { createTourAdditionalSchema } from "./tourAdditionalValidators";
 
 /**
  * Schema para imagen de tour

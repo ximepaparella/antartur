@@ -33,18 +33,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
   useEffect(() => {
     if (tour) {
       // Transformar additionals del formato API al formato del formulario
-      // Mapear priceAdult a price (precio general)
-      const transformedAdditionals = tour.additionals?.map((add: any) => ({
-        id: add.id,
-        name: add.name,
-        description: add.description,
-        isActive: add.isActive ?? true,
-        sortOrder: add.sortOrder ?? 0,
-        prices: add.prices?.map((p: any) => ({
-          currency: p.currency,
-          price: Number(p.priceAdult), // Usar priceAdult como precio general
-        })) || [],
-      })) || [];
+      // Mapear prices al formato de objeto con ARS/USD keys
+      const transformedAdditionals = tour.additionals?.map((add: any) => {
+        const pricesObj: { ARS?: { adult: number; child: number }; USD?: { adult: number; child: number } } = {};
+        
+        if (add.prices && Array.isArray(add.prices)) {
+          add.prices.forEach((p: any) => {
+            const priceValue = Number(p.priceAdult || p.price || 0);
+            if (p.currency === "ARS") {
+              pricesObj.ARS = { adult: priceValue, child: priceValue };
+            } else if (p.currency === "USD") {
+              pricesObj.USD = { adult: priceValue, child: priceValue };
+            }
+          });
+        }
+        
+        return {
+          id: add.id,
+          name: add.name,
+          description: add.description,
+          isActive: add.isActive ?? true,
+          sortOrder: add.sortOrder ?? 0,
+          prices: Object.keys(pricesObj).length > 0 ? pricesObj : undefined,
+        };
+      }) || [];
 
       // Asegurar que los weekdays tengan valores explícitos al inicializar
       // Los weekdays ahora vienen del backend, pero usamos defaults si no están presentes
@@ -199,14 +211,29 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     }
 
     // Filtrar additionals con campos vacíos (solo nombre es requerido)
-    // También limpiar precios inválidos (NaN o undefined)
+    // Transformar prices del formato objeto al formato array esperado por el backend
     if (cleanedFormData.additionals) {
       cleanedFormData.additionals = cleanedFormData.additionals
         .filter((item: TourAdditional) => item.name && item.name.trim())
-        .map((item: TourAdditional) => ({
-          ...item,
-          prices: item.prices?.filter((p) => p.price !== undefined && !isNaN(p.price) && p.price >= 0) || [],
-        }));
+        .map((item: TourAdditional) => {
+          // Transformar prices de objeto { ARS?: { adult, child }, USD?: { adult, child } } 
+          // a array [{ currency, price }] donde price es el valor general (adult = child)
+          const pricesArray: Array<{ currency: string; price: number }> = [];
+          
+          if (item.prices) {
+            if (item.prices.ARS && typeof item.prices.ARS.adult === 'number' && !isNaN(item.prices.ARS.adult) && item.prices.ARS.adult >= 0) {
+              pricesArray.push({ currency: "ARS", price: item.prices.ARS.adult });
+            }
+            if (item.prices.USD && typeof item.prices.USD.adult === 'number' && !isNaN(item.prices.USD.adult) && item.prices.USD.adult >= 0) {
+              pricesArray.push({ currency: "USD", price: item.prices.USD.adult });
+            }
+          }
+          
+          return {
+            ...item,
+            prices: pricesArray,
+          };
+        });
     }
     
     // Eliminar campos que no deben enviarse en el update
@@ -575,7 +602,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
             <div className={styles.additionalsSection}>
               <Card title="Opciones Adicionales">
                 <p className={styles.sectionDescription}>
-                  Agrega opciones adicionales que los usuarios pueden seleccionar al hacer una reserva (ej: "Con Canoas").
+                  Agrega opciones adicionales que los usuarios pueden seleccionar al hacer una reserva (ej: &quot;Con Canoas&quot;).
                 </p>
                 <ArrayFieldManager
                   title=""
@@ -629,26 +656,19 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                               label="Precio (ARS)"
                               type="number"
                               value={
-                                item.prices?.find((p) => p.currency === "ARS")?.price || ""
+                                item.prices?.ARS?.adult || ""
                               }
                               onChange={(e) => {
-                                const prices = item.prices || [];
-                                const arsIndex = prices.findIndex((p) => p.currency === "ARS");
-                                const updatedPrices = [...prices];
+                                const prices = item.prices || {};
                                 const priceValue = e.target.value === "" ? 0 : Number(e.target.value);
                                 if (isNaN(priceValue)) return; // No actualizar si es NaN
-                                if (arsIndex >= 0) {
-                                  updatedPrices[arsIndex] = {
-                                    ...updatedPrices[arsIndex],
-                                    price: priceValue,
-                                  };
-                                } else {
-                                  updatedPrices.push({
-                                    currency: "ARS",
-                                    price: priceValue,
-                                  });
-                                }
-                                onUpdate({ ...item, prices: updatedPrices });
+                                onUpdate({
+                                  ...item,
+                                  prices: {
+                                    ...prices,
+                                    ARS: { adult: priceValue, child: priceValue },
+                                  },
+                                });
                               }}
                               disabled={!isEditingItem || !isEditing}
                               placeholder="0"
@@ -661,26 +681,19 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                               label="Precio (USD)"
                               type="number"
                               value={
-                                item.prices?.find((p) => p.currency === "USD")?.price || ""
+                                item.prices?.USD?.adult || ""
                               }
                               onChange={(e) => {
-                                const prices = item.prices || [];
-                                const usdIndex = prices.findIndex((p) => p.currency === "USD");
-                                const updatedPrices = [...prices];
+                                const prices = item.prices || {};
                                 const priceValue = e.target.value === "" ? 0 : Number(e.target.value);
                                 if (isNaN(priceValue)) return; // No actualizar si es NaN
-                                if (usdIndex >= 0) {
-                                  updatedPrices[usdIndex] = {
-                                    ...updatedPrices[usdIndex],
-                                    price: priceValue,
-                                  };
-                                } else {
-                                  updatedPrices.push({
-                                    currency: "USD",
-                                    price: priceValue,
-                                  });
-                                }
-                                onUpdate({ ...item, prices: updatedPrices });
+                                onUpdate({
+                                  ...item,
+                                  prices: {
+                                    ...prices,
+                                    USD: { adult: priceValue, child: priceValue },
+                                  },
+                                });
                               }}
                               disabled={!isEditingItem || !isEditing}
                               placeholder="0"
@@ -696,10 +709,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     description: null,
                     isActive: true,
                     sortOrder: formData.additionals?.length || 0,
-                    prices: [
-                      { currency: "ARS", price: 0 },
-                      { currency: "USD", price: 0 },
-                    ],
+                    prices: {
+                      ARS: { adult: 0, child: 0 },
+                      USD: { adult: 0, child: 0 },
+                    },
                   })}
                   disabled={!isEditing}
                 />

@@ -60,12 +60,12 @@ export async function GET(request: NextRequest) {
   } else {
     // Para otras monedas, usar métodos siempre disponibles si existen
     const alwaysAvailable = ALWAYS_AVAILABLE_METHODS[currency] || [];
-    for (const method of alwaysAvailable) {
-      availableMethods.push({
-        provider: method,
-        displayName: method === "transferencia" ? "Transferencia Bancaria" : method,
+  for (const method of alwaysAvailable) {
+    availableMethods.push({
+      provider: method,
+      displayName: method === "transferencia" ? "Transferencia Bancaria" : method,
         currency: currency,
-      });
+    });
     }
   }
 

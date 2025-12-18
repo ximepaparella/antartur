@@ -38,7 +38,7 @@ export default function AdminTourCreatePage() {
         setFormData((prev) => ({ ...prev, slug: newSlug }));
       }
     }
-  }, [formData.name]);
+  }, [formData.name, formData.slug]);
 
   const validateForm = () => {
     const errors: string[] = [];

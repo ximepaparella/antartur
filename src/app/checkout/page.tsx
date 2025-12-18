@@ -184,7 +184,8 @@ export default function CheckoutPage() {
         savePendingBooking(updatedBookingData);
       }
     }
-  }, [currency, tourAdditionals]); // No incluir bookingData.additionals para evitar loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency, tourAdditionals]); // bookingData.additionals se actualiza dentro del efecto, no debe estar en deps
 
   const handlePaymentMethodChange = (method: PaymentMethod) => {
     setPaymentMethod(method);
