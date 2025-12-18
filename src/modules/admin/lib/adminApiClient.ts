@@ -45,6 +45,22 @@ function getAuthToken(): string | null {
 }
 
 /**
+ * Limpia tokens y redirige a login
+ */
+function handleUnauthorized() {
+  if (typeof window === "undefined") return;
+  
+  // Limpiar tokens
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  sessionStorage.removeItem("admin_auth_session");
+  
+  // Redirigir a login solo si no estamos ya ahí
+  if (window.location.pathname !== "/admin/login") {
+    window.location.href = "/admin/login";
+  }
+}
+
+/**
  * Creates fetch options with auth headers and timeout
  */
 function createFetchOptions(options: RequestInit = {}): RequestInit {
@@ -82,14 +98,30 @@ function createFetchOptions(options: RequestInit = {}): RequestInit {
   };
 }
 
+/**
+ * Wrapper para fetch que maneja errores 401 automáticamente
+ */
+async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  const fetchOptions = createFetchOptions(options);
+  const response = await fetch(url, fetchOptions);
+  
+  // Si recibimos 401, el token está expirado o es inválido
+  if (response.status === 401) {
+    handleUnauthorized();
+    throw new Error("Unauthorized: Token expired or invalid");
+  }
+  
+  return response;
+}
+
 class AdminApiClient {
   /**
    * Get dashboard statistics
    */
   async getDashboardStats(): Promise<ApiResponse<DashboardStats>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/admin/stats`,
-      createFetchOptions({ method: "GET" })
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -115,7 +147,7 @@ class AdminApiClient {
     if (params?.type) queryParams.append("type", params.type);
 
     const url = `${API_BASE_URL}/orders${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const response = await fetch(url, createFetchOptions({ method: "GET" }));
+    const response = await fetchWithAuth(url, { method: "GET" });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch orders: ${response.statusText}`);
@@ -128,9 +160,9 @@ class AdminApiClient {
    * Get order by ID
    */
   async getOrderById(id: string): Promise<ApiResponse<OrderFullResponse>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/orders/${id}`,
-      createFetchOptions({ method: "GET" })
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -157,7 +189,7 @@ class AdminApiClient {
       queryParams.append("isActive", params.isActive.toString());
 
     const url = `${API_BASE_URL}/tours${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const response = await fetch(url, createFetchOptions({ method: "GET" }));
+    const response = await fetchWithAuth(url, { method: "GET" });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch tours: ${response.statusText}`);
@@ -170,9 +202,9 @@ class AdminApiClient {
    * Get tour by ID
    */
   async getTourById(id: string): Promise<ApiResponse<TourFullResponse>> {
-    const response = await fetch(
-      `${API_BASE_URL}/tours/${id}?includeContent=true&includeImages=true&includeDepartures=true&includePrices=true`,
-      createFetchOptions({ method: "GET" })
+    const response = await fetchWithAuth(
+      `${API_BASE_URL}/tours/${id}?includeContent=true&includeImages=true&includeDepartures=true&includePrices=true&includeAdditionals=true`,
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -203,12 +235,12 @@ class AdminApiClient {
       throw new Error("Tour long description is required and must be a string");
     }
 
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/tours`,
-      createFetchOptions({
+      {
         method: "POST",
         body: JSON.stringify(data),
-      })
+      }
     );
 
     if (!response.ok) {
@@ -233,12 +265,12 @@ class AdminApiClient {
       throw new Error("Tour category must be a string if provided");
     }
 
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/tours/${id}`,
-      createFetchOptions({
+      {
         method: "PATCH",
         body: JSON.stringify(data),
-      })
+      }
     );
 
     if (!response.ok) {
@@ -252,9 +284,9 @@ class AdminApiClient {
    * Delete tour
    */
   async deleteTour(id: string): Promise<ApiResponse<void>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/tours/${id}`,
-      createFetchOptions({ method: "DELETE" })
+      { method: "DELETE" }
     );
 
     if (!response.ok) {
@@ -299,7 +331,7 @@ class AdminApiClient {
     if (params?.orderId) queryParams.append("orderId", params.orderId);
 
     const url = `${API_BASE_URL}/bookings${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const response = await fetch(url, createFetchOptions({ method: "GET" }));
+    const response = await fetchWithAuth(url, { method: "GET" });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch bookings: ${response.statusText}`);
@@ -312,9 +344,9 @@ class AdminApiClient {
    * Get booking by ID
    */
   async getBookingById(id: string): Promise<ApiResponse<BookingResponse>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/bookings/${id}`,
-      createFetchOptions({ method: "GET" })
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -342,7 +374,7 @@ class AdminApiClient {
     if (params?.orderId) queryParams.append("orderId", params.orderId);
 
     const url = `${API_BASE_URL}/notifications${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const response = await fetch(url, createFetchOptions({ method: "GET" }));
+    const response = await fetchWithAuth(url, { method: "GET" });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch notifications: ${response.statusText}`);
@@ -355,9 +387,9 @@ class AdminApiClient {
    * Get notification by ID
    */
   async getNotificationById(id: string): Promise<ApiResponse<NotificationResponse>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/notifications/${id}`,
-      createFetchOptions({ method: "GET" })
+      { method: "GET" }
     );
 
     if (!response.ok) {
@@ -371,12 +403,12 @@ class AdminApiClient {
    * Update order status
    */
   async updateOrderStatus(id: string, status: string): Promise<ApiResponse<OrderResponse>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/orders/${id}/status`,
-      createFetchOptions({
+      {
         method: "PATCH",
         body: JSON.stringify({ status }),
-      })
+      }
     );
 
     if (!response.ok) {
@@ -390,12 +422,12 @@ class AdminApiClient {
    * Update booking status
    */
   async updateBookingStatus(id: string, status: string): Promise<ApiResponse<BookingResponse>> {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_BASE_URL}/bookings/${id}/status`,
-      createFetchOptions({
+      {
         method: "PATCH",
         body: JSON.stringify({ status }),
-      })
+      }
     );
 
     if (!response.ok) {

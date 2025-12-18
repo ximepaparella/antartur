@@ -183,6 +183,7 @@ export default async function TourPage({ params }: TourPageProps) {
               additionals={fullTour.booking?.additionals}
               minAge={fullTour.restrictions?.minAge}
               minPassengers={fullTour.restrictions?.minPassengers}
+              allowsInfants={fullTour.restrictions?.allowsInfants}
               restrictions={fullTour.quickInfo?.restrictions}
               restrictionText={fullTour.quickInfo?.restrictions && fullTour.quickInfo.restrictions.length > 0 
                 ? fullTour.quickInfo.restrictions.join(". ") 

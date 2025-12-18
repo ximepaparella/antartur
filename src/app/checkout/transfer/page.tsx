@@ -48,13 +48,23 @@ export default function CheckoutTransferPage() {
   useEffect(() => {
     // Cargar datos bancarios desde API
     fetch("/api/bank-details")
-      .then((res) => res.json())
-      .then((data) => setBankData(data))
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Bank transfer not available");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success && data.data) {
+          setBankData(data.data);
+        }
+      })
       .catch((error) => {
         console.error("Error al cargar datos bancarios:", error);
-        // Mantener valores por defecto si falla
+        // Si no hay datos disponibles, redirigir al inicio
+        router.push("/");
       });
-  }, []);
+  }, [router]);
 
   return (
     <>
@@ -84,7 +94,7 @@ export default function CheckoutTransferPage() {
 
           <Message variant="warning" className={styles.expirationWarning}>
             <p>
-              <strong>Importante:</strong> La reserva estará vigente por 24 horas. Si no se efectúa el pago
+              <strong>Importante:</strong> La reserva estará vigente por 5 horas. Si no se efectúa el pago
               correspondiente, será dada de baja y los cupos liberados.
             </p>
           </Message>
@@ -98,15 +108,19 @@ export default function CheckoutTransferPage() {
                 <span className={styles.value}>{bankData.accountName}</span>
               </div>
               
-              <div className={styles.bankRow}>
-                <span className={styles.label}>Número de Cuenta:</span>
-                <span className={styles.value}>{bankData.accountNumber}</span>
-              </div>
+              {bankData.accountNumber && bankData.accountNumber.trim() !== "" && (
+                <div className={styles.bankRow}>
+                  <span className={styles.label}>Número de Cuenta:</span>
+                  <span className={styles.value}>{bankData.accountNumber}</span>
+                </div>
+              )}
               
-              <div className={styles.bankRow}>
-                <span className={styles.label}>Banco:</span>
-                <span className={styles.value}>{bankData.bank}</span>
-              </div>
+              {bankData.bank && bankData.bank.trim() !== "" && (
+                <div className={styles.bankRow}>
+                  <span className={styles.label}>Banco:</span>
+                  <span className={styles.value}>{bankData.bank}</span>
+                </div>
+              )}
               
               <div className={styles.bankRow}>
                 <span className={styles.label}>CUIT:</span>

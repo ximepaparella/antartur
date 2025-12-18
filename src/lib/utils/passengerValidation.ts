@@ -29,12 +29,31 @@ export function validateChildAge(age: number | null): { valid: boolean; error?: 
 }
 
 /**
- * Valida la edad según el tipo de pasajero (adulto o niño)
+ * Valida que un infante tenga entre 0 y 3 años
+ */
+export function validateInfantAge(age: number | null, infantMaxAge: number = 3): { valid: boolean; error?: string } {
+  if (age === null) return { valid: false, error: "La edad no puede ser nula" };
+  if (age < 0) {
+    return { valid: false, error: "La edad no puede ser negativa" };
+  }
+  if (age > infantMaxAge) {
+    return { valid: false, error: `Los infantes deben tener entre 0 y ${infantMaxAge} años` };
+  }
+  return { valid: true };
+}
+
+/**
+ * Valida la edad según el tipo de pasajero (adulto, niño o infante)
  */
 export function validatePassengerAge(
   age: number | null,
-  isAdult: boolean
+  isAdult: boolean,
+  isInfant: boolean = false,
+  infantMaxAge: number = 3
 ): { valid: boolean; error?: string } {
+  if (isInfant) {
+    return validateInfantAge(age, infantMaxAge);
+  }
   if (isAdult) {
     return validateAdultAge(age);
   }

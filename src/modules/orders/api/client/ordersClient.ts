@@ -11,6 +11,7 @@ export interface CreateOrderRequest {
   startTime: string;
   numAdults: number;
   numChildren: number;
+  numInfants?: number;
   currency: string;
   customerName: string;
   customerEmail: string;

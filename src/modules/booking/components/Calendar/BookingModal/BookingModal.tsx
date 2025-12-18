@@ -22,8 +22,10 @@ interface BookingModalProps {
   pricing: Pricing;
   adults: number;
   childrenCount: number;
+  infantsCount?: number;
   onAdultsChange: (value: number) => void;
   onChildrenChange: (value: number) => void;
+  onInfantsChange?: (value: number) => void;
   onClose: () => void;
   onBooking: () => void;
   exceedsAvailability: boolean;
@@ -32,6 +34,7 @@ interface BookingModalProps {
   additionals?: TourAdditional[];
   minAge?: number | null;
   minPassengers?: number | null;
+  allowsInfants?: boolean;
   restrictionText?: string | null;
   onAdditionalsChange?: (additionals: SelectedAdditional[]) => void;
 }
@@ -46,8 +49,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   pricing,
   adults,
   childrenCount,
+  infantsCount = 0,
   onAdultsChange,
   onChildrenChange,
+  onInfantsChange,
   onClose,
   onBooking,
   exceedsAvailability,
@@ -55,14 +60,65 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   additionals = [],
   minAge,
   minPassengers,
+  allowsInfants: allowsInfantsProp,
   restrictionText,
   onAdditionalsChange,
 }) => {
   const [selectedAdditionals, setSelectedAdditionals] = useState<SelectedAdditional[]>([]);
   const { currency } = useCurrency();
 
-  // Validar mínimo de pasajeros
-  const totalPassengers = adults + childrenCount;
+  // Actualizar additionals cuando cambia la moneda
+  useEffect(() => {
+    if (additionals && additionals.length > 0 && selectedAdditionals.length > 0) {
+      // Crear un mapa de additionals por ID para acceso rápido
+      const additionalsMap = new Map(additionals.map(a => [a.id, a]));
+      
+      // Actualizar cada additional seleccionado con el precio de la nueva moneda
+      const updated = selectedAdditionals.map(selected => {
+        const originalAdditional = additionalsMap.get(selected.additionalId);
+        if (originalAdditional) {
+          const prices = originalAdditional.prices[currency as "ARS" | "USD"];
+          if (prices) {
+            return {
+              ...selected,
+              priceAdult: prices.adult,
+              priceChild: prices.child,
+              currency,
+            };
+          }
+        }
+        return selected;
+      }).filter(selected => {
+        // Filtrar additionals que no tienen precio en la nueva moneda
+        const originalAdditional = additionalsMap.get(selected.additionalId);
+        return originalAdditional?.prices[currency as "ARS" | "USD"];
+      });
+      
+      if (updated.length !== selectedAdditionals.length || 
+          updated.some((u, i) => u.currency !== selectedAdditionals[i].currency || 
+                                 u.priceAdult !== selectedAdditionals[i].priceAdult)) {
+        setSelectedAdditionals(updated);
+        if (onAdditionalsChange) {
+          onAdditionalsChange(updated);
+        }
+      }
+    }
+  }, [currency, additionals, onAdditionalsChange]); // No incluir selectedAdditionals para evitar loops
+
+  // Determinar si el tour acepta infantes
+  // Priorizar el prop allowsInfants del tour, sino usar priceInfantFree del pricing
+  // Pero NO permitir infantes si la edad mínima del tour es mayor a 3 años
+  const allowsInfants = useMemo(() => {
+    const baseAllowsInfants = allowsInfantsProp ?? pricing.priceInfantFree === true;
+    // Si la edad mínima es mayor a 3, no permitir infantes (los infantes son 0-3 años)
+    if (minAge && minAge > 3) {
+      return false;
+    }
+    return baseAllowsInfants;
+  }, [allowsInfantsProp, pricing.priceInfantFree, minAge]);
+
+  // Validar mínimo de pasajeros (incluyendo infantes)
+  const totalPassengers = adults + childrenCount + infantsCount;
   const violatesMinPassengers = useMemo(() => {
     return !validateMinPassengers(totalPassengers, minPassengers);
   }, [totalPassengers, minPassengers]);
@@ -97,6 +153,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       onChildrenChange(0);
     }
   }, [allowsChildren, childrenCount, onChildrenChange]);
+
+  // Resetear infantsCount si el tour no permite infantes (por ejemplo, si minAge > 3)
+  useEffect(() => {
+    if (!allowsInfants && infantsCount > 0) {
+      onInfantsChange?.(0);
+    }
+  }, [allowsInfants, infantsCount, onInfantsChange]);
 
   // Calcular total incluyendo additionals
   const subtotal = useMemo(() => {
@@ -146,14 +209,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       <PassengerInputs
         adults={adults}
         childrenCount={childrenCount}
+        infantsCount={infantsCount}
         onAdultsChange={onAdultsChange}
         onChildrenChange={onChildrenChange}
+        onInfantsChange={onInfantsChange}
         priceAdult={pricing.priceAdult}
         priceChild={pricing.priceChild}
         currency={pricing.currencyCode}
         childAgeRange={pricing.childAgeRange}
         description={pricing.childAgeRange ? `Rango de edad para menores: ${pricing.childAgeRange} años` : undefined}
         allowsChildren={allowsChildren}
+        allowsInfants={allowsInfants}
+        infantMaxAge={pricing.infantMaxAge}
       />
 
       {/* Selector de additionals */}

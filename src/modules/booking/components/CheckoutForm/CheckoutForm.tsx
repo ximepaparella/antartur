@@ -20,6 +20,8 @@ interface CheckoutFormProps {
   hasHealthRestriction?: boolean;
   /** Edad mínima requerida para el tour */
   minAge?: number | null;
+  /** Si el tour acepta infantes (0-3 años) */
+  allowsInfants?: boolean;
   /** Callback cuando se completa el checkout */
   onCheckoutComplete: (order: Order) => void;
   /** Callback cuando cambia el estado de violaciones de restricciones */
@@ -46,6 +48,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   hasPregnancyRestriction = false,
   hasHealthRestriction = false,
   minAge,
+  allowsInfants = false,
   onCheckoutComplete,
   onRestrictionViolationsChange,
   onPassengersChange,
@@ -78,6 +81,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
     isValid,
     updateBillingInfo,
     replacePassenger,
+    markFieldAsTouched,
     addPassenger,
     removePassenger,
     validateBilling,
@@ -153,10 +157,10 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       isUserEditingRef.current = true;
       lastEditTimeRef.current = Date.now();
       
-      // Resetear el flag después de un delay más largo (2 segundos) cuando se agregan pasajeros
+      // Resetear el flag después de un delay más largo (5 segundos) cuando se agregan pasajeros
       const timeoutId = setTimeout(() => {
         isUserEditingRef.current = false;
-      }, 2000);
+      }, 5000);
       
       return () => clearTimeout(timeoutId);
     } else {
@@ -164,10 +168,10 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
       isUserEditingRef.current = true;
       lastEditTimeRef.current = Date.now();
       
-      // Resetear el flag después de un breve delay (500ms sin cambios)
+      // Resetear el flag después de un delay más largo (3 segundos sin cambios) para dar más tiempo al usuario
       const timeoutId = setTimeout(() => {
         isUserEditingRef.current = false;
-      }, 500);
+      }, 3000);
       
       return () => clearTimeout(timeoutId);
     }
@@ -205,14 +209,37 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   // Manejar eliminación de pasajero
   const handleRemovePassenger = useCallback(() => {
     if (passengerToRemove !== null) {
-      removePassenger(passengerToRemove);
+      const indexToRemove = passengerToRemove;
+      const wasLastPassenger = indexToRemove === passengers.length - 1;
+      removePassenger(indexToRemove);
+      
+      // Hacer scroll al pasajero que quedó en la posición del eliminado (o al anterior si era el último)
+      // Usar setTimeout para esperar a que React actualice el DOM
+      setTimeout(() => {
+        // Si era el último pasajero, hacer scroll al nuevo último
+        // Si no, hacer scroll al que quedó en esa posición
+        const scrollToIndex = wasLastPassenger 
+          ? Math.max(0, passengers.length - 2) // El nuevo último (o 0 si solo quedaba uno)
+          : Math.min(indexToRemove, passengers.length - 2); // El que quedó en esa posición
+        
+        // Buscar el elemento del pasajero en el DOM usando el atributo data-passenger-index
+        const passengerElement = document.querySelector(
+          `[data-passenger-index="${scrollToIndex}"]`
+        );
+        if (passengerElement) {
+          passengerElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 150);
     }
     setIsClosingModal(true);
     setTimeout(() => {
       setPassengerToRemove(null);
       setIsClosingModal(false);
     }, 200);
-  }, [passengerToRemove, removePassenger]);
+  }, [passengerToRemove, removePassenger, passengers]);
 
   // Manejar cierre del modal
   const handleCloseModal = useCallback(() => {
@@ -264,8 +291,16 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
         hasPregnancyRestriction={hasPregnancyRestriction}
         hasHealthRestriction={hasHealthRestriction}
         minAge={minAge}
+        allowsInfants={
+          // No permitir infantes si la edad mínima es mayor a 3 años
+          (minAge && minAge > 3) 
+            ? false 
+            : (allowsInfants || bookingData?.pricing?.priceInfantFree === true)
+        }
+        infantMaxAge={bookingData?.pricing?.infantMaxAge}
         onPassengerChange={replacePassenger}
         onPassengerValidate={validatePassenger}
+        onMarkFieldAsTouched={markFieldAsTouched}
         onAddPassenger={addPassenger}
         onPassengerRemove={setPassengerToRemove}
       />

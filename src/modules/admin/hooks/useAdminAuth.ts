@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { isTokenExpired } from "@/lib/auth";
 
 const AUTH_STORAGE_KEY = "admin_auth_session";
 const TOKEN_STORAGE_KEY = "admin_auth_tokens";
@@ -102,23 +103,62 @@ export function useAdminAuth() {
     }
   }, [getTokens, saveTokens, clearTokens]);
 
+  // Refs para evitar loops infinitos
+  const isCheckingRef = useRef(false);
+  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   /**
    * Verifica si el usuario está autenticado
    */
   const checkAuth = useCallback(async () => {
+    // Prevenir múltiples verificaciones simultáneas
+    if (isCheckingRef.current) {
+      return;
+    }
+
+    isCheckingRef.current = true;
     const tokens = getTokens();
+    
     if (!tokens?.accessToken) {
       setIsAuthenticated(false);
       setUser(null);
       setIsLoading(false);
+      isCheckingRef.current = false;
       return;
     }
 
+    // Verificar expiración del token antes de hacer la llamada
+    if (isTokenExpired(tokens.accessToken)) {
+      // Token expirado, intentar renovar
+      const refreshed = await refreshAccessToken();
+      if (!refreshed) {
+        // No se pudo renovar, limpiar y desautenticar
+        clearTokens();
+        setIsAuthenticated(false);
+        setUser(null);
+        setIsLoading(false);
+        isCheckingRef.current = false;
+        // Redirigir a login
+        router.push("/admin/login");
+        return;
+      }
+      // Token renovado, continuar con la verificación
+    }
+
     try {
+      const currentTokens = getTokens();
+      if (!currentTokens?.accessToken) {
+        setIsAuthenticated(false);
+        setUser(null);
+        setIsLoading(false);
+        isCheckingRef.current = false;
+        return;
+      }
+
       // Intentar obtener el usuario actual
       const response = await fetch("/api/auth/me", {
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${currentTokens.accessToken}`,
         },
       });
 
@@ -133,7 +173,7 @@ export function useAdminAuth() {
           throw new Error("Invalid response");
         }
       } else if (response.status === 401) {
-        // Token expirado, intentar renovar
+        // Token expirado o inválido, intentar renovar
         const refreshed = await refreshAccessToken();
         if (refreshed) {
           // Reintentar después de renovar
@@ -154,6 +194,12 @@ export function useAdminAuth() {
                   JSON.stringify(retryResult.data.user)
                 );
               }
+            } else if (retryResponse.status === 401) {
+              // Aún expirado después de renovar, desloguear
+              clearTokens();
+              setIsAuthenticated(false);
+              setUser(null);
+              router.push("/admin/login");
             }
           }
         } else {
@@ -161,6 +207,7 @@ export function useAdminAuth() {
           clearTokens();
           setIsAuthenticated(false);
           setUser(null);
+          router.push("/admin/login");
         }
       } else {
         throw new Error("Auth check failed");
@@ -170,15 +217,50 @@ export function useAdminAuth() {
       clearTokens();
       setIsAuthenticated(false);
       setUser(null);
+      router.push("/admin/login");
     } finally {
       setIsLoading(false);
+      isCheckingRef.current = false;
     }
-  }, [getTokens, refreshAccessToken, clearTokens]);
+  }, [getTokens, refreshAccessToken, clearTokens, router]);
 
   // Verificar autenticación al montar
   useEffect(() => {
     checkAuth();
+  }, []); // Solo al montar, sin dependencias para evitar loops
+
+  // Validación periódica del token (cada 5 minutos)
+  // Usar ref para checkAuth para evitar recrear el intervalo
+  const checkAuthRef = useRef(checkAuth);
+  useEffect(() => {
+    checkAuthRef.current = checkAuth;
   }, [checkAuth]);
+
+  useEffect(() => {
+    // Limpiar intervalo anterior si existe
+    if (checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current);
+    }
+
+    // Configurar validación periódica solo si está autenticado
+    if (isAuthenticated) {
+      checkIntervalRef.current = setInterval(() => {
+        const tokens = getTokens();
+        if (!tokens?.accessToken || isTokenExpired(tokens.accessToken)) {
+          // Token expirado, verificar y renovar si es necesario
+          checkAuthRef.current();
+        }
+      }, 5 * 60 * 1000); // Cada 5 minutos
+    }
+
+    // Cleanup
+    return () => {
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+        checkIntervalRef.current = null;
+      }
+    };
+  }, [isAuthenticated, getTokens]); // Removido checkAuth de dependencias
 
   /**
    * Login con email y password

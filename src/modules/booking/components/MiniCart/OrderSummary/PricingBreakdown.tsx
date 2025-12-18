@@ -55,19 +55,21 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
 
       {additionals && additionals.length > 0 && additionalsSubtotal !== undefined && (
         <>
-          {additionals.map((additional) => (
-            <div key={additional.additionalId} className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>
-                {additional.name}
-              </span>
-              <span className={styles.summaryValue}>
-                {formatPriceByCurrency(
-                  (adults * additional.priceAdult) + (childrenCount * additional.priceChild),
-                  currency
-                )}
-              </span>
-            </div>
-          ))}
+          {additionals
+            .filter(additional => additional.currency === currency) // Solo mostrar additionals con la moneda actual
+            .map((additional) => (
+              <div key={additional.additionalId} className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>
+                  {additional.name}
+                </span>
+                <span className={styles.summaryValue}>
+                  {formatPriceByCurrency(
+                    additional.priceAdult, // Precio único (no por pasajero)
+                    currency
+                  )}
+                </span>
+              </div>
+            ))}
         </>
       )}
 

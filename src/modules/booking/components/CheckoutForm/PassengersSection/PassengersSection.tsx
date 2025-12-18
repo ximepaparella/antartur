@@ -13,9 +13,12 @@ interface PassengersSectionProps {
   hasPregnancyRestriction: boolean;
   hasHealthRestriction: boolean;
   minAge?: number | null;
-  onPassengerChange: (index: number, passenger: Passenger) => void;
+  allowsInfants?: boolean;
+  infantMaxAge?: number;
+  onPassengerChange: (index: number, passenger: Passenger, touchedField?: string) => void;
   onPassengerValidate: (index: number) => void;
-  onAddPassenger: (isAdult: boolean) => void;
+  onMarkFieldAsTouched?: (fieldKey: string) => void;
+  onAddPassenger: (isAdult: boolean, isInfant?: boolean) => void;
   onPassengerRemove: (index: number) => void;
 }
 
@@ -28,8 +31,11 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
   hasPregnancyRestriction,
   hasHealthRestriction,
   minAge,
+  allowsInfants = false,
+  infantMaxAge,
   onPassengerChange,
   onPassengerValidate,
+  onMarkFieldAsTouched,
   onAddPassenger,
   onPassengerRemove,
 }) => {
@@ -46,8 +52,11 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
           hasPregnancyRestriction={hasPregnancyRestriction}
           hasHealthRestriction={hasHealthRestriction}
           minAge={minAge}
+          allowsInfants={allowsInfants}
+          infantMaxAge={infantMaxAge}
           onPassengerChange={onPassengerChange}
           onPassengerValidate={onPassengerValidate}
+          onMarkFieldAsTouched={onMarkFieldAsTouched}
           onPassengerRemove={onPassengerRemove}
         />
       </div>
@@ -55,7 +64,9 @@ export const PassengersSection: React.FC<PassengersSectionProps> = ({
       <PassengerActions
         onAddAdult={() => onAddPassenger(true)}
         onAddChild={() => onAddPassenger(false)}
+        onAddInfant={() => onAddPassenger(false, true)}
         minAge={minAge}
+        allowsInfants={allowsInfants}
       />
     </Card>
   );

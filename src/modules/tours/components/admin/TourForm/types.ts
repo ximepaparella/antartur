@@ -47,6 +47,18 @@ export interface Restriction {
   sortOrder?: number;
 }
 
+export interface TourAdditional {
+  id?: string;
+  name: string;
+  description?: string | null;
+  isActive?: boolean;
+  sortOrder?: number;
+  prices?: Array<{
+    currency: string;
+    price: number; // Precio general (no por pasajero)
+  }>;
+}
+
 export interface TourFormData {
   id?: string;
   name?: string;
@@ -59,6 +71,7 @@ export interface TourFormData {
   durationHours?: number | null;
   minAge?: number | null;
   minPassengers?: number | null;
+  allowsInfants?: boolean;
   restrictionText?: string | null;
   isActive?: boolean;
   mondayAvailable?: boolean;
@@ -90,6 +103,7 @@ export interface TourFormData {
   featuredInfos?: FeaturedInfo[];
   testimonials?: Testimonial[];
   restrictions?: Restriction[];
+  additionals?: TourAdditional[];
   // Internal fields (not sent to API)
   departures?: unknown[];
   createdAt?: string;

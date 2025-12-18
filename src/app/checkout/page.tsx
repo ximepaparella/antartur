@@ -9,7 +9,9 @@ import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCart
 import { LoadingOverlay } from "@/components/common/LoadingOverlay/LoadingOverlay";
 import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
-import type { Order, PaymentMethod, Pricing } from "@/lib/types/order";
+import type { Order, PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import type { TourAdditional } from "@/modules/tours/types/tourTypes";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
 import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useCheckoutFlow } from "@/modules/booking/hooks/useCheckoutFlow";
@@ -29,6 +31,7 @@ export default function CheckoutPage() {
     pricing: Pricing;
     timeSlot: { start: string; end: string };
     exceedsAvailability: boolean;
+    additionals?: SelectedAdditional[];
   } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("transferencia");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -66,6 +69,9 @@ export default function CheckoutPage() {
   const [hasPregnancyRestriction, setHasPregnancyRestriction] = useState(false);
   const [hasHealthRestriction, setHasHealthRestriction] = useState(false);
   const [tourMinAge, setTourMinAge] = useState<number | null>(null);
+  const [allowsInfants, setAllowsInfants] = useState(false);
+  const [tourAdditionals, setTourAdditionals] = useState<TourAdditional[]>([]);
+  const { currency } = useCurrency();
 
   useEffect(() => {
     if (bookingData?.tourId) {
@@ -73,6 +79,10 @@ export default function CheckoutPage() {
       toursClient.client.getBySlug(bookingData.tourId, { includeContent: true })
         .then((tour) => {
           if (tour) {
+            // Guardar additionals del tour
+            if (tour.additionals && Array.isArray(tour.additionals)) {
+              setTourAdditionals(tour.additionals);
+            }
             // Concatenar todas las restricciones: restrictionText (legacy) + restrictions (array)
             const restrictionParts: string[] = [];
             if (tour.restrictionText) {
@@ -102,24 +112,27 @@ export default function CheckoutPage() {
             );
             
             // Detectar restricciones de salud/físicas con múltiples variantes
+            // Solo buscar frases específicas para evitar falsos positivos
             const healthKeywords = [
               "restricciones físicas",
               "restricciones médicas",
               "restricciones de salud",
               "problemas de salud",
+              "problemas de columna",
               "dolencias",
-              "columna",
-              "salud",
-              "físicas",
-              "médicas",
               "discapacidad",
               "movilidad reducida",
+              "no recomendado para personas con",
+              "no apto para personas con",
             ];
+            // Solo considerar como restricción de salud si aparece en contexto específico
             setHasHealthRestriction(
               healthKeywords.some(keyword => restrictionLower.includes(keyword))
             );
             
             setTourMinAge(tour.minAge ?? null);
+            // Obtener allowsInfants del tour (puede venir en restrictions o directamente del tour)
+            setAllowsInfants(tour.allowsInfants ?? false);
           }
         })
         .catch((error) => {
@@ -127,6 +140,51 @@ export default function CheckoutPage() {
         });
     }
   }, [bookingData?.tourId]);
+
+  // Actualizar additionals cuando cambia la moneda
+  useEffect(() => {
+    if (bookingData?.additionals && bookingData.additionals.length > 0 && tourAdditionals.length > 0) {
+      // Crear un mapa de additionals por ID para acceso rápido
+      const additionalsMap = new Map(tourAdditionals.map(a => [a.id, a]));
+      
+      // Actualizar cada additional seleccionado con el precio de la nueva moneda
+      const updated = bookingData.additionals.map(selected => {
+        const originalAdditional = additionalsMap.get(selected.additionalId);
+        if (originalAdditional) {
+          const prices = originalAdditional.prices[currency as "ARS" | "USD"];
+          if (prices) {
+            return {
+              ...selected,
+              priceAdult: prices.adult,
+              priceChild: prices.child,
+              currency,
+            };
+          }
+        }
+        return selected;
+      }).filter(selected => {
+        // Filtrar additionals que no tienen precio en la nueva moneda
+        const originalAdditional = additionalsMap.get(selected.additionalId);
+        return originalAdditional?.prices[currency as "ARS" | "USD"];
+      });
+      
+      // Solo actualizar si hay cambios
+      const hasChanges = updated.length !== bookingData.additionals.length || 
+        updated.some((u, i) => {
+          const old = bookingData.additionals![i];
+          return u.currency !== old.currency || u.priceAdult !== old.priceAdult;
+        });
+      
+      if (hasChanges) {
+        const updatedBookingData = {
+          ...bookingData,
+          additionals: updated,
+        };
+        setBookingData(updatedBookingData);
+        savePendingBooking(updatedBookingData);
+      }
+    }
+  }, [currency, tourAdditionals]); // No incluir bookingData.additionals para evitar loops
 
   const handlePaymentMethodChange = (method: PaymentMethod) => {
     setPaymentMethod(method);
@@ -223,6 +281,7 @@ export default function CheckoutPage() {
                 hasPregnancyRestriction={hasPregnancyRestriction}
                 hasHealthRestriction={hasHealthRestriction}
                 minAge={tourMinAge}
+                allowsInfants={allowsInfants}
                 onCheckoutComplete={onCheckoutComplete}
                 onRestrictionViolationsChange={handleRestrictionViolationsChange}
                 onPassengersChange={handlePassengersChange}
@@ -243,6 +302,7 @@ export default function CheckoutPage() {
                   pricing={bookingData.pricing}
                   tourId={bookingData.tourId}
                   exceedsAvailability={bookingData.exceedsAvailability}
+                  additionals={bookingData.additionals}
                   hasRestrictionViolations={hasRestrictionViolations}
                   hasValidationErrors={hasValidationErrors}
                   isProcessing={isProcessing}

@@ -154,6 +154,7 @@ export class TourService {
       quickInfoItems,
       restrictions,
       prices,
+      additionals,
       ...tourFields 
     } = data;
 
@@ -313,10 +314,94 @@ export class TourService {
           }
         }
       }
+
+      // 9. Actualizar additionals si se proporcionan
+      if (additionals !== undefined) {
+        // Obtener IDs de additionals existentes que se están actualizando
+        const existingAdditionalIds = additionals
+          .filter(a => a.id && !a.id.startsWith("temp-"))
+          .map(a => a.id!);
+        
+        // Eliminar additionals que no están en el payload (y sus precios)
+        await tx.tourAdditionalPrice.deleteMany({
+          where: {
+            tourAdditional: {
+              tourId: id,
+              id: {
+                notIn: existingAdditionalIds.length > 0 ? existingAdditionalIds : [],
+              },
+            },
+          },
+        });
+        await tx.tourAdditional.deleteMany({
+          where: {
+            tourId: id,
+            id: {
+              notIn: existingAdditionalIds.length > 0 ? existingAdditionalIds : [],
+            },
+          },
+        });
+
+        // Crear o actualizar additionals del payload
+        for (const additional of additionals) {
+          if (additional.id && !additional.id.startsWith("temp-")) {
+            // Actualizar additional existente
+            const updatedAdditional = await tx.tourAdditional.update({
+              where: { id: additional.id },
+              data: {
+                name: additional.name,
+                description: additional.description ?? null,
+                isActive: additional.isActive ?? true,
+                sortOrder: additional.sortOrder ?? 0,
+              },
+            });
+
+            // Eliminar precios existentes del additional
+            await tx.tourAdditionalPrice.deleteMany({
+              where: { tourAdditionalId: additional.id },
+            });
+
+            // Crear nuevos precios (mapear price general a priceAdult, priceChild igual)
+            if (additional.prices && additional.prices.length > 0) {
+              await tx.tourAdditionalPrice.createMany({
+                data: additional.prices.map(price => ({
+                  tourAdditionalId: updatedAdditional.id,
+                  currency: price.currency,
+                  priceAdult: price.price,
+                  priceChild: price.price, // Precio general aplica a todos
+                })),
+              });
+            }
+          } else {
+            // Crear nuevo additional
+            const newAdditional = await tx.tourAdditional.create({
+              data: {
+                tourId: id,
+                name: additional.name,
+                description: additional.description ?? null,
+                isActive: additional.isActive ?? true,
+                sortOrder: additional.sortOrder ?? 0,
+              },
+            });
+
+            // Crear precios del additional (mapear price general a priceAdult, priceChild igual)
+            if (additional.prices && additional.prices.length > 0) {
+              await tx.tourAdditionalPrice.createMany({
+                data: additional.prices.map(price => ({
+                  tourAdditionalId: newAdditional.id,
+                  currency: price.currency,
+                  priceAdult: price.price,
+                  priceChild: price.price, // Precio general aplica a todos
+                })),
+              });
+            }
+          }
+        }
+      }
     });
     
     // Obtener tour completo con todas las relaciones para la respuesta
-    const tourComplete = await tourRepository.findById(id, true, false, true, true, true);
+    const tourComplete = await tourRepository.findById(id, true, false, true, true, true, true);
     if (!tourComplete) {
       throw new NotFoundError("Tour", id);
     }

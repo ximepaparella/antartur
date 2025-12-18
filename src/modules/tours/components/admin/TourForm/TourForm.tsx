@@ -13,7 +13,7 @@ import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
 import { AvailabilityManager } from "../AvailabilityManager";
 import type { TourFormProps, TabType } from "@/modules/tours/types/admin";
-import type { TourFormData, TourImage, QuickInfoItem, TimelineItem, FeaturedInfo, Testimonial, TourPrice, Restriction } from "./types";
+import type { TourFormData, TourImage, QuickInfoItem, TimelineItem, FeaturedInfo, Testimonial, TourPrice, Restriction, TourAdditional } from "./types";
 import {
   sanitizeImages,
   filterQuickInfoItems,
@@ -32,6 +32,20 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
 
   useEffect(() => {
     if (tour) {
+      // Transformar additionals del formato API al formato del formulario
+      // Mapear priceAdult a price (precio general)
+      const transformedAdditionals = tour.additionals?.map((add: any) => ({
+        id: add.id,
+        name: add.name,
+        description: add.description,
+        isActive: add.isActive ?? true,
+        sortOrder: add.sortOrder ?? 0,
+        prices: add.prices?.map((p: any) => ({
+          currency: p.currency,
+          price: Number(p.priceAdult), // Usar priceAdult como precio general
+        })) || [],
+      })) || [];
+
       // Asegurar que los weekdays tengan valores explícitos al inicializar
       // Los weekdays ahora vienen del backend, pero usamos defaults si no están presentes
       setFormData({
@@ -43,6 +57,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         fridayAvailable: tour.fridayAvailable ?? true,
         saturdayAvailable: tour.saturdayAvailable ?? true,
         sundayAvailable: tour.sundayAvailable ?? true,
+        allowsInfants: tour.allowsInfants ?? false,
+        additionals: transformedAdditionals,
         // Valores por defecto para campos no configurables
         timelineImportantNote: tour.timelineImportantNote || "Itinerario a modo informativo, puede variar de acuerdo a las condiciones climáticas y al grupo.",
         alternativeText: tour.alternativeText || "Consultar precio",
@@ -181,6 +197,17 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         (item: Restriction) => item.text && item.text.trim()
       );
     }
+
+    // Filtrar additionals con campos vacíos (solo nombre es requerido)
+    // También limpiar precios inválidos (NaN o undefined)
+    if (cleanedFormData.additionals) {
+      cleanedFormData.additionals = cleanedFormData.additionals
+        .filter((item: TourAdditional) => item.name && item.name.trim())
+        .map((item: TourAdditional) => ({
+          ...item,
+          prices: item.prices?.filter((p) => p.price !== undefined && !isNaN(p.price) && p.price >= 0) || [],
+        }));
+    }
     
     // Eliminar campos que no deben enviarse en el update
     const { id, departures, createdAt, updatedAt, ...dataToSave } = cleanedFormData;
@@ -206,6 +233,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     if (dataToSave.featuredInfos && dataToSave.featuredInfos.length === 0) {
       delete dataToSave.featuredInfos;
     }
+    if (dataToSave.additionals && dataToSave.additionals.length === 0) {
+      delete dataToSave.additionals;
+    }
     if (dataToSave.testimonials && dataToSave.testimonials.length === 0) {
       delete dataToSave.testimonials;
     }
@@ -218,6 +248,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     }
     if (dataToSave.prices && dataToSave.prices.length === 0) {
       delete dataToSave.prices;
+    }
+    // Si el array de additionals queda vacío, enviarlo como [] para que el backend elimine las existentes
+    if (dataToSave.additionals && dataToSave.additionals.length === 0) {
+      dataToSave.additionals = [];
     }
     
     onSave(dataToSave);
@@ -293,6 +327,17 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 onChange={(e) => updateField("minPassengers", e.target.value ? Number(e.target.value) : null)}
                 disabled={!isEditing}
               />
+              <div className={styles.checkbox}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={formData.allowsInfants || false}
+                    onChange={(e) => updateField("allowsInfants", e.target.checked)}
+                    disabled={!isEditing}
+                  />
+                  <span>Acepta infantes (0-3 años, sin costo)</span>
+                </label>
+              </div>
               <div className={styles.checkbox}>
                 <label>
                   <input
@@ -523,7 +568,141 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   />
                 </div>
               </div>
-                </div>
+            </div>
+              </Card>
+            </div>
+
+            <div className={styles.additionalsSection}>
+              <Card title="Opciones Adicionales">
+                <p className={styles.sectionDescription}>
+                  Agrega opciones adicionales que los usuarios pueden seleccionar al hacer una reserva (ej: "Con Canoas").
+                </p>
+                <ArrayFieldManager
+                  title=""
+                  items={formData.additionals || []}
+                  onAdd={() => {
+                    const newItem: TourAdditional = {
+                      id: `temp-${Date.now()}`,
+                      name: "",
+                      description: null,
+                      isActive: true,
+                      sortOrder: (formData.additionals?.length || 0),
+                      prices: [
+                        { currency: "ARS", price: 0 },
+                        { currency: "USD", price: 0 },
+                      ],
+                    };
+                    updateField("additionals", [...(formData.additionals || []), newItem]);
+                  }}
+                  onUpdate={(index, item) => {
+                    const updated = [...(formData.additionals || [])];
+                    updated[index] = item;
+                    updateField("additionals", updated);
+                  }}
+                  onDelete={(index) => {
+                    const filtered = (formData.additionals || []).filter((_, i: number) => i !== index);
+                    updateField("additionals", filtered);
+                  }}
+                  renderItem={(item, index, isEditingItem, onUpdate) => (
+                    <div className={styles.additionalItem}>
+                      <Input
+                        label={`Nombre del adicional ${index + 1} *`}
+                        value={item.name || ""}
+                        onChange={(e) => onUpdate({ ...item, name: e.target.value })}
+                        disabled={!isEditingItem || !isEditing}
+                        required
+                        placeholder="Ej: Con Canoas"
+                      />
+                      <Textarea
+                        label="Descripción (opcional)"
+                        value={item.description || ""}
+                        onChange={(e) => onUpdate({ ...item, description: e.target.value || null })}
+                        disabled={!isEditingItem || !isEditing}
+                        rows={2}
+                        placeholder="Descripción del adicional"
+                      />
+                      <div className={styles.priceSection}>
+                        <div className={styles.formGrid}>
+                          <div className={styles.priceSection}>
+                            <h4 className={styles.sectionTitle}>Precio ARS</h4>
+                            <Input
+                              label="Precio (ARS)"
+                              type="number"
+                              value={
+                                item.prices?.find((p) => p.currency === "ARS")?.price || ""
+                              }
+                              onChange={(e) => {
+                                const prices = item.prices || [];
+                                const arsIndex = prices.findIndex((p) => p.currency === "ARS");
+                                const updatedPrices = [...prices];
+                                const priceValue = e.target.value === "" ? 0 : Number(e.target.value);
+                                if (isNaN(priceValue)) return; // No actualizar si es NaN
+                                if (arsIndex >= 0) {
+                                  updatedPrices[arsIndex] = {
+                                    ...updatedPrices[arsIndex],
+                                    price: priceValue,
+                                  };
+                                } else {
+                                  updatedPrices.push({
+                                    currency: "ARS",
+                                    price: priceValue,
+                                  });
+                                }
+                                onUpdate({ ...item, prices: updatedPrices });
+                              }}
+                              disabled={!isEditingItem || !isEditing}
+                              placeholder="0"
+                            />
+                          </div>
+
+                          <div className={styles.priceSection}>
+                            <h4 className={styles.sectionTitle}>Precio USD</h4>
+                            <Input
+                              label="Precio (USD)"
+                              type="number"
+                              value={
+                                item.prices?.find((p) => p.currency === "USD")?.price || ""
+                              }
+                              onChange={(e) => {
+                                const prices = item.prices || [];
+                                const usdIndex = prices.findIndex((p) => p.currency === "USD");
+                                const updatedPrices = [...prices];
+                                const priceValue = e.target.value === "" ? 0 : Number(e.target.value);
+                                if (isNaN(priceValue)) return; // No actualizar si es NaN
+                                if (usdIndex >= 0) {
+                                  updatedPrices[usdIndex] = {
+                                    ...updatedPrices[usdIndex],
+                                    price: priceValue,
+                                  };
+                                } else {
+                                  updatedPrices.push({
+                                    currency: "USD",
+                                    price: priceValue,
+                                  });
+                                }
+                                onUpdate({ ...item, prices: updatedPrices });
+                              }}
+                              disabled={!isEditingItem || !isEditing}
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  getDefaultItem={() => ({
+                    id: `temp-${Date.now()}`,
+                    name: "",
+                    description: null,
+                    isActive: true,
+                    sortOrder: formData.additionals?.length || 0,
+                    prices: [
+                      { currency: "ARS", price: 0 },
+                      { currency: "USD", price: 0 },
+                    ],
+                  })}
+                  disabled={!isEditing}
+                />
               </Card>
             </div>
           </Card>

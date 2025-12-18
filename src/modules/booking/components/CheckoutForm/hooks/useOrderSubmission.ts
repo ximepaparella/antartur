@@ -129,6 +129,14 @@ export function useOrderSubmission({
           ? bookingData.pricing as Pricing
           : { ...bookingData.pricing, currencyCode: "ARS" };
 
+        // Calcular infantes para la orden local
+        const infants = passengers.filter(p => {
+          if (!p.fechaNacimiento) return false;
+          const age = calculateAge(p.fechaNacimiento);
+          const priceType = getPassengerPriceType(age, pricing);
+          return priceType === "INFANT";
+        }).length;
+
         // Crear orden para localStorage (compatibilidad)
         const order: Order = {
           orderId: generateOrderId(),
@@ -137,8 +145,10 @@ export function useOrderSubmission({
           date: bookingData.date,
           adults: bookingData.adults,
           children: bookingData.children,
+          infants,
           pricing,
           timeSlot: bookingData.timeSlot,
+          additionals: bookingData.additionals,
           passengers,
           billingInfo,
           paymentMethod,
@@ -149,6 +159,12 @@ export function useOrderSubmission({
 
         // Crear orden (API o localStorage)
         if (useAPI) {
+          // Convertir pasajeros al formato de la API
+          const apiPassengers = passengers.map(p => convertPassengerToAPI(p, pricing));
+          
+          // Calcular numInfants basado en los pasajeros convertidos
+          const numInfants = apiPassengers.filter(p => p.type === "INFANT").length;
+          
           // Convertir datos al formato de la API
           const apiData: CreateOrderRequest = {
             tourId: bookingData.tourId, // slug
@@ -156,11 +172,12 @@ export function useOrderSubmission({
             startTime: bookingData.timeSlot.start,
             numAdults: bookingData.adults,
             numChildren: bookingData.children,
+            numInfants,
             currency: pricing.currencyCode,
             customerName: `${billingInfo.nombreCompleto} ${billingInfo.apellidos}`.trim(),
             customerEmail: billingInfo.email,
             customerPhone: billingInfo.telefono,
-            passengers: passengers.map(p => convertPassengerToAPI(p, pricing)),
+            passengers: apiPassengers,
             notes: billingInfo.notasPedido,
             paymentMethod,
             exceedsAvailability: bookingData.exceedsAvailability,

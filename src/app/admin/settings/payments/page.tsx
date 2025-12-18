@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { PaymentGatewayCard, PaymentGatewayData, PendingGatewayCard, PendingGatewayData } from "@/modules/admin/components/PaymentGatewayCard";
+import { 
+  PaymentGatewayCard, 
+  PaymentGatewayData, 
+  PendingGatewayCard, 
+  PendingGatewayData,
+  BankTransferCard,
+  BankTransferData as BankTransferDataType
+} from "@/modules/admin/components/PaymentGatewayCard";
 import { Message } from "@/components/common/Message";
 import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
 import styles from "./page.module.scss";
@@ -36,6 +43,8 @@ export default function PaymentSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [bankTransfer, setBankTransfer] = useState<BankTransferDataType | null>(null);
+  const [isLoadingBankTransfer, setIsLoadingBankTransfer] = useState(true);
 
   const fetchGateways = useCallback(async () => {
     try {
@@ -56,9 +65,69 @@ export default function PaymentSettingsPage() {
     }
   }, []);
 
+  const fetchBankTransfer = useCallback(async () => {
+    setIsLoadingBankTransfer(true);
+    try {
+      const headers = createAuthHeaders({ "Content-Type": "application/json" });
+      
+      const response = await fetch("/api/admin/settings/bank-transfer", {
+        headers,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Bank transfer API error:", response.status, errorText);
+        // Si es 401, probablemente el token expiró, no crear datos por defecto
+        if (response.status === 401) {
+          throw new Error("Unauthorized");
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setBankTransfer(data.data);
+      } else {
+        console.error("Error en respuesta de bank-transfer:", data.error);
+        // Crear datos por defecto para que el componente se muestre
+        setBankTransfer({
+          id: "default",
+          isActive: false,
+          accountName: "",
+          accountNumber: "",
+          bank: "",
+          cuit: "",
+          cbu: "",
+          alias: "",
+          updatedAt: new Date().toISOString(),
+        });
+        setError(data.error?.detail || "Error al cargar la configuración de transferencia bancaria");
+      }
+    } catch (err) {
+      console.error("Error al cargar configuración de transferencia bancaria:", err);
+      // Crear un objeto por defecto para que el componente se muestre
+      // Esto permite que el usuario pueda configurar la transferencia bancaria incluso si falla el fetch inicial
+      setBankTransfer({
+        id: "default",
+        isActive: false,
+        accountName: "",
+        accountNumber: "",
+        bank: "",
+        cuit: "",
+        cbu: "",
+        alias: "",
+        updatedAt: new Date().toISOString(),
+      });
+    } finally {
+      setIsLoadingBankTransfer(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchGateways();
-  }, [fetchGateways]);
+    fetchBankTransfer();
+  }, [fetchGateways, fetchBankTransfer]);
 
   const handleToggleActive = async (provider: string, isActive: boolean) => {
     try {
@@ -128,6 +197,56 @@ export default function PaymentSettingsPage() {
       return data.data;
     } else {
       throw new Error(data.error?.detail || "Error al probar la conexión");
+    }
+  };
+
+  const handleToggleBankTransfer = async (isActive: boolean) => {
+    try {
+      const response = await fetch("/api/admin/settings/bank-transfer", {
+        method: "PATCH",
+        headers: createAuthHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({ isActive }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setBankTransfer(data.data);
+        setSuccessMessage(
+          `Transferencia bancaria ${isActive ? "activada" : "desactivada"} correctamente`
+        );
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        setError(data.error?.detail || "Error al actualizar la transferencia bancaria");
+        setTimeout(() => setError(null), 5000);
+      }
+    } catch (err) {
+      setError("Error de conexión al actualizar la transferencia bancaria");
+      setTimeout(() => setError(null), 5000);
+    }
+  };
+
+  const handleSaveBankTransfer = async (formData: Partial<BankTransferDataType>) => {
+    try {
+      const response = await fetch("/api/admin/settings/bank-transfer", {
+        method: "PATCH",
+        headers: createAuthHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setBankTransfer(data.data);
+        setSuccessMessage("Datos bancarios actualizados correctamente");
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        setError(data.error?.detail || "Error al actualizar los datos bancarios");
+        setTimeout(() => setError(null), 5000);
+      }
+    } catch (err) {
+      setError("Error de conexión al actualizar los datos bancarios");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -216,6 +335,25 @@ export default function PaymentSettingsPage() {
         <div className={styles.emptyState}>
           <p>No hay gateways de pago configurados.</p>
           <p>Ejecuta el seed de la base de datos para crear los gateways iniciales.</p>
+        </div>
+      )}
+
+      <h2 className={styles.sectionTitle}>Transferencia Bancaria</h2>
+      {isLoadingBankTransfer ? (
+        <div className={styles.emptyState}>
+          <p>Cargando configuración de transferencia bancaria...</p>
+        </div>
+      ) : bankTransfer ? (
+        <div className={styles.gatewaysGrid}>
+          <BankTransferCard
+            bankTransfer={bankTransfer}
+            onToggleActive={handleToggleBankTransfer}
+            onSave={handleSaveBankTransfer}
+          />
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <p>No se pudo cargar la configuración de transferencia bancaria.</p>
         </div>
       )}
 

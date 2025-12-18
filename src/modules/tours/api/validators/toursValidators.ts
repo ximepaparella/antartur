@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { paginationSchema, commonFiltersSchema, idSchema, slugSchema, currencyCodeSchema, priceSchema } from "@/lib/validation/schemas";
+import { createTourAdditionalSchema } from "./tourAdditionalValidators";
 
 /**
  * Schema para imagen de tour
@@ -99,6 +100,7 @@ export const createTourSchema = z.object({
   // Restricciones
   minAge: z.coerce.number().int().min(0).optional().nullable(),
   minPassengers: z.coerce.number().int().min(1).optional().nullable(),
+  allowsInfants: z.boolean().optional().default(false),
 });
 
 export type CreateTourInput = z.infer<typeof createTourSchema>;
@@ -130,6 +132,7 @@ export const updateTourSchema = z.object({
   // Restricciones - nullable en Prisma (con preprocess para valores vacíos)
   minAge: nullableNumber.optional(),
   minPassengers: nullableNumber.optional(),
+  allowsInfants: z.boolean().optional(),
   // Relaciones opcionales para actualización
   images: z.array(tourImageSchema).optional(),
   timelineItems: z.array(timelineItemSchema).optional(),
@@ -140,6 +143,22 @@ export const updateTourSchema = z.object({
   restrictions: z.array(tourRestrictionSchema).optional(),
   // Precios
   prices: z.array(tourPriceSchema).optional(),
+  // Additionals - schema simplificado para update de tour (tourId se asigna automáticamente)
+  additionals: z.array(
+    z.object({
+      id: idSchema.optional(), // Para updates, omitir para crear nuevos
+      name: z.string().min(1, "Name is required").max(200),
+      description: z.string().optional().nullable(),
+      isActive: z.boolean().default(true),
+      sortOrder: z.coerce.number().int().min(0).default(0),
+      prices: z.array(
+        z.object({
+          currency: currencyCodeSchema,
+          price: priceSchema, // Precio general (no por pasajero)
+        })
+      ).optional(),
+    })
+  ).optional(),
   // SEO fields - nullable en Prisma
   metaTitle: z.string().max(200).optional().nullable(),
   metaDescription: z.string().optional().nullable(),

@@ -17,6 +17,13 @@ export interface BookingData {
   pricing: { currencyCode?: string; priceAdult: number; priceChild: number };
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
+  additionals?: Array<{
+    additionalId: string;
+    name: string;
+    priceAdult: number;
+    priceChild: number;
+    currency: string;
+  }>;
 }
 
 interface UseCheckoutInitializationReturn {
@@ -58,9 +65,15 @@ export function useCheckoutInitialization(): UseCheckoutInitializationReturn {
       // Inicializar pasajeros
       const passengers: Passenger[] = [];
 
+      // Función helper para generar ID único
+      const generatePassengerId = () => {
+        return `passenger-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+      };
+
       // Crear pasajeros adultos
       for (let i = 0; i < pending.adults; i++) {
         passengers.push({
+          id: generatePassengerId(),
           nombreCompleto: "",
           fechaNacimiento: "",
           documento: "",
@@ -76,6 +89,7 @@ export function useCheckoutInitialization(): UseCheckoutInitializationReturn {
       // Crear pasajeros niños
       for (let i = 0; i < pending.children; i++) {
         passengers.push({
+          id: generatePassengerId(),
           nombreCompleto: "",
           fechaNacimiento: "",
           documento: "",
@@ -83,6 +97,22 @@ export function useCheckoutInitialization(): UseCheckoutInitializationReturn {
           telefono: "",
           tieneRestriccionesAlimentarias: false,
           esAdulto: false,
+        });
+      }
+
+      // Crear pasajeros infantes
+      const infants = pending.infants || 0;
+      for (let i = 0; i < infants; i++) {
+        passengers.push({
+          id: generatePassengerId(),
+          nombreCompleto: "",
+          fechaNacimiento: "",
+          documento: "",
+          direccion: "",
+          telefono: "",
+          tieneRestriccionesAlimentarias: false,
+          esAdulto: false,
+          esInfante: true,
         });
       }
 

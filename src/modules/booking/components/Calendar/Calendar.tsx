@@ -28,6 +28,8 @@ interface CalendarProps {
   minAge?: number | null;
   /** Mínimo de pasajeros requeridos */
   minPassengers?: number | null;
+  /** Si el tour acepta infantes (0-3 años) */
+  allowsInfants?: boolean;
   /** Texto de restricciones del tour */
   restrictionText?: string | null;
 }
@@ -46,6 +48,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   additionals,
   minAge,
   minPassengers,
+  allowsInfants,
   restrictionText,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -121,8 +124,10 @@ export const Calendar: React.FC<CalendarProps> = ({
           pricing={pricing}
           adults={bookingFlow.adults}
           childrenCount={bookingFlow.children}
+          infantsCount={bookingFlow.infants}
           onAdultsChange={bookingFlow.setAdults}
           onChildrenChange={bookingFlow.setChildren}
+          onInfantsChange={bookingFlow.setInfants}
           onClose={handleCloseModal}
           onBooking={bookingFlow.handleBooking}
           exceedsAvailability={bookingFlow.exceedsAvailability}
@@ -130,7 +135,9 @@ export const Calendar: React.FC<CalendarProps> = ({
           additionals={additionals}
           minAge={minAge}
           minPassengers={minPassengers}
+          allowsInfants={allowsInfants}
           restrictionText={restrictionText}
+          onAdditionalsChange={bookingFlow.setAdditionals}
         />
       )}
     </>

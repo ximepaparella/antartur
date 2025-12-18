@@ -36,6 +36,7 @@ interface TourFullData {
   timelineImportantNote: string | null;
   minAge: number | null;
   minPassengers: number | null;
+  allowsInfants: boolean;
   // Weekdays
   mondayAvailable: boolean;
   tuesdayAvailable: boolean;
@@ -90,6 +91,18 @@ interface TourFullData {
     id: string;
     text: string;
     sortOrder: number;
+  }>;
+  additionals?: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    isActive: boolean;
+    sortOrder: number;
+    prices?: Array<{
+      currency: string;
+      priceAdult: number;
+      priceChild: number;
+    }>;
   }>;
 }
 

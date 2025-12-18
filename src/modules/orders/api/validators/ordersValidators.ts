@@ -16,6 +16,7 @@ export const createOrderSchema = z.object({
   startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // HH:mm
   numAdults: z.coerce.number().int().positive("Number of adults must be positive"),
   numChildren: z.coerce.number().int().min(0, "Number of children cannot be negative"),
+  numInfants: z.coerce.number().int().min(0, "Number of infants cannot be negative").optional(),
   currency: currencyCodeSchema,
   customerName: z.string().min(1, "Customer name is required").max(200),
   customerEmail: emailSchema,

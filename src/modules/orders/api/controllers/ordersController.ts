@@ -80,6 +80,7 @@ export class OrdersController {
       departureId,
       numAdults: data.numAdults,
       numChildren: data.numChildren,
+      numInfants: data.numInfants || 0,
       currency: data.currency,
       customerName: data.customerName,
       customerEmail: data.customerEmail,

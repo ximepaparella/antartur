@@ -134,6 +134,18 @@ export interface UpdateTourBasicInput {
 /**
  * Input completo para actualizar tour incluyendo relaciones (para el servicio)
  */
+export interface TourAdditionalInput {
+  id?: string; // Para updates, omitir para crear nuevos
+  name: string;
+  description?: string | null;
+  isActive?: boolean;
+  sortOrder?: number;
+  prices?: Array<{
+    currency: string;
+    price: number; // Precio general (no por pasajero)
+  }>;
+}
+
 export interface UpdateTourInput extends UpdateTourBasicInput {
   // Relaciones
   images?: TourImageInput[];
@@ -144,6 +156,8 @@ export interface UpdateTourInput extends UpdateTourBasicInput {
   restrictions?: TourRestrictionInput[];
   // Precios
   prices?: TourPriceInput[];
+  // Additionals
+  additionals?: TourAdditionalInput[];
 }
 
 export interface TourPrice {
