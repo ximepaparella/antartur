@@ -401,7 +401,7 @@ export class TourService {
     });
     
     // Obtener tour completo con todas las relaciones para la respuesta
-    const tourComplete = await tourRepository.findById(id, true, false, true, true, true, true);
+    const tourComplete = await tourRepository.findById(id, true, false, true, true, true);
     if (!tourComplete) {
       throw new NotFoundError("Tour", id);
     }

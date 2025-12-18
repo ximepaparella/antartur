@@ -10,7 +10,7 @@ import { OrderSummaryCard } from "@/components/common/OrderSummaryCard";
 import { PaymentDetails } from "@/components/common/PaymentDetails";
 import { getCompletedOrderData, type CompletedOrderData } from "@/lib/utils/orderStorage";
 import { generateOrderWhatsAppLink } from "@/lib/utils/whatsapp";
-import type { OrderWithBookingsResponse } from "@/modules/orders/api/dto/ordersDto";
+import type { OrderFullResponse } from "@/modules/orders/api/dto/ordersDto";
 import styles from "./page.module.scss";
 
 export default function CheckoutSuccessPage() {
@@ -45,7 +45,7 @@ export default function CheckoutSuccessPage() {
           throw new Error("Orden no encontrada");
         }
 
-        const order: OrderWithBookingsResponse = result.data;
+        const order: OrderFullResponse = result.data;
 
         // Mapear datos de la BD al formato esperado
         const booking = order.bookings?.[0];

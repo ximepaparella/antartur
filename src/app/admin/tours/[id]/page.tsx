@@ -93,15 +93,14 @@ interface TourFullData {
     sortOrder: number;
   }>;
   additionals?: Array<{
-    id: string;
+    id?: string;
     name: string;
-    description: string | null;
-    isActive: boolean;
-    sortOrder: number;
+    description?: string | null;
+    isActive?: boolean;
+    sortOrder?: number;
     prices?: Array<{
       currency: string;
-      priceAdult: number;
-      priceChild: number;
+      price: number; // Precio general (no por pasajero)
     }>;
   }>;
 }

@@ -87,11 +87,15 @@ export interface CreateTourDto {
     sortOrder?: number;
   }>;
   additionals?: Array<{
-    additionalId: string;
+    id?: string; // Para updates, omitir para crear nuevos
     name: string;
-    priceAdult: number;
-    priceChild: number;
-    currency: string;
+    description?: string | null;
+    isActive?: boolean;
+    sortOrder?: number;
+    prices?: Array<{
+      currency: string;
+      price: number; // Precio general (no por pasajero)
+    }>;
   }>;
 }
 

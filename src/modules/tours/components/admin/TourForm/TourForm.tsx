@@ -232,8 +232,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
           return {
             ...item,
             prices: pricesArray,
-          };
-        });
+          } as any; // Type assertion necesario porque transformamos el formato
+        }) as any;
     }
     
     // Eliminar campos que no deben enviarse en el update
@@ -614,10 +614,10 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       description: null,
                       isActive: true,
                       sortOrder: (formData.additionals?.length || 0),
-                      prices: [
-                        { currency: "ARS", price: 0 },
-                        { currency: "USD", price: 0 },
-                      ],
+                      prices: {
+                        ARS: { adult: 0, child: 0 },
+                        USD: { adult: 0, child: 0 },
+                      },
                     };
                     updateField("additionals", [...(formData.additionals || []), newItem]);
                   }}

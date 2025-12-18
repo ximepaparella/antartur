@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { Passenger, BillingInfo } from "@/lib/types/order";
+import type { Passenger, BillingInfo, Pricing } from "@/lib/types/order";
 import { getPendingBooking } from "@/lib/utils/orderStorage";
 
 export interface BookingData {
@@ -14,7 +14,7 @@ export interface BookingData {
   date: string;
   adults: number;
   children: number;
-  pricing: { currencyCode?: string; priceAdult: number; priceChild: number };
+  pricing: Pricing;
   timeSlot: { start: string; end: string };
   exceedsAvailability: boolean;
   additionals?: Array<{
