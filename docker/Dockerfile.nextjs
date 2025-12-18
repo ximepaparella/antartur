@@ -54,9 +54,9 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 # Copy prisma binary for CLI (migrations)
 COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
 
-# Crear directorio de imágenes y dar permisos de escritura al usuario nextjs
-RUN mkdir -p ./public/images/tours ./public/images/testimonials && \
-    chown -R nextjs:nodejs ./public/images
+# Crear directorios necesarios y dar permisos de escritura al usuario nextjs
+RUN mkdir -p ./public/images/tours ./public/images/testimonials ./.next/cache && \
+    chown -R nextjs:nodejs ./public/images ./.next
 
 USER nextjs
 

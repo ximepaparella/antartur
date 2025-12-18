@@ -1,7 +1,56 @@
 /**
- * API Route para gestionar configuración de transferencia bancaria
- * GET: Obtener configuración actual
- * PATCH: Actualizar configuración
+ * @swagger
+ * /api/admin/settings/bank-transfer:
+ *   get:
+ *     summary: Obtener configuración de transferencia bancaria
+ *     tags: [Admin Settings]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Configuración obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/BankTransfer'
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: No autorizado (requiere rol ADMIN)
+ *   patch:
+ *     summary: Actualizar configuración de transferencia bancaria
+ *     tags: [Admin Settings]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateBankTransferInput'
+ *     responses:
+ *       200:
+ *         description: Configuración actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/BankTransfer'
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: No autorizado (requiere rol ADMIN)
  */
 
 import { NextRequest } from "next/server";
@@ -78,8 +127,16 @@ export const PATCH = withAuth(
 
       const body = await request.json();
       
+      // Convertir strings vacíos a undefined para que los campos opcionales funcionen correctamente
+      const cleanedBody = Object.fromEntries(
+        Object.entries(body).map(([key, value]) => [
+          key,
+          typeof value === "string" && value.trim() === "" ? undefined : value,
+        ])
+      );
+      
       // Validar datos
-      const validatedData = updateBankTransferSchema.parse(body);
+      const validatedData = updateBankTransferSchema.parse(cleanedBody);
 
       // Buscar o crear configuración
       let bankTransfer = await prisma.bankTransfer.findFirst();

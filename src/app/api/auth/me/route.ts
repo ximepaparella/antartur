@@ -4,13 +4,37 @@
  *   get:
  *     summary: Obtener usuario actual
  *     tags: [Auth]
+ *     description: Obtiene la información del usuario autenticado actual. Requiere token JWT válido.
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Datos del usuario
+ *         description: Datos del usuario obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
  *       401:
- *         description: No autenticado
+ *         description: No autenticado o token inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "No autenticado"
  */
 
 import { NextRequest } from "next/server";

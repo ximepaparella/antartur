@@ -1,16 +1,63 @@
 /**
- * Endpoint de cron para cancelar órdenes expiradas
- * Protegido por header de autorización o secret de Vercel Cron
+ * @swagger
+ * /api/cron/cancel-expired-orders:
+ *   get:
+ *     summary: Cancelar órdenes expiradas (Cron Job)
+ *     tags: [Cron Jobs]
+ *     description: Cancela automáticamente las órdenes que han expirado. Ejecutar cada hora. Requiere autenticación con CRON_SECRET.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: secret
+ *         schema:
+ *           type: string
+ *         description: CRON_SECRET como query parameter (alternativa al header Authorization)
+ *     responses:
+ *       200:
+ *         description: Órdenes canceladas exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                   example: "Procesadas 5 órdenes"
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: No autorizado (CRON_SECRET inválido)
+ *   post:
+ *     summary: Cancelar órdenes expiradas (método POST alternativo)
+ *     tags: [Cron Jobs]
+ *     description: Versión POST del endpoint para compatibilidad con algunos sistemas de cron
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: secret
+ *         schema:
+ *           type: string
+ *         description: CRON_SECRET como query parameter
+ *     responses:
+ *       200:
+ *         description: Órdenes canceladas exitosamente
+ *       401:
+ *         description: No autorizado
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { cancelExpiredOrders } from "@/modules/orders/domain/orderService";
 
 export const dynamic = "force-dynamic";
-
-/**
- * Verifica que la request viene de Vercel Cron o tiene el secret correcto
- */
 function isAuthorized(request: NextRequest): boolean {
   // Vercel Cron envía un header Authorization con el secret
   const authHeader = request.headers.get("authorization");

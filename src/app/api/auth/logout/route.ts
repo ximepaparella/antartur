@@ -4,6 +4,9 @@
  *   post:
  *     summary: Cerrar sesión (invalidar refresh token)
  *     tags: [Auth]
+ *     description: Invalida el refresh token proporcionado, cerrando la sesión del usuario. Requiere autenticación.
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -12,9 +15,25 @@
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 description: Refresh token a invalidar (opcional, también se puede invalidar desde cookies)
  *     responses:
  *       200:
- *         description: Logout exitoso
+ *         description: Sesión cerrada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: "Sesión cerrada correctamente"
+ *       401:
+ *         description: No autenticado
  */
 
 import { NextRequest } from "next/server";

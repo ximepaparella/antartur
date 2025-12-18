@@ -4,6 +4,8 @@
  *   get:
  *     summary: Obtener configuración de un gateway específico
  *     tags: [Admin Settings]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: provider
@@ -11,12 +13,30 @@
  *         schema:
  *           type: string
  *           enum: [PAYPAL, PAYWAY]
+ *         description: Proveedor de pago (PAYPAL o PAYWAY)
  *     responses:
  *       200:
  *         description: Gateway obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/PaymentGateway'
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: No autorizado (requiere rol ADMIN)
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  *   patch:
  *     summary: Actualizar configuración de un gateway
  *     tags: [Admin Settings]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: provider
@@ -24,20 +44,33 @@
  *         schema:
  *           type: string
  *           enum: [PAYPAL, PAYWAY]
+ *         description: Proveedor de pago (PAYPAL o PAYWAY)
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               isActive:
- *                 type: boolean
- *               isSandbox:
- *                 type: boolean
+ *             $ref: '#/components/schemas/UpdatePaymentGatewayInput'
  *     responses:
  *       200:
  *         description: Gateway actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/PaymentGateway'
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: No autorizado (requiere rol ADMIN)
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 
 import { NextRequest } from "next/server";

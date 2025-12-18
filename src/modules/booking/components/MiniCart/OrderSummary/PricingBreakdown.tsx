@@ -53,7 +53,7 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
         </div>
       )}
 
-      {additionals && additionals.length > 0 && additionalsSubtotal !== undefined && (
+      {additionals && additionals.length > 0 && (
         <>
           {additionals
             .filter(additional => additional.currency === currency) // Solo mostrar additionals con la moneda actual

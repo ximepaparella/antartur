@@ -1,6 +1,38 @@
 /**
- * API Route pública para obtener datos bancarios
- * GET: Obtiene los datos bancarios si la transferencia está activa
+ * @swagger
+ * /api/bank-details:
+ *   get:
+ *     summary: Obtener datos bancarios para transferencia
+ *     tags: [Payments]
+ *     description: Retorna los datos bancarios si la transferencia está activa. Si no está activa, retorna 404.
+ *     responses:
+ *       200:
+ *         description: Datos bancarios obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/BankDetailsResponse'
+ *       404:
+ *         description: Transferencia bancaria no disponible
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Bank transfer is not available"
+ *                 code:
+ *                   type: string
+ *                   example: "NOT_AVAILABLE"
  */
 
 import { NextRequest } from "next/server";
@@ -9,11 +41,6 @@ import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { successResponse, errorResponse } from "@/lib/api/response";
 
 export const dynamic = "force-dynamic";
-
-/**
- * GET /api/bank-details
- * Obtiene los datos bancarios si la transferencia está activa
- */
 export const GET = withControllerErrorHandler(async (request: NextRequest) => {
   const bankTransfer = await prisma.bankTransfer.findFirst({
     where: { isActive: true },
