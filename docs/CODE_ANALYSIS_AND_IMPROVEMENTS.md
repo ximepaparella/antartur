@@ -1,25 +1,36 @@
 # Antartur - Code Analysis & Improvement Recommendations
 
-**Version:** 2.3  
-**Analysis Date:** December 2024  
-**Last Updated:** December 2024  
-**Analyst:** Technical Architecture Team
+**Versión:** 3.0  
+**Fecha de Análisis:** Enero 2025  
+**Última actualización:** Enero 2025  
+**Analista:** Technical Architecture Team
 
 ---
 
-## Table of Contents
+## Tabla de Contenidos
 
 1. [Executive Summary](#executive-summary)
-2. [Architecture Analysis](#architecture-analysis)
-3. [Code Quality Assessment](#code-quality-assessment)
-4. [Performance Analysis](#performance-analysis)
-5. [Scalability Concerns](#scalability-concerns)
-6. [Technical Debt Inventory](#technical-debt-inventory)
-7. [Security Analysis](#security-analysis)
-8. [Improvement Recommendations](#improvement-recommendations)
-9. [Refactoring Plan](#refactoring-plan)
-10. [Priority Matrix](#priority-matrix)
-11. [Completed Improvements](#completed-improvements)
+2. [FRONTEND - Análisis Completo](#frontend---análisis-completo)
+   - [Arquitectura Frontend](#arquitectura-frontend)
+   - [Código Frontend](#código-frontend)
+   - [Performance Frontend](#performance-frontend)
+   - [Seguridad Frontend](#seguridad-frontend)
+   - [Testing Frontend](#testing-frontend)
+   - [Mejoras Frontend Priorizadas](#mejoras-frontend-priorizadas)
+3. [BACKEND - Análisis Completo](#backend---análisis-completo)
+   - [Arquitectura Backend](#arquitectura-backend)
+   - [Código Backend](#código-backend)
+   - [Performance Backend](#performance-backend)
+   - [Seguridad Backend](#seguridad-backend)
+   - [Testing Backend](#testing-backend)
+   - [Mejoras Backend Priorizadas](#mejoras-backend-priorizadas)
+4. [SEGURIDAD - Análisis Exhaustivo](#seguridad---análisis-exhaustivo)
+   - [Vulnerabilidades Frontend](#vulnerabilidades-frontend)
+   - [Vulnerabilidades Backend](#vulnerabilidades-backend)
+   - [Recomendaciones de Seguridad](#recomendaciones-de-seguridad)
+   - [Checklist de Seguridad](#checklist-de-seguridad)
+5. [Mejoras Completadas](#mejoras-completadas)
+6. [Matriz de Priorización General](#matriz-de-priorización-general)
 
 ---
 
@@ -29,7 +40,13 @@
 
 **Status:** 🟢 **EXCELLENT - PRODUCTION READY with MINIMAL TECHNICAL DEBT**
 
-**Strengths:**
+**Technical Debt Score:** 2.0/10 ✅  
+**Maintainability Score:** 9.5/10 ✅  
+**Scalability Score:** 8.5/10 ✅  
+**Security Score:** 7.5/10 ⚠️ (mejorable)
+
+### Strengths
+
 - ✅ Modern tech stack (Next.js 15, TypeScript, React 18)
 - ✅ Well-organized project structure with domain-based modules
 - ✅ Type safety with TypeScript strict mode
@@ -46,1382 +63,1368 @@
 - ✅ **Centralized logging service** (COMPLETED - December 2024)
 - ✅ **Database connection management fixed** (COMPLETED - December 2024)
 
-**Remaining Issues:**
+### Remaining Issues
+
 - ⚠️ Testing infrastructure exists but minimal coverage (only 3 test files)
 - ⚠️ Accessibility improvements partially complete (keyboard navigation, semantic HTML, color contrast pending)
-- ⚠️ Type safety: ~10 instances of `any` type found (down from 72, 86% improvement)
-
-**Technical Debt Score:** 2.0/10 (Significant reduction after API refactoring) ✅
-
-**Maintainability Score:** 9.5/10 (Restored and improved after API reorganization) ✅
-
-**Scalability Score:** 8.5/10 (Improved with proper connection management and rate limiting) ✅
+- ⚠️ Type safety: ~54 instances of `any` type found (mejorable)
+- ⚠️ Security: Algunas vulnerabilidades menores identificadas
 
 ---
 
-## Completed Improvements ✅
+## FRONTEND - Análisis Completo
 
-### Phase 1: Component Refactoring (COMPLETED)
+### Arquitectura Frontend
 
-#### 1. Calendar Component Refactoring ✅
+#### Estructura de Carpetas
 
-**Before:**
-- 529 lines in a single file
-- Multiple responsibilities mixed together
-- Hard to test and maintain
-
-**After:**
-- **121 lines** main component (77% reduction)
-- Extracted hooks:
-  - `useCalendarState.ts` - Calendar state management
-  - `useBookingFlow.ts` - Booking logic
-- Extracted components:
-  - `CalendarHeader.tsx` - Month navigation
-  - `CalendarGrid.tsx` - Date grid (memoized)
-  - `DateCell.tsx` - Individual date cell (memoized)
-  - `TimeSlotSelector.tsx` - Time slot selection
-  - `SelectedDateInfo.tsx` - Selected date display
-  - `BookingModal/` - Modal with sub-components:
-    - `BookingModalHeader.tsx`
-    - `PassengerInputs.tsx`
-    - `BookingSummary.tsx`
-- Extracted utilities:
-  - `dateUtils.ts` - Date formatting and calendar generation
-
-**Impact:** 🧪 Testability +80%, 🔧 Maintainability +70%, 📖 Readability +90%
-
-#### 2. CheckoutForm Component Refactoring ✅
-
-**Before:**
-- ~678 lines in a single file
-- Complex state management
-- Multiple responsibilities
-
-**After:**
-- **274 lines** main component (60% reduction)
-- Extracted hooks:
-  - `useCheckoutState.ts` - Form state management
-  - `useCheckoutInitialization.ts` - Data loading
-  - `useOrderSubmission.ts` - Order submission logic
-  - `useCheckoutValidation.ts` - Validation logic
-- Extracted components:
-  - `ValidationMessage.tsx` - Error display
-  - `BillingInfoForm/` - Billing section:
-    - `BillingInfoForm.tsx`
-    - `BillingInfoFields.tsx`
-  - `PassengersSection/` - Passengers section:
-    - `PassengersSection.tsx`
-    - `PassengersList.tsx`
-    - `PassengerActions.tsx`
-  - `AdditionalInfoForm.tsx` - Notes section
-  - `RemovePassengerModal.tsx` - Confirmation modal
-- Extracted constants:
-  - `provinceOptions.ts` - Province dropdown options
-  - `countryOptions.ts` - Country dropdown options
-
-**Impact:** 🧪 Testability +75%, 🔧 Maintainability +65%, 📖 Readability +85%
-
-#### 3. MiniCart Component Refactoring ✅
-
-**Before:**
-- 283 lines in a single file
-- Pricing, payment, and display logic mixed
-
-**After:**
-- **92 lines** main component (67% reduction)
-- Extracted hooks:
-  - `useMiniCartPricing.ts` - Pricing calculations
-- Extracted components:
-  - `OrderSummary/` - Order summary section:
-    - `OrderSummary.tsx`
-    - `PricingBreakdown.tsx`
-  - `PaymentMethods/` - Payment options:
-    - `PaymentMethods.tsx`
-    - `PaymentMethodOption.tsx`
-    - `PaymentMethodInfo.tsx`
-  - `CheckoutButton.tsx` - Submit button with logic
-- Extracted utilities:
-  - `paymentUtils.ts` - Payment method utilities (icons, descriptions, constants)
-
-**Impact:** 🧪 Testability +70%, 🔧 Maintainability +60%, 📖 Readability +80%
-
-### Phase 2: Architecture Improvements (COMPLETED)
-
-#### 4. API Structure Refactoring ✅ (NEW - December 2024)
-
-**Before:**
-- API clients scattered in `src/lib/api/`
-- 3 duplicate implementations for tours API
-- Inconsistent domain service organization
-- Controllers contained business logic
-- Handler layer added unnecessary indirection
-
-**After:**
-- ✅ **API clients organized by domain:**
-  - `src/modules/orders/api/client/ordersClient.ts`
-  - `src/modules/tours/api/client/toursClient.ts`
-  - `src/modules/tours/api/server/toursServer.ts`
-- ✅ **Domain services extracted consistently:**
-  - 9 domain services created (orders, tours, booking, payments, departures, passengers, notifications, tourPrices)
-  - All services in `domain/` folder
-  - Email service moved from `services/` to `domain/`
-- ✅ **Controllers refactored:**
-  - All controllers now only orchestrate
-  - Business logic delegated to domain services
-  - Error handling via `withControllerErrorHandler`
-- ✅ **Handler layer eliminated:**
-  - 9 handler files removed
-  - Routes call controllers directly
-  - Cleaner, more direct code flow
-- ✅ **Rate limiting implemented:**
-  - All 27 API routes protected
-  - Configurable limits per endpoint type
-  - Centralized middleware (`rateLimiter.ts`)
-- ✅ **Infrastructure improvements:**
-  - Centralized logging service (`logger.ts`)
-  - Controller error wrapper (`controllerWrapper.ts`)
-  - Database connection management fixed
-
-**Impact:** 🏗️ Architecture Quality +70%, 🔍 Discoverability +60%, 🔄 Reusability +50%, 🧪 Testability +40%
-
-#### 5. Folder Structure Reorganization ✅
-
-**Before:**
+**Organización actual:**
 ```
-src/modules/content/components/
-├── Calendar/
-├── CheckoutForm/
-├── MiniCart/
-├── ToursGrid/
-├── Hero/
-├── Banner/
-└── ... (mixed concerns)
+src/
+├── app/                    # Next.js App Router
+│   ├── (pages)/           # Páginas públicas
+│   ├── admin/             # Páginas admin
+│   ├── checkout/          # Páginas de checkout
+│   └── api/               # API Routes (backend)
+├── modules/                # Módulos por dominio
+│   ├── booking/           # Dominio de reservas
+│   │   ├── components/    # Calendar, CheckoutForm, MiniCart
+│   │   ├── hooks/         # useCalendarState, useBookingFlow
+│   │   └── utils/          # dateUtils
+│   ├── tours/             # Dominio de tours
+│   │   ├── components/    # ToursGrid, TourGallery
+│   │   └── types/         # Tour types
+│   ├── ui/                # Componentes presentacionales
+│   │   └── components/    # Hero, Banner, ContactForm
+│   └── layout/            # Componentes de layout
+│       └── components/    # Header, Footer
+├── components/             # Componentes genéricos
+│   └── common/            # Button, Card, Input, Modal, etc.
+├── contexts/               # React Contexts
+│   └── CurrencyContext.tsx
+└── lib/                    # Utilidades
+    ├── types/             # Tipos compartidos
+    └── utils/             # Funciones utilitarias
 ```
 
-**After:**
-```
-src/modules/
-├── booking/          # Booking domain
-│   ├── components/
-│   │   ├── Calendar/
-│   │   ├── CheckoutForm/
-│   │   ├── MiniCart/
-│   │   └── PaymentModal/
-│   ├── hooks/
-│   │   ├── useCalendarState.ts
-│   │   └── useBookingFlow.ts
-│   └── utils/
-│       └── dateUtils.ts
-├── tours/            # Tours domain
-│   ├── components/
-│   │   ├── ToursGrid/
-│   │   ├── TourGallery/
-│   │   └── ...
-│   └── types/
-│       └── tourTypes.ts
-├── ui/               # Presentational components
-│   └── components/
-│       ├── Hero/
-│       ├── Banner/
-│       └── ...
-└── layout/           # Layout components
-    └── components/
-        ├── Header/
-        └── Footer/
-```
+**Evaluación:** ✅ **EXCELENTE**
+- Separación clara por dominio
+- Componentes genéricos separados de componentes de dominio
+- Estructura predecible y fácil de navegar
 
-**Impact:** 🏗️ Architecture Quality +60%, 📁 Organization +80%, 🔍 Discoverability +70%
+#### Patrones de Componentes
 
-#### 5. Utility Extraction ✅
+**Server Components vs Client Components:**
 
-**Date Utilities:**
-- `src/modules/booking/utils/dateUtils.ts`
-  - `formatDate()` - Format to YYYY-MM-DD
-  - `formatDisplayDate()` - Format to Spanish readable
-  - `isDateDisabled()` - Check if date is in past
-  - `generateCalendarDays()` - Generate calendar grid
-  - `MONTH_NAMES`, `DAY_NAMES` constants
+**Server Components (por defecto):**
+- Páginas (`app/**/page.tsx`)
+- Componentes que no requieren interactividad
+- Acceso directo a base de datos
+- Sin estado local, sin efectos
 
-**Payment Utilities:**
-- `src/modules/booking/components/MiniCart/utils/paymentUtils.ts`
-  - `getPaymentIcon()` - Get icon for payment method
-  - `getPaymentInfo()` - Get description for payment method
-  - `AVAILABLE_PAYMENT_METHODS` constant
+**Client Components (`"use client"`):**
+- Componentes interactivos (formularios, modales, calendarios)
+- Requieren hooks (`useState`, `useEffect`)
+- Acceso a APIs del cliente
 
-**Impact:** 🔄 Reusability +90%, 🧹 DRY Compliance +85%
+**Evaluación:** ✅ **BUENO**
+- Uso correcto de Server Components donde es posible
+- Client Components solo donde es necesario
+- Mejorable: Algunos componentes podrían ser Server Components
+
+**Ejemplos:**
+- ✅ `Calendar.tsx` - Client Component (correcto, requiere interactividad)
+- ✅ `CheckoutForm.tsx` - Client Component (correcto, requiere estado)
+- ⚠️ `ToursGrid.tsx` - Podría ser Server Component si no requiere interactividad
+
+#### Gestión de Estado
+
+**Estrategias actuales:**
+
+1. **React Context:**
+   - `CurrencyContext` - Estado global de moneda
+   - Persistencia en localStorage
+   - SSR-safe con hydration handling
+
+2. **Custom Hooks:**
+   - `useCalendarState` - Estado del calendario
+   - `useBookingFlow` - Lógica de reserva
+   - `useCheckoutState` - Estado del checkout
+   - `useMiniCartPricing` - Cálculos de precios
+
+3. **LocalStorage:**
+   - Persistencia de datos de reserva
+   - Datos de facturación
+   - Preferencias de usuario
+
+4. **Component State:**
+   - Estado local con `useState`
+   - Estado de formularios
+   - Estado de UI (modales, tooltips)
+
+**Evaluación:** ✅ **BUENO**
+- No hay necesidad de Redux/Zustand actualmente
+- Hooks personalizados bien diseñados
+- Context solo para estado verdaderamente global
+
+**Recomendación:** Considerar Zustand cuando se agreguen:
+- Autenticación de usuarios
+- Carrito con múltiples items
+- Notificaciones en tiempo real
+- Historial de órdenes
+
+#### Routing
+
+**Next.js App Router:**
+- Rutas basadas en carpetas
+- Layouts anidados
+- Server Components por defecto
+- Streaming y Suspense
+
+**Evaluación:** ✅ **EXCELENTE**
+- Uso correcto del App Router
+- Layouts bien organizados
+- Rutas dinámicas correctamente implementadas
 
 ---
 
-## Architecture Analysis
+### Código Frontend
 
-### Current Architecture Assessment
+#### Análisis de Componentes
 
-#### 1. Layered Architecture (✅ EXCELLENT)
+**Componentes grandes (ya refactorizados):**
 
-```
-Presentation (App Router Pages)
-    ↓
-Component Layer (Domain Modules: booking, tours, ui)
-    ↓
-Business Logic (Hooks + Utils)
-    ↓
-Data Layer (Static JSON + localStorage)
-```
+1. **Calendar Component** ✅ REFACTORED
+   - **Antes:** 529 líneas
+   - **Después:** 121 líneas (77% reducción)
+   - **Sub-componentes:** 6 componentes extraídos
+   - **Hooks:** 2 hooks extraídos
+   - **Utilidades:** 1 archivo de utilidades
+   - **Complejidad:** 3/10 (antes: 8/10)
 
-**Strengths:**
-- ✅ Clear separation of concerns
-- ✅ Domain-based module organization
-- ✅ Predictable file structure
-- ✅ Easy to navigate codebase
-- ✅ **Hooks extracted for reusable logic**
-- ✅ **Utilities centralized**
+2. **CheckoutForm Component** ✅ REFACTORED
+   - **Antes:** ~678 líneas
+   - **Después:** 274 líneas (60% reducción)
+   - **Sub-componentes:** 5 grupos de componentes
+   - **Hooks:** 4 hooks extraídos
+   - **Constantes:** 2 archivos de constantes
+   - **Complejidad:** 3/10 (antes: 8/10)
 
-**Remaining Weaknesses:**
-- Data layer is still primitive (static files)
-- No service layer for complex operations (planned for API migration)
+3. **MiniCart Component** ✅ REFACTORED
+   - **Antes:** 283 líneas
+   - **Después:** 92 líneas (67% reducción)
+   - **Sub-componentes:** 3 grupos de componentes
+   - **Hooks:** 1 hook extraído
+   - **Utilidades:** 1 archivo de utilidades
+   - **Complejidad:** 2/10 (antes: 7/10)
 
-**Recommendation:** Introduce a **Service Layer** when migrating to API.
+**Componentes restantes:**
+- Todos los componentes principales < 300 líneas ✅
+- Responsabilidad única por componente ✅
+- Testeable en aislamiento ✅
 
-#### 2. Module Organization (✅ EXCELLENT)
+#### Hooks Personalizados
 
-**Current Structure:**
-```
-src/modules/
-├── booking/          # ✅ Booking domain isolated
-│   ├── components/   # Calendar, CheckoutForm, MiniCart
-│   ├── hooks/        # useCalendarState, useBookingFlow
-│   └── utils/        # dateUtils
-├── tours/            # ✅ Tours domain isolated
-│   ├── components/   # ToursGrid, TourGallery, etc.
-│   └── types/        # Tour types
-├── ui/               # ✅ Presentational components
-│   └── components/   # Hero, Banner, ContactForm
-└── layout/           # ✅ Layout concerns
-    └── components/   # Header, Footer
-```
+**Hooks existentes:**
 
-**Status:** ✅ **EXCELLENT** - Clear domain separation achieved
+1. **useCalendarState**
+   - **Ubicación:** `src/modules/booking/hooks/useCalendarState.ts`
+   - **Propósito:** Gestión de estado del calendario
+   - **Estado:** ✅ Bien diseñado, reutilizable
 
-#### 3. API Structure Organization (✅ EXCELLENT - REFACTORED)
+2. **useBookingFlow**
+   - **Ubicación:** `src/modules/booking/hooks/useBookingFlow.ts`
+   - **Propósito:** Lógica de flujo de reserva
+   - **Estado:** ✅ Bien diseñado, reutilizable
 
-**Current State After Refactoring (December 2024):**
+3. **useCheckoutState**
+   - **Ubicación:** `src/modules/booking/components/CheckoutForm/hooks/useCheckoutState.ts`
+   - **Propósito:** Estado del formulario de checkout
+   - **Estado:** ✅ Completo, maneja validaciones
 
-**✅ Solution 1: API Clients Organized by Domain**
-```
-src/modules/
-├── orders/
-│   └── api/
-│       └── client/
-│           └── ordersClient.ts          # ✅ Moved from lib/api
-├── tours/
-│   └── api/
-│       ├── client/
-│       │   └── toursClient.ts          # ✅ Consolidated (client + server)
-│       └── server/
-│           └── toursServer.ts          # ✅ Direct controller access
-```
+4. **useCheckoutInitialization**
+   - **Ubicación:** `src/modules/booking/components/CheckoutForm/hooks/useCheckoutInitialization.ts`
+   - **Propósito:** Inicialización de datos del checkout
+   - **Estado:** ✅ Bien diseñado
 
-**✅ Solution 2: Consolidated API Client Functions**
-- `toursClient.ts` - Single source of truth with `client` and `server` exports
-- Legacy exports maintained for backward compatibility
-- **No duplication** - all functions consolidated
+5. **useOrderSubmission**
+   - **Ubicación:** `src/modules/booking/components/CheckoutForm/hooks/useOrderSubmission.ts`
+   - **Propósito:** Envío de órdenes
+   - **Estado:** ✅ Completo, maneja API y localStorage
 
-**✅ Solution 3: Consistent Domain Service Organization**
-```
-modules/
-├── orders/
-│   └── domain/
-│       └── orderService.ts             # ✅ Domain service
-├── notifications/
-│   └── domain/
-│       ├── emailService.ts             # ✅ Moved from services/
-│       └── notificationService.ts     # ✅ New domain service
-├── tours/
-│   └── domain/
-│       ├── tourService.ts              # ✅ New domain service
-│       └── tourPriceService.ts         # ✅ New domain service
-├── booking/
-│   └── domain/
-│       └── bookingService.ts           # ✅ New domain service
-├── payments/
-│   └── domain/
-│       └── paymentService.ts           # ✅ New domain service
-├── departures/
-│   └── domain/
-│       └── departureService.ts         # ✅ New domain service
-└── passengers/
-    └── domain/
-        └── passengerService.ts        # ✅ New domain service
-```
+6. **useMiniCartPricing**
+   - **Ubicación:** `src/modules/booking/components/MiniCart/hooks/useMiniCartPricing.ts`
+   - **Propósito:** Cálculos de precios
+   - **Estado:** ✅ Extraído, reutilizable
 
-**✅ Solution 4: Controllers Only Orchestrate**
-- Controllers validate input with schemas
-- Controllers delegate all business logic to domain services
-- Controllers transform output with DTOs
-- Controllers use `withControllerErrorHandler` for error handling
+7. **useAvailablePaymentMethods**
+   - **Ubicación:** `src/modules/booking/hooks/useAvailablePaymentMethods.ts`
+   - **Propósito:** Obtener métodos de pago disponibles
+   - **Estado:** ✅ Bien diseñado, consume API
 
-**Example of Clean Controller:**
-```typescript
-// src/modules/orders/api/controllers/ordersController.ts
-export class OrdersController {
-  async create(body: unknown) {
-    // ✅ Validation only
-    const data = validateBody(createOrderSchema, body);
-    
-    // ✅ Business logic delegated to service
-    const result = await createReservation({...});
-    
-    // ✅ Transform with DTO
-    return toOrderFullResponse(order);
-  }
-}
-```
+**Evaluación:** ✅ **EXCELENTE**
+- Hooks bien diseñados y reutilizables
+- Separación de responsabilidades clara
+- Fácil de testear
 
-**✅ Solution 5: Handler Layer Eliminated**
-- All handlers removed (9 files deleted)
-- Routes call controllers directly with `withControllerErrorHandler`
-- Error handling centralized in `controllerWrapper.ts`
+#### Utilidades
 
-**Current Structure:**
-```
-src/app/api/orders/route.ts
-  → withRateLimitHandler("public", ...)
-    → withControllerErrorHandler(...)
-      → OrdersController.list
-        → OrderService.list
-          → OrderRepository.findAll
-```
+**Utilidades existentes:**
 
-**Impact:**
-- 🔍 **Discoverability:** +60% (all API code in domain modules)
-- 🔄 **Reusability:** +50% (no duplication, single source of truth)
-- 🧪 **Testability:** +40% (clear separation of concerns)
-- 📖 **Readability:** +45% (consistent patterns)
-- 🏗️ **Architecture Quality:** +70% (proper domain-based structure)
+1. **dateUtils.ts**
+   - **Ubicación:** `src/modules/booking/utils/dateUtils.ts`
+   - **Funciones:**
+     - `formatDate()` - Formato YYYY-MM-DD
+     - `formatDisplayDate()` - Formato legible en español
+     - `isDateDisabled()` - Validar fecha en el pasado
+     - `generateCalendarDays()` - Generar grid del calendario
+   - **Estado:** ✅ Centralizado, reutilizable
 
-**Recommended Refactoring:**
+2. **paymentUtils.ts**
+   - **Ubicación:** `src/modules/booking/components/MiniCart/utils/paymentUtils.ts`
+   - **Funciones:**
+     - `getPaymentIcon()` - Obtener icono del método de pago
+     - `getPaymentInfo()` - Obtener descripción del método
+   - **Constantes:** `AVAILABLE_PAYMENT_METHODS`
+   - **Estado:** ✅ Centralizado, reutilizable
 
-**1. Move API Clients to Modules**
-```
-src/modules/
-├── orders/
-│   └── api/
-│       ├── client/              # ✅ NEW
-│       │   └── ordersClient.ts
-│       ├── server/              # ✅ NEW (if needed)
-│       │   └── ordersServer.ts
-│       ├── controllers/
-│       ├── handlers/
-│       ├── dto/
-│       └── validators/
-├── tours/
-│   └── api/
-│       ├── client/              # ✅ NEW
-│       │   └── toursClient.ts
-│       ├── server/              # ✅ NEW
-│       │   └── toursServer.ts
-│       └── ...
-```
+3. **pricing.ts**
+   - **Ubicación:** `src/lib/utils/pricing.ts`
+   - **Funciones:**
+     - `calculateOrderTotal()` - Calcular total de orden
+     - `calculateSubtotal()` - Calcular subtotales
+   - **Estado:** ✅ Centralizado, usado en múltiples lugares
 
-**2. Extract Domain Services Consistently**
-```
-src/modules/
-├── orders/
-│   └── domain/
-│       ├── orderService.ts      # ✅ Already exists
-│       └── types.ts
-├── tours/
-│   └── domain/
-│       ├── tourService.ts       # ✅ NEW - Extract from controller
-│       └── types.ts
-├── booking/
-│   └── domain/
-│       ├── bookingService.ts    # ✅ NEW
-│       └── types.ts
-└── notifications/
-    └── domain/                  # ✅ MOVE from services/
-        ├── emailService.ts
-        └── types.ts
-```
+**Evaluación:** ✅ **EXCELENTE**
+- Utilidades bien organizadas
+- Sin duplicación
+- Fácil de mantener
 
-**3. Simplify Controller Responsibilities**
-```typescript
-// ✅ GOOD: Controller only orchestrates
-export class OrdersController {
-  constructor(private orderService: OrderService) {}
-  
-  async create(body: unknown) {
-    const data = validateBody(createOrderSchema, body);
-    const order = await this.orderService.createReservation(data);
-    return toOrderResponse(order);
-  }
-}
-```
+#### TypeScript Usage
 
-**4. Consolidate API Client Functions**
-```typescript
-// ✅ GOOD: Single source of truth
-// src/modules/tours/api/client/toursClient.ts
-export const toursClient = {
-  // For Server Components
-  server: {
-    getById: (id: string, options?: GetTourOptions) => { ... },
-    getBySlug: (slug: string, options?: GetTourOptions) => { ... },
-  },
-  // For Client Components
-  client: {
-    getById: (id: string, options?: GetTourOptions) => { ... },
-    getBySlug: (slug: string, options?: GetTourOptions) => { ... },
-  },
-};
-```
+**Análisis de tipos:**
 
-**Status:** ✅ **COMPLETED** (December 2024)  
-**Effort Spent:** 2-3 days  
-**Result:** All API structure issues resolved, architecture significantly improved
+**Fortalezas:**
+- ✅ TypeScript strict mode activado
+- ✅ Tipos explícitos en props de componentes
+- ✅ Interfaces bien definidas
+- ✅ Tipos de dominio separados
 
-#### 4. Component Size (✅ SIGNIFICANTLY IMPROVED)
+**Debilidades:**
+- ⚠️ ~54 instancias de `any` type encontradas
+- Ubicaciones principales:
+  - `src/modules/orders/domain/orderService.ts` (8 instancias)
+  - `src/modules/tours/components/admin/TourForm/TourForm.tsx` (19 instancias)
+  - `src/modules/tours/domain/tourService.ts` (19 instancias)
+  - `src/modules/admin/components/TourForm/TourForm.tsx` (19 instancias)
+  - Otros archivos con 1-3 instancias cada uno
 
-**Large Components - REFACTORED:**
-- ✅ `Calendar.tsx`: **529 → 121 lines** (77% reduction)
-- ✅ `MiniCart.tsx`: **283 → 92 lines** (67% reduction)
-- ✅ `CheckoutForm.tsx`: **~678 → 274 lines** (60% reduction)
+**Recomendación:**
+- Reemplazar `any` con tipos específicos
+- Usar `unknown` cuando el tipo es realmente desconocido
+- Crear tipos genéricos cuando sea apropiado
 
-**Current Status:**
-- ✅ All major components < 300 lines
-- ✅ Single responsibility per component
-- ✅ Testable in isolation
-- ✅ Reusable hooks and utilities
-
-**KISS Principle:** ✅ **SIGNIFICANTLY IMPROVED**
-
-#### 4. Data Management (⚠️ STILL AN ISSUE)
-
-**Current:**
-```typescript
-// tourExample.json - 156KB!
-import tourExampleJson from "./tourExample.json";
-export const tourFullData: TourFullData = tourExampleJson as TourFullData;
-```
-
-**Problems:**
-1. Imported directly in module scope
-2. Entire 156KB loaded on every page
-3. No lazy loading
-4. No pagination
-5. No caching strategy
-6. Bundle bloat
-
-**Impact:**
-- First load: **Heavy**
-- TTI (Time to Interactive): **Delayed**
-- Hydration: **Slow**
-- Unnecessary data transfer
-
-**Recommendation:**  
-Immediate: Use dynamic imports  
-Short-term: Move to API with pagination  
-Long-term: Database with proper indexing
+**Impacto:** ⚠️ **MEDIO** - La mayoría están en contextos seguros (formularios admin, adaptadores)
 
 ---
 
-## Code Quality Assessment
+### Performance Frontend
 
-### KISS (Keep It Simple, Stupid) Analysis
+#### Code Splitting
 
-#### ✅ IMPROVEMENTS COMPLETED
+**Estado actual:** ✅ **IMPLEMENTADO**
 
-**1. Calendar Component - ✅ REFACTORED**
+**Implementaciones:**
+- ✅ `Calendar` - Dynamic import con `ssr: false` en `BannerBooking`
+- ✅ `CheckoutForm` - Dynamic import con Suspense en checkout page
+- ✅ `MiniCart` - Dynamic import con Suspense en checkout page
 
-**Before:** 529 lines, multiple responsibilities
+**Impacto:**
+- ✅ Bundle size reducido
+- ✅ Time to Interactive mejorado
+- ✅ Mejor experiencia móvil
 
-**After:** 
-- Main component: 121 lines
-- 6 sub-components
-- 2 custom hooks
-- 1 utility file
+**Mejorable:**
+- ⚠️ Podría agregarse más granular splitting para:
+  - Galerías de imágenes
+  - Componentes pesados de admin
+  - Modales grandes
 
-**Complexity Score:** 3/10 (Down from 8/10) ✅
+#### Bundle Size
 
-**2. MiniCart Component - ✅ REFACTORED**
+**Estado actual:** ✅ **MEJORADO**
 
-**Before:** 332 lines, doing too much
+**Mejoras completadas:**
+- ✅ Eliminación de archivos JSON grandes (tourExample.json)
+- ✅ Code splitting implementado
+- ✅ Dynamic imports para componentes pesados
 
-**After:**
-- Main component: 92 lines
-- 3 sub-component groups
-- 1 custom hook
-- 1 utility file
+**Análisis:**
+- Bundle inicial: ~200-300KB (estimado)
+- Componentes lazy-loaded: Calendar, CheckoutForm, MiniCart
+- Imágenes: Optimizadas con `next/image`
 
-**Complexity Score:** 2/10 (Down from 7/10) ✅
+**Recomendaciones:**
+- ⚠️ Analizar bundle con `@next/bundle-analyzer`
+- ⚠️ Considerar tree-shaking para librerías grandes
+- ⚠️ Optimizar imports (evitar `import *`)
 
-**3. CheckoutForm Component - ✅ REFACTORED**
+#### Image Optimization
 
-**Before:** ~678 lines, overgrown
+**Estado actual:** ⚠️ **MEJORABLE**
 
-**After:**
-- Main component: 274 lines
-- 5 sub-component groups
-- 4 custom hooks
-- 2 constant files
+**Implementación:**
+- ✅ Uso de `next/image` en la mayoría de lugares
+- ✅ Lazy loading habilitado
+- ✅ Responsive images
 
-**Complexity Score:** 3/10 (Down from estimated 8/10) ✅
+**Mejorable:**
+- ⚠️ Algunos lugares aún usan `<img>` tags
+- ⚠️ Falta soporte para formatos modernos (AVIF, WebP)
+- ⚠️ Falta blur placeholders en algunas imágenes
+- ⚠️ Falta optimización de imágenes de galería
 
-#### Remaining KISS Violations
-
-**1. Pricing Logic - ⚠️ PARTIALLY ADDRESSED**
-
-**Status:** Pricing calculations extracted to `useMiniCartPricing` hook, but still duplicated in some places.
-
-**Remaining Locations:**
-- `BookingModal.tsx` - Line 45 (subtotal calculation)
-- Other components may still calculate manually
-
-**Solution:**
-```typescript
-// src/lib/utils/pricing.ts
-export function calculateOrderTotal(
-  adults: number,
-  children: number,
-  pricing: Pricing
-): number {
-  return adults * pricing.priceAdult + children * pricing.priceChild;
-}
-```
-
-**2. Form Validation Patterns - ⚠️ PARTIALLY ADDRESSED**
-
-**Status:** Validation extracted to `useCheckoutValidation` hook, but patterns may be duplicated elsewhere.
-
-**Remaining Locations:**
-- Contact form - May have inline validation
-- Other forms - Need audit
-
-**Solution:**
-```typescript
-// src/lib/utils/validation.ts
-export const validators = {
-  required: (value: string) => value.trim().length > 0,
-  email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-  phone: (value: string) => /^\+?[\d\s-()]+$/.test(value),
-};
-```
-
-### DRY (Don't Repeat Yourself) Analysis
-
-#### ✅ IMPROVEMENTS COMPLETED
-
-**1. Date Formatting - ✅ EXTRACTED**
-- ✅ Centralized in `dateUtils.ts`
-- ✅ Used across Calendar, MiniCart, and other components
-
-**2. Payment Method Logic - ✅ EXTRACTED**
-- ✅ Centralized in `paymentUtils.ts`
-- ✅ Icons, descriptions, and constants reusable
-
-**3. Calendar State Management - ✅ EXTRACTED**
-- ✅ `useCalendarState` hook reusable
-- ✅ Booking flow logic in `useBookingFlow`
-
-**4. Checkout State Management - ✅ EXTRACTED**
-- ✅ `useCheckoutState` hook reusable
-- ✅ Validation logic in `useCheckoutValidation`
-
-#### Remaining DRY Violations
-
-**1. Pricing Logic Duplication - ✅ RESOLVED**
-
-**Status:** ✅ **EXTRACTED**
-
-**Solution Implemented:**
-- ✅ Created `src/lib/utils/pricing.ts` with:
-  - `calculateOrderTotal()` - Used in BookingModal, useBookingFlow, PaymentModal
-  - `calculateSubtotal()` - Available for future use
-- ✅ Replaced manual calculations across components
-
-**2. Form Validation Patterns - ⚠️ LOW PRIORITY**
-
-**Status:** Mostly extracted, but needs audit for remaining forms.
-
----
-
-## Performance Analysis
-
-### Critical Performance Issues
-
-#### 1. Bundle Size - **CRITICAL** ❌ (STILL AN ISSUE)
-
-**Problem:**
-```javascript
-// This loads 156KB on EVERY page load
-import tourExampleJson from "./tourExample.json";
-```
-
-**Impact:**
-- Initial bundle: +156KB
-- Parse time: ~50-100ms (mobile)
-- Hydration time: Increased
-- FCP (First Contentful Paint): Delayed
-- LCP (Largest Contentful Paint): Delayed
-
-**Solution Levels:**
-
-**Immediate (1 day):**
-```typescript
-// src/modules/tours/services/tourData.ts
-export async function getTourById(id: string): Promise<Tour> {
-  // Dynamic import per tour
-  const tour = await import(`@/data/tours/${id}.json`);
-  return tour.default;
-}
-```
-
-**Short-term (1 week):**
-- Split `tourExample.json` into individual files
-- Use Next.js dynamic imports
-- Implement route-based code splitting
-
-**Long-term (with API):**
-- Fetch from API
-- Implement caching (SWR or React Query)
-- Paginate tour listings
-
-#### 2. No Code Splitting - ✅ IMPROVED
-
-**Status:** ✅ **IMPLEMENTED**
-
-**Implemented:**
-- ✅ `Calendar` - Dynamic import with `ssr: false` in `BannerBooking`
-- ✅ `CheckoutForm` - Dynamic import with Suspense in checkout page
-- ✅ `MiniCart` - Dynamic import with Suspense in checkout page
-
-**Impact:**
-- ✅ Reduced initial bundle size
-- ✅ Faster Time to Interactive
-- ✅ Better mobile experience
-- ✅ Improved code splitting
-
-**Remaining:** Could add more granular splitting for image galleries and other heavy components.
-
-#### 3. Unnecessary Re-renders - ✅ IMPROVED
-
-**Status:** ✅ **SIGNIFICANTLY IMPROVED**
-
-**Improvements:**
-- ✅ `CalendarGrid` memoized with `React.memo()`
-- ✅ `DateCell` memoized with `React.memo()`
-- ✅ State separated into hooks
-- ✅ Components isolated
-
-**Remaining:** May need further optimization with `useMemo` for expensive calculations.
-
-#### 4. Image Optimization - ⚠️ STILL AN ISSUE
-
-**Issues:**
-- Using `<img>` instead of `next/image` in many places
-- No lazy loading for gallery images
-- No modern format support (AVIF, WebP)
-- No responsive images
-
-**Solution:**
+**Recomendación:**
 ```typescript
 import Image from 'next/image';
 
 <Image
   src={tour.featuredImage}
-  alt={tour.title}
+  alt={tour.name}
   width={800}
   height={600}
   placeholder="blur"
   blurDataURL="data:image/..."
   loading="lazy"
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 />
 ```
 
----
+#### Re-renders y Memoización
 
-## Scalability Concerns
+**Estado actual:** ✅ **MEJORADO**
 
-### 1. Data Management Scalability - ❌ CRITICAL (STILL AN ISSUE)
+**Implementaciones:**
+- ✅ `CalendarGrid` memoizado con `React.memo()`
+- ✅ `DateCell` memoizado con `React.memo()`
+- ✅ Estado separado en hooks
+- ✅ Componentes aislados
 
-**Current Limitations:**
-
-**Tours:**
-- Max ~20 tours before performance degrades
-- No pagination
-- No search/filtering on large datasets
-- Linear complexity O(n) for searches
-
-**Bookings:**
-- Stored in localStorage (max ~5-10MB)
-- No persistence
-- Lost on browser clear
-- No cross-device sync
-
-**Availability:**
-- Static data (no real-time updates)
-- No conflict resolution
-- Manual updates required
-
-**Scaling Issues:**
-If business grows to:
-- 50 tours: 400KB+ JSON bundle
-- 1000 bookings/month: localStorage overflow
-- 100 concurrent users: No conflict management
-
-**Solution Required:**  
-Must migrate to database + API (see API proposals document).
-
-### 2. State Management Scalability - ✅ IMPROVED
-
-**Current Approach:**
-- ✅ Custom hooks for domain logic
-- ✅ LocalStorage for booking persistence
-- ✅ Component state for UI
-
-**Improvements:**
-- ✅ Hooks extracted and reusable
-- ✅ State logic centralized in hooks
-- ✅ Better separation of concerns
-
-**Remaining Concerns:**
-- No centralized state for complex scenarios
-- May need Zustand/Redux when adding:
-  - User accounts (auth state)
-  - Cart with multiple items
-  - Real-time notifications
-  - Order history
-
-**Recommendation:** Consider Zustand when adding user accounts or complex state needs.
-
-### 3. API Rate Limiting - ⚠️ MEDIUM (STILL AN ISSUE)
-
-**Current:**
-- Contact API: 10 requests/hour per IP
-
-**Problems:**
-- No rate limiting on other endpoints
-- IP-based limiting (VPN/Proxy issues)
-- No user-based limits
-- No burst handling
-
-**Scaling Concerns:**
-- DDoS vulnerability
-- Resource exhaustion
-- No priority for authenticated users
-
-**Solution:**
-```typescript
-// Multi-tier rate limiting
-- Per IP: 100 requests/hour
-- Per user (auth): 1000 requests/hour
-- Per endpoint: Different limits
-- Burst allowance: 10 requests/minute
-```
+**Mejorable:**
+- ⚠️ Podría agregarse `useMemo` para cálculos costosos
+- ⚠️ Podría agregarse `useCallback` para funciones pasadas como props
+- ⚠️ Revisar re-renders innecesarios con React DevTools Profiler
 
 ---
 
-## Technical Debt Inventory
+### Seguridad Frontend
 
-### High Priority Debt
+#### XSS Prevention
 
-**1. Remove Debug Logs** ✅ COMPLETED
+**Estado actual:** ⚠️ **MEJORABLE**
+
+**Implementación actual:**
+- ✅ React escapa automáticamente el contenido
+- ⚠️ Falta sanitización explícita en algunos lugares
+- ⚠️ Uso de `dangerouslySetInnerHTML` no verificado
+
+**Recomendaciones:**
+- Agregar sanitización para contenido dinámico
+- Usar DOMPurify para HTML no confiable
+- Validar todos los inputs del usuario
+
+#### Input Sanitization
+
+**Estado actual:** ⚠️ **MEJORABLE**
+
+**Problemas identificados:**
+- ⚠️ Formularios no sanitizan inputs antes de enviar
+- ⚠️ Validación solo en frontend (debe validarse también en backend)
+- ⚠️ Falta sanitización de HTML en descripciones de tours
+
+**Recomendación:**
 ```typescript
-// Debug logs gated behind NODE_ENV check
-if (process.env.NODE_ENV === 'development') {
-  console.warn("Debug message");
-}
+import DOMPurify from 'dompurify';
+
+const sanitizedHtml = DOMPurify.sanitize(userInput);
 ```
 
-**Impact:** ✅ Security improved, performance optimized, cleaner logs  
-**Status:** ✅ Completed - Debug logs removed or gated
+#### LocalStorage para Datos Sensibles
 
-**2. Split tourExample.json** ⏰ 4 hours
-```bash
-# Create individual tour files
-mkdir -p src/data/tours
-# Split into:
-src/data/tours/lagos-off-road.json
-src/data/tours/trekking-glaciar-vinciguerra.json
-# ... one per tour
-```
+**Estado actual:** ⚠️ **MEJORABLE**
 
-**Impact:** Performance (bundle size)  
-**Solution:** Split into individual files + dynamic imports
+**Problemas:**
+- ⚠️ Datos de pasajeros almacenados en localStorage
+- ⚠️ Información de facturación en localStorage
+- ⚠️ Vulnerable a XSS attacks
 
-**3. Implement Code Splitting** ✅ COMPLETED
-- ✅ Dynamic imports for Calendar
-- ✅ Lazy load CheckoutForm
-- ✅ Lazy load MiniCart
+**Recomendaciones:**
+- Considerar encriptar datos sensibles antes de almacenar
+- Usar sessionStorage para datos temporales
+- Limpiar localStorage después de submit exitoso
+- No almacenar información de tarjetas de crédito
 
-**Impact:** ✅ Performance improved (FCP, TTI)  
-**Status:** ✅ Completed - Dynamic imports implemented with Suspense
+#### CSRF Protection
 
-**4. Extract Remaining Pricing Logic** ✅ COMPLETED
-- ✅ Created `src/lib/utils/pricing.ts`
-- ✅ Replaced manual calculations in BookingModal, useBookingFlow, PaymentModal
+**Estado actual:** ⚠️ **NO IMPLEMENTADO**
 
-**Impact:** ✅ DRY compliance, maintainability improved  
-**Status:** ✅ Completed - Pricing utilities centralized
+**Problema:**
+- No hay protección CSRF para requests de estado-changing
 
-### Medium Priority Debt
-
-**5. Add Error Boundaries** ✅ COMPLETED
-```typescript
-// Implemented:
-// - RouteErrorBoundary for route-level errors
-// - FeatureErrorBoundary for feature-level errors
-// - Used in checkout page and booking flow
-```
-
-**Impact:** ✅ Better error handling, graceful degradation  
-**Status:** ✅ Completed - Error boundaries implemented
-
-**6. TypeScript Improvements** ⏰ 2 days
-- Remove any types (if any remain)
-- Add more specific types
-- Use discriminated unions where appropriate
-- Improve type inference
-
-**7. Accessibility Audit** ⏰ 3-4 days (PARTIALLY COMPLETE)
-- ✅ Add ARIA labels (form inputs, buttons, modals, navigation)
-- ✅ Focus traps in modals
-- ✅ Focus return after modal close
-- ✅ Semantic HTML improvements (DateCell as button)
-- ⏰ Keyboard navigation (pending)
-- ⏰ Screen reader support improvements (pending)
-- ⏰ Color contrast fixes (pending)
-
-**Status:** ✅ Partially completed - ARIA labels and focus management implemented
-
-**8. Testing Infrastructure** ⏰ 5 days (PARTIALLY COMPLETE)
-- ✅ Vitest configured and ready
-- ✅ Test setup files created (`src/lib/test/setup.ts`)
-- ⏰ Only 3 test files exist (minimal coverage)
-- ⏰ Need to write tests for:
-  - Critical booking flow
-  - API routes
-  - Utility functions
-  - Components
-- ⏰ Add Playwright for E2E tests
-- ⏰ Set up CI/CD tests
-
-### Low Priority Debt
-
-**9. Documentation** ⏰ 2-3 days
-- Add JSDoc comments
-- Document complex functions
-- Create component usage examples
-
-**10. Linter Rules** ⏰ 1 day
-- Stricter ESLint rules
-- Prettier integration
-- Husky pre-commit hooks
-
-### New Issues Discovered (December 2024)
-
-**15. API Structure Disorganization** ✅ COMPLETED (December 2024)
-**Issue:** After API implementation, feature-based structure was disrupted
-- ✅ API client files moved to `src/modules/{module}/api/client/`
-- ✅ Duplication eliminated - tours API consolidated into single file
-- ✅ Domain services extracted consistently (all in `domain/` folder)
-- ✅ Controllers refactored to only orchestrate (delegate to domain services)
-- ✅ Handler layer completely removed (9 files deleted)
-
-**Status:** ✅ **RESOLVED** - Complete API refactoring completed
-
-**Files Moved/Created:**
-- ✅ `src/lib/api/orders-client.ts` → `src/modules/orders/api/client/ordersClient.ts`
-- ✅ `src/lib/api/tours-client.ts` + `tours-server.ts` + `tours.ts` → Consolidated into `src/modules/tours/api/client/toursClient.ts` and `src/modules/tours/api/server/toursServer.ts`
-- ✅ `src/modules/notifications/services/emailService.ts` → `src/modules/notifications/domain/emailService.ts`
-- ✅ 9 domain services created: `orderService`, `tourService`, `bookingService`, `paymentService`, `departureService`, `passengerService`, `notificationService`, `tourPriceService`, `emailService`
-- ✅ 9 handler files deleted (replaced by direct controller calls with `withControllerErrorHandler`)
-
-**Effort Spent:** 2-3 days  
-**Result:** Architecture significantly improved, all issues resolved
-
-### New Issues Discovered (November 2024)
-
-**11. Database Connection Management** ✅ COMPLETED (December 2024)
-**Issue:** Inconsistent Prisma connection handling
-- ✅ `test-db/route.ts` - `$disconnect()` removed (line 98)
-- ✅ All routes use singleton pattern correctly
-- ✅ Connection pooling managed by Prisma Client
-- ✅ Comment added explaining why `$disconnect()` is not called
-
-**Status:** ✅ **RESOLVED** - Connection management consistent across all routes
-
-**12. Type Safety Issues** ⚠️ LOW PRIORITY (IMPROVED)
-**Issue:** ~10 instances of `any` type found (down from 72)
-- Found in: specific contexts (orderService, TourQuickInfo, useMiniCartPricing, PassengerForm, departureRepository)
-- Most are in type-safe contexts or legacy code
-- Significant improvement from 72 instances
-
-**Impact:** Minimal - most critical areas are type-safe  
-**Status:** ⚠️ **IMPROVED** - 86% reduction in `any` usage
-
-**13. Rate Limiting Coverage** ✅ COMPLETED (December 2024)
-**Issue:** Rate limiting only implemented on `/api/contact`
-- ✅ Rate limiting implemented on all 27 API routes
-- ✅ Configurable limits per endpoint type (public, write, admin, notifications)
-- ✅ Centralized middleware (`rateLimiter.ts`)
-- ✅ Webhooks have higher limits (100 req/hour)
-
-**Status:** ✅ **RESOLVED** - All API routes protected
-
-**14. Error Logging** ✅ COMPLETED (December 2024)
-**Issue:** `console.error` used in production code
-- ✅ Centralized logging service created (`logger.ts`)
-- ✅ Logging levels: debug, info, warn, error
-- ✅ Environment-aware (dev vs prod)
-- ✅ Integrated with `controllerWrapper.ts` for automatic error logging
-- ⏰ Ready for external service integration (Sentry, LogRocket)
-
-**Status:** ✅ **RESOLVED** - Centralized logging implemented
+**Recomendación:**
+- Implementar tokens CSRF para operaciones críticas
+- Usar SameSite cookies
+- Validar origin/referer en backend
 
 ---
 
-## Security Analysis
+### Testing Frontend
 
-### Current Security Posture: 6.5/10 (Improved from 6/10)
+#### Cobertura Actual
 
-### Vulnerabilities
+**Estado:** ⚠️ **MINIMAL**
 
-**1. No Input Sanitization** - ⚠️ MEDIUM
-```typescript
-// Contact form inputs not sanitized
-const { name, email, message } = await req.json();
-// Directly used in email without sanitization
-```
+**Tests existentes:**
+- Solo 3 archivos de test encontrados
+- `tests/api/availability.test.ts`
+- `tests/api/orders.test.ts`
+- `tests/api/tours.test.ts`
 
-**Risk:** XSS, email injection  
-**Solution:** Use sanitization library (e.g., DOMPurify, validator.js)
+**Cobertura estimada:** < 5%
 
-**2. LocalStorage for Sensitive Data** - ⚠️ LOW
-```typescript
-localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
-// Contains passenger personal information
-```
+#### Tests Faltantes
 
-**Risk:** XSS access, browser storage attacks  
-**Solution:**  
-- Encrypt sensitive data
-- Use sessionStorage for temporary data
-- Clear after submission
+**Prioridad Alta:**
+1. Tests de componentes críticos:
+   - `Calendar` component
+   - `CheckoutForm` component
+   - `MiniCart` component
+2. Tests de hooks:
+   - `useCalendarState`
+   - `useBookingFlow`
+   - `useCheckoutState`
+   - `useOrderSubmission`
+3. Tests de utilidades:
+   - `dateUtils`
+   - `paymentUtils`
+   - `pricing`
 
-**3. No CSRF Protection** - ⚠️ MEDIUM (when API is live)
-**Current:** No token-based protection  
-**Risk:** Cross-site request forgery  
-**Solution:** Implement CSRF tokens for state-changing operations
+**Prioridad Media:**
+4. Tests de integración:
+   - Flujo completo de reserva
+   - Flujo de checkout
+   - Cambio de moneda
+5. Tests E2E:
+   - Journey completo de usuario
+   - Formulario de contacto
 
-**4. Rate Limiting Only on Contact** - ⚠️ MEDIUM
-**Risk:** Other endpoints vulnerable to abuse  
-**Solution:** Add rate limiting to all API routes
-
-**5. No Content Security Policy** - ⚠️ LOW
-**Current:** Basic headers, no CSP  
-**Solution:** Add CSP header
-
-**6. Inconsistent Database Connection Management** - ⚠️ MEDIUM (NEW)
-**Current:** `test-db/route.ts` disconnects Prisma after each request, other routes use singleton  
-**Risk:** Connection pool exhaustion, potential leaks  
-**Solution:** Remove `$disconnect()` calls, configure connection pooling properly
-
-**7. Missing Rate Limiting on Most API Routes** - ⚠️ MEDIUM (NEW)
-**Current:** Only `/api/contact` has rate limiting  
-**Risk:** DDoS vulnerability, resource exhaustion  
-**Solution:** Implement rate limiting middleware for all API routes
-
-```typescript
-// next.config.ts
-{
-  key: 'Content-Security-Policy',
-  value: "default-src 'self'; script-src 'self' 'unsafe-inline' ..."
-}
-```
+**Recomendación:**
+- Configurar Vitest para unit tests
+- Configurar Playwright para E2E tests
+- Objetivo: 70% cobertura en componentes críticos
 
 ---
 
-## Improvement Recommendations
+### Mejoras Frontend Priorizadas
 
-### Phase 1: Quick Wins (1-2 weeks) - ✅ COMPLETED
+| ID | Mejora | Prioridad | Impacto | Esfuerzo | Dependencias | Estado |
+|----|--------|-----------|---------|----------|--------------|--------|
+| FE-1 | Reemplazar `any` types restantes | Media | Alto | Medio | - | ⏰ Pendiente |
+| FE-2 | Agregar tests para componentes críticos | Alta | Alto | Alto | - | ⏰ Pendiente |
+| FE-3 | Completar accesibilidad (keyboard nav, color contrast) | Media | Medio | Medio | - | ⚠️ Parcial |
+| FE-4 | Implementar sanitización de inputs | Alta | Alto | Bajo | - | ⏰ Pendiente |
+| FE-5 | Optimizar imágenes (AVIF, WebP, blur) | Media | Medio | Bajo | - | ⏰ Pendiente |
+| FE-6 | Agregar `useMemo`/`useCallback` donde sea necesario | Baja | Bajo | Bajo | - | ⏰ Pendiente |
+| FE-7 | Implementar CSRF protection | Alta | Alto | Medio | - | ⏰ Pendiente |
+| FE-8 | Encriptar datos sensibles en localStorage | Media | Medio | Medio | - | ⏰ Pendiente |
+| FE-9 | Agregar más code splitting granular | Baja | Bajo | Bajo | - | ⏰ Pendiente |
+| FE-10 | Analizar bundle size con bundle-analyzer | Baja | Bajo | Bajo | - | ⏰ Pendiente |
 
-**✅ COMPLETED:**
-- ✅ Component refactoring (Calendar, CheckoutForm, MiniCart)
-- ✅ Folder structure reorganization
-- ✅ Utility extraction (dateUtils, paymentUtils, pricing)
-- ✅ Hook extraction (useCalendarState, useBookingFlow, etc.)
-- ✅ Remove debug logs (gated behind NODE_ENV)
-- ✅ Dynamic imports for heavy components (CheckoutForm, MiniCart, Calendar)
-- ✅ Extract remaining pricing utilities
-- ✅ Add error boundaries (RouteErrorBoundary, FeatureErrorBoundary)
-- ✅ Accessibility improvements (ARIA labels, focus traps, semantic HTML improvements)
+**Leyenda:**
+- **Prioridad:** Alta (crítico), Media (importante), Baja (nice-to-have)
+- **Impacto:** Alto (mejora significativa), Medio (mejora moderada), Bajo (mejora menor)
+- **Esfuerzo:** Alto (> 1 día), Medio (4-8 horas), Bajo (< 4 horas)
+- **Estado:** ✅ Completado, ⚠️ Parcial, ⏰ Pendiente
 
-**⏰ REMAINING:**
+---
 
-**1.1 Split tourExample.json** ⏰ 4 hours, 💰 Free
+## BACKEND - Análisis Completo
+
+### Arquitectura Backend
+
+#### Estructura de API Routes
+
+**Organización actual:**
+```
+src/app/api/
+├── auth/                 # Autenticación
+│   ├── login/
+│   ├── logout/
+│   ├── me/
+│   └── refresh/
+├── tours/                # Tours
+│   ├── route.ts
+│   ├── [id]/
+│   ├── [id]/availability/
+│   ├── [id]/prices/
+│   └── slug/[slug]/
+├── orders/               # Órdenes
+│   ├── route.ts
+│   ├── [id]/
+│   ├── [id]/status/
+│   └── code/[code]/
+├── bookings/            # Bookings
+│   ├── route.ts
+│   ├── [id]/
+│   ├── [id]/status/
+│   ├── [id]/passengers/
+│   └── order/[orderId]/
+├── payments/             # Pagos
+│   ├── route.ts
+│   ├── [id]/
+│   ├── available/
+│   ├── paypal/create/
+│   ├── payway/create/
+│   └── webhook/
+├── notifications/        # Notificaciones
+│   ├── route.ts
+│   ├── [id]/
+│   └── order/[orderId]/
+├── admin/                # Admin
+│   ├── stats/
+│   ├── orders/expire-pending/
+│   └── settings/
+├── cron/                 # Cron jobs
+│   ├── cancel-expired-orders/
+│   └── retry-notifications/
+└── contact/              # Contacto
+```
+
+**Evaluación:** ✅ **EXCELENTE**
+- Organización clara por dominio
+- Rutas RESTful bien diseñadas
+- Separación de concerns
+
+#### Organización por Dominio
+
+**Estructura de módulos:**
+```
+src/modules/
+├── orders/
+│   ├── api/
+│   │   ├── client/          # API client (frontend)
+│   │   ├── controllers/     # Controllers
+│   │   ├── dto/             # Data Transfer Objects
+│   │   └── validators/      # Zod schemas
+│   ├── domain/
+│   │   └── orderService.ts  # Lógica de negocio
+│   └── infra/
+│       └── orderRepository.ts # Acceso a datos
+├── tours/
+│   ├── api/
+│   │   ├── client/
+│   │   ├── server/
+│   │   ├── controllers/
+│   │   ├── dto/
+│   │   └── validators/
+│   ├── domain/
+│   │   ├── tourService.ts
+│   │   └── tourPriceService.ts
+│   └── infra/
+│       ├── tourRepository.ts
+│       └── tourPriceRepository.ts
+├── payments/
+│   ├── api/
+│   │   ├── client/
+│   │   └── controllers/
+│   ├── domain/
+│   │   └── paymentService.ts
+│   └── infra/
+│       ├── paymentRepository.ts
+│       ├── paypalService.ts
+│       └── paywayService.ts
+└── notifications/
+    ├── api/
+    │   └── controllers/
+    ├── domain/
+    │   ├── notificationService.ts
+    │   └── emailService.ts
+    └── infra/
+        └── notificationRepository.ts
+```
+
+**Evaluación:** ✅ **EXCELENTE**
+- Clean Architecture implementada
+- Separación clara de capas
+- Fácil de mantener y escalar
+
+#### Controllers → Domain Services → Repositories
+
+**Flujo actual:**
+```
+API Route
+  ↓
+Rate Limiter
+  ↓
+Error Handler
+  ↓
+Controller (orquesta)
+  ↓
+Domain Service (lógica de negocio)
+  ↓
+Repository (acceso a datos)
+  ↓
+Database (Prisma)
+```
+
+**Evaluación:** ✅ **EXCELENTE**
+- Handler layer eliminado (diciembre 2024) ✅
+- Controllers solo orquestan ✅
+- Lógica de negocio en Domain Services ✅
+- Acceso a datos en Repositories ✅
+
+**Ejemplo de Controller limpio:**
 ```typescript
-// Create utility for conditional logging
-// src/lib/utils/logger.ts
-export const logger = {
-  log: (...args: any[]) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(...args);
-    }
-  },
-  error: (...args: any[]) => {
-    console.error(...args); // Always log errors
+// ✅ BUENO: Controller solo orquesta
+export class OrdersController {
+  async create(body: unknown) {
+    // 1. Validar entrada
+    const data = validateBody(createOrderSchema, body);
+    
+    // 2. Delegar lógica de negocio
+    const result = await createReservation(data);
+    
+    // 3. Transformar salida
+    return toOrderResponse(result.order);
   }
-};
-
-// Replace all console.log with logger.log
-```
-
-**1.2 Split tourExample.json** ⏰ 4 hours, 💰 Free
-```bash
-# Create individual tour files
-mkdir -p src/data/tours
-# Split into:
-src/data/tours/lagos-off-road.json
-src/data/tours/trekking-glaciar-vinciguerra.json
-# ... one per tour
-```
-
-**Impact:** 🚀 Performance +15%, 📦 Bundle -30KB, ⚡ Better DX
-
----
-
-### Phase 2: Architecture Improvements (3-4 weeks) - ⚠️ PARTIALLY COMPLETE
-
-**✅ COMPLETED:**
-- ✅ Folder structure reorganization
-- ✅ Component refactoring
-- ✅ Hook extraction
-
-**⏰ REMAINING:**
-
-**2.1 Introduce Service Layer** ⏰ 1 week, 💰 Free
-```
-src/services/
-├── tourService.ts       # Tour CRUD operations
-├── bookingService.ts    # Booking logic
-├── orderService.ts      # Order management
-└── emailService.ts      # Email operations
-```
-
-**Benefits:**
-- Centralized business logic
-- Easier testing (mock services)
-- Preparation for API migration
-- Single source of truth
-
-**2.2 Implement State Management (Optional)** ⏰ 1 week, 💰 Free
-```bash
-npm install zustand
-```
-
-```typescript
-// src/stores/
-├── bookingStore.ts      # Booking state
-├── currencyStore.ts     # Currency state (if re-added)
-├── cartStore.ts         # Shopping cart (future)
-└── userStore.ts         # User auth (future)
-```
-
-**2.3 Add Error Boundaries** ⏰ 2 days, 💰 Free
-```typescript
-// src/components/common/ErrorBoundary/
-├── RouteErrorBoundary.tsx
-├── FeatureErrorBoundary.tsx
-└── GlobalErrorBoundary.tsx
-```
-
-**2.4 Implement Proper Caching** ⏰ 3 days, 💰 Free
-```bash
-npm install swr
-# or
-npm install @tanstack/react-query
-```
-
-**Impact:** 🏗️ Architecture Quality +30%, 🔄 Scalability +40%
-
----
-
-### Phase 3: Testing Infrastructure (2 weeks)
-
-**3.1 Set Up Testing Environment** ⏰ 2 days, 💰 Free
-```bash
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
-npm install --save-dev @playwright/test
-```
-
-**3.2 Write Unit Tests** ⏰ 5 days, 💰 Free
-- Utility functions (100% coverage)
-- Custom hooks
-- Simple components
-
-**3.3 Write Integration Tests** ⏰ 3 days, 💰 Free
-- Booking flow
-- Form submissions
-
-**3.4 Write E2E Tests** ⏰ 3 days, 💰 Free
-- Complete booking journey
-- Contact form
-- Tour browsing
-
-**Impact:** 🧪 Test Coverage 0% → 70%, 🐛 Bug Prevention +90%
-
----
-
-## Refactoring Plan
-
-### ✅ COMPLETED Refactorings
-
-#### Calendar Component ✅
-- ✅ Extracted `useCalendarState` hook
-- ✅ Extracted `useBookingFlow` hook
-- ✅ Created `CalendarHeader` component
-- ✅ Created `CalendarGrid` component (memoized)
-- ✅ Created `DateCell` component (memoized)
-- ✅ Created `TimeSlotSelector` component
-- ✅ Created `SelectedDateInfo` component
-- ✅ Moved `BookingModal` to separate directory
-- ✅ Extracted date utilities to `dateUtils.ts`
-
-#### CheckoutForm Component ✅
-- ✅ Extracted `useCheckoutState` hook
-- ✅ Extracted `useCheckoutInitialization` hook
-- ✅ Extracted `useOrderSubmission` hook
-- ✅ Extracted `useCheckoutValidation` hook
-- ✅ Created `ValidationMessage` component
-- ✅ Created `BillingInfoForm` components
-- ✅ Created `PassengersSection` components
-- ✅ Created `AdditionalInfoForm` component
-- ✅ Created `RemovePassengerModal` component
-- ✅ Extracted constants (provinceOptions, countryOptions)
-
-#### MiniCart Component ✅
-- ✅ Extracted `useMiniCartPricing` hook
-- ✅ Created `OrderSummary` components
-- ✅ Created `PaymentMethods` components
-- ✅ Created `CheckoutButton` component
-- ✅ Extracted payment utilities to `paymentUtils.ts`
-
-### Remaining Refactorings
-
-#### Extract Pricing Utilities
-```typescript
-// src/lib/utils/pricing.ts
-export function calculateOrderTotal(
-  adults: number,
-  children: number,
-  pricing: Pricing
-): number {
-  return adults * pricing.priceAdult + children * pricing.priceChild;
-}
-
-export function calculateSubtotal(
-  adults: number,
-  children: number,
-  pricing: Pricing
-): { adults: number; children: number; total: number } {
-  const subtotalAdults = adults * pricing.priceAdult;
-  const subtotalChildren = children * pricing.priceChild;
-  return {
-    adults: subtotalAdults,
-    children: subtotalChildren,
-    total: subtotalAdults + subtotalChildren,
-  };
 }
 ```
 
 ---
 
-## Priority Matrix
+### Código Backend
 
-### Implementation Priority
+#### Análisis de Controllers
 
-| Task | Impact | Effort | Priority | Status |
-|------|--------|--------|----------|--------|
-| ~~Refactor Calendar component~~ | High | High | ~~MEDIUM~~ | ✅ **COMPLETED** |
-| ~~Refactor MiniCart component~~ | Medium | Medium | ~~MEDIUM~~ | ✅ **COMPLETED** |
-| ~~Refactor CheckoutForm component~~ | High | High | ~~MEDIUM~~ | ✅ **COMPLETED** |
-| ~~Reorganize folder structure~~ | High | Medium | ~~HIGH~~ | ✅ **COMPLETED** |
-| ~~Extract date utilities~~ | Medium | Low | ~~HIGH~~ | ✅ **COMPLETED** |
-| ~~Extract payment utilities~~ | Medium | Low | ~~HIGH~~ | ✅ **COMPLETED** |
-| Remove debug logs | Low | Low | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Split tourExample.json | High | Low | **HIGH** | ⏰ Pending |
-| Dynamic imports for heavy components | High | Medium | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Extract remaining pricing utilities | Medium | Low | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Introduce service layer | High | High | **MEDIUM** | ⏰ Pending |
-| Implement state management (Zustand) | High | Medium | **MEDIUM** | ⏰ Pending |
-| Add error boundaries | Medium | Low | ~~**MEDIUM**~~ | ✅ **COMPLETED** |
-| Set up testing infrastructure | High | High | **MEDIUM** | ⚠️ **PARTIALLY COMPLETE** |
-| Write unit tests | High | High | **MEDIUM** | ⏰ Pending |
-| Write E2E tests | Medium | High | **LOW** | ⏰ Pending |
-| Accessibility audit | Medium | High | ~~**LOW**~~ | ⚠️ **PARTIALLY COMPLETE** |
-| TypeScript improvements | Medium | Medium | **MEDIUM** | ⏰ Pending |
-| Reorganize API structure (move clients to modules) | High | Medium | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Extract domain services consistently | High | Medium | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Fix database connection management | High | Low | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Implement rate limiting on all API routes | High | Medium | ~~**HIGH**~~ | ✅ **COMPLETED** |
-| Replace `any` types with proper types | Medium | High | **MEDIUM** | ⏰ Pending |
-| Set up error logging service | Medium | Low | **MEDIUM** | ⏰ Pending |
+**Controllers existentes:**
 
-### Recommended Execution Order
+1. **OrdersController**
+   - **Ubicación:** `src/modules/orders/api/controllers/ordersController.ts`
+   - **Líneas:** ~208
+   - **Responsabilidades:**
+     - ✅ Validación de entrada (Zod)
+     - ✅ Orquestación de servicios
+     - ✅ Transformación de salida (DTOs)
+     - ✅ Manejo de errores
+   - **Evaluación:** ✅ **EXCELENTE** - Solo orquesta, no contiene lógica de negocio
 
-**Week 1-2: Quick Wins (Remaining)**
-1. ✅ Remove debug logs - **COMPLETED**
-2. Split tourExample.json - **PENDING**
-3. ✅ Dynamic imports - **COMPLETED**
-4. ✅ Extract remaining pricing utilities - **COMPLETED**
+2. **ToursController**
+   - **Ubicación:** `src/modules/tours/api/controllers/toursController.ts`
+   - **Responsabilidades:** Similar a OrdersController
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Week 3-5: Architecture & API Reorganization** ✅ COMPLETED
-5. ✅ **Reorganize API structure** - **COMPLETED** (December 2024)
-   - ✅ API clients moved to modules
-   - ✅ Duplicate functions consolidated
-   - ✅ Domain services extracted consistently (9 services created)
-   - ✅ Controllers refactored to only orchestrate
-   - ✅ Handler layer eliminated
-   - ✅ Rate limiting implemented on all routes
-   - ✅ Centralized logging service created
-   - ✅ Database connection management fixed
-6. Service layer - ✅ **COMPLETED** (Domain services implemented)
-7. State management (if needed) - **PENDING** (Not needed yet)
-8. ✅ Error boundaries - **COMPLETED**
-9. Caching strategy - **PENDING** (Can be added when needed)
+3. **PaymentsController**
+   - **Ubicación:** `src/modules/payments/api/controllers/paymentsController.ts`
+   - **Responsabilidades:** Gestión de pagos
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Week 6+: Quality**
-9. Testing infrastructure
-10. Test coverage
-11. Accessibility
-12. Documentation
+4. **NotificationsController**
+   - **Ubicación:** `src/modules/notifications/api/controllers/notificationsController.ts`
+   - **Responsabilidades:** Gestión de notificaciones
+   - **Evaluación:** ✅ **EXCELENTE**
 
----
+**Evaluación general:** ✅ **EXCELENTE**
+- Todos los controllers siguen el mismo patrón
+- No contienen lógica de negocio
+- Fácil de testear
 
-## Conclusion
+#### Domain Services
 
-### Summary of Findings
+**Services existentes:**
 
-**Strengths:**
-- ✅ Solid foundation with modern stack
-- ✅ **Excellent project structure with domain-based modules**
-- ✅ Type-safe codebase
-- ✅ **Component-based architecture with well-refactored components**
-- ✅ **Reusable hooks and utilities**
+1. **orderService.ts**
+   - **Ubicación:** `src/modules/orders/domain/orderService.ts`
+   - **Funciones principales:**
+     - `createReservation()` - Crear reserva completa
+     - `confirmPayment()` - Confirmar pago
+     - `listOrders()` - Listar órdenes
+     - `getOrderWithRelations()` - Obtener orden con relaciones
+   - **Evaluación:** ✅ **EXCELENTE** - Lógica de negocio centralizada
 
-**Critical Issues Remaining:**
-1. ✅ **Performance:** Mockup JSON files eliminated - all data now from database
-2. ✅ **Performance:** Code splitting implemented for heavy components
-3. ✅ **Scalability:** Database migration complete - PostgreSQL with Prisma ORM
-4. ✅ **Architecture:** API structure fully refactored - domain-based organization complete
-5. ✅ **Security:** Rate limiting implemented on all API routes
-6. ✅ **Infrastructure:** Centralized logging and error handling implemented
-7. ✅ **Database:** Connection management fixed and consistent
-8. ⚠️ **Testing:** Testing infrastructure exists but minimal coverage (only 3 test files)
-9. ⚠️ **Type Safety:** ~10 instances of `any` type (down from 72, 86% improvement)
+2. **tourService.ts**
+   - **Ubicación:** `src/modules/tours/domain/tourService.ts`
+   - **Funciones principales:**
+     - `listTours()` - Listar tours
+     - `getTourById()` - Obtener tour
+     - `createTour()` - Crear tour
+     - `updateTour()` - Actualizar tour
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Impact of Completed Improvements:**
-- ✅ **Maintainability:** +70% easier to modify and test
-- ✅ **Readability:** +85% easier to understand
-- ✅ **Testability:** +75% easier to test components
-- ✅ **Architecture:** +60% better organization
+3. **paymentService.ts**
+   - **Ubicación:** `src/modules/payments/domain/paymentService.ts`
+   - **Funciones principales:**
+     - `createPayPalPayment()` - Crear pago PayPal
+     - `createPaywayPayment()` - Crear pago Payway
+     - `processPayPalWebhook()` - Procesar webhook PayPal
+     - `processPaywayWebhook()` - Procesar webhook Payway
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Remaining Improvements Needed:**
-- ✅ **Performance:** Code splitting implemented (+15-20% improvement achieved)
-- ✅ **Performance:** Mockup JSON files eliminated - all data from database (+20-25% improvement achieved)
-- ✅ **Scalability:** Database migration complete - PostgreSQL with Prisma ORM (Ready for 10x growth)
-- ✅ **API:** Complete REST API with Swagger documentation
-- ✅ **Postman:** Complete Postman collection for API testing
-- **Quality:** +90% bug prevention (with testing)
-- ⚠️ **Accessibility:** Partially complete (keyboard navigation, color contrast pending)
+4. **notificationService.ts**
+   - **Ubicación:** `src/modules/notifications/domain/notificationService.ts`
+   - **Funciones principales:**
+     - `createNotification()` - Crear notificación
+     - `sendEmail()` - Enviar email
+     - `retryFailedNotifications()` - Reintentar notificaciones fallidas
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Estimated Effort for Remaining:**
-- ✅ Quick wins: **COMPLETED** (including mockup elimination and database migration)
-- ✅ Architecture improvements: **COMPLETED** (Database, API, Swagger, Postman)
-- Testing: 2 weeks
-- Accessibility completion: 2-3 days
-- **Total:** ~2-3 weeks (part-time) or ~1-2 weeks (full-time)
+**Evaluación general:** ✅ **EXCELENTE**
+- Lógica de negocio bien encapsulada
+- Servicios testeables
+- Sin dependencias de frameworks
 
-**ROI:**
-- ✅ **High:** Maintainability improvements already achieved
-- **High:** Performance improvements will directly impact conversions
-- **Medium:** Scalability enables business growth
-- **High:** Testing prevents costly bugs
+#### Repositories
 
-### Recommended Immediate Action
+**Repositories existentes:**
 
-**✅ Quick Wins Phase - MOSTLY COMPLETE**
+1. **orderRepository.ts**
+   - **Ubicación:** `src/modules/orders/infra/orderRepository.ts`
+   - **Responsabilidades:** Acceso a datos de órdenes
+   - **Evaluación:** ✅ **EXCELENTE** - Solo acceso a datos
 
-**Completed:**
-1. ✅ Remove debug logs (2 hours) - **DONE**
-2. ⏰ Split tourExample.json (4 hours) - **PENDING**
-3. ✅ Implement dynamic imports (1 day) - **DONE**
-4. ✅ Extract remaining pricing utilities (4 hours) - **DONE**
-5. ✅ Add error boundaries (1 day) - **DONE**
-6. ⚠️ Accessibility improvements (partially complete) - **IN PROGRESS**
+2. **tourRepository.ts**
+   - **Ubicación:** `src/modules/tours/infra/tourRepository.ts`
+   - **Responsabilidades:** Acceso a datos de tours
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Completed:**
-- ✅ Mockup JSON files eliminated - all data now from database
-- ✅ Complete REST API with Swagger documentation
-- ✅ Postman collection created for API testing
-- ✅ All pages migrated to use database (Server Components)
-- ✅ Client Components updated to fetch from API
+3. **paymentRepository.ts**
+   - **Ubicación:** `src/modules/payments/infra/paymentRepository.ts`
+   - **Responsabilidades:** Acceso a datos de pagos
+   - **Evaluación:** ✅ **EXCELENTE**
 
-**Next Steps (Updated December 2024):**
-1. ✅ **COMPLETED:** Reorganize API structure (move clients to modules, consolidate duplicates)
-2. ✅ **COMPLETED:** Extract domain services consistently (move business logic from controllers)
-3. ✅ **COMPLETED:** Fix database connection management (remove `$disconnect()` calls)
-4. ✅ **COMPLETED:** Implement rate limiting on all API routes
-5. ✅ **COMPLETED:** Set up centralized error logging service
-6. Complete accessibility audit (keyboard navigation, color contrast - 2-3 days)
-7. Write unit and integration tests (expand beyond 3 existing test files)
-8. Replace remaining `any` types with proper types (~10 instances, low priority)
+**Evaluación general:** ✅ **EXCELENTE**
+- Repositories solo acceden a datos
+- Fáciles de mockear para tests
+- Abstracción correcta de Prisma
 
-**Total time remaining for quick wins:** ✅ **COMPLETED**  
-**Impact:** +20-25% performance improvement achieved (mockup elimination)  
-**Cost:** Free (no dependencies)
+#### Validators (Zod Schemas)
+
+**Validators existentes:**
+
+1. **ordersValidators.ts**
+   - **Ubicación:** `src/modules/orders/api/validators/ordersValidators.ts`
+   - **Schemas:**
+     - `createOrderSchema` - Validación de creación de orden
+     - `listOrdersQuerySchema` - Validación de query params
+     - `updateOrderStatusSchema` - Validación de actualización de estado
+   - **Evaluación:** ✅ **EXCELENTE** - Validación completa
+
+2. **toursValidators.ts**
+   - **Ubicación:** `src/modules/tours/api/validators/toursValidators.ts`
+   - **Evaluación:** ✅ **EXCELENTE**
+
+**Evaluación general:** ✅ **EXCELENTE**
+- Validación centralizada con Zod
+- Schemas reutilizables
+- Type-safe validation
+
+#### DTOs (Data Transfer Objects)
+
+**DTOs existentes:**
+
+1. **ordersDto.ts**
+   - **Ubicación:** `src/modules/orders/api/dto/ordersDto.ts`
+   - **Funciones:**
+     - `toOrderResponse()` - Transformar Order a respuesta
+     - `toOrderWithBookingsResponse()` - Transformar Order con bookings
+     - `toOrderFullResponse()` - Transformar Order completo
+   - **Evaluación:** ✅ **EXCELENTE** - Transformación clara
+
+**Evaluación general:** ✅ **EXCELENTE**
+- DTOs separan modelos de dominio de respuestas API
+- Fácil de mantener
+- Type-safe
 
 ---
 
-**Document Version:** 3.0  
-**Review Date:** December 2024  
-**Last Updated:** December 2024  
-**Next Review:** After completing testing coverage and accessibility improvements
+### Performance Backend
 
-**Recent Updates (December 2024):**
-- ✅ **COMPLETED:** API structure fully refactored - all clients moved to modules
-- ✅ **COMPLETED:** Duplication eliminated - tours API consolidated
-- ✅ **COMPLETED:** Domain services extracted consistently (9 services created)
-- ✅ **COMPLETED:** Controllers refactored to only orchestrate
-- ✅ **COMPLETED:** Handler layer eliminated (9 files removed)
-- ✅ **COMPLETED:** Rate limiting implemented on all 27 API routes
-- ✅ **COMPLETED:** Centralized logging service created
-- ✅ **COMPLETED:** Database connection management fixed
-- Updated technical debt score: 2.0/10 (significant reduction)
-- Updated maintainability score: 9.5/10 (restored and improved)
-- Updated scalability score: 8.5/10 (improved with rate limiting and connection management)
+#### Database Queries
 
-**Recent Updates (November 2024):**
-- ✅ Verified all pages use `export const dynamic = 'force-dynamic'` for database access
-- ✅ Confirmed no `<img>` tags found (all using `next/image`)
-- ✅ Confirmed error boundaries implemented
-- ✅ Confirmed pricing utilities extracted
-- ⚠️ **NEW:** Identified database connection management inconsistencies
-- ⚠️ **NEW:** Found 72 instances of `any` type (type safety concern)
-- ⚠️ **NEW:** Identified missing rate limiting on most API routes
-- ⚠️ **NEW:** Identified need for centralized error logging service
-- ⚠️ Testing infrastructure exists but minimal coverage (only 3 test files)
-- Updated technical debt score: 3.0/10 (slight increase due to new findings)
-- Updated scalability score: 7.5/10 (connection management concerns)
+**Estado actual:** ✅ **BUENO**
 
-**Previous Updates:**
-- ✅ Marked debug logs removal as completed
-- ✅ Marked dynamic imports as completed
-- ✅ Marked pricing utilities extraction as completed
-- ✅ Marked error boundaries as completed
-- ✅ **Marked mockup elimination as completed** - All JSON files removed, site uses 100% database
-- ✅ **Marked database migration as completed** - PostgreSQL with Prisma ORM fully integrated
-- ✅ **Marked API documentation as completed** - Swagger documentation for all endpoints
-- ✅ **Marked Postman collection as completed** - Complete collection with all endpoints
-- ⚠️ Marked accessibility audit as partially complete
+**Optimizaciones implementadas:**
+- ✅ Índices estratégicos en base de datos
+- ✅ SELECT FOR UPDATE para prevenir race conditions
+- ✅ Transacciones para operaciones atómicas
+- ✅ Queries optimizadas con Prisma
+
+**Mejorable:**
+- ⚠️ Revisar queries N+1 potenciales
+- ⚠️ Agregar paginación donde sea necesario
+- ⚠️ Considerar eager loading para relaciones frecuentes
+
+**Ejemplo de optimización:**
+```typescript
+// ✅ BUENO: SELECT FOR UPDATE
+await tx.$queryRaw`
+  SELECT * FROM "TourDeparture"
+  WHERE id = ${departureId}
+  FOR UPDATE
+`;
+
+// ✅ BUENO: Transacción atómica
+await prisma.$transaction(async (tx) => {
+  // Operaciones atómicas
+});
+```
+
+#### Connection Pooling
+
+**Estado actual:** ✅ **CORRECTO**
+
+**Implementación:**
+- ✅ Prisma Client singleton
+- ✅ Connection pooling manejado por Prisma
+- ✅ No se llama `$disconnect()` innecesariamente
+- ✅ Pool configurado correctamente
+
+**Evaluación:** ✅ **EXCELENTE**
+
+#### Rate Limiting
+
+**Estado actual:** ✅ **IMPLEMENTADO**
+
+**Configuración:**
+- ✅ Todos los endpoints protegidos
+- ✅ Límites configurables por tipo de endpoint
+- ✅ Middleware centralizado
+
+**Límites actuales:**
+- Public endpoints: 200 req/hour
+- Write endpoints: 50 req/hour
+- Admin endpoints: 500 req/hour
+- Contact form: 10 req/hour
+- Notifications: 30 req/hour
+- Webhooks: 100 req/hour
+
+**Evaluación:** ✅ **EXCELENTE**
+
+#### Caching
+
+**Estado actual:** ⚠️ **NO IMPLEMENTADO**
+
+**Recomendaciones:**
+- Implementar Redis para:
+  - Cache de tours frecuentes
+  - Cache de disponibilidad
+  - Cache de precios
+- Usar Next.js cache para:
+  - Páginas estáticas
+  - Datos que no cambian frecuentemente
+
+---
+
+### Seguridad Backend
+
+#### Autenticación
+
+**Estado actual:** ✅ **IMPLEMENTADO**
+
+**Implementación:**
+- ✅ JWT tokens para autenticación
+- ✅ Refresh tokens para mantener sesiones
+- ✅ Password hashing con bcrypt
+- ✅ Roles (ADMIN, OPERATOR)
+
+**Evaluación:** ✅ **BUENO**
+
+**Mejorable:**
+- ⚠️ Considerar rate limiting en login
+- ⚠️ Agregar 2FA para admin
+- ⚠️ Implementar lockout después de intentos fallidos
+
+#### Autorización
+
+**Estado actual:** ✅ **IMPLEMENTADO**
+
+**Implementación:**
+- ✅ Middleware `withAuth` para proteger rutas
+- ✅ Verificación de roles
+- ✅ Protección de endpoints admin
+
+**Evaluación:** ✅ **BUENO**
+
+#### Input Validation
+
+**Estado actual:** ✅ **EXCELENTE**
+
+**Implementación:**
+- ✅ Validación con Zod en todos los endpoints
+- ✅ Validación de tipos
+- ✅ Validación de formato (email, phone, etc.)
+
+**Evaluación:** ✅ **EXCELENTE**
+
+#### SQL Injection Prevention
+
+**Estado actual:** ✅ **PROTEGIDO**
+
+**Implementación:**
+- ✅ Prisma ORM previene SQL injection
+- ✅ Queries parametrizadas
+- ✅ No hay queries raw sin parámetros
+
+**Evaluación:** ✅ **EXCELENTE**
+
+#### Rate Limiting
+
+**Estado actual:** ✅ **IMPLEMENTADO**
+
+**Implementación:**
+- ✅ Todos los endpoints protegidos
+- ✅ Límites configurables
+- ✅ Middleware centralizado
+
+**Evaluación:** ✅ **EXCELENTE**
+
+#### CORS Configuration
+
+**Estado actual:** ⚠️ **REVISAR**
+
+**Recomendación:**
+- Verificar configuración de CORS
+- Restringir origins permitidos
+- Configurar headers apropiados
+
+#### Webhook Security
+
+**Estado actual:** ⚠️ **MEJORABLE**
+
+**Implementación actual:**
+- ✅ Validación de firma en webhooks
+- ⚠️ Falta verificación de IP whitelist
+- ⚠️ Falta idempotencia en webhooks
+
+**Recomendaciones:**
+- Agregar verificación de IP para webhooks
+- Implementar idempotencia (evitar procesar el mismo webhook dos veces)
+- Agregar logging detallado de webhooks
+
+---
+
+### Testing Backend
+
+#### Cobertura Actual
+
+**Estado:** ⚠️ **MINIMAL**
+
+**Tests existentes:**
+- `tests/api/availability.test.ts`
+- `tests/api/orders.test.ts`
+- `tests/api/tours.test.ts`
+
+**Cobertura estimada:** < 5%
+
+#### Tests Faltantes
+
+**Prioridad Alta:**
+1. Tests de Domain Services:
+   - `orderService` - Lógica crítica de reservas
+   - `paymentService` - Lógica de pagos
+   - `notificationService` - Lógica de notificaciones
+2. Tests de Controllers:
+   - Validación de entrada
+   - Transformación de salida
+   - Manejo de errores
+3. Tests de Repositories:
+   - Queries a base de datos
+   - Transacciones
+
+**Prioridad Media:**
+4. Tests de integración:
+   - Flujo completo de creación de orden
+   - Flujo de pago
+   - Flujo de notificaciones
+5. Tests de API:
+   - Todos los endpoints
+   - Casos de error
+   - Validaciones
+
+**Recomendación:**
+- Configurar Vitest para unit tests
+- Configurar base de datos de test
+- Objetivo: 80% cobertura en servicios críticos
+
+---
+
+### Mejoras Backend Priorizadas
+
+| ID | Mejora | Prioridad | Impacto | Esfuerzo | Dependencias | Estado |
+|----|--------|-----------|---------|----------|--------------|--------|
+| BE-1 | Agregar tests para Domain Services | Alta | Alto | Alto | - | ⏰ Pendiente |
+| BE-2 | Implementar caching (Redis) | Media | Alto | Alto | Redis | ⏰ Pendiente |
+| BE-3 | Revisar y optimizar queries N+1 | Media | Medio | Medio | - | ⏰ Pendiente |
+| BE-4 | Agregar paginación donde falte | Media | Medio | Bajo | - | ⏰ Pendiente |
+| BE-5 | Mejorar seguridad de webhooks (IP whitelist, idempotencia) | Alta | Alto | Medio | - | ⏰ Pendiente |
+| BE-6 | Agregar rate limiting en login | Media | Medio | Bajo | - | ⏰ Pendiente |
+| BE-7 | Implementar 2FA para admin | Baja | Medio | Alto | - | ⏰ Pendiente |
+| BE-8 | Agregar lockout después de intentos fallidos | Media | Medio | Bajo | - | ⏰ Pendiente |
+| BE-9 | Revisar y configurar CORS correctamente | Media | Medio | Bajo | - | ⏰ Pendiente |
+| BE-10 | Agregar logging estructurado (JSON) | Baja | Bajo | Bajo | - | ⏰ Pendiente |
+
+**Leyenda:** Misma que Frontend
+
+---
+
+## SEGURIDAD - Análisis Exhaustivo
+
+### Vulnerabilidades Frontend
+
+#### 1. XSS (Cross-Site Scripting)
+
+**Riesgo:** ⚠️ **MEDIO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Contenido dinámico de tours (descripciones) no sanitizado
+- ⚠️ Uso potencial de `dangerouslySetInnerHTML` sin sanitización
+- ⚠️ Inputs de usuario no sanitizados antes de mostrar
+
+**Recomendación:**
+```typescript
+import DOMPurify from 'dompurify';
+
+// Sanitizar HTML antes de renderizar
+const sanitizedHtml = DOMPurify.sanitize(tour.longDescription);
+```
+
+**Prioridad:** **ALTA**
+
+#### 2. LocalStorage para Datos Sensibles
+
+**Riesgo:** ⚠️ **MEDIO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Datos de pasajeros en localStorage (vulnerable a XSS)
+- ⚠️ Información de facturación en localStorage
+- ⚠️ No hay encriptación
+
+**Recomendación:**
+- Encriptar datos sensibles antes de almacenar
+- Usar sessionStorage para datos temporales
+- Limpiar localStorage después de submit exitoso
+- Considerar no almacenar datos sensibles en absoluto
+
+**Prioridad:** **MEDIA**
+
+#### 3. CSRF (Cross-Site Request Forgery)
+
+**Riesgo:** ⚠️ **MEDIO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ No hay protección CSRF implementada
+- ⚠️ Requests de estado-changing no protegidos
+
+**Recomendación:**
+- Implementar tokens CSRF
+- Usar SameSite cookies
+- Validar origin/referer en backend
+
+**Prioridad:** **ALTA**
+
+#### 4. Input Validation Solo en Frontend
+
+**Riesgo:** ⚠️ **BAJO** (backend también valida)
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Validación duplicada (frontend y backend)
+- ⚠️ Posible inconsistencia entre validaciones
+
+**Recomendación:**
+- Mantener validación en ambos lados
+- Asegurar que las validaciones sean consistentes
+- Backend es la fuente de verdad
+
+**Prioridad:** **BAJA**
+
+---
+
+### Vulnerabilidades Backend
+
+#### 1. Rate Limiting en Login
+
+**Riesgo:** ⚠️ **MEDIO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Login tiene rate limiting pero podría ser más estricto
+- ⚠️ No hay lockout después de intentos fallidos
+
+**Recomendación:**
+- Implementar lockout después de 5 intentos fallidos
+- Agregar captcha después de 3 intentos
+- Rate limiting más estricto en login
+
+**Prioridad:** **MEDIA**
+
+#### 2. Webhook Security
+
+**Riesgo:** ⚠️ **MEDIO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Validación de firma implementada pero mejorable
+- ⚠️ No hay verificación de IP whitelist
+- ⚠️ No hay idempotencia (puede procesar el mismo webhook dos veces)
+
+**Recomendación:**
+- Agregar verificación de IP whitelist
+- Implementar idempotencia (usar `providerPaymentId` como clave)
+- Agregar logging detallado
+
+**Prioridad:** **ALTA**
+
+#### 3. CORS Configuration
+
+**Riesgo:** ⚠️ **BAJO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Configuración de CORS no verificada
+- ⚠️ Posible exposición a origins no autorizados
+
+**Recomendación:**
+- Revisar y restringir origins permitidos
+- Configurar headers apropiados
+- Validar origin en cada request
+
+**Prioridad:** **MEDIA**
+
+#### 4. Error Messages Informativos
+
+**Riesgo:** ⚠️ **BAJO**
+
+**Vulnerabilidades identificadas:**
+- ⚠️ Algunos errores pueden exponer información sensible
+- ⚠️ Stack traces en desarrollo
+
+**Recomendación:**
+- Asegurar que errores en producción no expongan información sensible
+- Logging detallado solo en desarrollo
+- Mensajes de error genéricos para usuarios
+
+**Prioridad:** **BAJA**
+
+#### 5. SQL Injection
+
+**Riesgo:** ✅ **PROTEGIDO**
+
+**Estado:**
+- ✅ Prisma ORM previene SQL injection
+- ✅ Queries parametrizadas
+- ✅ No hay queries raw sin parámetros
+
+**Evaluación:** ✅ **SEGURO**
+
+#### 6. Password Security
+
+**Riesgo:** ✅ **PROTEGIDO**
+
+**Estado:**
+- ✅ Passwords hasheados con bcrypt
+- ✅ Salt automático
+- ✅ No se almacenan passwords en texto plano
+
+**Evaluación:** ✅ **SEGURO**
+
+---
+
+### Recomendaciones de Seguridad
+
+#### Prioridad Alta
+
+1. **Implementar sanitización de HTML**
+   - Usar DOMPurify para contenido dinámico
+   - Sanitizar descripciones de tours
+   - Sanitizar inputs de usuario
+
+2. **Mejorar seguridad de webhooks**
+   - Agregar verificación de IP whitelist
+   - Implementar idempotencia
+   - Agregar logging detallado
+
+3. **Implementar CSRF protection**
+   - Tokens CSRF para operaciones críticas
+   - SameSite cookies
+   - Validación de origin/referer
+
+#### Prioridad Media
+
+4. **Encriptar datos sensibles en localStorage**
+   - Usar librería de encriptación
+   - Encriptar antes de almacenar
+   - Desencriptar al leer
+
+5. **Agregar lockout después de intentos fallidos**
+   - Lockout después de 5 intentos
+   - Captcha después de 3 intentos
+   - Rate limiting más estricto
+
+6. **Revisar y configurar CORS**
+   - Restringir origins permitidos
+   - Configurar headers apropiados
+   - Validar origin en cada request
+
+#### Prioridad Baja
+
+7. **Implementar 2FA para admin**
+   - TOTP (Time-based One-Time Password)
+   - SMS o app authenticator
+   - Backup codes
+
+8. **Mejorar logging de seguridad**
+   - Logging estructurado (JSON)
+   - Alertas para intentos sospechosos
+   - Integración con servicios de monitoreo
+
+---
+
+### Checklist de Seguridad
+
+#### Frontend
+
+- [ ] Sanitizar todo el HTML dinámico (DOMPurify)
+- [ ] Encriptar datos sensibles en localStorage
+- [ ] Implementar CSRF protection
+- [ ] Validar inputs en frontend (ya implementado)
+- [ ] Usar HTTPS en producción (ya implementado)
+- [ ] Limpiar localStorage después de submit
+- [ ] No almacenar información de tarjetas de crédito
+- [ ] Implementar Content Security Policy (CSP)
+
+#### Backend
+
+- [ ] Validar inputs en backend (ya implementado)
+- [ ] Rate limiting en todos los endpoints (ya implementado)
+- [ ] Autenticación JWT (ya implementado)
+- [ ] Password hashing (ya implementado)
+- [ ] SQL injection prevention (ya implementado)
+- [ ] Webhook security mejorada (pendiente)
+- [ ] CORS configurado correctamente (revisar)
+- [ ] Error messages no expongan información sensible
+- [ ] Logging de seguridad implementado
+- [ ] Lockout después de intentos fallidos (pendiente)
+
+#### General
+
+- [ ] HTTPS en producción (ya implementado)
+- [ ] Variables de entorno seguras (ya implementado)
+- [ ] Secrets no en código (ya implementado)
+- [ ] Dependencias actualizadas (revisar regularmente)
+- [ ] Security headers configurados (revisar)
+- [ ] Monitoreo de seguridad (considerar)
+
+---
+
+## Mejoras Completadas
+
+### Phase 1: Component Refactoring ✅
+
+1. ✅ Calendar Component Refactoring (529 → 121 líneas, 77% reducción)
+2. ✅ CheckoutForm Component Refactoring (~678 → 274 líneas, 60% reducción)
+3. ✅ MiniCart Component Refactoring (283 → 92 líneas, 67% reducción)
+
+### Phase 2: Architecture Improvements ✅
+
+4. ✅ API Structure Refactoring (diciembre 2024)
+   - API clients organizados por dominio
+   - Domain services extraídos consistentemente
+   - Controllers refactorizados para solo orquestar
+   - Handler layer eliminado
+5. ✅ Folder Structure Reorganization
+6. ✅ Utility Extraction (dateUtils, paymentUtils, pricing)
+
+### Phase 3: Infrastructure Improvements ✅
+
+7. ✅ Rate Limiting implementado en todos los endpoints
+8. ✅ Centralized Logging Service
+9. ✅ Database Connection Management fixed
+10. ✅ Error Boundaries implementados
+11. ✅ Code Splitting implementado
+
+---
+
+## Matriz de Priorización General
+
+### Prioridad Alta (Crítico - Hacer primero)
+
+| ID | Mejora | Tipo | Impacto | Esfuerzo | Dependencias |
+|----|--------|------|---------|----------|--------------|
+| FE-4 | Implementar sanitización de inputs | Frontend | Alto | Bajo | - |
+| FE-7 | Implementar CSRF protection | Frontend | Alto | Medio | - |
+| BE-5 | Mejorar seguridad de webhooks | Backend | Alto | Medio | - |
+| FE-2 | Agregar tests para componentes críticos | Frontend | Alto | Alto | - |
+| BE-1 | Agregar tests para Domain Services | Backend | Alto | Alto | - |
+
+### Prioridad Media (Importante - Hacer después)
+
+| ID | Mejora | Tipo | Impacto | Esfuerzo | Dependencias |
+|----|--------|------|---------|----------|--------------|
+| FE-1 | Reemplazar `any` types restantes | Frontend | Alto | Medio | - |
+| FE-3 | Completar accesibilidad | Frontend | Medio | Medio | - |
+| FE-8 | Encriptar datos sensibles en localStorage | Frontend | Medio | Medio | - |
+| BE-2 | Implementar caching (Redis) | Backend | Alto | Alto | Redis |
+| BE-3 | Revisar y optimizar queries N+1 | Backend | Medio | Medio | - |
+| BE-4 | Agregar paginación donde falte | Backend | Medio | Bajo | - |
+| BE-6 | Agregar rate limiting en login | Backend | Medio | Bajo | - |
+| BE-8 | Agregar lockout después de intentos fallidos | Backend | Medio | Bajo | - |
+| BE-9 | Revisar y configurar CORS correctamente | Backend | Medio | Bajo | - |
+
+### Prioridad Baja (Nice-to-have)
+
+| ID | Mejora | Tipo | Impacto | Esfuerzo | Dependencias |
+|----|--------|------|---------|----------|--------------|
+| FE-5 | Optimizar imágenes (AVIF, WebP, blur) | Frontend | Medio | Bajo | - |
+| FE-6 | Agregar `useMemo`/`useCallback` | Frontend | Bajo | Bajo | - |
+| FE-9 | Agregar más code splitting granular | Frontend | Bajo | Bajo | - |
+| FE-10 | Analizar bundle size | Frontend | Bajo | Bajo | - |
+| BE-7 | Implementar 2FA para admin | Backend | Medio | Alto | - |
+| BE-10 | Agregar logging estructurado | Backend | Bajo | Bajo | - |
+
+---
+
+## Conclusión
+
+### Resumen de Fortalezas
+
+- ✅ Arquitectura sólida y bien organizada
+- ✅ Código limpio y mantenible
+- ✅ Separación de responsabilidades clara
+- ✅ Type safety en la mayoría del código
+- ✅ Performance optimizado en áreas críticas
+- ✅ Seguridad básica implementada
+
+### Áreas de Mejora Principales
+
+1. **Testing:** Cobertura mínima, necesita expansión significativa
+2. **Seguridad:** Algunas vulnerabilidades menores identificadas
+3. **Type Safety:** ~54 instancias de `any` type a reemplazar
+4. **Accesibilidad:** Completar mejoras pendientes
+
+### Recomendación de Próximos Pasos
+
+**Sprint 1 (1-2 semanas):**
+1. Implementar sanitización de inputs (FE-4)
+2. Mejorar seguridad de webhooks (BE-5)
+3. Implementar CSRF protection (FE-7)
+
+**Sprint 2 (2-3 semanas):**
+4. Agregar tests para componentes críticos (FE-2)
+5. Agregar tests para Domain Services (BE-1)
+6. Reemplazar `any` types restantes (FE-1)
+
+**Sprint 3 (1-2 semanas):**
+7. Completar accesibilidad (FE-3)
+8. Encriptar datos sensibles en localStorage (FE-8)
+9. Revisar y optimizar queries N+1 (BE-3)
+
+---
+
+**Documento actualizado:** Enero 2025  
+**Próxima revisión:** Después de completar mejoras de prioridad alta

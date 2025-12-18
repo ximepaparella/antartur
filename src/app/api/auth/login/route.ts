@@ -4,28 +4,40 @@
  *   post:
  *     summary: Autenticar usuario
  *     tags: [Auth]
+ *     description: Autentica un usuario y retorna access token y refresh token. Rate limit: 20 requests/hour.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
  *         description: Login exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/LoginResponse'
  *       401:
  *         description: Credenciales inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid credentials"
  *       429:
- *         description: Demasiados intentos
+ *         description: Demasiados intentos (rate limit excedido)
  */
 
 import { NextRequest } from "next/server";

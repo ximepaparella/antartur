@@ -21,7 +21,7 @@
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [PENDING, CONFIRMED, CANCELLED]
+ *                 enum: [HELD, CONFIRMED, CANCELLED]
  *     responses:
  *       200:
  *         description: Estado actualizado exitosamente

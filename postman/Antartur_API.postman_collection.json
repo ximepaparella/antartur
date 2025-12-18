@@ -79,6 +79,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -90,7 +95,7 @@
               "host": ["{{api_url}}"],
               "path": ["tours"]
             },
-            "description": "Crear un nuevo tour"
+            "description": "Crear un nuevo tour (requiere auth admin)"
           },
           "response": []
         },
@@ -102,6 +107,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -116,7 +126,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Actualizar un tour existente"
+            "description": "Actualizar un tour existente (requiere auth admin)"
           },
           "response": []
         },
@@ -124,7 +134,13 @@
           "name": "Delete Tour",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/tours/:id",
               "host": ["{{api_url}}"],
@@ -133,7 +149,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Eliminar un tour"
+            "description": "Eliminar un tour (requiere auth admin)"
           },
           "response": []
         },
@@ -185,6 +201,11 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
                   }
                 ],
                 "body": {
@@ -199,7 +220,7 @@
                     { "key": "id", "value": "" }
                   ]
                 },
-                "description": "Crear un nuevo precio para un tour"
+                "description": "Crear un nuevo precio para un tour (requiere auth admin)"
               },
               "response": []
             },
@@ -211,6 +232,11 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
                   }
                 ],
                 "body": {
@@ -226,7 +252,7 @@
                     { "key": "priceId", "value": "" }
                   ]
                 },
-                "description": "Actualizar un precio existente"
+                "description": "Actualizar un precio existente (requiere auth admin)"
               },
               "response": []
             },
@@ -234,7 +260,13 @@
               "name": "Delete Tour Price",
               "request": {
                 "method": "DELETE",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
+                  }
+                ],
                 "url": {
                   "raw": "{{api_url}}/tours/:id/prices/:priceId",
                   "host": ["{{api_url}}"],
@@ -244,7 +276,7 @@
                     { "key": "priceId", "value": "" }
                   ]
                 },
-                "description": "Eliminar un precio"
+                "description": "Eliminar un precio (requiere auth admin)"
               },
               "response": []
             }
@@ -296,11 +328,16 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
                   }
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"date\": \"2024-01-15\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"13:00\",\n  \"available\": 20,\n  \"seatsTotal\": 20\n}"
+                  "raw": "{\n  \"date\": \"2025-01-15\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"13:00\",\n  \"seatsTotal\": 20\n}"
                 },
                 "url": {
                   "raw": "{{api_url}}/tours/:id/availability",
@@ -310,7 +347,7 @@
                     { "key": "id", "value": "" }
                   ]
                 },
-                "description": "Crear disponibilidad para un tour"
+                "description": "Crear disponibilidad para un tour (requiere auth admin)"
               },
               "response": []
             }
@@ -346,11 +383,16 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"available\": 15,\n  \"isActive\": true\n}"
+              "raw": "{\n  \"seatsTotal\": 20,\n  \"isActive\": true\n}"
             },
             "url": {
               "raw": "{{api_url}}/availability/:id",
@@ -360,7 +402,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Actualizar disponibilidad"
+            "description": "Actualizar disponibilidad (requiere auth admin)"
           },
           "response": []
         },
@@ -368,7 +410,13 @@
           "name": "Delete Availability",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/availability/:id",
               "host": ["{{api_url}}"],
@@ -377,7 +425,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Eliminar disponibilidad"
+            "description": "Eliminar disponibilidad (requiere auth admin)"
           },
           "response": []
         }
@@ -390,7 +438,13 @@
           "name": "List Orders",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/orders?page=1&limit=10",
               "host": ["{{api_url}}"],
@@ -402,7 +456,7 @@
                 { "key": "type", "value": "RESERVATION", "disabled": true }
               ]
             },
-            "description": "Listar todas las órdenes con paginación"
+            "description": "Listar todas las órdenes con paginación (requiere auth)"
           },
           "response": []
         },
@@ -433,7 +487,13 @@
           "name": "Get Order by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/orders/:id?includePayments=false",
               "host": ["{{api_url}}"],
@@ -445,7 +505,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener una orden por su ID"
+            "description": "Obtener una orden por su ID (requiere auth)"
           },
           "response": []
         },
@@ -453,7 +513,13 @@
           "name": "Get Order by Code",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/orders/code/:code?includePayments=false",
               "host": ["{{api_url}}"],
@@ -462,10 +528,10 @@
                 { "key": "includePayments", "value": "false" }
               ],
               "variable": [
-                { "key": "code", "value": "ORD-2024-001" }
+                { "key": "code", "value": "ANT-2025-0001" }
               ]
             },
-            "description": "Obtener una orden por su código único"
+            "description": "Obtener una orden por su código único (requiere auth)"
           },
           "response": []
         },
@@ -477,6 +543,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -491,7 +562,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Actualizar el estado de una orden"
+            "description": "Actualizar el estado de una orden (requiere auth admin)"
           },
           "response": []
         }
@@ -504,7 +575,13 @@
           "name": "Get Booking by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/bookings/:id",
               "host": ["{{api_url}}"],
@@ -513,7 +590,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener un booking por su ID"
+            "description": "Obtener un booking por su ID (requiere auth)"
           },
           "response": []
         },
@@ -521,7 +598,13 @@
           "name": "Get Bookings by Order",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/bookings/order/:orderId?includePassengers=false",
               "host": ["{{api_url}}"],
@@ -533,7 +616,7 @@
                 { "key": "orderId", "value": "" }
               ]
             },
-            "description": "Obtener todos los bookings de una orden"
+            "description": "Obtener todos los bookings de una orden (requiere auth)"
           },
           "response": []
         },
@@ -545,6 +628,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -559,7 +647,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Actualizar el estado de un booking"
+            "description": "Actualizar el estado de un booking (requiere auth admin)"
           },
           "response": []
         },
@@ -567,7 +655,13 @@
           "name": "Get Booking Passengers",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/bookings/:id/passengers",
               "host": ["{{api_url}}"],
@@ -576,7 +670,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener los pasajeros de un booking"
+            "description": "Obtener los pasajeros de un booking (requiere auth)"
           },
           "response": []
         }
@@ -589,7 +683,13 @@
           "name": "Get Passenger by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/passengers/:id",
               "host": ["{{api_url}}"],
@@ -598,7 +698,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener un pasajero por su ID"
+            "description": "Obtener un pasajero por su ID (requiere auth)"
           },
           "response": []
         }
@@ -611,7 +711,13 @@
           "name": "Get Payment by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/payments/:id",
               "host": ["{{api_url}}"],
@@ -620,7 +726,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener un pago por su ID"
+            "description": "Obtener un pago por su ID (requiere auth)"
           },
           "response": []
         },
@@ -628,7 +734,13 @@
           "name": "Get Payments by Order",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/payments/order/:orderId",
               "host": ["{{api_url}}"],
@@ -637,7 +749,28 @@
                 { "key": "orderId", "value": "" }
               ]
             },
-            "description": "Obtener todos los pagos de una orden"
+            "description": "Obtener todos los pagos de una orden (requiere auth)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Payment Methods",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/payments/available?currency=ARS",
+              "host": ["{{api_url}}"],
+              "path": ["payments", "available"],
+              "query": [
+                {
+                  "key": "currency",
+                  "value": "ARS",
+                  "description": "Moneda (ARS o USD)"
+                }
+              ]
+            },
+            "description": "Obtener métodos de pago disponibles según la moneda. Retorna gateways activos y transferencia bancaria si está activa."
           },
           "response": []
         },
@@ -649,6 +782,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -660,55 +798,111 @@
               "host": ["{{api_url}}"],
               "path": ["payments"]
             },
-            "description": "Crear un registro de pago (admin)"
+            "description": "Crear un registro de pago (admin, para uso interno)"
           },
           "response": []
         },
         {
-          "name": "PayPal Webhook",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"event\": \"payment.completed\",\n  \"data\": {}\n}"
+          "name": "PayPal",
+          "item": [
+            {
+              "name": "Create PayPal Payment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderId\": \"\",\n  \"amount\": 180.00,\n  \"currency\": \"USD\"\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/payments/paypal/create",
+                  "host": ["{{api_url}}"],
+                  "path": ["payments", "paypal", "create"]
+                },
+                "description": "Crear un pago PayPal. Retorna approvalUrl para redirigir al cliente."
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{api_url}}/payments/webhook/paypal",
-              "host": ["{{api_url}}"],
-              "path": ["payments", "webhook", "paypal"]
-            },
-            "description": "Webhook de PayPal para procesar notificaciones de pago"
-          },
-          "response": []
+            {
+              "name": "PayPal Webhook",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"event_type\": \"PAYMENT.CAPTURE.COMPLETED\",\n  \"resource\": {\n    \"id\": \"PAYMENT_ID\",\n    \"status\": \"COMPLETED\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/payments/webhook/paypal",
+                  "host": ["{{api_url}}"],
+                  "path": ["payments", "webhook", "paypal"]
+                },
+                "description": "Webhook de PayPal para procesar notificaciones de pago. Llamado automáticamente por PayPal."
+              },
+              "response": []
+            }
+          ]
         },
         {
-          "name": "Payway Webhook",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"event\": \"payment.completed\",\n  \"data\": {}\n}"
+          "name": "Payway",
+          "item": [
+            {
+              "name": "Create Payway Payment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderId\": \"\",\n  \"amount\": 180000,\n  \"currency\": \"ARS\"\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/payments/payway/create",
+                  "host": ["{{api_url}}"],
+                  "path": ["payments", "payway", "create"]
+                },
+                "description": "Crear un pago Payway. Retorna formToken y url para redirigir al cliente."
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{api_url}}/payments/webhook/payway",
-              "host": ["{{api_url}}"],
-              "path": ["payments", "webhook", "payway"]
-            },
-            "description": "Webhook de Payway para procesar notificaciones de pago"
-          },
-          "response": []
+            {
+              "name": "Payway Webhook",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"event\": \"payment.approved\",\n  \"data\": {\n    \"id\": \"PAYMENT_ID\",\n    \"status\": \"approved\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{api_url}}/payments/webhook/payway",
+                  "host": ["{{api_url}}"],
+                  "path": ["payments", "webhook", "payway"]
+                },
+                "description": "Webhook de Payway para procesar notificaciones de pago. Llamado automáticamente por Payway."
+              },
+              "response": []
+            }
+          ]
         }
       ]
     },
@@ -719,7 +913,13 @@
           "name": "Get Notification by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/notifications/:id",
               "host": ["{{api_url}}"],
@@ -728,7 +928,7 @@
                 { "key": "id", "value": "" }
               ]
             },
-            "description": "Obtener una notificación por su ID"
+            "description": "Obtener una notificación por su ID (requiere auth)"
           },
           "response": []
         },
@@ -736,7 +936,13 @@
           "name": "Get Notifications by Order",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/notifications/order/:orderId",
               "host": ["{{api_url}}"],
@@ -745,7 +951,7 @@
                 { "key": "orderId", "value": "" }
               ]
             },
-            "description": "Obtener todas las notificaciones de una orden"
+            "description": "Obtener todas las notificaciones de una orden (requiere auth)"
           },
           "response": []
         },
@@ -757,6 +963,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
               }
             ],
             "body": {
@@ -768,7 +979,110 @@
               "host": ["{{api_url}}"],
               "path": ["notifications"]
             },
-            "description": "Crear una nueva notificación. Campos requeridos: type, recipient, templateKey. Template keys disponibles: reservation-confirmation, reservation-notification, enquiry-confirmation, enquiry-notification, payment-confirmation"
+            "description": "Crear una nueva notificación (requiere auth). Campos requeridos: type, recipient, templateKey. Template keys disponibles: reservation-confirmation, reservation-notification, enquiry-confirmation, enquiry-notification, payment-confirmation, order-expired"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.accessToken) {",
+                  "        pm.environment.set('auth_token', jsonData.data.accessToken);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@antartur.tur.ar\",\n  \"password\": \"tu-password\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/auth/login",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Autenticar usuario. El accessToken se guarda automáticamente en la variable auth_token."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/auth/logout",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Cerrar sesión (requiere auth)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/auth/me",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Obtener información del usuario actual (requiere auth)"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/auth/refresh",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Refrescar access token usando refresh token (enviado en cookies httpOnly)"
           },
           "response": []
         }
@@ -781,13 +1095,19 @@
           "name": "Expire Pending Orders",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/admin/orders/expire-pending",
               "host": ["{{api_url}}"],
               "path": ["admin", "orders", "expire-pending"]
             },
-            "description": "Expirar órdenes pendientes (cron job)"
+            "description": "Expirar órdenes pendientes manualmente (requiere auth admin)"
           },
           "response": []
         },
@@ -795,15 +1115,235 @@
           "name": "Get Stats",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{api_url}}/admin/stats",
               "host": ["{{api_url}}"],
               "path": ["admin", "stats"]
             },
-            "description": "Obtener estadísticas generales del sistema"
+            "description": "Obtener estadísticas generales del sistema (requiere auth admin)"
           },
           "response": []
+        },
+        {
+          "name": "Settings",
+          "item": [
+            {
+              "name": "Payment Gateways",
+              "item": [
+                {
+                  "name": "Get Payment Gateways",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{api_url}}/admin/settings/payments",
+                      "host": ["{{api_url}}"],
+                      "path": ["admin", "settings", "payments"]
+                    },
+                    "description": "Obtener configuración de todos los gateways de pago (requiere auth admin)"
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Update Payment Gateway",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"isActive\": true,\n  \"isSandbox\": false,\n  \"displayName\": \"PayPal\"\n}"
+                    },
+                    "url": {
+                      "raw": "{{api_url}}/admin/settings/payments/:provider",
+                      "host": ["{{api_url}}"],
+                      "path": ["admin", "settings", "payments", ":provider"],
+                      "variable": [
+                        {
+                          "key": "provider",
+                          "value": "PAYPAL",
+                          "description": "PAYPAL o PAYWAY"
+                        }
+                      ]
+                    },
+                    "description": "Actualizar configuración de un gateway de pago (requiere auth admin)"
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Test Payment Gateway",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{api_url}}/admin/settings/payments/:provider/test",
+                      "host": ["{{api_url}}"],
+                      "path": ["admin", "settings", "payments", ":provider", "test"],
+                      "variable": [
+                        {
+                          "key": "provider",
+                          "value": "PAYPAL",
+                          "description": "PAYPAL o PAYWAY"
+                        }
+                      ]
+                    },
+                    "description": "Probar conexión con un gateway de pago (requiere auth admin)"
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Bank Transfer",
+              "item": [
+                {
+                  "name": "Get Bank Transfer Config",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{api_url}}/admin/settings/bank-transfer",
+                      "host": ["{{api_url}}"],
+                      "path": ["admin", "settings", "bank-transfer"]
+                    },
+                    "description": "Obtener configuración de transferencia bancaria (requiere auth admin)"
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Update Bank Transfer Config",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"isActive\": true,\n  \"accountName\": \"Gustavo Adolfo Francisco Giro\",\n  \"accountNumber\": \"6893238937\",\n  \"bank\": \"HSBC\",\n  \"cuit\": \"20-20453913-9\",\n  \"cbu\": \"1500689100068932389378\",\n  \"alias\": \"Antartur\"\n}"
+                    },
+                    "url": {
+                      "raw": "{{api_url}}/admin/settings/bank-transfer",
+                      "host": ["{{api_url}}"],
+                      "path": ["admin", "settings", "bank-transfer"]
+                    },
+                    "description": "Actualizar configuración de transferencia bancaria (requiere auth admin)"
+                  },
+                  "response": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Upload",
+          "item": [
+            {
+              "name": "Upload Image",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{api_url}}/admin/upload",
+                  "host": ["{{api_url}}"],
+                  "path": ["admin", "upload"]
+                },
+                "description": "Subir una imagen (requiere auth admin)"
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Testimonial",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{api_url}}/admin/upload/testimonial",
+                  "host": ["{{api_url}}"],
+                  "path": ["admin", "upload", "testimonial"]
+                },
+                "description": "Subir avatar de testimonio (requiere auth admin)"
+              },
+              "response": []
+            }
+          ]
         }
       ]
     },
@@ -915,7 +1455,26 @@
               "host": ["{{api_url}}"],
               "path": ["contact"]
             },
-            "description": "Enviar formulario de contacto"
+            "description": "Enviar formulario de contacto. Rate limit: 10 requests/hour por IP."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bank Details",
+      "item": [
+        {
+          "name": "Get Bank Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/bank-details",
+              "host": ["{{api_url}}"],
+              "path": ["bank-details"]
+            },
+            "description": "Obtener datos bancarios para transferencia. Solo retorna datos si la transferencia está activa."
           },
           "response": []
         }
@@ -978,6 +1537,16 @@
     {
       "key": "api_url",
       "value": "{{base_url}}/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cron_secret",
+      "value": "",
       "type": "string"
     }
   ]

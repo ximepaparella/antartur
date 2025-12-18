@@ -2,8 +2,9 @@
  * @swagger
  * /api/auth/refresh:
  *   post:
- *     summary: Renovar tokens con refresh token
+ *     summary: Renovar access token con refresh token
  *     tags: [Auth]
+ *     description: Renueva el access token usando un refresh token válido. El refresh token también se puede enviar en cookies httpOnly.
  *     requestBody:
  *       required: true
  *       content:
@@ -15,11 +16,37 @@
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 description: Refresh token obtenido del login
  *     responses:
  *       200:
- *         description: Tokens renovados
+ *         description: Tokens renovados exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                     refreshToken:
+ *                       type: string
  *       401:
  *         description: Refresh token inválido o expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Refresh token inválido o expirado"
  */
 
 import { NextRequest } from "next/server";
