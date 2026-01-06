@@ -1,0 +1,132 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.content {
+  max-width: 900px;
+  margin: $spacing-64 auto;
+  padding: 0 $spacing-16;
+  
+  @include desktop {
+    padding: 0;
+    margin: $spacing-96 auto;
+  }
+}
+
+.section {
+  margin-bottom: $spacing-48;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h2 {
+    font-size: $font-size-32;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    margin-bottom: $spacing-24;
+    line-height: $line-height-tight;
+    
+    @include desktop {
+      font-size: $font-size-36;
+    }
+  }
+  
+  h3 {
+    font-size: $font-size-24;
+    font-weight: $font-weight-semibold;
+    color: $primary-color;
+    margin-top: $spacing-32;
+    margin-bottom: $spacing-16;
+    line-height: $line-height-tight;
+    
+    @include desktop {
+      font-size: $font-size-28;
+    }
+  }
+  
+  p {
+    font-size: $font-size-16;
+    line-height: $line-height-relaxed;
+    color: $gray-900;
+    margin-bottom: $spacing-16;
+    
+    @include desktop {
+      font-size: $font-size-18;
+    }
+  }
+  
+  ul {
+    margin: $spacing-16 0;
+    padding-left: $spacing-24;
+    
+    li {
+      font-size: $font-size-16;
+      line-height: $line-height-relaxed;
+      color: $gray-900;
+      margin-bottom: $spacing-8;
+      
+      @include desktop {
+        font-size: $font-size-18;
+      }
+    }
+  }
+  
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $primary-color;
+  }
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: $spacing-24 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-16;
+  
+  @include desktop {
+    font-size: $font-size-18;
+  }
+  
+  thead {
+    background-color: $primary-color;
+    color: $white;
+    
+    th {
+      padding: $spacing-16;
+      text-align: left;
+      font-weight: $font-weight-semibold;
+      
+      @include desktop {
+        padding: $spacing-20;
+      }
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid $gray-200;
+      
+      &:nth-child(even) {
+        background-color: $gray-50;
+      }
+      
+      &:hover {
+        background-color: $gray-100;
+      }
+    }
+    
+    td {
+      padding: $spacing-16;
+      color: $gray-900;
+      
+      @include desktop {
+        padding: $spacing-20;
+      }
+    }
+  }
+}
+
