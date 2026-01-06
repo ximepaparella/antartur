@@ -19,8 +19,18 @@ const options: SwaggerOptions = {
     },
     servers: [
       {
-        url: process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar",
-        description: process.env.NEXT_PUBLIC_SITE_URL ? "Production server" : "Development server",
+        url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+        description: (() => {
+          if (process.env.NEXT_PUBLIC_SITE_URL) {
+            try {
+              const hostname = new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname;
+              return `Production server (${hostname})`;
+            } catch {
+              return "Production server";
+            }
+          }
+          return "Development server";
+        })(),
       },
     ],
     components: {

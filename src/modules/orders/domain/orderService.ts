@@ -15,6 +15,7 @@ import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { logger } from "@/lib/services/logger";
+import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -506,7 +507,6 @@ export async function findDepartureByTourDateAndTime(
   startTime: string
 ): Promise<{ departureId: string; tourId: string }> {
   const { TourRepository } = await import("../../tours/infra/tourRepository");
-  const { NotFoundError } = await import("@/lib/api/errorHandler");
   const tourRepository = new TourRepository();
 
   // Buscar tour por slug si tourId es un slug
@@ -639,8 +639,6 @@ export async function listOrders(query: {
  * Obtiene una orden por código
  */
 export async function getOrderByCode(code: string, includePayments = false) {
-  const { NotFoundError } = await import("@/lib/api/errorHandler");
-  
   const order = await prisma.order.findUnique({
     where: { code },
     include: {
@@ -833,7 +831,6 @@ export async function sendOrderEmails(order: {
  * Actualiza el estado de una orden
  */
 export async function updateOrderStatus(orderId: string, newStatus: string) {
-  const { ValidationError, NotFoundError } = await import("@/lib/api/errorHandler");
   const order = await prisma.order.findUnique({
     where: { id: orderId },
   });
