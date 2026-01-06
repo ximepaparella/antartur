@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!order) {
-      throw new NotFoundError(`Order ${orderId} not found`);
+      throw new NotFoundError("Order", orderId);
     }
 
     // Capturar el pago en PayPal

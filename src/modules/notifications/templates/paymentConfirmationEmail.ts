@@ -227,7 +227,7 @@ Tu reserva está confirmada y lista. Te esperamos en la fecha y hora indicadas.
 Si tienes alguna pregunta o necesitas modificar tu reserva, no dudes en contactarnos.
 
 ---
-${process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar"}
+${process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://coderoots.tech"}
 Este es un email automático, por favor no respondas directamente.
   `.trim();
 }

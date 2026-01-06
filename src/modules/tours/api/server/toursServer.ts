@@ -48,7 +48,8 @@ export async function getToursServer(options: GetToursOptions = {}) {
 
   // Crear un mock NextRequest para el controller
   // El host no importa ya que solo se usa para construir el objeto NextRequest internamente
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar";
+  // Usar SITE_URL (servidor) o NEXT_PUBLIC_SITE_URL (cliente), con fallback a URL de producción actual
+  const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://coderoots.tech";
   const url = new URL(`${baseUrl}/api/tours`);
   if (category) url.searchParams.append("category", category);
   if (difficulty) url.searchParams.append("difficulty", difficulty);
