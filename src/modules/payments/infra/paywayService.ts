@@ -78,7 +78,8 @@ export async function createPaywayTransaction(
   }
 
   const { apiKey, merchantId, environment } = credentials;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar";
+  // Usar SITE_URL (servidor) o NEXT_PUBLIC_SITE_URL (cliente), con fallback a URL de producción actual
+  const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://coderoots.tech";
   
   // Determinar URLs según ambiente
   const checkoutBaseUrl = environment === "production" 

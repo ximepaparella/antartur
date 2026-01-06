@@ -30,6 +30,8 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER:-antartur}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-antartur}
+      # Site URL: SITE_URL para servidor, NEXT_PUBLIC_SITE_URL para cliente
+      - SITE_URL=${SITE_URL:-https://coderoots.tech}
       - NEXT_PUBLIC_SITE_URL=${SITE_URL:-https://coderoots.tech}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${SITE_URL:-https://coderoots.tech}
