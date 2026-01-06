@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { PaymentMethod } from "@/lib/types/order";
 import { paymentsClient } from "@/modules/payments/api/client/paymentsClient";
 import { isValidPaymentMethod, ALWAYS_AVAILABLE_METHODS } from "@/modules/payments/domain/constants";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface UseAvailablePaymentMethodsReturn {
   methods: PaymentMethod[];
@@ -20,10 +21,15 @@ interface UseAvailablePaymentMethodsReturn {
 /**
  * Hook para obtener los métodos de pago disponibles según la moneda
  * Solo retorna métodos que estén activos en la base de datos
+ * Usa la moneda del CurrencyContext (antartur_selected_currency)
  */
 export function useAvailablePaymentMethods(
-  currencyCode: string
+  currencyCode?: string
 ): UseAvailablePaymentMethodsReturn {
+  const { currency: contextCurrency } = useCurrency();
+  // Usar currencyCode del prop si está disponible, sino usar la del contexto
+  const currency = currencyCode || contextCurrency;
+  
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +39,7 @@ export function useAvailablePaymentMethods(
     setIsLoading(true);
     setError(null);
 
-    const result = await paymentsClient.getAvailableMethods(currencyCode);
+    const result = await paymentsClient.getAvailableMethods(currency);
 
     if (result.success && result.data) {
       // Convertir providers a PaymentMethod type usando validación centralizada
@@ -46,14 +52,14 @@ export function useAvailablePaymentMethods(
       setError(null);
     } else {
       // En caso de error, usar fallback de métodos siempre disponibles
-      const fallbackMethods = (ALWAYS_AVAILABLE_METHODS[currencyCode] || []) as PaymentMethod[];
+      const fallbackMethods = (ALWAYS_AVAILABLE_METHODS[currency] || []) as PaymentMethod[];
       setMethods(fallbackMethods);
       setHasOnlinePayment(false);
       setError(result.error || "Error al obtener métodos de pago");
     }
 
     setIsLoading(false);
-  }, [currencyCode]);
+  }, [currency]);
 
   useEffect(() => {
     fetchMethods();

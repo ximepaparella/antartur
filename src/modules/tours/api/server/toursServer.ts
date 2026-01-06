@@ -47,7 +47,9 @@ export async function getToursServer(options: GetToursOptions = {}) {
   } = options;
 
   // Crear un mock NextRequest para el controller
-  const url = new URL("http://localhost/api/tours");
+  // El host no importa ya que solo se usa para construir el objeto NextRequest internamente
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar";
+  const url = new URL(`${baseUrl}/api/tours`);
   if (category) url.searchParams.append("category", category);
   if (difficulty) url.searchParams.append("difficulty", difficulty);
   if (isActive !== undefined) url.searchParams.append("isActive", String(isActive));
