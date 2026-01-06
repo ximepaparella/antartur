@@ -14,6 +14,7 @@ export interface UsePaymentVerificationOptions {
   onError?: (error: string) => void;
   maxRetries?: number;
   retryDelay?: number;
+  enabled?: boolean; // Si es false, no ejecuta la verificación automáticamente
 }
 
 export interface UsePaymentVerificationReturn {
@@ -36,6 +37,7 @@ export function usePaymentVerification(
     onError,
     maxRetries = 3,
     retryDelay = 3000,
+    enabled = true,
   } = options;
 
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -50,11 +52,24 @@ export function usePaymentVerification(
     }
 
     try {
-      const identifier = orderCode || orderId;
-      const response = await fetch(`/api/orders/code/${identifier}`);
+      // Usar el endpoint correcto según si tenemos code o id
+      // Validar que orderCode sea una cadena no vacía antes de usarlo
+      const hasValidCode = orderCode && typeof orderCode === "string" && orderCode.trim().length > 0;
+      const url = hasValidCode
+        ? `/api/orders/code/${orderCode}`
+        : orderId
+        ? `/api/orders/${orderId}`
+        : null;
+      
+      if (!url) {
+        throw new Error("No se proporcionó código de orden ni ID válido");
+      }
+      
+      const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error(`Error al verificar orden: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.detail || errorData.error?.title || `Error al verificar orden: ${response.statusText}`);
       }
 
       const result = await response.json();
@@ -67,8 +82,14 @@ export function usePaymentVerification(
           onSuccess();
         } else {
           // Redirigir a success después de 2 segundos por defecto
+          // Pasar orderId o orderCode en la URL para que la página de éxito pueda cargar la orden
           setTimeout(() => {
-            router.push("/checkout/success");
+            const successUrl = orderId 
+              ? `/checkout/success?orderId=${orderId}`
+              : orderCode 
+              ? `/checkout/success?code=${orderCode}`
+              : "/checkout/success";
+            router.push(successUrl);
           }, 2000);
         }
       } else if (retryCount < maxRetries) {
@@ -101,9 +122,11 @@ export function usePaymentVerification(
   }, [orderCode, orderId, router, onSuccess, onError, maxRetries, retryDelay, retryCount]);
 
   useEffect(() => {
-    verifyPayment();
+    if (enabled && (orderCode || orderId)) {
+      verifyPayment();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [enabled, orderCode, orderId]);
 
   return {
     status,

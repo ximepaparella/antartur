@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard/OrderSummaryCard";
 import { getCompletedOrderData } from "@/lib/utils/orderStorage";
@@ -10,7 +10,10 @@ import styles from "./page.module.scss";
 
 export default function PayPalReturnPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [orderData, setOrderData] = useState<ReturnType<typeof getCompletedOrderData> | null>(null);
+  const [captureStatus, setCaptureStatus] = useState<"idle" | "capturing" | "success" | "error">("idle");
+  const [captureError, setCaptureError] = useState<string | null>(null);
 
   const token = searchParams.get("token");
   const payerId = searchParams.get("PayerID");
@@ -25,21 +28,83 @@ export default function PayPalReturnPage() {
   }, []);
 
   // Validar parámetros de PayPal
-  const hasValidParams = token && payerId;
+  const hasValidParams = token && payerId && orderId;
 
-  // Verificar estado del pago usando hook reutilizable
+  // Capturar el pago de PayPal primero
+  useEffect(() => {
+    if (!hasValidParams || captureStatus !== "idle") return;
+
+    const capturePayment = async () => {
+      setCaptureStatus("capturing");
+      try {
+        const response = await fetch("/api/payments/paypal/capture", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            paypalOrderId: token,
+            orderId: orderId,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Error al capturar el pago");
+        }
+
+        setCaptureStatus("success");
+      } catch (error) {
+        setCaptureStatus("error");
+        setCaptureError(error instanceof Error ? error.message : "Error al capturar el pago");
+      }
+    };
+
+    capturePayment();
+  }, [hasValidParams, token, orderId, captureStatus]);
+
+  // Verificar estado del pago solo después de capturar exitosamente
+  const shouldVerify = captureStatus === "success";
+  // Priorizar orderId de la URL ya que es más confiable que sessionStorage
+  // orderCode solo si no hay orderId y está disponible en orderData
   const { status, errorMessage } = usePaymentVerification({
-    orderCode: orderData?.code,
+    orderCode: !orderId && orderData?.code ? orderData.code : undefined,
     orderId: orderId || undefined,
     maxRetries: 3,
     retryDelay: 3000,
+    enabled: shouldVerify,
+    onSuccess: () => {
+      setTimeout(() => {
+        // Pasar orderId en la URL para que la página de éxito pueda cargar la orden
+        const successUrl = orderId 
+          ? `/checkout/success?orderId=${orderId}`
+          : orderData?.code 
+          ? `/checkout/success?code=${orderData.code}`
+          : "/checkout/success";
+        router.push(successUrl);
+      }, 2000);
+    },
   });
 
-  // Si no hay parámetros válidos, mostrar error
-  const finalStatus = !hasValidParams ? "error" : status;
-  const finalErrorMessage = !hasValidParams
-    ? "Parámetros de PayPal incompletos"
-    : errorMessage;
+  // Determinar el estado final
+  let finalStatus: "loading" | "success" | "error" = "loading";
+  let finalErrorMessage: string | null = null;
+
+  if (!hasValidParams) {
+    finalStatus = "error";
+    finalErrorMessage = "Parámetros de PayPal incompletos";
+  } else if (captureStatus === "error") {
+    finalStatus = "error";
+    finalErrorMessage = captureError || "Error al capturar el pago de PayPal";
+  } else if (captureStatus === "success" && status === "error") {
+    finalStatus = "error";
+    finalErrorMessage = errorMessage || "Error al verificar el estado del pago";
+  } else if (captureStatus === "success" && status === "success") {
+    finalStatus = "success";
+  } else {
+    finalStatus = "loading";
+  }
 
   if (finalStatus === "loading") {
     return (

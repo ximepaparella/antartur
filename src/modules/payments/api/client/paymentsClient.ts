@@ -32,15 +32,32 @@ export const paymentsClient = {
       const response = await fetch(url);
 
       if (!response.ok) {
+        try {
+          const errorData = await response.json();
+          if (errorData.error && typeof errorData.error === "object") {
+            return {
+              success: false,
+              error: errorData.error.detail || errorData.error.title || `Error ${response.status}`,
+            };
+          }
+          if (typeof errorData.error === "string") {
+            return {
+              success: false,
+              error: errorData.error,
+            };
+          }
+        } catch {
+          // Si no se puede parsear, usar el status
+        }
         return {
           success: false,
           error: `Error ${response.status}: ${response.statusText}`,
         };
       }
 
-      return await response.json();
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error("Error fetching available payment methods:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Error desconocido",

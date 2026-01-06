@@ -19,8 +19,8 @@ const options: SwaggerOptions = {
     },
     servers: [
       {
-        url: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-        description: "Development server",
+        url: process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar",
+        description: process.env.NEXT_PUBLIC_SITE_URL ? "Production server" : "Development server",
       },
     ],
     components: {

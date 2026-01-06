@@ -23,21 +23,32 @@ export default function CheckoutSuccessPage() {
   useEffect(() => {
     const loadOrderData = async () => {
       try {
-        // Intentar obtener código de orden desde URL params o sessionStorage
+        // Intentar obtener orderId o orderCode desde URL params o sessionStorage
+        const orderIdFromUrl = searchParams.get("orderId");
         const orderCodeFromUrl = searchParams.get("code");
         const completedDataFromStorage = getCompletedOrderData();
+        
+        // Priorizar orderId de URL, luego orderCode de URL, luego sessionStorage
+        const orderId = orderIdFromUrl;
         const orderCode = orderCodeFromUrl || completedDataFromStorage?.code;
 
-        if (!orderCode) {
-      router.push("/");
+        if (!orderId && !orderCode) {
+          router.push("/");
           return;
-    }
+        }
+
+        // Construir URL del endpoint según el identificador disponible
+        const apiUrl = orderId
+          ? `/api/orders/${orderId}?includePayments=true`
+          : `/api/orders/code/${orderCode}?includePayments=true`;
 
         // Obtener datos desde la base de datos
-        const response = await fetch(`/api/orders/code/${orderCode}?includePayments=true`);
+        const response = await fetch(apiUrl);
         
         if (!response.ok) {
-          throw new Error("No se pudo cargar la orden");
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.error || `Error ${response.status}: ${response.statusText}`;
+          throw new Error(`No se pudo cargar la orden: ${errorMessage}`);
         }
 
         const result = await response.json();
@@ -123,8 +134,8 @@ export default function CheckoutSuccessPage() {
 
         setOrderData(mappedData);
       } catch (err) {
-        console.error("Error al cargar datos de la orden:", err);
-        setError(err instanceof Error ? err.message : "Error al cargar la orden");
+        const errorMessage = err instanceof Error ? err.message : "Error al cargar la orden";
+        setError(errorMessage);
         
         // Intentar usar datos de sessionStorage como fallback
         const completedDataFromStorage = getCompletedOrderData();

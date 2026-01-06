@@ -4,7 +4,7 @@
  *   post:
  *     summary: Autenticar usuario
  *     tags: [Auth]
- *     description: Autentica un usuario y retorna access token y refresh token. Rate limit: 20 requests/hour.
+ *     description: Autentica un usuario y retorna access token y refresh token. Rate limit 20 requests/hour.
  *     requestBody:
  *       required: true
  *       content:

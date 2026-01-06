@@ -639,6 +639,8 @@ export async function listOrders(query: {
  * Obtiene una orden por código
  */
 export async function getOrderByCode(code: string, includePayments = false) {
+  const { NotFoundError } = await import("@/lib/api/errorHandler");
+  
   const order = await prisma.order.findUnique({
     where: { code },
     include: {
@@ -657,7 +659,7 @@ export async function getOrderByCode(code: string, includePayments = false) {
   });
 
   if (!order) {
-    throw new Error(`Order with code ${code} not found`);
+    throw new NotFoundError("Order", code);
   }
 
   return order;

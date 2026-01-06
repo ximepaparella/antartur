@@ -70,7 +70,13 @@ export default function PaywayReturnPage() {
       clearPendingBooking();
       // Pequeño delay para mostrar mensaje de éxito
       timeoutId = setTimeout(() => {
-        router.push("/checkout/success");
+        // Pasar orderId o orderCode en la URL para que la página de éxito pueda cargar la orden
+        const successUrl = orderId 
+          ? `/checkout/success?orderId=${orderId}`
+          : orderData?.code 
+          ? `/checkout/success?code=${orderData.code}`
+          : "/checkout/success";
+        router.push(successUrl);
       }, 1500);
     }
 
@@ -80,7 +86,7 @@ export default function PaywayReturnPage() {
         clearTimeout(timeoutId);
       }
     };
-  }, [finalStatus, isRedirecting, router]);
+  }, [finalStatus, isRedirecting, router, orderId, orderData]);
 
   if (finalStatus === "loading") {
     return (
