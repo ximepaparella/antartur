@@ -953,3 +953,4 @@ SMTP_PASS=...
 
 **Documento actualizado:** Enero 2025  
 **Próxima revisión:** Cuando se agreguen nuevas features o cambien reglas de negocio significativas
+

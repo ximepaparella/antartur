@@ -14,12 +14,14 @@ interface OrderSummaryProps {
   timeSlot: string;
   adults: number;
   childrenCount: number;
+  infantsCount?: number;
   subtotalAdults: number;
   subtotalChildren: number;
   total: number;
   currency: string;
   additionals?: SelectedAdditional[];
   additionalsSubtotal?: number;
+  onRemoveAdditional?: (additionalId: string) => void;
 }
 
 /**
@@ -31,12 +33,14 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   timeSlot,
   adults,
   childrenCount,
+  infantsCount = 0,
   subtotalAdults,
   subtotalChildren,
   total,
   currency,
   additionals,
   additionalsSubtotal,
+  onRemoveAdditional,
 }) => {
   return (
     <Card title="Resumen de la reserva">
@@ -51,12 +55,14 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
         <PricingBreakdown
           adults={adults}
           childrenCount={childrenCount}
+          infantsCount={infantsCount}
           subtotalAdults={subtotalAdults}
           subtotalChildren={subtotalChildren}
           total={total}
           currency={currency}
           additionals={additionals}
           additionalsSubtotal={additionalsSubtotal}
+          onRemoveAdditional={onRemoveAdditional}
         />
       </div>
     </Card>

@@ -15,6 +15,7 @@ interface MiniCartProps {
   timeSlot: string;
   adults: number;
   childrenCount: number;
+  infantsCount?: number;
   pricing: Pricing;
   tourId?: string; // ID del tour para obtener pricing completo si es necesario
   exceedsAvailability: boolean;
@@ -22,6 +23,7 @@ interface MiniCartProps {
   hasValidationErrors?: boolean;
   isProcessing?: boolean;
   additionals?: SelectedAdditional[];
+  onRemoveAdditional?: (additionalId: string) => void;
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
 }
@@ -35,6 +37,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   timeSlot,
   adults,
   childrenCount,
+  infantsCount = 0,
   pricing,
   tourId,
   exceedsAvailability,
@@ -42,6 +45,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   hasValidationErrors = false,
   isProcessing = false,
   additionals = [],
+  onRemoveAdditional,
   onPaymentMethodChange,
   onSubmit,
 }) => {
@@ -49,13 +53,26 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | undefined>(undefined);
 
   // Calcular precios usando hook
-  const { subtotalAdults, subtotalChildren, additionalsSubtotal, total, currentPricing } = useMiniCartPricing({
+  const { subtotalAdults, subtotalChildren, additionalsSubtotal, total, currentPricing, normalizedAdditionals } = useMiniCartPricing({
     pricing,
     tourId,
     adults,
     childrenCount,
     additionals,
   });
+
+  // Debug temporal
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[MiniCart Debug]', {
+        additionalsRecibidos: additionals,
+        additionalsNormalizados: normalizedAdditionals,
+        additionalsLength: additionals?.length,
+        normalizedLength: normalizedAdditionals?.length,
+        currency: currentPricing.currencyCode,
+      });
+    }
+  }, [additionals, normalizedAdditionals, currentPricing.currencyCode]);
 
   // Obtener métodos de pago disponibles (centralizado aquí, no en PaymentMethods)
   const { methods: availableMethods, isLoading: isLoadingMethods, noMethodsAvailable } = useAvailablePaymentMethods(
@@ -98,12 +115,14 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         timeSlot={timeSlot}
         adults={adults}
         childrenCount={childrenCount}
+        infantsCount={infantsCount}
         subtotalAdults={subtotalAdults}
         subtotalChildren={subtotalChildren}
         total={total}
         currency={currentPricing.currencyCode}
-        additionals={additionals}
+        additionals={normalizedAdditionals}
         additionalsSubtotal={additionalsSubtotal}
+        onRemoveAdditional={onRemoveAdditional}
       />
 
       <PaymentMethods

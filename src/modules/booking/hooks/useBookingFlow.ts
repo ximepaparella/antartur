@@ -2,7 +2,7 @@
  * Hook para manejar el flujo de reserva
  */
 
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Pricing, TimeSlot, SelectedAdditional } from "@/lib/types/order";
 import { calculateOrderTotal } from "@/lib/utils/pricing";
@@ -31,7 +31,24 @@ export function useBookingFlow({
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
-  const [additionals, setAdditionals] = useState<SelectedAdditional[]>([]);
+  
+  // Usar un ref para capturar los additionals más recientes de forma síncrona
+  const additionalsRef = React.useRef<SelectedAdditional[]>([]);
+  const [additionals, setAdditionalsState] = useState<SelectedAdditional[]>([]);
+  
+  // Wrapper para setAdditionals que actualiza tanto el estado como el ref
+  const setAdditionals = React.useCallback((newAdditionals: SelectedAdditional[] | ((prev: SelectedAdditional[]) => SelectedAdditional[])) => {
+    if (typeof newAdditionals === 'function') {
+      setAdditionalsState((prev) => {
+        const updated = newAdditionals(prev);
+        additionalsRef.current = updated;
+        return updated;
+      });
+    } else {
+      additionalsRef.current = newAdditionals;
+      setAdditionalsState(newAdditionals);
+    }
+  }, []);
 
   // Calcular subtotal (infantes son $0, no afectan el total)
   const subtotal = useMemo(() => {
@@ -45,8 +62,7 @@ export function useBookingFlow({
     return adults + children > selectedTimeSlot.available;
   }, [selectedDate, selectedTimeSlot, adults, children]);
 
-  // Manejar reserva
-  const handleBooking = useCallback(() => {
+  const handleBooking = useCallback((overrideAdditionals?: SelectedAdditional[]) => {
     if (!selectedDate || !selectedTimeSlot || !pricing) return;
 
     // Usar el valor memoizado de exceedsAvailability en lugar de recalcular
@@ -55,6 +71,9 @@ export function useBookingFlow({
       // TODO: Mostrar notificación al usuario cuando se implemente sistema de notificaciones
       return;
     }
+
+    // Usar los additionals pasados como parámetro, o del ref (que siempre tiene los más recientes)
+    const currentAdditionals = overrideAdditionals || additionalsRef.current;
 
     // Crear objeto de reserva inicial
     const bookingData = {
@@ -70,8 +89,20 @@ export function useBookingFlow({
         end: selectedTimeSlot.end,
       },
       exceedsAvailability: false, // Usar el valor memoizado
-      additionals: additionals.length > 0 ? additionals : undefined,
+      additionals: currentAdditionals.length > 0 ? currentAdditionals : undefined,
     };
+
+    // Debug temporal
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[useBookingFlow] Guardando reserva:', {
+        overrideAdditionals,
+        additionalsFromRef: additionalsRef.current,
+        additionalsFromState: additionals,
+        currentAdditionals,
+        additionalsLength: currentAdditionals.length,
+        bookingData,
+      });
+    }
 
     // Guardar en localStorage
     try {

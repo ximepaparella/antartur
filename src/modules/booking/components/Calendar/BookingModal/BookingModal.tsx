@@ -178,6 +178,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     if (violatesMinPassengers) {
       return;
     }
+    // Asegurar que los additionals seleccionados se actualicen en el estado del hook ANTES de hacer la reserva
+    // setAdditionals ahora actualiza el ref inmediatamente, así que podemos llamar a onBooking directamente
+    if (onAdditionalsChange) {
+      onAdditionalsChange(selectedAdditionals);
+    }
+    // Llamar a onBooking - el ref en useBookingFlow ya tiene los additionals más recientes
     onBooking();
   };
 

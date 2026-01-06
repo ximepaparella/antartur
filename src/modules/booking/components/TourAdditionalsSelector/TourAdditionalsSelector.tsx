@@ -43,15 +43,23 @@ export const TourAdditionalsSelector: React.FC<TourAdditionalsSelectorProps> = (
       const updated = selectedAdditionals.filter((sa) => sa.additionalId !== additional.id);
       onSelectionChange(updated);
     } else {
-      // Seleccionar
-      const prices = additional.prices[currency as "ARS" | "USD"];
-      if (prices) {
+      // Seleccionar - guardar precios en ambas monedas
+      const arsPrices = additional.prices.ARS;
+      const usdPrices = additional.prices.USD;
+      const currentPrices = additional.prices[currency as "ARS" | "USD"];
+      
+      if (currentPrices) {
         const newSelected: SelectedAdditional = {
           additionalId: additional.id,
           name: additional.name,
-          priceAdult: prices.adult,
-          priceChild: prices.child,
+          priceAdult: currentPrices.adult,
+          priceChild: currentPrices.child,
           currency,
+          // Guardar precios en ambas monedas para permitir cambio sin consultar API
+          prices: {
+            ARS: arsPrices ? { adult: arsPrices.adult, child: arsPrices.child } : undefined,
+            USD: usdPrices ? { adult: usdPrices.adult, child: usdPrices.child } : undefined,
+          },
         };
         onSelectionChange([...selectedAdditionals, newSelected]);
       }

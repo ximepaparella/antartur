@@ -69,6 +69,36 @@
   font-family: $font-roboto;
   font-size: $font-size-16;
   color: $gray-400;
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.removeAdditionalButton {
+  background: none;
+  border: none;
+  padding: $spacing-4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray-400;
+  border-radius: $spacing-4;
+  transition: all 0.2s ease;
+  margin-left: $spacing-4;
+
+  &:hover {
+    background-color: $gray-100;
+    color: $gray-700;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    display: block;
+  }
 }
 
 .summaryValue {
