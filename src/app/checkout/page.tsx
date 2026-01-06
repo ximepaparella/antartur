@@ -28,6 +28,7 @@ export default function CheckoutPage() {
     date: string;
     adults: number;
     children: number;
+    infants?: number;
     pricing: Pricing;
     timeSlot: { start: string; end: string };
     exceedsAvailability: boolean;
@@ -54,8 +55,33 @@ export default function CheckoutPage() {
       // Asegurar que pricing tenga currencyCode (migración de datos antiguos)
       if (!pending.pricing.currencyCode) {
         pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
-        // Persistir la migración para evitar re-ejecutarla en cada carga
-        savePendingBooking(pending);
+      }
+      
+      // Migrar additionals antiguos que no tienen prices
+      if (pending.additionals && pending.additionals.length > 0) {
+        pending.additionals = pending.additionals.map((additional: any) => {
+          // Si el additional no tiene prices, agregar un objeto vacío
+          // El efecto de cambio de moneda intentará completarlo desde tourAdditionals
+          if (!additional.prices) {
+            return {
+              ...additional,
+              prices: {},
+            } as SelectedAdditional;
+          }
+          return additional as SelectedAdditional;
+        });
+      }
+      
+      // Persistir la migración para evitar re-ejecutarla en cada carga
+      savePendingBooking(pending);
+      
+      // Debug temporal
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Checkout Debug] Datos cargados:', {
+          additionals: pending.additionals,
+          additionalsLength: pending.additionals?.length,
+          todosLosDatos: pending,
+        });
       }
       setBookingData(pending);
     } else {
@@ -142,47 +168,139 @@ export default function CheckoutPage() {
   }, [bookingData?.tourId]);
 
   // Actualizar additionals cuando cambia la moneda
+  // IMPORTANTE: Solo actualizar si tourAdditionals ya está cargado para evitar eliminar additionals
   useEffect(() => {
-    if (bookingData?.additionals && bookingData.additionals.length > 0 && tourAdditionals.length > 0) {
-      // Crear un mapa de additionals por ID para acceso rápido
-      const additionalsMap = new Map(tourAdditionals.map(a => [a.id, a]));
+    // Solo actualizar si tenemos additionals en bookingData y tourAdditionals cargados desde la API
+    // Si tourAdditionals está vacío, no hacer nada (aún no se cargó el tour o no tiene additionals)
+    // Esto previene que se eliminen los additionals cuando la página carga
+    if (!bookingData?.additionals || bookingData.additionals.length === 0) {
+      return; // No hay additionals para actualizar
+    }
+    
+    // Si tourAdditionals aún no se ha cargado, no hacer nada (evitar eliminar additionals)
+    if (tourAdditionals.length === 0) {
+      return; // Esperar a que se cargue el tour
+    }
+    
+    // Crear un mapa de additionals por ID para acceso rápido
+    const additionalsMap = new Map(tourAdditionals.map(a => [a.id, a]));
+    
+    // Debug temporal para ver qué está pasando
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Checkout Currency Change]', {
+        currency,
+        tourAdditionals: tourAdditionals.map(a => ({ id: a.id, name: a.name, prices: a.prices })),
+        selectedAdditionals: bookingData.additionals.map(a => ({ 
+          additionalId: a.additionalId, 
+          name: a.name, 
+          priceAdult: a.priceAdult, 
+          currency: a.currency 
+        })),
+      });
+    }
+    
+    // Actualizar cada additional seleccionado con el precio de la nueva moneda
+    // Usar los precios guardados en el objeto (prices.ARS o prices.USD) en lugar de consultar la API
+    const updated = bookingData.additionals.map(selected => {
+      // Intentar obtener el precio desde los precios guardados en el objeto
+      const pricesInNewCurrency = selected.prices?.[currency as "ARS" | "USD"];
       
-      // Actualizar cada additional seleccionado con el precio de la nueva moneda
-      const updated = bookingData.additionals.map(selected => {
+      if (pricesInNewCurrency) {
+        // Actualizar precio y moneda usando los precios guardados
+        const newPriceAdult = pricesInNewCurrency.adult;
+        const newPriceChild = pricesInNewCurrency.child;
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Checkout Currency Update]', {
+            additionalId: selected.additionalId,
+            name: selected.name,
+            oldCurrency: selected.currency,
+            newCurrency: currency,
+            oldPriceAdult: selected.priceAdult,
+            newPriceAdult,
+            pricesInNewCurrency,
+          });
+        }
+        
+        return {
+          ...selected,
+          priceAdult: newPriceAdult,
+          priceChild: newPriceChild,
+          currency,
+        };
+      } else {
+        // Si no hay precios guardados en la nueva moneda, intentar obtenerlos del tourAdditionals
         const originalAdditional = additionalsMap.get(selected.additionalId);
         if (originalAdditional) {
           const prices = originalAdditional.prices[currency as "ARS" | "USD"];
           if (prices) {
+            // Actualizar con precios del tour y guardar ambos precios
+            const newPriceAdult = prices.adult;
+            const newPriceChild = prices.child;
+            
+            // Preservar los precios existentes y agregar el nuevo
+            const updatedPrices = {
+              ...selected.prices,
+              [currency]: { adult: newPriceAdult, child: newPriceChild },
+            };
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[Checkout Currency Update from Tour]', {
+                additionalId: selected.additionalId,
+                name: selected.name,
+                oldCurrency: selected.currency,
+                newCurrency: currency,
+                oldPriceAdult: selected.priceAdult,
+                newPriceAdult,
+                updatedPrices,
+              });
+            }
+            
             return {
               ...selected,
-              priceAdult: prices.adult,
-              priceChild: prices.child,
+              priceAdult: newPriceAdult,
+              priceChild: newPriceChild,
               currency,
+              prices: updatedPrices,
             };
           }
         }
-        return selected;
-      }).filter(selected => {
-        // Filtrar additionals que no tienen precio en la nueva moneda
-        const originalAdditional = additionalsMap.get(selected.additionalId);
-        return originalAdditional?.prices[currency as "ARS" | "USD"];
-      });
-      
-      // Solo actualizar si hay cambios
-      const hasChanges = updated.length !== bookingData.additionals.length || 
-        updated.some((u, i) => {
-          const old = bookingData.additionals![i];
-          return u.currency !== old.currency || u.priceAdult !== old.priceAdult;
-        });
-      
-      if (hasChanges) {
-        const updatedBookingData = {
-          ...bookingData,
-          additionals: updated,
-        };
-        setBookingData(updatedBookingData);
-        savePendingBooking(updatedBookingData);
+        
+        // Si no encontramos el precio en ninguna fuente, mantener el additional tal como está
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[Checkout Currency Warning]', {
+            additionalId: selected.additionalId,
+            name: selected.name,
+            currency,
+            hasPrices: !!selected.prices,
+            availableCurrencies: selected.prices ? Object.keys(selected.prices) : [],
+          });
+        }
       }
+      
+      // Mantener el additional tal como está si no se pudo actualizar
+      return selected;
+    });
+    
+    // Solo actualizar si hay cambios en precios o moneda
+    const hasChanges = updated.some((u, i) => {
+      const old = bookingData.additionals![i];
+      return u.currency !== old.currency || u.priceAdult !== old.priceAdult || u.priceChild !== old.priceChild;
+    });
+    
+    if (hasChanges) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Checkout Currency Update] Aplicando cambios:', {
+          old: bookingData.additionals,
+          updated,
+        });
+      }
+      const updatedBookingData = {
+        ...bookingData,
+        additionals: updated,
+      };
+      setBookingData(updatedBookingData);
+      savePendingBooking(updatedBookingData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency, tourAdditionals]); // bookingData.additionals se actualiza dentro del efecto, no debe estar en deps
@@ -217,6 +335,21 @@ export default function CheckoutPage() {
   const handleValidationErrorsChange = useCallback((hasErrors: boolean) => {
     setHasValidationErrors(hasErrors);
   }, []);
+
+  // Manejar eliminación de adicionales
+  const handleRemoveAdditional = useCallback((additionalId: string) => {
+    if (bookingData?.additionals) {
+      const updated = bookingData.additionals.filter(
+        (a) => a.additionalId !== additionalId
+      );
+      const updatedBookingData = {
+        ...bookingData,
+        additionals: updated.length > 0 ? updated : undefined,
+      };
+      setBookingData(updatedBookingData);
+      savePendingBooking(updatedBookingData);
+    }
+  }, [bookingData]);
 
   // Ref para almacenar los valores previos de pasajeros y evitar actualizaciones innecesarias
   const prevPassengersRef = useRef<{ adults: number; children: number } | null>(null);
@@ -300,10 +433,12 @@ export default function CheckoutPage() {
                   timeSlot={`${bookingData.timeSlot.start} – ${bookingData.timeSlot.end}`}
                   adults={bookingData.adults}
                   childrenCount={bookingData.children}
+                  infantsCount={bookingData.infants || 0}
                   pricing={bookingData.pricing}
                   tourId={bookingData.tourId}
                   exceedsAvailability={bookingData.exceedsAvailability}
-                  additionals={bookingData.additionals}
+                  additionals={bookingData.additionals || []}
+                  onRemoveAdditional={handleRemoveAdditional}
                   hasRestrictionViolations={hasRestrictionViolations}
                   hasValidationErrors={hasValidationErrors}
                   isProcessing={isProcessing}

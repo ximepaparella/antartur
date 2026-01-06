@@ -29,6 +29,7 @@ interface UseMiniCartPricingReturn {
   subtotalChildren: number;
   additionalsSubtotal: number;
   total: number;
+  normalizedAdditionals: SelectedAdditional[];
 }
 
 /**
@@ -101,6 +102,17 @@ export function useMiniCartPricing({
     };
   }, [pricing, tourId, currency, defaultCurrency, tourData]);
 
+  // Normalizar additionals: mostrar todos los additionals, pero solo calcular subtotal de los que tienen la moneda correcta
+  // Los additionals ya deberían estar normalizados desde checkout cuando cambia la moneda
+  const normalizedAdditionals = useMemo(() => {
+    if (!additionals || additionals.length === 0) {
+      return [];
+    }
+    // Mostrar todos los additionals que se pasan, asumiendo que ya están normalizados desde checkout
+    // Si alguno tiene moneda diferente, aún lo mostramos pero no se incluirá en el cálculo del subtotal
+    return additionals;
+  }, [additionals]);
+
   const subtotalAdults = useMemo(() => {
     return calculateSubtotalAdults(adults, currentPricing);
   }, [adults, currentPricing]);
@@ -109,13 +121,20 @@ export function useMiniCartPricing({
     return calculateSubtotalChildren(childrenCount, currentPricing);
   }, [childrenCount, currentPricing]);
 
+  // Filtrar additionals para el cálculo del subtotal (solo los que tienen la moneda correcta)
+  const additionalsForCalculation = useMemo(() => {
+    return normalizedAdditionals.filter(
+      (additional) => additional.currency === currentPricing.currencyCode
+    );
+  }, [normalizedAdditionals, currentPricing.currencyCode]);
+
   const additionalsSubtotal = useMemo(() => {
-    return calculateAdditionalsSubtotal(additionals, adults, childrenCount, currentPricing);
-  }, [additionals, adults, childrenCount, currentPricing]);
+    return calculateAdditionalsSubtotal(additionalsForCalculation, adults, childrenCount, currentPricing);
+  }, [additionalsForCalculation, adults, childrenCount, currentPricing]);
 
   const total = useMemo(() => {
-    return calculateOrderTotal(adults, childrenCount, currentPricing, additionals);
-  }, [adults, childrenCount, currentPricing, additionals]);
+    return calculateOrderTotal(adults, childrenCount, currentPricing, additionalsForCalculation);
+  }, [adults, childrenCount, currentPricing, additionalsForCalculation]);
 
   return {
     currentPricing,
@@ -123,6 +142,7 @@ export function useMiniCartPricing({
     subtotalChildren,
     additionalsSubtotal,
     total,
+    normalizedAdditionals,
   };
 }
 

@@ -3,17 +3,20 @@
 import React from "react";
 import type { SelectedAdditional } from "@/lib/types/order";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
+import { Icon } from "@/components/icons/Icon";
 import styles from "../MiniCart.module.scss";
 
 interface PricingBreakdownProps {
   adults: number;
   childrenCount: number;
+  infantsCount?: number;
   subtotalAdults: number;
   subtotalChildren: number;
   total: number;
   currency: string;
   additionals?: SelectedAdditional[];
   additionalsSubtotal?: number;
+  onRemoveAdditional?: (additionalId: string) => void;
 }
 
 /**
@@ -22,13 +25,27 @@ interface PricingBreakdownProps {
 export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
   adults,
   childrenCount,
+  infantsCount = 0,
   subtotalAdults,
   subtotalChildren,
   total,
   currency,
   additionals,
   additionalsSubtotal,
+  onRemoveAdditional,
 }) => {
+  // Debug temporal
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[PricingBreakdown Debug]', {
+        additionals,
+        additionalsLength: additionals?.length,
+        currency,
+        onRemoveAdditional: !!onRemoveAdditional,
+      });
+    }
+  }, [additionals, currency, onRemoveAdditional]);
+
   return (
     <>
       {adults > 0 && (
@@ -53,19 +70,39 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
         </div>
       )}
 
+      {infantsCount > 0 && (
+        <div className={styles.summaryRow}>
+          <span className={styles.summaryLabel}>
+            Infantes: {infantsCount}
+          </span>
+          <span className={styles.summaryValue}>
+            {formatPriceByCurrency(0, currency)}
+          </span>
+        </div>
+      )}
+
       {additionals && additionals.length > 0 && (
         <>
-          {additionals
-            .filter(additional => additional.currency === currency) // Solo mostrar additionals con la moneda actual
-            .map((additional) => (
+          {additionals.map((additional) => (
             <div key={additional.additionalId} className={styles.summaryRow}>
               <span className={styles.summaryLabel}>
                 {additional.name}
+                {onRemoveAdditional && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveAdditional(additional.additionalId)}
+                    className={styles.removeAdditionalButton}
+                    aria-label={`Eliminar ${additional.name}`}
+                    title={`Eliminar ${additional.name}`}
+                  >
+                    <Icon name="close" size={16} />
+                  </button>
+                )}
               </span>
               <span className={styles.summaryValue}>
                 {formatPriceByCurrency(
-                    additional.priceAdult, // Precio único (no por pasajero)
-                  currency
+                  additional.priceAdult, // Precio único (no por pasajero)
+                  additional.currency || currency
                 )}
               </span>
             </div>

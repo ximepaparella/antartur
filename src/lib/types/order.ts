@@ -29,6 +29,12 @@ export interface SelectedAdditional {
   priceAdult: number;
   priceChild: number;
   currency: string;
+  // Precios en ambas monedas para permitir cambio de moneda sin necesidad de consultar la API
+  // Opcional para compatibilidad con datos antiguos guardados antes de este cambio
+  prices?: {
+    ARS?: { adult: number; child: number };
+    USD?: { adult: number; child: number };
+  };
 }
 
 export interface TimeSlot {
