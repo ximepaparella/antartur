@@ -75,6 +75,20 @@
     "backgroundImage": "",
     "backgroundPosition": "center center",
     "overlayOpacity": 0.5
+  },
+  "terminos-y-condiciones": {
+    "title": "TÉRMINOS Y CONDICIONES",
+    "subtitle": "",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
+  "politicas-de-privacidad": {
+    "title": "POLÍTICAS DE PRIVACIDAD",
+    "subtitle": "",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
   }
 }
 

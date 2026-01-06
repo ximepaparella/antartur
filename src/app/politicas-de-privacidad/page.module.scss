@@ -1,0 +1,61 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.content {
+  max-width: 900px;
+  margin: $spacing-64 auto;
+  padding: 0 $spacing-16;
+  
+  @include desktop {
+    padding: 0;
+    margin: $spacing-96 auto;
+  }
+}
+
+.section {
+  margin-bottom: $spacing-48;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h2 {
+    font-size: $font-size-32;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    margin-bottom: $spacing-24;
+    line-height: $line-height-tight;
+    
+    @include desktop {
+      font-size: $font-size-36;
+    }
+  }
+  
+  p {
+    font-size: $font-size-16;
+    line-height: $line-height-relaxed;
+    color: $gray-900;
+    margin-bottom: $spacing-16;
+    
+    @include desktop {
+      font-size: $font-size-18;
+    }
+  }
+  
+  ul {
+    margin: $spacing-16 0;
+    padding-left: $spacing-24;
+    
+    li {
+      font-size: $font-size-16;
+      line-height: $line-height-relaxed;
+      color: $gray-900;
+      margin-bottom: $spacing-8;
+      
+      @include desktop {
+        font-size: $font-size-18;
+      }
+    }
+  }
+}
+

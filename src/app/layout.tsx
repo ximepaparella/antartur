@@ -3,6 +3,7 @@ import { Work_Sans, Roboto } from "next/font/google";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoundaryClient";
 import { Providers } from "@/components/providers/Providers";
+import { CookieBanner } from "@/components/common/CookieBanner/CookieBanner";
 import "@/styles/globals.scss";
 
 const workSans = Work_Sans({
@@ -65,6 +66,7 @@ export default function RootLayout({
         <ErrorBoundaryClient>
           <Providers>
             <ConditionalLayout>{children}</ConditionalLayout>
+            <CookieBanner />
           </Providers>
         </ErrorBoundaryClient>
       </body>
