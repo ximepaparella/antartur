@@ -71,8 +71,8 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
 
         // Redirigir según tipo de orden y método de pago
         if (order.orderType === "consulta") {
-          // Consulta: redirigir a página de éxito
-          router.push("/checkout/success");
+          // Consulta: redirigir a página de éxito con código de orden
+          router.push(`/checkout/success?code=${order.orderId}`);
         } else if (order.orderType === "reserva") {
           // Reserva: redirigir según método de pago
           if (order.paymentMethod === "transferencia") {
@@ -89,8 +89,8 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
               customerName: orderData.customerName,
             });
           } else {
-            // Sin método de pago: redirigir a éxito
-            router.push("/checkout/success");
+            // Sin método de pago: redirigir a éxito con código de orden
+            router.push(`/checkout/success?code=${order.orderId}`);
           }
         }
       } finally {

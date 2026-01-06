@@ -76,7 +76,13 @@ export default function PayPalReturnPage() {
     enabled: shouldVerify,
     onSuccess: () => {
       setTimeout(() => {
-        router.push("/checkout/success");
+        // Pasar orderId en la URL para que la página de éxito pueda cargar la orden
+        const successUrl = orderId 
+          ? `/checkout/success?orderId=${orderId}`
+          : orderData?.code 
+          ? `/checkout/success?code=${orderData.code}`
+          : "/checkout/success";
+        router.push(successUrl);
       }, 2000);
     },
   });

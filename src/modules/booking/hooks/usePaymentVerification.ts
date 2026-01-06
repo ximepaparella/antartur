@@ -82,8 +82,14 @@ export function usePaymentVerification(
           onSuccess();
         } else {
           // Redirigir a success después de 2 segundos por defecto
+          // Pasar orderId o orderCode en la URL para que la página de éxito pueda cargar la orden
           setTimeout(() => {
-            router.push("/checkout/success");
+            const successUrl = orderId 
+              ? `/checkout/success?orderId=${orderId}`
+              : orderCode 
+              ? `/checkout/success?code=${orderCode}`
+              : "/checkout/success";
+            router.push(successUrl);
           }, 2000);
         }
       } else if (retryCount < maxRetries) {
