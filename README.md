@@ -98,7 +98,7 @@ Esto iniciará:
 
 **Credenciales por defecto (desarrollo):**
 - Usuario: `antartur`
-- Contraseña: `antart_dev_password`
+- Contraseña: `antartur_dev_password`
 - Base de datos: `antartur`
 
 ### 5. Configurar Base de Datos
@@ -180,7 +180,7 @@ Si prefieres usar PostgreSQL instalado localmente:
    - Host: `postgres` (si estás en Docker) o `localhost`
    - Puerto: `5432`
    - Usuario: `antartur`
-   - Password: `antart_dev_password`
+   - Password: `antartur_dev_password`
    - Base de datos: `antartur`
 
 ### Importar Dump SQL
@@ -295,7 +295,7 @@ Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 # ============================================
 # DATABASE - REQUERIDO
 # ============================================
-DATABASE_URL="postgresql://antartur:antart_dev_password@localhost:5432/antartur"
+DATABASE_URL="postgresql://antartur:antartur_dev_password@localhost:5432/antartur"
 
 # ============================================
 # SITE URL - REQUERIDO
@@ -505,7 +505,7 @@ ports:
   - "5433:5432"  # Usar 5433 en lugar de 5432
 
 # Y actualizar DATABASE_URL
-DATABASE_URL="postgresql://antartur:antart_dev_password@localhost:5433/antartur"
+DATABASE_URL="postgresql://antartur:antartur_dev_password@localhost:5433/antartur"
 ```
 
 ### Limpiar y Reconstruir Todo
