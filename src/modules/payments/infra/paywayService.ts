@@ -100,6 +100,9 @@ export async function createPaywayTransaction(
 
   // Usar la moneda de la request (default: ARS)
   const currency = request.currency || "ARS";
+  
+  // Template ID opcional (para personalizar el checkout)
+  const templateId = process.env.PAYWAY_TEMPLATE_ID;
 
   // Datos para el checkout de Payway
   // La estructura exacta puede variar según la versión de la API
@@ -135,6 +138,11 @@ export async function createPaywayTransaction(
     cancel_url: checkoutData.cancel_url,
     signature: signature,
   });
+  
+  // Agregar Template ID si está configurado (opcional)
+  if (templateId) {
+    params.append("template_id", templateId);
+  }
 
   const redirectUrl = `${checkoutBaseUrl}?${params.toString()}`;
 

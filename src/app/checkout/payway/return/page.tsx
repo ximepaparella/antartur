@@ -13,9 +13,14 @@ export default function PaywayReturnPage() {
   const router = useRouter();
   const [orderData, setOrderData] = useState<ReturnType<typeof getCompletedOrderData> | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [verifyStatus, setVerifyStatus] = useState<"idle" | "verifying" | "success" | "error">("idle");
+  const [verifyError, setVerifyError] = useState<string | null>(null);
 
   const orderId = searchParams.get("orderId");
   const statusParam = searchParams.get("status");
+  const transactionId = searchParams.get("transaction_id") || searchParams.get("transactionId");
+  const signature = searchParams.get("signature");
+  const amount = searchParams.get("amount");
 
   // Obtener datos de la orden desde sessionStorage
   useEffect(() => {
@@ -27,13 +32,60 @@ export default function PaywayReturnPage() {
 
   // Validar parámetros de Payway
   const hasValidParams = orderId || orderData?.code;
+  const hasPaywayParams = orderId && transactionId;
 
-  // Verificar estado del pago usando hook reutilizable
+  // Verificar el pago con Payway primero (similar a PayPal capture)
+  useEffect(() => {
+    if (!hasPaywayParams || verifyStatus !== "idle") return;
+
+    const verifyPayment = async () => {
+      setVerifyStatus("verifying");
+      try {
+        const response = await fetch("/api/payments/payway/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            transactionId: transactionId,
+            status: statusParam || undefined,
+            signature: signature || undefined,
+            amount: amount || undefined,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || result.data?.message || "Error al verificar el pago");
+        }
+
+        // Si el pago fue verificado y confirmado exitosamente
+        if (result.data?.verified && result.data?.status === "approved") {
+          setVerifyStatus("success");
+        } else {
+          // Pago verificado pero no confirmado (pendiente, rechazado, etc.)
+          setVerifyStatus("success"); // Marcamos como success para continuar con verificación
+          setVerifyError(result.data?.message || "El pago no pudo ser confirmado");
+        }
+      } catch (error) {
+        setVerifyStatus("error");
+        setVerifyError(error instanceof Error ? error.message : "Error al verificar el pago");
+      }
+    };
+
+    verifyPayment();
+  }, [hasPaywayParams, orderId, transactionId, statusParam, signature, amount, verifyStatus]);
+
+  // Verificar estado del pago usando hook reutilizable (solo después de verificar con Payway)
+  const shouldVerify = verifyStatus === "success" || (!hasPaywayParams && hasValidParams);
   const { status, errorMessage } = usePaymentVerification({
     orderCode: orderData?.code,
     orderId: orderId || undefined,
     maxRetries: 3,
     retryDelay: 3000,
+    enabled: shouldVerify,
   });
 
   // Mapear estados de Payway a mensajes de UI (solo para display, NO para lógica)
@@ -51,15 +103,32 @@ export default function PaywayReturnPage() {
     }
   };
 
-  // IMPORTANTE: Confiar SOLO en la verificación del servidor, no en parámetros del provider
-  // El statusParam solo se usa para mensajes de UI, nunca para determinar éxito
-  const finalStatus = !hasValidParams ? "error" : status;
-  
-  // Mensaje de error: priorizar mensaje del servidor, usar mensaje del provider solo como fallback para UI
-  const providerMessage = getPaywayStatusMessage(statusParam);
-  const finalErrorMessage = !hasValidParams
-    ? "Parámetros de Payway incompletos"
-    : errorMessage || providerMessage || "Error desconocido al procesar el pago";
+  // Determinar el estado final
+  // Si estamos verificando con Payway, mostrar loading
+  // Si la verificación falló, mostrar error
+  // Si la verificación fue exitosa, usar el estado de usePaymentVerification
+  let finalStatus: "loading" | "success" | "error" = "loading";
+  let finalErrorMessage: string | null = null;
+
+  if (verifyStatus === "verifying") {
+    finalStatus = "loading";
+  } else if (verifyStatus === "error") {
+    finalStatus = "error";
+    finalErrorMessage = verifyError || "Error al verificar el pago con Payway";
+  } else if (verifyStatus === "success" && shouldVerify) {
+    // Después de verificar con Payway, usar el estado de usePaymentVerification
+    finalStatus = !hasValidParams ? "error" : status;
+    finalErrorMessage = !hasValidParams
+      ? "Parámetros de Payway incompletos"
+      : errorMessage || verifyError || getPaywayStatusMessage(statusParam) || "Error desconocido al procesar el pago";
+  } else if (!hasPaywayParams && hasValidParams) {
+    // Si no hay parámetros de Payway pero hay orderId, solo verificar estado de la orden
+    finalStatus = status;
+    finalErrorMessage = errorMessage || getPaywayStatusMessage(statusParam) || null;
+  } else if (!hasValidParams) {
+    finalStatus = "error";
+    finalErrorMessage = "Parámetros de Payway incompletos";
+  }
 
   // Redirigir a success si el pago fue exitoso
   useEffect(() => {
