@@ -57,7 +57,11 @@ export function useMiniCartPricing({
   const defaultCurrency = "ARS"; // Moneda por defecto
 
   // Obtener tour desde la API si tenemos tourId
-  const [tourData, setTourData] = useState<any>(null);
+  type TourWithPrices = {
+    prices?: TourPrice[];
+  };
+
+  const [tourData, setTourData] = useState<TourWithPrices | null>(null);
 
   useEffect(() => {
     if (tourId) {

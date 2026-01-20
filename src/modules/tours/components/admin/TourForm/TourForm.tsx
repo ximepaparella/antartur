@@ -235,12 +235,12 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     if (cleanedFormData.additionals) {
       cleanedFormData.additionals = cleanedFormData.additionals
         .filter((item: TourAdditional) => item.name && item.name.trim())
-        .map((item: TourAdditional) => {
+        .map((item: TourAdditional): TourAdditional => {
           // Transformar prices de objeto { ARS?: { adult, child }, USD?: { adult, child } }
           // a array [{ currency, price }] donde price es el valor general (adult = child)
           const pricesArray: Array<{ currency: string; price: number }> = [];
 
-          if (item.prices) {
+          if (item.prices && !Array.isArray(item.prices)) {
             if (
               item.prices.ARS &&
               typeof item.prices.ARS.adult === "number" &&
@@ -268,8 +268,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
           return {
             ...item,
             prices: pricesArray,
-          } as any; // Type assertion necesario porque transformamos el formato
-        }) as any;
+          };
+        });
     }
 
     // Eliminar campos que no deben enviarse en el update
@@ -551,11 +551,13 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       <label>
                         <input
                           type="checkbox"
-                          checked={(formData as any)[day.key] ?? true}
+                          checked={
+                            formData[day.key as keyof TourFormData] ?? true
+                          }
                           onChange={(e) =>
                             updateField(
                               day.key as keyof TourFormData,
-                              e.target.checked as any,
+                              e.target.checked,
                             )
                           }
                           disabled={!isEditing}
@@ -1060,7 +1062,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 </h3>
                 <ArrayFieldManager
                   title=""
-                  items={(formData.featuredInfos as any) || []}
+                  items={formData.featuredInfos || []}
                   onAdd={() => {
                     const newItem = {
                       id: `temp-${Date.now()}`,
@@ -1130,7 +1132,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 <h3 className={styles.relationSectionTitle}>Itinerario</h3>
                 <ArrayFieldManager
                   title=""
-                  items={(formData.timelineItems as any) || []}
+                  items={formData.timelineItems || []}
                   onAdd={() => {
                     const newItem = {
                       id: `temp-${Date.now()}`,
@@ -1200,7 +1202,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 <h3 className={styles.relationSectionTitle}>Testimonios</h3>
                 <ArrayFieldManager
                   title=""
-                  items={(formData.testimonials as any) || []}
+                  items={formData.testimonials || []}
                   onAdd={() => {
                     const newItem = {
                       id: `temp-${Date.now()}`,

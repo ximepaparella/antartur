@@ -56,7 +56,12 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
 }) => {
   const { currency } = useCurrency();
   const defaultCurrency = "ARS"; // Moneda por defecto
-  const [tourData, setTourData] = useState<any>(null);
+
+  type TourWithPrices = {
+    prices?: TourPrice[];
+  };
+
+  const [tourData, setTourData] = useState<TourWithPrices | null>(null);
 
   useEffect(() => {
     toursClient.client

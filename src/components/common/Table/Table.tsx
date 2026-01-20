@@ -1,10 +1,12 @@
 import React from "react";
 import styles from "./Table.module.scss";
 
+type TableColumnKey<T> = Extract<keyof T, string>;
+
 export interface TableColumn<T = unknown> {
-  key: string;
+  key: TableColumnKey<T>;
   label: string;
-  render?: (value: unknown, row: T) => React.ReactNode;
+  render?: (value: T[TableColumnKey<T>], row: T) => React.ReactNode;
   sortable?: boolean;
   align?: "left" | "center" | "right";
 }
@@ -24,6 +26,20 @@ export function Table<T = unknown>({
   className = "",
   emptyMessage = "No hay datos disponibles",
 }: TableProps<T>) {
+  const toCellContent = (value: unknown): React.ReactNode => {
+    if (value === null || value === undefined) return "";
+    if (React.isValidElement(value)) return value;
+    switch (typeof value) {
+      case "string":
+      case "number":
+      case "boolean":
+      case "bigint":
+        return String(value);
+      default:
+        return String(value);
+    }
+  };
+
   if (data.length === 0) {
     return (
       <div className={styles.empty}>
@@ -55,10 +71,10 @@ export function Table<T = unknown>({
               className={onRowClick ? styles.clickable : ""}
             >
               {columns.map((column) => {
-                const value = (row as any)[column.key];
+                const value = row[column.key];
                 const content = column.render
                   ? column.render(value, row)
-                  : value;
+                  : toCellContent(value);
 
                 return (
                   <td

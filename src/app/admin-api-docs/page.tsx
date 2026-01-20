@@ -13,6 +13,28 @@ export default function SwaggerDocsPage() {
   const [specUrl, setSpecUrl] = useState<string | null>(null);
   const [swaggerLoaded, setSwaggerLoaded] = useState(false);
 
+  type SwaggerUIPresets = {
+    apis: unknown;
+    standalone: unknown;
+  };
+
+  type SwaggerUIBundleFn = {
+    (options: {
+      url: string;
+      dom_id: string;
+      presets: SwaggerUIPresets[keyof SwaggerUIPresets][];
+      deepLinking: boolean;
+      displayRequestDuration: boolean;
+      tryItOutEnabled: boolean;
+      supportedSubmitMethods: Array<"get" | "post" | "put" | "delete" | "patch">;
+    }): unknown;
+    presets: SwaggerUIPresets;
+  };
+
+  interface SwaggerUIWindow extends Window {
+    SwaggerUIBundle?: SwaggerUIBundleFn;
+  }
+
   useEffect(() => {
     // Solo permitir en desarrollo
     if (process.env.NODE_ENV === "production") {
@@ -29,14 +51,14 @@ export default function SwaggerDocsPage() {
       // Esperar un poco para asegurar que todos los scripts estén cargados
       setTimeout(() => {
         try {
-          // @ts-ignore - SwaggerUIBundle está disponible globalmente después de cargar el script
-          if ((window as any).SwaggerUIBundle) {
-            const ui = (window as any).SwaggerUIBundle({
+          const swaggerWindow = window as SwaggerUIWindow;
+          if (swaggerWindow.SwaggerUIBundle) {
+            swaggerWindow.SwaggerUIBundle({
               url: specUrl,
               dom_id: "#swagger-ui",
               presets: [
-                (window as any).SwaggerUIBundle.presets.apis,
-                (window as any).SwaggerUIBundle.presets.standalone,
+                swaggerWindow.SwaggerUIBundle.presets.apis,
+                swaggerWindow.SwaggerUIBundle.presets.standalone,
               ],
               deepLinking: true,
               displayRequestDuration: true,
