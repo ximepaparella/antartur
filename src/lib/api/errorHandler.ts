@@ -14,7 +14,7 @@ export class ApiError extends Error {
     message: string,
     statusCode: number = 500,
     code?: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -128,7 +128,10 @@ export function formatError(error: unknown): {
       type: "https://antartur.tur.ar/errors/INTERNAL_ERROR",
       title: "Internal Server Error",
       status: 500,
-      detail: process.env.NODE_ENV === "development" ? error.message : "An unexpected error occurred",
+      detail:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "An unexpected error occurred",
     };
   }
 
@@ -161,9 +164,9 @@ export function handleApiError(error: unknown): NextResponse {
 /**
  * Wrapper para route handlers que maneja errores automáticamente
  */
-export function withErrorHandler<T extends (...args: any[]) => Promise<NextResponse>>(
-  handler: T
-): T {
+export function withErrorHandler<
+  T extends (...args: Parameters<T>) => Promise<NextResponse>,
+>(handler: T): T {
   return (async (...args: Parameters<T>) => {
     try {
       return await handler(...args);
@@ -172,4 +175,3 @@ export function withErrorHandler<T extends (...args: any[]) => Promise<NextRespo
     }
   }) as T;
 }
-

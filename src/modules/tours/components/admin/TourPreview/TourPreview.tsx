@@ -8,6 +8,15 @@ import { TourFeaturedInfo } from "@/modules/tours/components/TourFeaturedInfo/To
 import { TourTimeline } from "@/modules/tours/components/TourTimeline/TourTimeline";
 import { Testimonials } from "@/components/common/Testimonials/Testimonials";
 import type { TourPreviewProps } from "@/modules/tours/types/admin";
+import type {
+  TourImage,
+  TourPrice,
+  QuickInfoItem,
+  FeaturedInfo,
+  TimelineItem,
+  Testimonial,
+  Restriction,
+} from "@/modules/tours/components/admin/TourForm/types";
 import styles from "./TourPreview.module.scss";
 
 export function TourPreview({ tourData }: TourPreviewProps) {
@@ -19,23 +28,28 @@ export function TourPreview({ tourData }: TourPreviewProps) {
   const heroImage = tourData.heroImage || "";
   const galleryImages =
     tourData.images
-      ?.filter((img: any) => img.imageType === "GALLERY" && img.url && img.url.trim() !== "")
-      .map((img: any) => ({
+      ?.filter(
+        (img: TourImage) =>
+          img.imageType === "GALLERY" && img.url && img.url.trim() !== "",
+      )
+      .map((img: TourImage) => ({
         id: img.id || `gallery-${Math.random()}`,
         src: img.url,
         alt: img.altText || tourData.name,
       })) || [];
 
   // Obtener precios
-  const arsPrice = tourData.prices?.find((p: any) => p.currency === "ARS");
+  const arsPrice = tourData.prices?.find(
+    (p: TourPrice) => p.currency === "ARS",
+  );
   const priceText = arsPrice
     ? `ARS ${arsPrice.priceAdult?.toLocaleString("es-AR")}`
     : tourData.alternativePrice || "Consultar";
 
   // QuickInfo items - asegurar formato correcto
   const quickInfoItems =
-    tourData.quickInfoItems?.map((item: any, index: number) => ({
-      id: item.id || `quickinfo-${index}-${Date.now()}`,
+    tourData.quickInfoItems?.map((item: QuickInfoItem, index: number) => ({
+      id: `quickinfo-${index}-${Date.now()}`,
       icon: item.icon || "info",
       label: item.label || "",
       value: item.value || "",
@@ -43,8 +57,8 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // Featured Info - asegurar formato correcto
   const featuredInfoItems =
-    tourData.featuredInfos?.map((item: any, index: number) => ({
-      id: item.id || `featured-${index}-${Date.now()}`,
+    tourData.featuredInfos?.map((item: FeaturedInfo, index: number) => ({
+      id: `featured-${index}-${Date.now()}`,
       icon: item.icon || "info",
       title: item.title || "",
       description: item.description || "",
@@ -52,7 +66,7 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // Timeline - asegurar formato correcto
   const timelineItems =
-    tourData.timelineItems?.map((item: any) => ({
+    tourData.timelineItems?.map((item: TimelineItem) => ({
       timeLabel: item.timeLabel || "",
       title: item.title || "",
       description: item.description || "",
@@ -60,8 +74,8 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // Testimonials - asegurar formato correcto
   const testimonials =
-    tourData.testimonials?.map((item: any) => ({
-      id: item.id || `testimonial-${Math.random()}`,
+    tourData.testimonials?.map((item: Testimonial) => ({
+      id: `testimonial-${Math.random()}`,
       text: item.text || "",
       author: item.author || "",
       avatar: item.avatar || "",
@@ -70,7 +84,9 @@ export function TourPreview({ tourData }: TourPreviewProps) {
 
   // Restrictions - asegurar formato correcto
   const restrictions =
-    tourData.restrictions?.map((item: any) => item.text || "").filter(Boolean) || [];
+    tourData.restrictions
+      ?.map((item: Restriction) => item.text || "")
+      .filter(Boolean) || [];
 
   return (
     <div className={styles.preview}>
@@ -104,7 +120,10 @@ export function TourPreview({ tourData }: TourPreviewProps) {
               restrictions={restrictions.length > 0 ? restrictions : undefined}
               alternative={
                 tourData.alternativeText && tourData.alternativePrice
-                  ? { text: tourData.alternativeText, price: tourData.alternativePrice }
+                  ? {
+                      text: tourData.alternativeText,
+                      price: tourData.alternativePrice,
+                    }
                   : undefined
               }
               ctaLabel={tourData.ctaLabel || "RESERVAR"}
@@ -119,12 +138,14 @@ export function TourPreview({ tourData }: TourPreviewProps) {
           <div className={styles.previewSection}>
             <TourInfo
               title="AVENTURA Y PAISAJES ÚNICOS"
-              paragraphs={
-                (tourData.longDescription || tourData.shortDescription || "")
-                  .split('\n')
-                  .filter((p: string) => p.trim().length > 0)
-                  .map((p: string) => p.trim())
-              }
+              paragraphs={(
+                tourData.longDescription ||
+                tourData.shortDescription ||
+                ""
+              )
+                .split("\n")
+                .filter((p: string) => p.trim().length > 0)
+                .map((p: string) => p.trim())}
             />
           </div>
         )}
@@ -161,15 +182,15 @@ export function TourPreview({ tourData }: TourPreviewProps) {
         )}
 
         {/* Empty state si no hay contenido */}
-        {!tourData.longDescription && 
-         !tourData.shortDescription && 
-         galleryImages.length === 0 && 
-         featuredInfoItems.length === 0 && 
-         timelineItems.length === 0 && (
-          <div className={styles.emptyContent}>
-            <p>Agrega contenido al tour para ver la vista previa completa.</p>
-          </div>
-        )}
+        {!tourData.longDescription &&
+          !tourData.shortDescription &&
+          galleryImages.length === 0 &&
+          featuredInfoItems.length === 0 &&
+          timelineItems.length === 0 && (
+            <div className={styles.emptyContent}>
+              <p>Agrega contenido al tour para ver la vista previa completa.</p>
+            </div>
+          )}
       </div>
     </div>
   );

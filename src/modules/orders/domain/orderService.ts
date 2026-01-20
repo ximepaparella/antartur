@@ -10,7 +10,12 @@ import { DepartureRepository } from "../../departures/infra/departureRepository"
 import { TourPriceRepository } from "../../tours/infra/tourPriceRepository";
 import type { ReservationInput } from "./types";
 import type { ConfirmPaymentInput } from "../../payments/domain/types";
-import { calculateAge, validateMinAge, validateMinPassengers, calculateAdditionalsSubtotal } from "@/lib/utils/pricing";
+import {
+  calculateAge,
+  validateMinAge,
+  validateMinPassengers,
+  calculateAdditionalsSubtotal,
+} from "@/lib/utils/pricing";
 import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
@@ -26,7 +31,12 @@ const tourPriceRepo = new TourPriceRepository();
  * Genera un código único para una orden en formato ANT-YYYY-NNNN
  * Debe ejecutarse dentro de una transacción para evitar race conditions
  */
-async function generateOrderCode(tx: Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">): Promise<string> {
+async function generateOrderCode(
+  tx: Omit<
+    PrismaClient,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+  >,
+): Promise<string> {
   const year = new Date().getFullYear();
   const prefix = `ANT-${year}-`;
 
@@ -63,7 +73,7 @@ export async function createReservation(input: ReservationInput) {
       WHERE id = ${input.departureId}
       FOR UPDATE
     `;
-    
+
     const departure = await tx.tourDeparture.findUnique({
       where: { id: input.departureId },
     });
@@ -87,9 +97,12 @@ export async function createReservation(input: ReservationInput) {
 
     // 3. Validar mínimo de pasajeros
     if (tour.minPassengers) {
-      const totalSeats = input.numAdults + input.numChildren + (input.numInfants || 0);
+      const totalSeats =
+        input.numAdults + input.numChildren + (input.numInfants || 0);
       if (!validateMinPassengers(totalSeats, tour.minPassengers)) {
-        throw new Error(`This tour requires a minimum of ${tour.minPassengers} passenger${tour.minPassengers > 1 ? "s" : ""}`);
+        throw new Error(
+          `This tour requires a minimum of ${tour.minPassengers} passenger${tour.minPassengers > 1 ? "s" : ""}`,
+        );
       }
     }
 
@@ -97,25 +110,35 @@ export async function createReservation(input: ReservationInput) {
     if (tour.minAge && input.passengers) {
       for (const passenger of input.passengers) {
         if (passenger.birthDate) {
-          const age = calculateAge(passenger.birthDate.toISOString().split("T")[0]);
+          const age = calculateAge(
+            passenger.birthDate.toISOString().split("T")[0],
+          );
           if (!validateMinAge(age, tour.minAge)) {
-            throw new Error(`Passenger ${passenger.firstName} ${passenger.lastName} does not meet the minimum age requirement of ${tour.minAge} years (age: ${age})`);
+            throw new Error(
+              `Passenger ${passenger.firstName} ${passenger.lastName} does not meet the minimum age requirement of ${tour.minAge} years (age: ${age})`,
+            );
           }
         }
       }
     }
 
     // 5. Determinar tipo de orden
-    const isEnquiry = input.exceedsAvailability || input.hasRestrictionViolations || false;
-    const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
+    const isEnquiry =
+      input.exceedsAvailability || input.hasRestrictionViolations || false;
+    const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry
+      ? "ENQUIRY"
+      : "RESERVATION";
 
     // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
     // Los infantes NO descuentan cupo, solo adultos y niños
     const totalSeats = input.numAdults + input.numChildren;
     if (!isEnquiry) {
-      const availableSeats = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
+      const availableSeats =
+        departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
       if (availableSeats < totalSeats) {
-        throw new Error(`Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`);
+        throw new Error(
+          `Not enough available seats. Requested: ${totalSeats}, Available: ${availableSeats}`,
+        );
       }
     }
 
@@ -130,14 +153,17 @@ export async function createReservation(input: ReservationInput) {
     });
 
     if (!tourPrice) {
-      throw new Error(`Price not found for tour ${input.tourId} in currency ${input.currency}`);
+      throw new Error(
+        `Price not found for tour ${input.tourId} in currency ${input.currency}`,
+      );
     }
 
     const unitPriceAdult = Number(tourPrice.priceAdult);
     const unitPriceChild = Number(tourPrice.priceChild);
 
     // Calcular total base
-    let totalAmount = unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
+    let totalAmount =
+      unitPriceAdult * input.numAdults + unitPriceChild * input.numChildren;
 
     // Sumar additionals si existen
     if (input.additionals && input.additionals.length > 0) {
@@ -149,7 +175,7 @@ export async function createReservation(input: ReservationInput) {
           currencyCode: input.currency,
           priceAdult: unitPriceAdult,
           priceChild: unitPriceChild,
-        }
+        },
       );
       totalAmount += additionalsSubtotal;
     }
@@ -162,23 +188,30 @@ export async function createReservation(input: ReservationInput) {
     const expiresAt = new Date();
     if (input.paymentMethod === "transferencia") {
       // Transferencia bancaria: tiempo extendido (default 24 horas)
-      const bankTransferHours = parseInt(process.env.BANK_TRANSFER_EXPIRATION_HOURS || "24", 10);
+      const bankTransferHours = parseInt(
+        process.env.BANK_TRANSFER_EXPIRATION_HOURS || "24",
+        10,
+      );
       expiresAt.setHours(expiresAt.getHours() + bankTransferHours);
     } else {
       // PayPal/Payway/Consulta/Otros: tiempo de hold para reservas pendientes (default 2 horas)
       // Si la reserva es PENDING (por cualquier razón: pago no confirmado, excede disponibilidad,
       // violación de restricciones), los cupos se retienen por este tiempo.
       // Después de este tiempo, si no se confirma el pago, la orden se cancela y los cupos se liberan.
-      const pendingHoldHours = parseInt(process.env.PENDING_RESERVATION_HOLD_HOURS || "2", 10);
+      const pendingHoldHours = parseInt(
+        process.env.PENDING_RESERVATION_HOLD_HOURS || "2",
+        10,
+      );
       expiresAt.setHours(expiresAt.getHours() + pendingHoldHours);
     }
 
     // 10. Crear Order con información de additionals en notes si existen
     const orderNotes = input.notes || "";
-    const additionalsNote = input.additionals && input.additionals.length > 0
-      ? `\n\nAdditionals seleccionados: ${input.additionals.map(a => a.name).join(", ")}`
-      : "";
-    
+    const additionalsNote =
+      input.additionals && input.additionals.length > 0
+        ? `\n\nAdditionals seleccionados: ${input.additionals.map((a) => a.name).join(", ")}`
+        : "";
+
     // Agregar información sobre motivo de consulta si es ENQUIRY
     const enquiryNote = isEnquiry
       ? `\n\nMotivo de consulta: ${input.exceedsAvailability ? "Excede disponibilidad" : ""}${input.hasRestrictionViolations ? (input.exceedsAvailability ? " y " : "") + "Violación de restricciones" : ""}`
@@ -242,7 +275,9 @@ export async function createReservation(input: ReservationInput) {
         nationality: p.nationality,
         email: p.email,
         phone: p.phone,
-        restrictions: p.restrictions ? (structuredClone(p.restrictions) as any) : Prisma.JsonNull,
+        restrictions: p.restrictions
+          ? (structuredClone(p.restrictions) as any)
+          : Prisma.JsonNull,
       })),
     });
 
@@ -271,7 +306,9 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
     }
 
     if (order.status !== "PENDING_PAYMENT") {
-      throw new Error(`Order ${input.orderId} is not in PENDING_PAYMENT status`);
+      throw new Error(
+        `Order ${input.orderId} is not in PENDING_PAYMENT status`,
+      );
     }
 
     // 2. Crear registro de pago
@@ -284,8 +321,12 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
         amount: input.amount,
         currency: input.currency,
         paidAt: new Date(),
-        rawRequest: input.rawRequest ? (structuredClone(input.rawRequest) as any) : Prisma.JsonNull,
-        rawResponse: input.rawResponse ? (structuredClone(input.rawResponse) as any) : Prisma.JsonNull,
+        rawRequest: input.rawRequest
+          ? (structuredClone(input.rawRequest) as any)
+          : Prisma.JsonNull,
+        rawResponse: input.rawResponse
+          ? (structuredClone(input.rawResponse) as any)
+          : Prisma.JsonNull,
       },
     });
 
@@ -321,7 +362,7 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
 
       if (!departure) {
         throw new Error(
-          `Departure ${booking.tourDepartureId} not found for booking ${booking.id}`
+          `Departure ${booking.tourDepartureId} not found for booking ${booking.id}`,
         );
       }
 
@@ -344,7 +385,11 @@ export async function confirmPayment(input: ConfirmPaymentInput) {
 /**
  * Envía email de confirmación de pago después de confirmar un pago
  */
-export async function sendPaymentConfirmationEmail(orderId: string, paymentProvider: string, transactionId?: string) {
+export async function sendPaymentConfirmationEmail(
+  orderId: string,
+  paymentProvider: string,
+  transactionId?: string,
+) {
   try {
     const order = await getOrderWithRelations(orderId, true);
 
@@ -360,27 +405,40 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       return;
     }
 
-  const passengers = booking.passengers || [];
-  const passengerList = passengers.map((p) => ({
-    firstName: p.firstName,
-    lastName: p.lastName,
-    type: p.type,
-    birthDate: p.birthDate ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0]) : null,
-    documentType: p.documentType || null,
-    documentNumber: p.documentNumber || null,
-    nationality: p.nationality || null,
-    email: p.email || null,
-    phone: p.phone || null,
-    restrictions: (p.restrictions && typeof p.restrictions === 'object' && !Array.isArray(p.restrictions)) 
-      ? p.restrictions as Record<string, any> 
-      : null,
-  }));
+    const passengers = booking.passengers || [];
+    const passengerList = passengers.map((p) => ({
+      firstName: p.firstName,
+      lastName: p.lastName,
+      type: p.type,
+      birthDate: p.birthDate
+        ? typeof p.birthDate === "string"
+          ? p.birthDate
+          : p.birthDate.toISOString().split("T")[0]
+        : null,
+      documentType: p.documentType || null,
+      documentNumber: p.documentNumber || null,
+      nationality: p.nationality || null,
+      email: p.email || null,
+      phone: p.phone || null,
+      restrictions:
+        p.restrictions &&
+        typeof p.restrictions === "object" &&
+        !Array.isArray(p.restrictions)
+          ? (p.restrictions as Record<string, any>)
+          : null,
+    }));
 
-    const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+    const departureDate = new Date(
+      booking.departureDateSnapshot || departure.departureDate,
+    ).toLocaleDateString("es-AR");
     const startTime = booking.startTimeSnapshot || departure.startTime;
 
-    const { sendEmail } = await import("../../notifications/domain/emailService");
-    const { generatePaymentConfirmationEmailHTML, generatePaymentConfirmationEmailText } = await import("../../notifications/templates/paymentConfirmationEmail");
+    const { sendEmail } =
+      await import("../../notifications/domain/emailService");
+    const {
+      generatePaymentConfirmationEmailHTML,
+      generatePaymentConfirmationEmailText,
+    } = await import("../../notifications/templates/paymentConfirmationEmail");
 
     const emailData = {
       orderCode: order.code,
@@ -467,7 +525,10 @@ export async function cancelExpiredOrders() {
             await tx.tourDeparture.update({
               where: { id: booking.tourDepartureId },
               data: {
-                seatsHeld: Math.max(0, departure.seatsHeld - booking.totalSeats),
+                seatsHeld: Math.max(
+                  0,
+                  departure.seatsHeld - booking.totalSeats,
+                ),
               },
             });
           }
@@ -503,7 +564,7 @@ export async function expirePendingOrders() {
 export async function findDepartureByTourDateAndTime(
   tourIdOrSlug: string,
   date: string,
-  startTime: string
+  startTime: string,
 ): Promise<{ departureId: string; tourId: string }> {
   const { TourRepository } = await import("../../tours/infra/tourRepository");
   const { NotFoundError } = await import("@/lib/api/errorHandler");
@@ -527,7 +588,7 @@ export async function findDepartureByTourDateAndTime(
   if (!departure) {
     throw new NotFoundError(
       "TourDeparture",
-      `Tour ${tourIdOrSlug} on ${date} at ${startTime}`
+      `Tour ${tourIdOrSlug} on ${date} at ${startTime}`,
     );
   }
 
@@ -540,13 +601,13 @@ export async function findDepartureByTourDateAndTime(
 export function validatePassengerCount(
   passengers: Array<unknown>,
   numAdults: number,
-  numChildren: number
+  numChildren: number,
 ): void {
   const { ValidationError } = require("@/lib/api/errorHandler");
   const totalPassengers = numAdults + numChildren;
   if (passengers.length !== totalPassengers) {
     throw new ValidationError(
-      `Number of passengers (${passengers.length}) does not match adults + children (${totalPassengers})`
+      `Number of passengers (${passengers.length}) does not match adults + children (${totalPassengers})`,
     );
   }
 }
@@ -554,17 +615,25 @@ export function validatePassengerCount(
 /**
  * Valida que haya al menos un adulto si hay niños
  */
-export function validateAdultRequired(numAdults: number, numChildren: number): void {
+export function validateAdultRequired(
+  numAdults: number,
+  numChildren: number,
+): void {
   const { ValidationError } = require("@/lib/api/errorHandler");
   if (numChildren > 0 && numAdults === 0) {
-    throw new ValidationError("At least one adult is required when booking for children");
+    throw new ValidationError(
+      "At least one adult is required when booking for children",
+    );
   }
 }
 
 /**
  * Obtiene una orden completa con todas sus relaciones
  */
-export async function getOrderWithRelations(orderId: string, includePayments = false) {
+export async function getOrderWithRelations(
+  orderId: string,
+  includePayments = false,
+) {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
@@ -640,7 +709,7 @@ export async function listOrders(query: {
  */
 export async function getOrderByCode(code: string, includePayments = false) {
   const { NotFoundError } = await import("@/lib/api/errorHandler");
-  
+
   const order = await prisma.order.findUnique({
     where: { code },
     include: {
@@ -695,7 +764,7 @@ export async function sendOrderEmails(order: {
       nationality?: string | null;
       email?: string | null;
       phone?: string | null;
-      restrictions?: any;
+      restrictions?: Record<string, unknown> | null;
     }>;
     tourDeparture?: {
       departureDate: Date;
@@ -711,8 +780,10 @@ export async function sendOrderEmails(order: {
   }
 
   const { sendEmail } = await import("../../notifications/domain/emailService");
-  const { generateReservationEmailHTML, generateReservationEmailText } = await import("../../notifications/templates/reservationEmail");
-  const { generateEnquiryEmailHTML, generateEnquiryEmailText } = await import("../../notifications/templates/enquiryEmail");
+  const { generateReservationEmailHTML, generateReservationEmailText } =
+    await import("../../notifications/templates/reservationEmail");
+  const { generateEnquiryEmailHTML, generateEnquiryEmailText } =
+    await import("../../notifications/templates/enquiryEmail");
 
   const booking = order.bookings[0];
   const departure = booking.tourDeparture;
@@ -727,20 +798,27 @@ export async function sendOrderEmails(order: {
     firstName: p.firstName,
     lastName: p.lastName,
     type: p.type,
-    birthDate: p.birthDate 
-      ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0])
+    birthDate: p.birthDate
+      ? typeof p.birthDate === "string"
+        ? p.birthDate
+        : p.birthDate.toISOString().split("T")[0]
       : null,
     documentType: p.documentType || null,
     documentNumber: p.documentNumber || null,
     nationality: p.nationality || null,
     email: p.email || null,
     phone: p.phone || null,
-    restrictions: (p.restrictions && typeof p.restrictions === 'object' && !Array.isArray(p.restrictions)) 
-      ? p.restrictions as Record<string, any> 
-      : null,
+    restrictions:
+      p.restrictions &&
+      typeof p.restrictions === "object" &&
+      !Array.isArray(p.restrictions)
+        ? (p.restrictions as Record<string, any>)
+        : null,
   }));
 
-  const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+  const departureDate = new Date(
+    booking.departureDateSnapshot || departure.departureDate,
+  ).toLocaleDateString("es-AR");
   const startTime = booking.startTimeSnapshot || departure.startTime;
 
   if (order.type === "ENQUIRY") {
@@ -833,7 +911,8 @@ export async function sendOrderEmails(order: {
  * Actualiza el estado de una orden
  */
 export async function updateOrderStatus(orderId: string, newStatus: string) {
-  const { ValidationError, NotFoundError } = await import("@/lib/api/errorHandler");
+  const { ValidationError, NotFoundError } =
+    await import("@/lib/api/errorHandler");
   const order = await prisma.order.findUnique({
     where: { id: orderId },
   });
@@ -843,7 +922,11 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
   }
 
   // Validaciones de transición de estado
-  if (order.status === "PAID" && newStatus !== "COMPLETED" && newStatus !== "CANCELLED") {
+  if (
+    order.status === "PAID" &&
+    newStatus !== "COMPLETED" &&
+    newStatus !== "CANCELLED"
+  ) {
     throw new ValidationError("Cannot change status from PAID to " + newStatus);
   }
 
@@ -888,10 +971,11 @@ export function generateWhatsAppLinkForEnquiry(order: {
 
   const booking = order.bookings[0];
   const departure = booking.tourDeparture;
-  const tourName = booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
-  const departureDate = booking.departureDateSnapshot 
+  const tourName =
+    booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
+  const departureDate = booking.departureDateSnapshot
     ? new Date(booking.departureDateSnapshot).toLocaleDateString("es-AR")
-    : departure?.departureDate 
+    : departure?.departureDate
       ? new Date(departure.departureDate).toLocaleDateString("es-AR")
       : "Fecha no disponible";
   const totalPassengers = booking.numAdults + booking.numChildren;
@@ -903,10 +987,11 @@ export function generateWhatsAppLinkForEnquiry(order: {
   const reason = order.notes?.includes("exceedsAvailability")
     ? "Excede disponibilidad"
     : order.notes?.includes("hasRestrictionViolations")
-    ? "Restricciones"
-    : "Consulta";
+      ? "Restricciones"
+      : "Consulta";
 
-  const message = `Nueva consulta:\n` +
+  const message =
+    `Nueva consulta:\n` +
     `Cliente: ${order.customerName}\n` +
     `Pasajeros: ${totalPassengers} (${booking.numAdults} adultos, ${booking.numChildren} menores)\n` +
     `Excursión: ${tourName}\n` +
@@ -918,4 +1003,3 @@ export function generateWhatsAppLinkForEnquiry(order: {
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/5492901487838?text=${encodedMessage}`;
 }
-

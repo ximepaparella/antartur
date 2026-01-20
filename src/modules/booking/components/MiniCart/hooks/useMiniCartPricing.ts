@@ -8,6 +8,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
 import type { SelectedAdditional } from "@/lib/types/order";
+import type { TourPrice } from "@/modules/tours/components/admin/TourForm/types";
 import {
   calculateSubtotalAdults,
   calculateSubtotalChildren,
@@ -60,7 +61,8 @@ export function useMiniCartPricing({
 
   useEffect(() => {
     if (tourId) {
-      toursClient.client.getBySlug(tourId, { includePrices: true })
+      toursClient.client
+        .getBySlug(tourId, { includePrices: true })
         .then((tour) => {
           if (tour) {
             setTourData(tour);
@@ -76,16 +78,29 @@ export function useMiniCartPricing({
   const currentPricing = useMemo(() => {
     if (tourId && tourData?.prices) {
       // Convertir prices de la API al formato esperado por getTourPriceByCurrency
-      const pricesMap: { ARS?: { adult: number; child: number }; USD?: { adult: number; child: number } } = {};
-      tourData.prices.forEach((p: any) => {
+      const pricesMap: {
+        ARS?: { adult: number; child: number };
+        USD?: { adult: number; child: number };
+      } = {};
+      tourData.prices.forEach((p: TourPrice) => {
         if (p.currency === "ARS") {
-          pricesMap.ARS = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
+          pricesMap.ARS = {
+            adult: Number(p.priceAdult),
+            child: Number(p.priceChild),
+          };
         } else if (p.currency === "USD") {
-          pricesMap.USD = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
+          pricesMap.USD = {
+            adult: Number(p.priceAdult),
+            child: Number(p.priceChild),
+          };
         }
       });
-      
-      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
+
+      const priceData = getTourPriceByCurrency(
+        pricesMap,
+        currency,
+        defaultCurrency,
+      );
       if (priceData) {
         return {
           priceAdult: priceData.adult,
@@ -124,16 +139,26 @@ export function useMiniCartPricing({
   // Filtrar additionals para el cálculo del subtotal (solo los que tienen la moneda correcta)
   const additionalsForCalculation = useMemo(() => {
     return normalizedAdditionals.filter(
-      (additional) => additional.currency === currentPricing.currencyCode
+      (additional) => additional.currency === currentPricing.currencyCode,
     );
   }, [normalizedAdditionals, currentPricing.currencyCode]);
 
   const additionalsSubtotal = useMemo(() => {
-    return calculateAdditionalsSubtotal(additionalsForCalculation, adults, childrenCount, currentPricing);
+    return calculateAdditionalsSubtotal(
+      additionalsForCalculation,
+      adults,
+      childrenCount,
+      currentPricing,
+    );
   }, [additionalsForCalculation, adults, childrenCount, currentPricing]);
 
   const total = useMemo(() => {
-    return calculateOrderTotal(adults, childrenCount, currentPricing, additionalsForCalculation);
+    return calculateOrderTotal(
+      adults,
+      childrenCount,
+      currentPricing,
+      additionalsForCalculation,
+    );
   }, [adults, childrenCount, currentPricing, additionalsForCalculation]);
 
   return {
@@ -145,4 +170,3 @@ export function useMiniCartPricing({
     normalizedAdditionals,
   };
 }
-

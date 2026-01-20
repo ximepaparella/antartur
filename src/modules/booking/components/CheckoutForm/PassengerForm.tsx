@@ -71,7 +71,7 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(passengerNumber === 1);
   const [showAllergiesInput, setShowAllergiesInput] = useState(
-    passenger.restriccionesAlimentarias?.alergias || false
+    passenger.restriccionesAlimentarias?.alergias || false,
   );
 
   const handleFieldTouched = (field: string) => {
@@ -79,17 +79,27 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     onMarkFieldAsTouched?.(fieldKey);
   };
 
-  const handleChange = (field: keyof Passenger, value: any, touchedField?: string) => {
+  const handleChange = (
+    field: keyof Passenger,
+    value: unknown,
+    touchedField?: string,
+  ) => {
     if (touchedField) {
       handleFieldTouched(touchedField);
     }
-    onChange({
-      ...passenger,
-      [field]: value,
-    }, touchedField);
+    onChange(
+      {
+        ...passenger,
+        [field]: value,
+      },
+      touchedField,
+    );
   };
 
-  const handleRestrictionChange = (field: keyof NonNullable<Passenger["restriccionesAlimentarias"]>, checked: boolean) => {
+  const handleRestrictionChange = (
+    field: keyof NonNullable<Passenger["restriccionesAlimentarias"]>,
+    checked: boolean,
+  ) => {
     const currentRestrictions = passenger.restriccionesAlimentarias || {};
     const newRestrictions = {
       ...currentRestrictions,
@@ -121,7 +131,10 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
   const childMaxAge = 17;
   const effectiveInfantMaxAge = infantMaxAge ?? 3;
 
-  const years = Array.from({ length: adultMaxAge + 1 }, (_, i) => currentYear - i);
+  const years = Array.from(
+    { length: adultMaxAge + 1 },
+    (_, i) => currentYear - i,
+  );
   const filteredYears = years.filter((year) => {
     const age = currentYear - year;
     if (isInfant) {
@@ -134,7 +147,10 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     // Niños: siempre menores de 18, edad no negativa
     return age >= 0 && age <= childMaxAge;
   });
-  const yearOptions = filteredYears.map((year) => ({ value: year.toString(), label: year.toString() }));
+  const yearOptions = filteredYears.map((year) => ({
+    value: year.toString(),
+    label: year.toString(),
+  }));
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const monthOptions = months.map((month) => ({
@@ -165,14 +181,19 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
   useEffect(() => {
     if (fechaNacimiento) {
       const fechaParts = fechaNacimiento.split("-");
-      if (fechaParts.length === 3 && fechaParts[0] && fechaParts[1] && fechaParts[2]) {
+      if (
+        fechaParts.length === 3 &&
+        fechaParts[0] &&
+        fechaParts[1] &&
+        fechaParts[2]
+      ) {
         const newYear = fechaParts[0];
         const newMonth = fechaParts[1].padStart(2, "0");
         const newDay = fechaParts[2].padStart(2, "0");
         // Usar función de actualización para evitar dependencias
-        setBirthYear((prev) => prev !== newYear ? newYear : prev);
-        setBirthMonth((prev) => prev !== newMonth ? newMonth : prev);
-        setBirthDay((prev) => prev !== newDay ? newDay : prev);
+        setBirthYear((prev) => (prev !== newYear ? newYear : prev));
+        setBirthMonth((prev) => (prev !== newMonth ? newMonth : prev));
+        setBirthDay((prev) => (prev !== newDay ? newDay : prev));
       }
     } else {
       // Si fechaNacimiento se borra externamente, limpiar el estado local
@@ -218,25 +239,39 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
     }
     const validation = validatePassengerAge(passengerAge, false);
     return validation.valid ? null : validation.error || null;
-  }, [adultMaxAge, effectiveAdultMinAge, isAdult, minAge, passenger.fechaNacimiento, passengerAge]);
+  }, [
+    adultMaxAge,
+    effectiveAdultMinAge,
+    isAdult,
+    minAge,
+    passenger.fechaNacimiento,
+    passengerAge,
+  ]);
 
   const handleDateChange = (type: "year" | "month" | "day", value: string) => {
     // Marcar el campo como touched cuando el usuario interactúa con cualquier parte de la fecha
     handleFieldTouched("fechaNacimiento");
-    
+
     // Calcular los nuevos valores usando el estado actual + el nuevo valor
     const newYear = type === "year" ? value : birthYear;
     const newMonth = type === "month" ? value : birthMonth;
     const newDay = type === "day" ? value : birthDay;
-    
+
     // Actualizar el estado local correspondiente
     if (type === "year") setBirthYear(value);
     if (type === "month") setBirthMonth(value);
     if (type === "day") setBirthDay(value);
-    
+
     // Solo actualizar passenger.fechaNacimiento cuando todos los campos estén completos
     // Y todos tengan valores válidos (no solo el primer número)
-    if (newYear && newYear.length === 4 && newMonth && newMonth.length === 2 && newDay && newDay.length === 2) {
+    if (
+      newYear &&
+      newYear.length === 4 &&
+      newMonth &&
+      newMonth.length === 2 &&
+      newDay &&
+      newDay.length === 2
+    ) {
       const dateStr = `${newYear}-${newMonth}-${newDay}`;
       // Actualizar el pasajero con la fecha completa
       handleChange("fechaNacimiento", dateStr, "fechaNacimiento");
@@ -253,16 +288,20 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
   const handleDateBlur = () => {
     // Validar solo cuando el usuario termine de seleccionar todos los campos
     // Y la fecha esté completa
-    if (birthYear && birthYear.length === 4 && birthMonth && birthMonth.length === 2 && birthDay && birthDay.length === 2) {
+    if (
+      birthYear &&
+      birthYear.length === 4 &&
+      birthMonth &&
+      birthMonth.length === 2 &&
+      birthDay &&
+      birthDay.length === 2
+    ) {
       onValidateField?.();
     }
   };
 
   return (
-    <div 
-      className={styles.passengerForm}
-      data-passenger-index={passengerIndex}
-    >
+    <div className={styles.passengerForm} data-passenger-index={passengerIndex}>
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -270,18 +309,20 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
         aria-expanded={isExpanded}
         aria-label={`${isExpanded ? "Contraer" : "Expandir"} información del ${isAdult ? "pasajero adulto" : isInfant ? "pasajero infante" : "pasajero menor"} ${passengerNumber}`}
       >
-        <div className={`${styles.passengerHeaderContent} ${hasErrors ? styles.passengerHeaderContentError : ""}`}>
-          <Icon 
-            name={isExpanded ? "chevron-up" : "chevron-down"} 
-            size={20} 
+        <div
+          className={`${styles.passengerHeaderContent} ${hasErrors ? styles.passengerHeaderContentError : ""}`}
+        >
+          <Icon
+            name={isExpanded ? "chevron-up" : "chevron-down"}
+            size={20}
             className={styles.chevronIcon}
             aria-hidden="true"
           />
           <h3 className={styles.passengerTitle}>
-            {isAdult 
-              ? `Pasajero Adulto ${passengerNumber}` 
-              : isInfant 
-                ? `Pasajero Infante ${passengerNumber}` 
+            {isAdult
+              ? `Pasajero Adulto ${passengerNumber}`
+              : isInfant
+                ? `Pasajero Infante ${passengerNumber}`
                 : `Pasajero Menor ${passengerNumber}`}
           </h3>
         </div>
@@ -303,81 +344,90 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
             </div>
           )}
           <div className={styles.formRow}>
-        <Input
-          label="Nombre Completo"
-          name={`passenger-${passengerNumber}-nombre`}
-          required
-          value={passenger.nombreCompleto}
-          onFocus={() => handleFieldTouched("nombreCompleto")}
-          onChange={(e) => handleChange("nombreCompleto", e.target.value, "nombreCompleto")}
-          onBlur={() => onValidateField?.()}
-          error={errors.nombreCompleto}
-          className={styles.formGroup}
-        />
-      </div>
-
-      <div className={styles.formRow}>
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Fecha de Nacimiento <span className={styles.required}>*</span>
-          </label>
-          <div className={`${styles.dateInputs} ${errors.fechaNacimiento ? styles.dateInputsError : ""}`}>
-            <Select
-              name={`passenger-${passengerNumber}-day`}
-              options={dayOptions}
-              value={birthDay}
-              onFocus={() => handleFieldTouched("fechaNacimiento")}
-              onChange={(e) => handleDateChange("day", e.target.value)}
-              onBlur={handleDateBlur}
-              error={errors.fechaNacimiento ? "" : undefined}
-              className={styles.dateSelect}
-            />
-            <Select
-              name={`passenger-${passengerNumber}-month`}
-              options={monthOptions}
-              value={birthMonth}
-              onFocus={() => handleFieldTouched("fechaNacimiento")}
-              onChange={(e) => handleDateChange("month", e.target.value)}
-              onBlur={handleDateBlur}
-              error={errors.fechaNacimiento ? "" : undefined}
-              className={styles.dateSelect}
-            />
-            <Select
-              name={`passenger-${passengerNumber}-year`}
-              options={yearOptions}
-              value={birthYear}
-              onFocus={() => handleFieldTouched("fechaNacimiento")}
-              onChange={(e) => handleDateChange("year", e.target.value)}
-              onBlur={handleDateBlur}
-              error={errors.fechaNacimiento ? "" : undefined}
-              className={styles.dateSelect}
+            <Input
+              label="Nombre Completo"
+              name={`passenger-${passengerNumber}-nombre`}
+              required
+              value={passenger.nombreCompleto}
+              onFocus={() => handleFieldTouched("nombreCompleto")}
+              onChange={(e) =>
+                handleChange("nombreCompleto", e.target.value, "nombreCompleto")
+              }
+              onBlur={() => onValidateField?.()}
+              error={errors.nombreCompleto}
+              className={styles.formGroup}
             />
           </div>
-          {errors.fechaNacimiento && (
-            <span className={styles.errorMessage}>{errors.fechaNacimiento}</span>
-          )}
-          {ageViolatesMinAge && minAge && passengerAge !== null && (
-            <span className={styles.errorMessage}>
-              La edad mínima requerida para este tour es {minAge} años. Este pasajero tiene {passengerAge} años.
-            </span>
-          )}
-          {ageValidationError && (
-            <span className={styles.errorMessage}>
-              {ageValidationError}
-            </span>
-          )}
-        </div>
-      </div>
+
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Fecha de Nacimiento <span className={styles.required}>*</span>
+              </label>
+              <div
+                className={`${styles.dateInputs} ${errors.fechaNacimiento ? styles.dateInputsError : ""}`}
+              >
+                <Select
+                  name={`passenger-${passengerNumber}-day`}
+                  options={dayOptions}
+                  value={birthDay}
+                  onFocus={() => handleFieldTouched("fechaNacimiento")}
+                  onChange={(e) => handleDateChange("day", e.target.value)}
+                  onBlur={handleDateBlur}
+                  error={errors.fechaNacimiento ? "" : undefined}
+                  className={styles.dateSelect}
+                />
+                <Select
+                  name={`passenger-${passengerNumber}-month`}
+                  options={monthOptions}
+                  value={birthMonth}
+                  onFocus={() => handleFieldTouched("fechaNacimiento")}
+                  onChange={(e) => handleDateChange("month", e.target.value)}
+                  onBlur={handleDateBlur}
+                  error={errors.fechaNacimiento ? "" : undefined}
+                  className={styles.dateSelect}
+                />
+                <Select
+                  name={`passenger-${passengerNumber}-year`}
+                  options={yearOptions}
+                  value={birthYear}
+                  onFocus={() => handleFieldTouched("fechaNacimiento")}
+                  onChange={(e) => handleDateChange("year", e.target.value)}
+                  onBlur={handleDateBlur}
+                  error={errors.fechaNacimiento ? "" : undefined}
+                  className={styles.dateSelect}
+                />
+              </div>
+              {errors.fechaNacimiento && (
+                <span className={styles.errorMessage}>
+                  {errors.fechaNacimiento}
+                </span>
+              )}
+              {ageViolatesMinAge && minAge && passengerAge !== null && (
+                <span className={styles.errorMessage}>
+                  La edad mínima requerida para este tour es {minAge} años. Este
+                  pasajero tiene {passengerAge} años.
+                </span>
+              )}
+              {ageValidationError && (
+                <span className={styles.errorMessage}>
+                  {ageValidationError}
+                </span>
+              )}
+            </div>
+          </div>
 
           <div className={styles.formRow}>
             <Input
               label="Documento o Pasaporte"
-          name={`passenger-${passengerNumber}-documento`}
-          required
-          value={passenger.documento}
-          onFocus={() => handleFieldTouched("documento")}
-          onChange={(e) => handleChange("documento", e.target.value, "documento")}
-          onBlur={() => onValidateField?.()}
+              name={`passenger-${passengerNumber}-documento`}
+              required
+              value={passenger.documento}
+              onFocus={() => handleFieldTouched("documento")}
+              onChange={(e) =>
+                handleChange("documento", e.target.value, "documento")
+              }
+              onBlur={() => onValidateField?.()}
               error={errors.documento}
               className={styles.formGroup}
             />
@@ -386,12 +436,14 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           <div className={styles.formRow}>
             <Input
               label="Dirección"
-          name={`passenger-${passengerNumber}-direccion`}
-          required
-          value={passenger.direccion}
-          onFocus={() => handleFieldTouched("direccion")}
-          onChange={(e) => handleChange("direccion", e.target.value, "direccion")}
-          onBlur={() => onValidateField?.()}
+              name={`passenger-${passengerNumber}-direccion`}
+              required
+              value={passenger.direccion}
+              onFocus={() => handleFieldTouched("direccion")}
+              onChange={(e) =>
+                handleChange("direccion", e.target.value, "direccion")
+              }
+              onBlur={() => onValidateField?.()}
               error={errors.direccion}
               className={styles.formGroup}
             />
@@ -400,13 +452,15 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           <div className={styles.formRow}>
             <Input
               label="Teléfono"
-          name={`passenger-${passengerNumber}-telefono`}
-          type="tel"
-          required
-          value={passenger.telefono}
-          onFocus={() => handleFieldTouched("telefono")}
-          onChange={(e) => handleChange("telefono", e.target.value, "telefono")}
-          onBlur={() => onValidateField?.()}
+              name={`passenger-${passengerNumber}-telefono`}
+              type="tel"
+              required
+              value={passenger.telefono}
+              onFocus={() => handleFieldTouched("telefono")}
+              onChange={(e) =>
+                handleChange("telefono", e.target.value, "telefono")
+              }
+              onBlur={() => onValidateField?.()}
               error={errors.telefono}
               className={styles.formGroup}
             />
@@ -415,45 +469,56 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                ¿Tiene restricciones alimentarias? <span className={styles.required}>*</span>
+                ¿Tiene restricciones alimentarias?{" "}
+                <span className={styles.required}>*</span>
               </label>
               <div className={styles.radioGroup}>
-            <label className={styles.radioOption}>
-              <input
-                type="radio"
-                name={`restrictions-${passengerNumber}`}
-                checked={passenger.tieneRestriccionesAlimentarias === true}
-                onFocus={() => handleFieldTouched("restricciones")}
-                onChange={() => {
-                  handleChange("tieneRestriccionesAlimentarias", true, "restricciones");
-                  onValidateField?.();
-                }}
-                onBlur={() => onValidateField?.()}
-              />
-              <span>Sí</span>
-            </label>
-            <label className={styles.radioOption}>
-              <input
-                type="radio"
-                name={`restrictions-${passengerNumber}`}
-                checked={passenger.tieneRestriccionesAlimentarias === false}
-                onFocus={() => handleFieldTouched("restricciones")}
-                onChange={() => {
-                  handleChange("tieneRestriccionesAlimentarias", false, "restricciones");
-                  onValidateField?.();
-                }}
-                onBlur={() => onValidateField?.()}
-              />
-                <span>No</span>
-              </label>
+                <label className={styles.radioOption}>
+                  <input
+                    type="radio"
+                    name={`restrictions-${passengerNumber}`}
+                    checked={passenger.tieneRestriccionesAlimentarias === true}
+                    onFocus={() => handleFieldTouched("restricciones")}
+                    onChange={() => {
+                      handleChange(
+                        "tieneRestriccionesAlimentarias",
+                        true,
+                        "restricciones",
+                      );
+                      onValidateField?.();
+                    }}
+                    onBlur={() => onValidateField?.()}
+                  />
+                  <span>Sí</span>
+                </label>
+                <label className={styles.radioOption}>
+                  <input
+                    type="radio"
+                    name={`restrictions-${passengerNumber}`}
+                    checked={passenger.tieneRestriccionesAlimentarias === false}
+                    onFocus={() => handleFieldTouched("restricciones")}
+                    onChange={() => {
+                      handleChange(
+                        "tieneRestriccionesAlimentarias",
+                        false,
+                        "restricciones",
+                      );
+                      onValidateField?.();
+                    }}
+                    onBlur={() => onValidateField?.()}
+                  />
+                  <span>No</span>
+                </label>
+              </div>
+              {errors.restricciones && (
+                <span className={styles.errorMessage}>
+                  {errors.restricciones}
+                </span>
+              )}
+              {errors.alergias && (
+                <span className={styles.errorMessage}>{errors.alergias}</span>
+              )}
             </div>
-            {errors.restricciones && (
-              <span className={styles.errorMessage}>{errors.restricciones}</span>
-            )}
-            {errors.alergias && (
-              <span className={styles.errorMessage}>{errors.alergias}</span>
-            )}
-          </div>
           </div>
 
           {passenger.tieneRestriccionesAlimentarias && (
@@ -461,53 +526,74 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
               <div className={styles.formGroup}>
                 <label className={styles.label}>Tipo de restricción:</label>
                 <div className={styles.checkboxGroup}>
-              <label className={styles.checkboxOption}>
-                <input
-                  type="checkbox"
-                  checked={passenger.restriccionesAlimentarias?.vegetariano || false}
-                  onChange={(e) => handleRestrictionChange("vegetariano", e.target.checked)}
-                />
-                <span>Vegetariano</span>
-              </label>
-              <label className={styles.checkboxOption}>
-                <input
-                  type="checkbox"
-                  checked={passenger.restriccionesAlimentarias?.vegano || false}
-                  onChange={(e) => handleRestrictionChange("vegano", e.target.checked)}
-                />
-                <span>Vegano</span>
-              </label>
-              <label className={styles.checkboxOption}>
-                <input
-                  type="checkbox"
-                  checked={passenger.restriccionesAlimentarias?.celiaco || false}
-                  onChange={(e) => handleRestrictionChange("celiaco", e.target.checked)}
-                />
-                <span>Celiaco</span>
-              </label>
-              <label className={styles.checkboxOption}>
-                <input
-                  type="checkbox"
-                  checked={passenger.restriccionesAlimentarias?.alergias || false}
-                  onChange={(e) => handleRestrictionChange("alergias", e.target.checked)}
-                />
-                  <span>Alergias</span>
-                </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={
+                        passenger.restriccionesAlimentarias?.vegetariano ||
+                        false
+                      }
+                      onChange={(e) =>
+                        handleRestrictionChange("vegetariano", e.target.checked)
+                      }
+                    />
+                    <span>Vegetariano</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={
+                        passenger.restriccionesAlimentarias?.vegano || false
+                      }
+                      onChange={(e) =>
+                        handleRestrictionChange("vegano", e.target.checked)
+                      }
+                    />
+                    <span>Vegano</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={
+                        passenger.restriccionesAlimentarias?.celiaco || false
+                      }
+                      onChange={(e) =>
+                        handleRestrictionChange("celiaco", e.target.checked)
+                      }
+                    />
+                    <span>Celiaco</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={
+                        passenger.restriccionesAlimentarias?.alergias || false
+                      }
+                      onChange={(e) =>
+                        handleRestrictionChange("alergias", e.target.checked)
+                      }
+                    />
+                    <span>Alergias</span>
+                  </label>
+                </div>
+                {showAllergiesInput && (
+                  <Input
+                    label="Especifique las alergias"
+                    name={`passenger-${passengerNumber}-alergias`}
+                    value={
+                      passenger.restriccionesAlimentarias?.alergiasDetalle || ""
+                    }
+                    onFocus={() => handleFieldTouched("alergias")}
+                    onChange={(e) =>
+                      handleAllergiesDetailChange(e.target.value)
+                    }
+                    onBlur={() => onValidateField?.()}
+                    className={styles.formGroup}
+                    style={{ marginTop: "8px" }}
+                  />
+                )}
               </div>
-              {showAllergiesInput && (
-                <Input
-                  label="Especifique las alergias"
-                  name={`passenger-${passengerNumber}-alergias`}
-                  value={passenger.restriccionesAlimentarias?.alergiasDetalle || ""}
-                  onFocus={() => handleFieldTouched("alergias")}
-                  onChange={(e) => handleAllergiesDetailChange(e.target.value)}
-                  onBlur={() => onValidateField?.()}
-                  className={styles.formGroup}
-                  style={{ marginTop: "8px" }}
-                />
-              )}
             </div>
-          </div>
           )}
 
           {isAdult && (
@@ -516,101 +602,116 @@ export const PassengerForm: React.FC<PassengerFormProps> = ({
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.label}>
-                      ¿Está embarazada? <span className={styles.required}>*</span>
+                      ¿Está embarazada?{" "}
+                      <span className={styles.required}>*</span>
                     </label>
                     <div className={styles.radioGroup}>
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`pregnancy-${passengerNumber}`}
-                      checked={passenger.embarazada === true}
-                      onFocus={() => handleFieldTouched("embarazada")}
-                      onChange={() => {
-                        handleChange("embarazada", true, "embarazada");
-                        onValidateField?.();
-                      }}
-                      onBlur={() => onValidateField?.()}
-                    />
-                    <span>Sí</span>
-                  </label>
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`pregnancy-${passengerNumber}`}
-                      checked={passenger.embarazada === false}
-                      onFocus={() => handleFieldTouched("embarazada")}
-                      onChange={() => {
-                        handleChange("embarazada", false, "embarazada");
-                        onValidateField?.();
-                      }}
-                      onBlur={() => onValidateField?.()}
-                    />
-                      <span>No</span>
-                    </label>
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`pregnancy-${passengerNumber}`}
+                          checked={passenger.embarazada === true}
+                          onFocus={() => handleFieldTouched("embarazada")}
+                          onChange={() => {
+                            handleChange("embarazada", true, "embarazada");
+                            onValidateField?.();
+                          }}
+                          onBlur={() => onValidateField?.()}
+                        />
+                        <span>Sí</span>
+                      </label>
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`pregnancy-${passengerNumber}`}
+                          checked={passenger.embarazada === false}
+                          onFocus={() => handleFieldTouched("embarazada")}
+                          onChange={() => {
+                            handleChange("embarazada", false, "embarazada");
+                            onValidateField?.();
+                          }}
+                          onBlur={() => onValidateField?.()}
+                        />
+                        <span>No</span>
+                      </label>
+                    </div>
+                    {errors.embarazada && (
+                      <span className={styles.errorMessage}>
+                        {errors.embarazada}
+                      </span>
+                    )}
                   </div>
-                  {errors.embarazada && (
-                    <span className={styles.errorMessage}>{errors.embarazada}</span>
-                  )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {hasHealthRestriction && (
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    ¿Tiene problemas de columna o de salud? <span className={styles.required}>*</span>
-                  </label>
-                  <div className={styles.radioGroup}>
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`health-${passengerNumber}`}
-                      checked={passenger.problemasColumnaSalud === true}
-                      onFocus={() => handleFieldTouched("salud")}
-                      onChange={() => {
-                        handleChange("problemasColumnaSalud", true, "salud");
-                        onValidateField?.();
-                      }}
-                      onBlur={() => onValidateField?.()}
-                    />
-                    <span>Sí</span>
-                  </label>
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`health-${passengerNumber}`}
-                      checked={passenger.problemasColumnaSalud === false}
-                      onFocus={() => handleFieldTouched("salud")}
-                      onChange={() => {
-                        handleChange("problemasColumnaSalud", false, "salud");
-                        onValidateField?.();
-                      }}
-                      onBlur={() => onValidateField?.()}
-                    />
-                      <span>No</span>
+              {hasHealthRestriction && (
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                      ¿Tiene problemas de columna o de salud?{" "}
+                      <span className={styles.required}>*</span>
                     </label>
+                    <div className={styles.radioGroup}>
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`health-${passengerNumber}`}
+                          checked={passenger.problemasColumnaSalud === true}
+                          onFocus={() => handleFieldTouched("salud")}
+                          onChange={() => {
+                            handleChange(
+                              "problemasColumnaSalud",
+                              true,
+                              "salud",
+                            );
+                            onValidateField?.();
+                          }}
+                          onBlur={() => onValidateField?.()}
+                        />
+                        <span>Sí</span>
+                      </label>
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`health-${passengerNumber}`}
+                          checked={passenger.problemasColumnaSalud === false}
+                          onFocus={() => handleFieldTouched("salud")}
+                          onChange={() => {
+                            handleChange(
+                              "problemasColumnaSalud",
+                              false,
+                              "salud",
+                            );
+                            onValidateField?.();
+                          }}
+                          onBlur={() => onValidateField?.()}
+                        />
+                        <span>No</span>
+                      </label>
+                    </div>
+                    {errors.salud && (
+                      <span className={styles.errorMessage}>
+                        {errors.salud}
+                      </span>
+                    )}
                   </div>
-                  {errors.salud && (
-                    <span className={styles.errorMessage}>{errors.salud}</span>
-                  )}
                 </div>
-              </div>
-            )}
-          </>
-        )}
-        
-        {/* Leyenda sobre declaración jurada - solo mostrar si hay restricciones de embarazo o salud */}
-        {(hasPregnancyRestriction || hasHealthRestriction) && (
-          <div className={styles.legalNotice}>
-            <p className={styles.legalNoticeText}>
-              <strong>IMPORTANTE:</strong> EL DÍA DE LA EXCURSION FIRMARÁ LA DECLARACIÓN JURADA DE SALUD Y RECONOCIMIENTO DE RESPONSABILIDAD Y RIESGOS.
-            </p>
-          </div>
-        )}
+              )}
+            </>
+          )}
+
+          {/* Leyenda sobre declaración jurada - solo mostrar si hay restricciones de embarazo o salud */}
+          {(hasPregnancyRestriction || hasHealthRestriction) && (
+            <div className={styles.legalNotice}>
+              <p className={styles.legalNoticeText}>
+                <strong>IMPORTANTE:</strong> EL DÍA DE LA EXCURSION FIRMARÁ LA
+                DECLARACIÓN JURADA DE SALUD Y RECONOCIMIENTO DE RESPONSABILIDAD
+                Y RIESGOS.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 };
-

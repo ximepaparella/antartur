@@ -12,11 +12,20 @@ import { IconPicker } from "@/modules/tours/components/admin/IconPicker";
 import { GalleryManager } from "@/modules/tours/components/admin/GalleryManager";
 import { AvailabilityManager } from "@/modules/tours/components/admin/AvailabilityManager";
 import type { TourFormProps } from "@/modules/tours/types/admin";
+import type {
+  TourFormData,
+  TourImage,
+  TourPrice,
+  QuickInfoItem,
+  FeaturedInfo,
+  TimelineItem,
+  Testimonial,
+} from "@/modules/tours/components/admin/TourForm/types";
 import styles from "./TourForm.module.scss";
 
 export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
   const [activeTab, setActiveTab] = useState<string>("basic");
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<TourFormData>({});
 
   useEffect(() => {
     if (tour) {
@@ -31,25 +40,32 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     { id: "availability", label: "Disponibilidad" },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    await onSave(formData);
   };
 
-  const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const updateField = (field: string, value: unknown) => {
+    setFormData((prev: TourFormData) => ({ ...prev, [field]: value }));
   };
 
   // Helper para obtener imágenes de galería
   const getGalleryImages = () => {
     return (formData.images || [])
-      .filter((img: any) => img.imageType === "GALLERY")
-      .map((img: any, index: number) => ({ ...img, sortOrder: index }));
+      .filter((img: TourImage) => img.imageType === "GALLERY")
+      .map((img: TourImage, index: number) => ({
+        ...img,
+        id: img.id || `gallery-${Date.now()}-${index}`,
+        altText: img.altText || "",
+        sortOrder: index,
+      }));
   };
 
   // Helper para actualizar imágenes de galería
-  const updateGalleryImages = (galleryImages: any[]) => {
-    const otherImages = (formData.images || []).filter((img: any) => img.imageType !== "GALLERY");
+  const updateGalleryImages = (galleryImages: TourImage[]) => {
+    const otherImages = (formData.images || []).filter(
+      (img: TourImage) => img.imageType !== "GALLERY",
+    );
     updateField("images", [...otherImages, ...galleryImages]);
   };
 
@@ -120,7 +136,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 label="Duración (horas)"
                 type="number"
                 value={formData.durationHours || ""}
-                onChange={(e) => updateField("durationHours", Number(e.target.value))}
+                onChange={(e) =>
+                  updateField("durationHours", Number(e.target.value))
+                }
                 disabled={!isEditing}
                 required
               />
@@ -128,14 +146,24 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 label="Edad mínima"
                 type="number"
                 value={formData.minAge || ""}
-                onChange={(e) => updateField("minAge", e.target.value ? Number(e.target.value) : null)}
+                onChange={(e) =>
+                  updateField(
+                    "minAge",
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
                 disabled={!isEditing}
               />
               <Input
                 label="Mínimo de pasajeros"
                 type="number"
                 value={formData.minPassengers || ""}
-                onChange={(e) => updateField("minPassengers", e.target.value ? Number(e.target.value) : null)}
+                onChange={(e) =>
+                  updateField(
+                    "minPassengers",
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
                 disabled={!isEditing}
               />
               <div className={styles.checkbox}>
@@ -150,11 +178,12 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 </label>
               </div>
             </div>
-            
+
             <div className={styles.weekdaysCard}>
               <Card title="Días de Semana Disponibles">
                 <p className={styles.weekdaysDescription}>
-                  Selecciona los días de la semana en que este tour está disponible.
+                  Selecciona los días de la semana en que este tour está
+                  disponible.
                 </p>
                 <div className={styles.weekdaysGrid}>
                   {[
@@ -170,8 +199,17 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       <label>
                         <input
                           type="checkbox"
-                          checked={formData[day.key] ?? true}
-                          onChange={(e) => updateField(day.key, e.target.checked)}
+                          checked={
+                            (formData[
+                              day.key as keyof TourFormData
+                            ] as boolean) ?? true
+                          }
+                          onChange={(e) =>
+                            updateField(
+                              day.key as keyof TourFormData,
+                              e.target.checked,
+                            )
+                          }
                           disabled={!isEditing}
                         />
                         <span>{day.label}</span>
@@ -209,7 +247,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 <Input
                   label="Subheadline del Hero"
                   value={formData.heroSubheadline || ""}
-                  onChange={(e) => updateField("heroSubheadline", e.target.value)}
+                  onChange={(e) =>
+                    updateField("heroSubheadline", e.target.value)
+                  }
                   disabled={!isEditing}
                   placeholder="Texto que aparece sobre el hero"
                 />
@@ -238,7 +278,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
               <Textarea
                 label="Descripción Corta"
                 value={formData.shortDescription || ""}
-                onChange={(e) => updateField("shortDescription", e.target.value)}
+                onChange={(e) =>
+                  updateField("shortDescription", e.target.value)
+                }
                 disabled={!isEditing}
                 rows={4}
                 required
@@ -262,7 +304,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
               <Textarea
                 label="Nota Importante del Timeline"
                 value={formData.timelineImportantNote || ""}
-                onChange={(e) => updateField("timelineImportantNote", e.target.value)}
+                onChange={(e) =>
+                  updateField("timelineImportantNote", e.target.value)
+                }
                 disabled={!isEditing}
                 rows={3}
               />
@@ -276,7 +320,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
               <Input
                 label="Precio Alternativo"
                 value={formData.alternativePrice || ""}
-                onChange={(e) => updateField("alternativePrice", e.target.value)}
+                onChange={(e) =>
+                  updateField("alternativePrice", e.target.value)
+                }
                 disabled={!isEditing}
                 placeholder="Ej: Consultar"
               />
@@ -339,19 +385,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Adulto (ARS)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "ARS")?.priceAdult || ""
+                      formData.prices?.find(
+                        (p: TourPrice) => p.currency === "ARS",
+                      )?.priceAdult || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: any) => p.currency === "ARS");
+                      const arsIndex = prices.findIndex(
+                        (p: TourPrice) => p.currency === "ARS",
+                      );
                       if (arsIndex >= 0) {
                         const updated = [...prices];
-                        updated[arsIndex] = { ...updated[arsIndex], priceAdult: Number(e.target.value) };
+                        updated[arsIndex] = {
+                          ...updated[arsIndex],
+                          priceAdult: Number(e.target.value),
+                        };
                         updateField("prices", updated);
                       } else {
                         updateField("prices", [
                           ...prices,
-                          { currency: "ARS", priceAdult: Number(e.target.value), priceChild: 0 },
+                          {
+                            currency: "ARS",
+                            priceAdult: Number(e.target.value),
+                            priceChild: 0,
+                          },
                         ]);
                       }
                     }}
@@ -362,19 +419,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Niño (ARS)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "ARS")?.priceChild || ""
+                      formData.prices?.find(
+                        (p: TourPrice) => p.currency === "ARS",
+                      )?.priceChild || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const arsIndex = prices.findIndex((p: any) => p.currency === "ARS");
+                      const arsIndex = prices.findIndex(
+                        (p: TourPrice) => p.currency === "ARS",
+                      );
                       if (arsIndex >= 0) {
                         const updated = [...prices];
-                        updated[arsIndex] = { ...updated[arsIndex], priceChild: Number(e.target.value) };
+                        updated[arsIndex] = {
+                          ...updated[arsIndex],
+                          priceChild: Number(e.target.value),
+                        };
                         updateField("prices", updated);
                       } else {
                         updateField("prices", [
                           ...prices,
-                          { currency: "ARS", priceAdult: 0, priceChild: Number(e.target.value) },
+                          {
+                            currency: "ARS",
+                            priceAdult: 0,
+                            priceChild: Number(e.target.value),
+                          },
                         ]);
                       }
                     }}
@@ -391,19 +459,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Adulto (USD)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "USD")?.priceAdult || ""
+                      formData.prices?.find(
+                        (p: TourPrice) => p.currency === "USD",
+                      )?.priceAdult || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: any) => p.currency === "USD");
+                      const usdIndex = prices.findIndex(
+                        (p: TourPrice) => p.currency === "USD",
+                      );
                       if (usdIndex >= 0) {
                         const updated = [...prices];
-                        updated[usdIndex] = { ...updated[usdIndex], priceAdult: Number(e.target.value) };
+                        updated[usdIndex] = {
+                          ...updated[usdIndex],
+                          priceAdult: Number(e.target.value),
+                        };
                         updateField("prices", updated);
                       } else {
                         updateField("prices", [
                           ...prices,
-                          { currency: "USD", priceAdult: Number(e.target.value), priceChild: 0 },
+                          {
+                            currency: "USD",
+                            priceAdult: Number(e.target.value),
+                            priceChild: 0,
+                          },
                         ]);
                       }
                     }}
@@ -414,19 +493,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                     label="Precio Niño (USD)"
                     type="number"
                     value={
-                      formData.prices?.find((p: any) => p.currency === "USD")?.priceChild || ""
+                      formData.prices?.find(
+                        (p: TourPrice) => p.currency === "USD",
+                      )?.priceChild || ""
                     }
                     onChange={(e) => {
                       const prices = formData.prices || [];
-                      const usdIndex = prices.findIndex((p: any) => p.currency === "USD");
+                      const usdIndex = prices.findIndex(
+                        (p: TourPrice) => p.currency === "USD",
+                      );
                       if (usdIndex >= 0) {
                         const updated = [...prices];
-                        updated[usdIndex] = { ...updated[usdIndex], priceChild: Number(e.target.value) };
+                        updated[usdIndex] = {
+                          ...updated[usdIndex],
+                          priceChild: Number(e.target.value),
+                        };
                         updateField("prices", updated);
                       } else {
                         updateField("prices", [
                           ...prices,
-                          { currency: "USD", priceAdult: 0, priceChild: Number(e.target.value) },
+                          {
+                            currency: "USD",
+                            priceAdult: 0,
+                            priceChild: Number(e.target.value),
+                          },
                         ]);
                       }
                     }}
@@ -450,38 +540,56 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   timeLabel: "",
                   title: "",
                   description: "",
-                  sortOrder: (formData.timelineItems?.length || 0),
+                  sortOrder: formData.timelineItems?.length || 0,
                 };
-                updateField("timelineItems", [...(formData.timelineItems || []), newItem]);
+                updateField("timelineItems", [
+                  ...(formData.timelineItems || []),
+                  newItem,
+                ]);
               }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.timelineItems || [])];
+              onUpdate={(index, item: TimelineItem) => {
+                const updated = [
+                  ...(formData.timelineItems || []),
+                ] as TimelineItem[];
                 updated[index] = item;
                 updateField("timelineItems", updated);
               }}
               onDelete={(index) => {
-                const filtered = (formData.timelineItems || []).filter((_: any, i: number) => i !== index);
+                const filtered = (formData.timelineItems || []).filter(
+                  (_: TimelineItem, i: number) => i !== index,
+                ) as TimelineItem[];
                 updateField("timelineItems", filtered);
               }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
+              renderItem={(
+                item: TimelineItem,
+                index,
+                isEditingItem,
+                onUpdate,
+              ) => (
                 <div className={styles.timelineItem}>
                   <Input
                     label="Hora"
                     value={item.timeLabel || ""}
-                    onChange={(e) => onUpdate({ ...item, timeLabel: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, timeLabel: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="Ej: 9:00 AM"
                   />
                   <Input
                     label="Título"
                     value={item.title || ""}
-                    onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, title: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                   />
                   <Textarea
                     label="Descripción"
                     value={item.description || ""}
-                    onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, description: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     rows={3}
                   />
@@ -506,17 +614,24 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   icon: "",
                   title: "",
                   description: "",
-                  sortOrder: (formData.featuredInfos?.length || 0),
+                  sortOrder: formData.featuredInfos?.length || 0,
                 };
-                updateField("featuredInfos", [...(formData.featuredInfos || []), newItem]);
+                updateField("featuredInfos", [
+                  ...(formData.featuredInfos || []),
+                  newItem,
+                ]);
               }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.featuredInfos || [])];
+              onUpdate={(index, item: FeaturedInfo) => {
+                const updated = [
+                  ...(formData.featuredInfos || []),
+                ] as FeaturedInfo[];
                 updated[index] = item;
                 updateField("featuredInfos", updated);
               }}
               onDelete={(index) => {
-                const filtered = (formData.featuredInfos || []).filter((_: any, i: number) => i !== index);
+                const filtered = (formData.featuredInfos || []).filter(
+                  (_: FeaturedInfo, i: number) => i !== index,
+                );
                 updateField("featuredInfos", filtered);
               }}
               renderItem={(item, index, isEditingItem, onUpdate) => (
@@ -524,20 +639,26 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   <IconPicker
                     label="Icono"
                     value={item.icon || ""}
-                    onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
+                    onChange={(iconName) =>
+                      onUpdate({ ...item, icon: iconName })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="Seleccionar icono"
                   />
                   <Input
                     label="Título"
                     value={item.title || ""}
-                    onChange={(e) => onUpdate({ ...item, title: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, title: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                   />
                   <Textarea
                     label="Descripción"
                     value={item.description || ""}
-                    onChange={(e) => onUpdate({ ...item, description: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, description: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     rows={2}
                   />
@@ -563,45 +684,65 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   author: "",
                   avatar: "",
                   country: "",
-                  sortOrder: (formData.testimonials?.length || 0),
+                  sortOrder: formData.testimonials?.length || 0,
                 };
-                updateField("testimonials", [...(formData.testimonials || []), newItem]);
+                updateField("testimonials", [
+                  ...(formData.testimonials || []),
+                  newItem,
+                ]);
               }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.testimonials || [])];
+              onUpdate={(index, item: Testimonial) => {
+                const updated = [
+                  ...(formData.testimonials || []),
+                ] as Testimonial[];
                 updated[index] = item;
                 updateField("testimonials", updated);
               }}
               onDelete={(index) => {
-                const filtered = (formData.testimonials || []).filter((_: any, i: number) => i !== index);
+                const filtered = (formData.testimonials || []).filter(
+                  (_: Testimonial, i: number) => i !== index,
+                ) as Testimonial[];
                 updateField("testimonials", filtered);
               }}
-              renderItem={(item, index, isEditingItem, onUpdate) => (
+              renderItem={(
+                item: Testimonial,
+                index,
+                isEditingItem,
+                onUpdate,
+              ) => (
                 <div className={styles.testimonialItem}>
                   <Textarea
                     label="Texto del Testimonio"
                     value={item.text || ""}
-                    onChange={(e) => onUpdate({ ...item, text: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, text: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     rows={3}
                   />
                   <Input
                     label="Autor"
                     value={item.author || ""}
-                    onChange={(e) => onUpdate({ ...item, author: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, author: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                   />
                   <Input
                     label="Avatar (URL)"
                     value={item.avatar || ""}
-                    onChange={(e) => onUpdate({ ...item, avatar: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, avatar: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="URL de la imagen del avatar"
                   />
                   <Input
                     label="País"
                     value={item.country || ""}
-                    onChange={(e) => onUpdate({ ...item, country: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, country: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                   />
                 </div>
@@ -626,17 +767,24 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   icon: "",
                   label: "",
                   value: "",
-                  sortOrder: (formData.quickInfoItems?.length || 0),
+                  sortOrder: formData.quickInfoItems?.length || 0,
                 };
-                updateField("quickInfoItems", [...(formData.quickInfoItems || []), newItem]);
+                updateField("quickInfoItems", [
+                  ...(formData.quickInfoItems || []),
+                  newItem,
+                ]);
               }}
-              onUpdate={(index, item) => {
-                const updated = [...(formData.quickInfoItems || [])];
+              onUpdate={(index, item: QuickInfoItem) => {
+                const updated = [
+                  ...(formData.quickInfoItems || []),
+                ] as QuickInfoItem[];
                 updated[index] = item;
                 updateField("quickInfoItems", updated);
               }}
               onDelete={(index) => {
-                const filtered = (formData.quickInfoItems || []).filter((_: any, i: number) => i !== index);
+                const filtered = (formData.quickInfoItems || []).filter(
+                  (_: QuickInfoItem, i: number) => i !== index,
+                );
                 updateField("quickInfoItems", filtered);
               }}
               renderItem={(item, index, isEditingItem, onUpdate) => (
@@ -644,21 +792,27 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   <IconPicker
                     label="Icono"
                     value={item.icon || ""}
-                    onChange={(iconName) => onUpdate({ ...item, icon: iconName })}
+                    onChange={(iconName) =>
+                      onUpdate({ ...item, icon: iconName })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="Seleccionar icono"
                   />
                   <Input
                     label="Label"
                     value={item.label || ""}
-                    onChange={(e) => onUpdate({ ...item, label: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, label: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="Ej: Duración"
                   />
                   <Input
                     label="Valor"
                     value={item.value || ""}
-                    onChange={(e) => onUpdate({ ...item, value: e.target.value })}
+                    onChange={(e) =>
+                      onUpdate({ ...item, value: e.target.value })
+                    }
                     disabled={!isEditingItem || !isEditing}
                     placeholder="Ej: 4 horas"
                   />

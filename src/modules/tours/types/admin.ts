@@ -1,16 +1,17 @@
 // Types para componentes admin de tours
+import type { TourFormData } from "@/modules/tours/components/admin/TourForm/types";
 
 export interface TourFormProps {
-  tour: any;
+  tour?: TourFormData;
   isEditing: boolean;
-  onSave: (data: any) => void;
+  onSave: (data: TourFormData) => void | Promise<void>;
   onCancel: () => void;
 }
 
 export type TabType = "basic" | "grid" | "images" | "content" | "availability";
 
 export interface TourPreviewProps {
-  tourData: any;
+  tourData?: TourFormData;
 }
 
 // Types para AvailabilityManager
@@ -75,4 +76,3 @@ export interface GalleryManagerProps {
   tourSlug: string;
   disabled?: boolean;
 }
-

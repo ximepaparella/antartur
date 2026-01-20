@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Button } from "@/components/common/Button/Button";
 import { Card } from "@/components/common/Card/Card";
-import type { ArrayFieldManagerProps } from "./types";
+import type { ArrayFieldManagerProps, ArrayFieldItem } from "./types";
 import styles from "./ArrayFieldManager.module.scss";
 
-export function ArrayFieldManager<T extends { id?: string; sortOrder?: number }>({
+export function ArrayFieldManager<T extends ArrayFieldItem>({
   items,
   title,
   onAdd,
@@ -62,7 +62,9 @@ export function ArrayFieldManager<T extends { id?: string; sortOrder?: number }>
 
       <div className={styles.items}>
         {items.length === 0 ? (
-          <p className={styles.empty}>No hay items. Haz clic en &quot;Agregar&quot; para crear uno.</p>
+          <p className={styles.empty}>
+            No hay items. Haz clic en &quot;Agregar&quot; para crear uno.
+          </p>
         ) : (
           items.map((item, index) => (
             <Card key={item.id || `temp-${index}`} className={styles.itemCard}>
@@ -109,8 +111,11 @@ export function ArrayFieldManager<T extends { id?: string; sortOrder?: number }>
                 )}
               </div>
               <div className={styles.itemContent}>
-                {renderItem(item, index, editingIndex === index, (updatedItem) =>
-                  handleItemUpdate(index, updatedItem)
+                {renderItem(
+                  item,
+                  index,
+                  editingIndex === index,
+                  (updatedItem) => handleItemUpdate(index, updatedItem),
                 )}
               </div>
             </Card>
@@ -120,4 +125,3 @@ export function ArrayFieldManager<T extends { id?: string; sortOrder?: number }>
     </div>
   );
 }
-

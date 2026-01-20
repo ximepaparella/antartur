@@ -17,28 +17,36 @@ export interface TourPrice {
 }
 
 export interface QuickInfoItem {
+  id?: string;
   icon: string;
   label: string;
   value: string;
+  sortOrder?: number;
 }
 
 export interface TimelineItem {
+  id?: string;
   timeLabel: string;
   title: string;
   description: string;
+  sortOrder?: number;
 }
 
 export interface FeaturedInfo {
+  id?: string;
   icon: string;
   title: string;
   description: string;
+  sortOrder?: number;
 }
 
 export interface Testimonial {
+  id?: string;
   text: string;
   author: string;
   avatar: string;
   country: string;
+  sortOrder?: number;
 }
 
 export interface Restriction {
@@ -53,10 +61,12 @@ export interface TourAdditional {
   description?: string | null;
   isActive?: boolean;
   sortOrder?: number;
-  prices?: {
-    ARS?: { adult: number; child: number };
-    USD?: { adult: number; child: number };
-  };
+  prices?:
+    | Array<{ currency: string; price: number }>
+    | {
+        ARS?: { adult: number; child: number };
+        USD?: { adult: number; child: number };
+      };
 }
 
 export interface TourFormData {

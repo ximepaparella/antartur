@@ -1,15 +1,15 @@
 import React from "react";
 import styles from "./Table.module.scss";
 
-export interface TableColumn<T = any> {
+export interface TableColumn<T = unknown> {
   key: string;
   label: string;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: unknown, row: T) => React.ReactNode;
   sortable?: boolean;
   align?: "left" | "center" | "right";
 }
 
-interface TableProps<T = any> {
+interface TableProps<T = unknown> {
   columns: TableColumn<T>[];
   data: T[];
   onRowClick?: (row: T) => void;
@@ -17,7 +17,7 @@ interface TableProps<T = any> {
   emptyMessage?: string;
 }
 
-export function Table<T = any>({
+export function Table<T = unknown>({
   columns,
   data,
   onRowClick,
@@ -76,4 +76,3 @@ export function Table<T = any>({
     </div>
   );
 }
-

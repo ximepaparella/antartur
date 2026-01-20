@@ -1,12 +1,21 @@
-export interface ArrayFieldManagerProps<T> {
+export interface ArrayFieldItem {
+  id?: string;
+  sortOrder?: number;
+}
+
+export interface ArrayFieldManagerProps<T extends ArrayFieldItem> {
   items: T[];
   title: string;
   onAdd: () => void;
   onUpdate: (index: number, item: T) => void;
   onDelete: (index: number) => void;
   onReorder?: (fromIndex: number, toIndex: number) => void;
-  renderItem: (item: T, index: number, isEditing: boolean, onUpdate: (item: T) => void) => React.ReactNode;
+  renderItem: (
+    item: T,
+    index: number,
+    isEditing: boolean,
+    onUpdate: (item: T) => void,
+  ) => React.ReactNode;
   getDefaultItem: () => T;
   disabled?: boolean;
 }
-

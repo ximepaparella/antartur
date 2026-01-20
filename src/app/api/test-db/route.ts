@@ -21,11 +21,11 @@ export async function GET() {
 
     // Obtener conteos usando SQL raw para evitar problemas con Prisma Client
     const counts: Record<string, number> = {};
-    
+
     for (const table of tables) {
       try {
         const result = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
-          `SELECT COUNT(*)::bigint as count FROM "${table.tablename}"`
+          `SELECT COUNT(*)::bigint as count FROM "${table.tablename}"`,
         );
         counts[table.tablename] = Number(result[0]?.count || 0);
       } catch (error) {
@@ -34,9 +34,9 @@ export async function GET() {
     }
 
     // Intentar obtener datos de Currency usando SQL raw
-    let currencies: any[] = [];
+    let currencies: unknown[] = [];
     try {
-      currencies = await prisma.$queryRaw<Array<any>>`
+      currencies = await prisma.$queryRaw<Array<unknown>>`
         SELECT * FROM "Currency" LIMIT 5
       `;
     } catch (e) {
@@ -46,7 +46,9 @@ export async function GET() {
     // Verificar índices (query simplificada)
     let indexes: Array<{ tablename: string; indexname: string }> = [];
     try {
-      indexes = await prisma.$queryRaw<Array<{ tablename: string; indexname: string }>>`
+      indexes = await prisma.$queryRaw<
+        Array<{ tablename: string; indexname: string }>
+      >`
         SELECT
           tablename,
           indexname
@@ -76,13 +78,16 @@ export async function GET() {
           isDefault: c.isDefault,
         })),
       },
-      indexes: indexes.reduce((acc, row) => {
-        if (!acc[row.tablename]) {
-          acc[row.tablename] = [];
-        }
-        acc[row.tablename].push(row.indexname);
-        return acc;
-      }, {} as Record<string, string[]>),
+      indexes: indexes.reduce(
+        (acc, row) => {
+          if (!acc[row.tablename]) {
+            acc[row.tablename] = [];
+          }
+          acc[row.tablename].push(row.indexname);
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      ),
     });
   } catch (error) {
     console.error("Database test error:", error);
@@ -90,9 +95,10 @@ export async function GET() {
       {
         status: "error",
         message: error instanceof Error ? error.message : "Unknown error",
-        error: process.env.NODE_ENV === "development" ? String(error) : undefined,
+        error:
+          process.env.NODE_ENV === "development" ? String(error) : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
   // Note: No $disconnect() call - Prisma Client uses connection pooling

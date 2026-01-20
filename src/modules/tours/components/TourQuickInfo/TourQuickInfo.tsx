@@ -7,6 +7,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import { toursClient } from "@/modules/tours/api/client/toursClient";
 import { getTourPriceByCurrency } from "@/lib/utils/pricingHelpers";
+import type { TourPrice } from "@/modules/tours/components/admin/TourForm/types";
 import styles from "./TourQuickInfo.module.scss";
 
 export interface QuickInfoItem {
@@ -58,7 +59,8 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   const [tourData, setTourData] = useState<any>(null);
 
   useEffect(() => {
-    toursClient.client.getBySlug(tourId, { includePrices: true })
+    toursClient.client
+      .getBySlug(tourId, { includePrices: true })
       .then((tour) => {
         if (tour) {
           setTourData(tour);
@@ -72,11 +74,24 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   // Obtener precio según la moneda seleccionada
   const displayPrice = React.useMemo(() => {
     if (tourData?.prices) {
-      const pricesMap = tourData.prices.reduce((acc: any, p: any) => {
-        acc[p.currency] = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
-        return acc;
-      }, {});
-      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
+      const pricesMap = tourData.prices.reduce(
+        (
+          acc: Record<string, { adult: number; child: number }>,
+          p: TourPrice,
+        ) => {
+          acc[p.currency] = {
+            adult: Number(p.priceAdult),
+            child: Number(p.priceChild),
+          };
+          return acc;
+        },
+        {},
+      );
+      const priceData = getTourPriceByCurrency(
+        pricesMap,
+        currency,
+        defaultCurrency,
+      );
       if (priceData) {
         return formatPriceByCurrency(priceData.adult, priceData.currencyCode);
       }
@@ -88,15 +103,28 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
   // Obtener precio alternativo si existe
   const alternativePrice = React.useMemo(() => {
     if (!alternative?.price) return null;
-    
+
     // Intentar parsear el precio alternativo si es numérico
     const parsedPrice = parseFloat(alternative.price.replace(/[^0-9.-]+/g, ""));
     if (!isNaN(parsedPrice) && tourData?.prices) {
-      const pricesMap = tourData.prices.reduce((acc: any, p: any) => {
-        acc[p.currency] = { adult: Number(p.priceAdult), child: Number(p.priceChild) };
-        return acc;
-      }, {});
-      const priceData = getTourPriceByCurrency(pricesMap, currency, defaultCurrency);
+      const pricesMap = tourData.prices.reduce(
+        (
+          acc: Record<string, { adult: number; child: number }>,
+          p: TourPrice,
+        ) => {
+          acc[p.currency] = {
+            adult: Number(p.priceAdult),
+            child: Number(p.priceChild),
+          };
+          return acc;
+        },
+        {},
+      );
+      const priceData = getTourPriceByCurrency(
+        pricesMap,
+        currency,
+        defaultCurrency,
+      );
       if (priceData) {
         // Usar el mismo precio relativo (simplificado)
         return formatPriceByCurrency(parsedPrice, priceData.currencyCode);
@@ -116,36 +144,45 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
                 <div className={styles.priceValue}>{displayPrice}</div>
               </div>
             )}
-            
+
             <div className={styles.ctaColumn}>
               <Button variant="tertiary" href={ctaHref} size="large">
                 {ctaLabel}
               </Button>
             </div>
           </div>
-          
+
           <ul className={styles.itemsColumn}>
             {items.map((item) => (
               <li key={item.id} className={styles.item}>
                 <Icon name={item.icon} size={24} className={styles.icon} />
                 <div className={styles.itemContent}>
-                  {item.label && <span className={styles.itemLabel}>{item.label}</span>}
+                  {item.label && (
+                    <span className={styles.itemLabel}>{item.label}</span>
+                  )}
                   <span className={styles.itemValue}>{item.value}</span>
                 </div>
               </li>
             ))}
-            {restrictions && restrictions.length > 0 && restrictions.map((restriction, index) => (
-              <li key={`restriction-${index}`} className={`${styles.item} ${styles.itemFullWidth}`}>
-                <Icon name="info" size={24} className={styles.icon} />
-                <div className={styles.itemContent}>
-                  <span className={styles.itemValue}>{restriction}</span>
-                </div>
-              </li>
-            ))}
+            {restrictions &&
+              restrictions.length > 0 &&
+              restrictions.map((restriction, index) => (
+                <li
+                  key={`restriction-${index}`}
+                  className={`${styles.item} ${styles.itemFullWidth}`}
+                >
+                  <Icon name="info" size={24} className={styles.icon} />
+                  <div className={styles.itemContent}>
+                    <span className={styles.itemValue}>{restriction}</span>
+                  </div>
+                </li>
+              ))}
             {alternative && alternativePrice && (
               <li key="alternative" className={styles.item}>
                 <Icon name="map-route" size={24} className={styles.icon} />
-                <div className={`${styles.itemContent} ${styles.itemContentRow}`}>
+                <div
+                  className={`${styles.itemContent} ${styles.itemContentRow}`}
+                >
                   <span className={styles.itemValue}>{alternative.text}</span>
                   <span className={styles.itemValue}>{alternativePrice}</span>
                 </div>
@@ -157,4 +194,3 @@ export const TourQuickInfo: React.FC<TourQuickInfoProps> = ({
     </section>
   );
 };
-

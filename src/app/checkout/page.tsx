@@ -3,24 +3,39 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
-import { CheckoutForm, type CheckoutFormRef } from "@/modules/booking/components/CheckoutForm";
+import {
+  CheckoutForm,
+  type CheckoutFormRef,
+} from "@/modules/booking/components/CheckoutForm";
 import { MiniCart } from "@/modules/booking/components/MiniCart";
 import { MiniCartSkeleton } from "@/modules/booking/components/MiniCart/MiniCartSkeleton";
 import { LoadingOverlay } from "@/components/common/LoadingOverlay/LoadingOverlay";
 import { toursClient } from "@/modules/tours/api/client/toursClient";
-import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
-import type { Order, PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
+import type {
+  Order,
+  PaymentMethod,
+  Pricing,
+  SelectedAdditional,
+} from "@/lib/types/order";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import type { TourAdditional } from "@/modules/tours/types/tourTypes";
 import { PaymentModal } from "@/modules/booking/components/PaymentModal/PaymentModal";
-import { RouteErrorBoundary, FeatureErrorBoundary } from "@/components/common/ErrorBoundary";
+import {
+  RouteErrorBoundary,
+  FeatureErrorBoundary,
+} from "@/components/common/ErrorBoundary";
 import { useCheckoutFlow } from "@/modules/booking/hooks/useCheckoutFlow";
 import { Message } from "@/components/common/Message";
 import styles from "./page.module.scss";
+import { getPendingBooking, savePendingBooking } from "@/lib/utils/orderStorage";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { handleCheckoutComplete, isProcessing, error: checkoutError } = useCheckoutFlow();
+  const {
+    handleCheckoutComplete,
+    isProcessing,
+    error: checkoutError,
+  } = useCheckoutFlow();
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const [bookingData, setBookingData] = useState<{
     tourId: string;
@@ -34,16 +49,18 @@ export default function CheckoutPage() {
     exceedsAvailability: boolean;
     additionals?: SelectedAdditional[];
   } | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("transferencia");
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>("transferencia");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
-  const [hasRestrictionViolations, setHasRestrictionViolations] = useState(false);
+  const [hasRestrictionViolations, setHasRestrictionViolations] =
+    useState(false);
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
   const [isUpdatingPassengers, setIsUpdatingPassengers] = useState(false);
-  
+
   // Ref para acceder a CheckoutForm
   const checkoutFormRef = React.useRef<CheckoutFormRef>(null);
-  
+
   // Callback para sincronizar estado de submit del formulario
   const handleSubmittingChange = useCallback((isSubmitting: boolean) => {
     setIsFormSubmitting(isSubmitting);
@@ -56,28 +73,30 @@ export default function CheckoutPage() {
       if (!pending.pricing.currencyCode) {
         pending.pricing.currencyCode = "ARS"; // Default para datos antiguos
       }
-      
+
       // Migrar additionals antiguos que no tienen prices
       if (pending.additionals && pending.additionals.length > 0) {
-        pending.additionals = pending.additionals.map((additional: any) => {
-          // Si el additional no tiene prices, agregar un objeto vacío
-          // El efecto de cambio de moneda intentará completarlo desde tourAdditionals
-          if (!additional.prices) {
-            return {
-              ...additional,
-              prices: {},
-            } as SelectedAdditional;
-          }
-          return additional as SelectedAdditional;
-        });
+        pending.additionals = pending.additionals.map(
+          (additional: SelectedAdditional) => {
+            // Si el additional no tiene prices, agregar un objeto vacío
+            // El efecto de cambio de moneda intentará completarlo desde tourAdditionals
+            if (!additional.prices) {
+              return {
+                ...additional,
+                prices: {},
+              } as SelectedAdditional;
+            }
+            return additional as SelectedAdditional;
+          },
+        );
       }
-      
+
       // Persistir la migración para evitar re-ejecutarla en cada carga
       savePendingBooking(pending);
-      
+
       // Debug temporal
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Checkout Debug] Datos cargados:', {
+      if (process.env.NODE_ENV === "development") {
+        console.log("[Checkout Debug] Datos cargados:", {
           additionals: pending.additionals,
           additionalsLength: pending.additionals?.length,
           todosLosDatos: pending,
@@ -102,7 +121,8 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (bookingData?.tourId) {
       // tourId es el slug en este contexto
-      toursClient.client.getBySlug(bookingData.tourId, { includeContent: true })
+      toursClient.client
+        .getBySlug(bookingData.tourId, { includeContent: true })
         .then((tour) => {
           if (tour) {
             // Guardar additionals del tour
@@ -124,7 +144,7 @@ export default function CheckoutPage() {
             const allRestrictions = restrictionParts.join(" ");
             const restrictionLower = allRestrictions.toLowerCase();
             setRestriction(allRestrictions);
-            
+
             // Detectar restricciones de embarazo con múltiples variantes
             const pregnancyKeywords = [
               "embarazada",
@@ -134,9 +154,11 @@ export default function CheckoutPage() {
               "embarazadas",
             ];
             setHasPregnancyRestriction(
-              pregnancyKeywords.some(keyword => restrictionLower.includes(keyword))
+              pregnancyKeywords.some((keyword) =>
+                restrictionLower.includes(keyword),
+              ),
             );
-            
+
             // Detectar restricciones de salud/físicas con múltiples variantes
             // Solo buscar frases específicas para evitar falsos positivos
             const healthKeywords = [
@@ -153,9 +175,11 @@ export default function CheckoutPage() {
             ];
             // Solo considerar como restricción de salud si aparece en contexto específico
             setHasHealthRestriction(
-              healthKeywords.some(keyword => restrictionLower.includes(keyword))
+              healthKeywords.some((keyword) =>
+                restrictionLower.includes(keyword),
+              ),
             );
-            
+
             setTourMinAge(tour.minAge ?? null);
             // Obtener allowsInfants del tour (puede venir en restrictions o directamente del tour)
             setAllowsInfants(tour.allowsInfants ?? false);
@@ -176,42 +200,46 @@ export default function CheckoutPage() {
     if (!bookingData?.additionals || bookingData.additionals.length === 0) {
       return; // No hay additionals para actualizar
     }
-    
+
     // Si tourAdditionals aún no se ha cargado, no hacer nada (evitar eliminar additionals)
     if (tourAdditionals.length === 0) {
       return; // Esperar a que se cargue el tour
     }
-    
+
     // Crear un mapa de additionals por ID para acceso rápido
-    const additionalsMap = new Map(tourAdditionals.map(a => [a.id, a]));
-    
+    const additionalsMap = new Map(tourAdditionals.map((a) => [a.id, a]));
+
     // Debug temporal para ver qué está pasando
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Checkout Currency Change]', {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Checkout Currency Change]", {
         currency,
-        tourAdditionals: tourAdditionals.map(a => ({ id: a.id, name: a.name, prices: a.prices })),
-        selectedAdditionals: bookingData.additionals.map(a => ({ 
-          additionalId: a.additionalId, 
-          name: a.name, 
-          priceAdult: a.priceAdult, 
-          currency: a.currency 
+        tourAdditionals: tourAdditionals.map((a) => ({
+          id: a.id,
+          name: a.name,
+          prices: a.prices,
+        })),
+        selectedAdditionals: bookingData.additionals.map((a) => ({
+          additionalId: a.additionalId,
+          name: a.name,
+          priceAdult: a.priceAdult,
+          currency: a.currency,
         })),
       });
     }
-    
+
     // Actualizar cada additional seleccionado con el precio de la nueva moneda
     // Usar los precios guardados en el objeto (prices.ARS o prices.USD) en lugar de consultar la API
-    const updated = bookingData.additionals.map(selected => {
+    const updated = bookingData.additionals.map((selected) => {
       // Intentar obtener el precio desde los precios guardados en el objeto
       const pricesInNewCurrency = selected.prices?.[currency as "ARS" | "USD"];
-      
+
       if (pricesInNewCurrency) {
         // Actualizar precio y moneda usando los precios guardados
         const newPriceAdult = pricesInNewCurrency.adult;
         const newPriceChild = pricesInNewCurrency.child;
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[Checkout Currency Update]', {
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("[Checkout Currency Update]", {
             additionalId: selected.additionalId,
             name: selected.name,
             oldCurrency: selected.currency,
@@ -221,7 +249,7 @@ export default function CheckoutPage() {
             pricesInNewCurrency,
           });
         }
-        
+
         return {
           ...selected,
           priceAdult: newPriceAdult,
@@ -237,15 +265,15 @@ export default function CheckoutPage() {
             // Actualizar con precios del tour y guardar ambos precios
             const newPriceAdult = prices.adult;
             const newPriceChild = prices.child;
-            
+
             // Preservar los precios existentes y agregar el nuevo
             const updatedPrices = {
               ...selected.prices,
               [currency]: { adult: newPriceAdult, child: newPriceChild },
             };
-            
-            if (process.env.NODE_ENV === 'development') {
-              console.log('[Checkout Currency Update from Tour]', {
+
+            if (process.env.NODE_ENV === "development") {
+              console.log("[Checkout Currency Update from Tour]", {
                 additionalId: selected.additionalId,
                 name: selected.name,
                 oldCurrency: selected.currency,
@@ -255,7 +283,7 @@ export default function CheckoutPage() {
                 updatedPrices,
               });
             }
-            
+
             return {
               ...selected,
               priceAdult: newPriceAdult,
@@ -265,32 +293,38 @@ export default function CheckoutPage() {
             };
           }
         }
-        
+
         // Si no encontramos el precio en ninguna fuente, mantener el additional tal como está
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[Checkout Currency Warning]', {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[Checkout Currency Warning]", {
             additionalId: selected.additionalId,
             name: selected.name,
             currency,
             hasPrices: !!selected.prices,
-            availableCurrencies: selected.prices ? Object.keys(selected.prices) : [],
+            availableCurrencies: selected.prices
+              ? Object.keys(selected.prices)
+              : [],
           });
         }
       }
-      
+
       // Mantener el additional tal como está si no se pudo actualizar
       return selected;
     });
-    
+
     // Solo actualizar si hay cambios en precios o moneda
     const hasChanges = updated.some((u, i) => {
       const old = bookingData.additionals![i];
-      return u.currency !== old.currency || u.priceAdult !== old.priceAdult || u.priceChild !== old.priceChild;
+      return (
+        u.currency !== old.currency ||
+        u.priceAdult !== old.priceAdult ||
+        u.priceChild !== old.priceChild
+      );
     });
-    
+
     if (hasChanges) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Checkout Currency Update] Aplicando cambios:', {
+      if (process.env.NODE_ENV === "development") {
+        console.log("[Checkout Currency Update] Aplicando cambios:", {
           old: bookingData.additionals,
           updated,
         });
@@ -314,7 +348,7 @@ export default function CheckoutPage() {
       setCompletedOrder(order);
       await handleCheckoutComplete(order);
     },
-    [handleCheckoutComplete]
+    [handleCheckoutComplete],
   );
 
   const handleSubmitFromCart = (method?: PaymentMethod) => {
@@ -328,61 +362,71 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleRestrictionViolationsChange = useCallback((hasViolations: boolean) => {
-    setHasRestrictionViolations(hasViolations);
-  }, []);
+  const handleRestrictionViolationsChange = useCallback(
+    (hasViolations: boolean) => {
+      setHasRestrictionViolations(hasViolations);
+    },
+    [],
+  );
 
   const handleValidationErrorsChange = useCallback((hasErrors: boolean) => {
     setHasValidationErrors(hasErrors);
   }, []);
 
   // Manejar eliminación de adicionales
-  const handleRemoveAdditional = useCallback((additionalId: string) => {
-    if (bookingData?.additionals) {
-      const updated = bookingData.additionals.filter(
-        (a) => a.additionalId !== additionalId
-      );
-      const updatedBookingData = {
-        ...bookingData,
-        additionals: updated.length > 0 ? updated : undefined,
-      };
-      setBookingData(updatedBookingData);
-      savePendingBooking(updatedBookingData);
-    }
-  }, [bookingData]);
+  const handleRemoveAdditional = useCallback(
+    (additionalId: string) => {
+      if (bookingData?.additionals) {
+        const updated = bookingData.additionals.filter(
+          (a) => a.additionalId !== additionalId,
+        );
+        const updatedBookingData = {
+          ...bookingData,
+          additionals: updated.length > 0 ? updated : undefined,
+        };
+        setBookingData(updatedBookingData);
+        savePendingBooking(updatedBookingData);
+      }
+    },
+    [bookingData],
+  );
 
   // Ref para almacenar los valores previos de pasajeros y evitar actualizaciones innecesarias
-  const prevPassengersRef = useRef<{ adults: number; children: number } | null>(null);
+  const prevPassengersRef = useRef<{ adults: number; children: number } | null>(
+    null,
+  );
   const bookingDataRef = useRef(bookingData);
-  
+
   // Mantener bookingDataRef actualizado
   useEffect(() => {
     bookingDataRef.current = bookingData;
   }, [bookingData]);
 
-  const handlePassengersChange = useCallback((adults: number, children: number) => {
-    // Solo actualizar si los valores realmente cambiaron
-    const prev = prevPassengersRef.current;
-    if (prev && prev.adults === adults && prev.children === children) {
-      return;
-    }
-    
-    prevPassengersRef.current = { adults, children };
-    
-    if (bookingDataRef.current) {
-      setIsUpdatingPassengers(true);
-      // Recargar datos actualizados desde localStorage
-      const updated = getPendingBooking();
-      if (updated) {
-        setBookingData(updated);
+  const handlePassengersChange = useCallback(
+    (adults: number, children: number) => {
+      // Solo actualizar si los valores realmente cambiaron
+      const prev = prevPassengersRef.current;
+      if (prev && prev.adults === adults && prev.children === children) {
+        return;
       }
-      // Simular un pequeño delay para mostrar el skeleton
-      setTimeout(() => {
-        setIsUpdatingPassengers(false);
-      }, 300);
-    }
-  }, []);
 
+      prevPassengersRef.current = { adults, children };
+
+      if (bookingDataRef.current) {
+        setIsUpdatingPassengers(true);
+        // Recargar datos actualizados desde localStorage
+        const updated = getPendingBooking();
+        if (updated) {
+          setBookingData(updated);
+        }
+        // Simular un pequeño delay para mostrar el skeleton
+        setTimeout(() => {
+          setIsUpdatingPassengers(false);
+        }, 300);
+      }
+    },
+    [],
+  );
 
   if (!bookingData) {
     return (
@@ -417,7 +461,9 @@ export default function CheckoutPage() {
                 minAge={tourMinAge}
                 allowsInfants={allowsInfants}
                 onCheckoutComplete={onCheckoutComplete}
-                onRestrictionViolationsChange={handleRestrictionViolationsChange}
+                onRestrictionViolationsChange={
+                  handleRestrictionViolationsChange
+                }
                 onPassengersChange={handlePassengersChange}
                 onValidationErrorsChange={handleValidationErrorsChange}
                 onSubmittingChange={handleSubmittingChange}

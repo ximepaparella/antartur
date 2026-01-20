@@ -2,7 +2,10 @@
  * Repositorio para acceso a datos de Departures usando Prisma
  */
 
-import type { CreateDepartureInput, UpdateDepartureInput } from "../domain/types";
+import type {
+  CreateDepartureInput,
+  UpdateDepartureInput,
+} from "../domain/types";
 import { prisma } from "@/lib/db";
 
 export class DepartureRepository {
@@ -47,9 +50,10 @@ export class DepartureRepository {
   }
 
   async update(id: string, data: UpdateDepartureInput) {
-    const updateData: any = {};
+    const updateData: Partial<UpdateDepartureInput> = {};
     if (data.tourId !== undefined) updateData.tourId = data.tourId;
-    if (data.departureDate !== undefined) updateData.departureDate = data.departureDate;
+    if (data.departureDate !== undefined)
+      updateData.departureDate = data.departureDate;
     if (data.startTime !== undefined) updateData.startTime = data.startTime;
     if (data.endTime !== undefined) updateData.endTime = data.endTime;
     if (data.seatsTotal !== undefined) updateData.seatsTotal = data.seatsTotal;
@@ -64,11 +68,7 @@ export class DepartureRepository {
   /**
    * Actualiza los cupos de un departure
    */
-  async updateSeats(
-    id: string,
-    seatsHeld: number,
-    seatsConfirmed: number
-  ) {
+  async updateSeats(id: string, seatsHeld: number, seatsConfirmed: number) {
     return prisma.tourDeparture.update({
       where: { id },
       data: {
@@ -84,4 +84,3 @@ export class DepartureRepository {
     });
   }
 }
-

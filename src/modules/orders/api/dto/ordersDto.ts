@@ -3,7 +3,12 @@
  * Transformaciones entre modelos de dominio y respuestas de API
  */
 
-import type { Order as PrismaOrder, Booking, Passenger, Payment } from "@prisma/client";
+import type {
+  Order as PrismaOrder,
+  Booking,
+  Passenger,
+  Payment,
+} from "@prisma/client";
 
 /**
  * DTO de respuesta para Order básico
@@ -163,23 +168,28 @@ export function toPassengerResponse(passenger: Passenger): PassengerResponse {
 /**
  * Transforma un TourDeparture de Prisma a TourDepartureResponse
  */
-export function toTourDepartureResponse(departure: any): TourDepartureResponse | undefined {
-  if (!departure) return undefined;
-  
+export function toTourDepartureResponse(
+  departure: unknown,
+): TourDepartureResponse | undefined {
+  if (!departure || typeof departure !== "object") return undefined;
+
+  const dep = departure as any;
   return {
-    id: departure.id,
-    departureDate: departure.departureDate.toISOString().split("T")[0],
-    startTime: departure.startTime,
-    endTime: departure.endTime,
-    seatsTotal: departure.seatsTotal,
-    seatsHeld: departure.seatsHeld,
-    seatsConfirmed: departure.seatsConfirmed,
-    isActive: departure.isActive,
-    tour: departure.tour ? {
-      id: departure.tour.id,
-      slug: departure.tour.slug,
-      name: departure.tour.name,
-    } : undefined,
+    id: dep.id,
+    departureDate: dep.departureDate.toISOString().split("T")[0],
+    startTime: dep.startTime,
+    endTime: dep.endTime,
+    seatsTotal: dep.seatsTotal,
+    seatsHeld: dep.seatsHeld,
+    seatsConfirmed: dep.seatsConfirmed,
+    isActive: dep.isActive,
+    tour: dep.tour
+      ? {
+          id: dep.tour.id,
+          slug: dep.tour.slug,
+          name: dep.tour.name,
+        }
+      : undefined,
   };
 }
 
@@ -187,10 +197,10 @@ export function toTourDepartureResponse(departure: any): TourDepartureResponse |
  * Transforma un Booking de Prisma a BookingResponse
  */
 export function toBookingResponse(
-  booking: Booking & { 
+  booking: Booking & {
     passengers?: Passenger[];
-    tourDeparture?: any;
-  }
+    tourDeparture?: unknown;
+  },
 ): BookingResponse {
   return {
     id: booking.id,
@@ -204,7 +214,9 @@ export function toBookingResponse(
     unitPriceChild: Number(booking.unitPriceChild),
     currency: booking.currency,
     tourNameSnapshot: booking.tourNameSnapshot,
-    departureDateSnapshot: booking.departureDateSnapshot.toISOString().split("T")[0],
+    departureDateSnapshot: booking.departureDateSnapshot
+      .toISOString()
+      .split("T")[0],
     startTimeSnapshot: booking.startTimeSnapshot,
     meetingPointSnapshot: booking.meetingPointSnapshot,
     passengers: booking.passengers?.map(toPassengerResponse) || [],
@@ -236,12 +248,12 @@ export function toPaymentResponse(payment: Payment): PaymentResponse {
  * Transforma un Order con bookings a OrderWithBookingsResponse
  */
 export function toOrderWithBookingsResponse(
-  order: PrismaOrder & { 
-    bookings?: (Booking & { 
+  order: PrismaOrder & {
+    bookings?: (Booking & {
       passengers?: Passenger[];
-      tourDeparture?: any;
+      tourDeparture?: unknown;
     })[];
-  }
+  },
 ): OrderWithBookingsResponse {
   const base = toOrderResponse(order);
   return {
@@ -257,7 +269,7 @@ export function toOrderFullResponse(
   order: PrismaOrder & {
     bookings?: (Booking & { passengers?: Passenger[] })[];
     payments?: Payment[];
-  }
+  },
 ): OrderFullResponse {
   const base = toOrderWithBookingsResponse(order);
   return {
@@ -265,4 +277,3 @@ export function toOrderFullResponse(
     payments: order.payments?.map(toPaymentResponse) || [],
   };
 }
-
