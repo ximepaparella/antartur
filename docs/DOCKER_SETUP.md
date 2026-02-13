@@ -70,7 +70,7 @@ You should see:
 - **Next.js App**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 - **pgAdmin**: http://localhost:5050
-  - Email: admin@antartur.com
+  - Email: admin@antartur.tur.ar
   - Password: admin
 
 ### Production (docker-compose.prod.yml)

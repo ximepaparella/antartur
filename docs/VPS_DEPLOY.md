@@ -10,8 +10,8 @@ Esta guía documenta el proceso completo para desplegar Antartur en el VPS de Do
 | Host | `vps-5495836-x.dattaweb.com` |
 | Usuario SSH | `root` |
 | Puerto SSH | `5857` |
-| Dominio | `coderoots.tech` |
-| Path del proyecto | `/var/www/antartur` |
+| Dominio | `antartur.tur.ar` |
+| Path del proyecto | `/var/www/antartur` (clonar el repo aquí; nginx y certbot usan `/var/www/` dentro del contenedor) |
 
 ## Conexión SSH
 
@@ -96,11 +96,14 @@ docker compose -f docker-compose.prod.yml run --rm app npx prisma db seed
 | Variable | Descripción | Ejemplo |
 |----------|-------------|---------|
 | `POSTGRES_USER` | Usuario de PostgreSQL | `antartur` |
-| `POSTGRES_PASSWORD` | Contraseña de PostgreSQL | (generar con openssl) |
+| `POSTGRES_PASSWORD` | Contraseña de PostgreSQL (recomendado: fuerte) | `openssl rand -base64 24` |
 | `POSTGRES_DB` | Nombre de la base de datos | `antartur` |
-| `SITE_URL` | URL del sitio | `https://coderoots.tech` |
+| `SITE_URL` | URL del sitio | `https://antartur.tur.ar` |
 | `NEXTAUTH_SECRET` | Secret para NextAuth | (generar con openssl) |
 | `CRON_SECRET` | Secret para endpoints cron | (generar con openssl) |
+
+**PostgreSQL: contraseña segura**  
+Sí, conviene usar una contraseña fuerte en producción. Generala con `openssl rand -base64 24` y ponela en `POSTGRES_PASSWORD` del `.env`. El `docker-compose.prod.yml` arma `DATABASE_URL` con esa variable, así que no hace falta tocar la base ya creada: solo asegurate de que en el `.env` esté la misma contraseña y reiniciá los servicios (`docker compose -f docker-compose.prod.yml up -d`). Si en algún momento cambiás la contraseña, actualizá `POSTGRES_PASSWORD` en el `.env` y reiniciá postgres y app.
 
 ### Email (elegir una opción)
 
@@ -116,7 +119,7 @@ SMTP_HOST=smtp.tu-servidor.com
 SMTP_PORT=587
 SMTP_USER=usuario
 SMTP_PASS=contraseña
-SMTP_FROM=noreply@coderoots.tech
+SMTP_FROM=noreply@antartur.tur.ar
 ```
 
 ### Pasarelas de Pago
@@ -256,11 +259,11 @@ El sistema requiere dos cronjobs para:
 Si Don Web tiene panel de cronjobs, configura:
 
 **Cronjob 1: Cancelar órdenes expiradas**
-- URL: `https://coderoots.tech/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET`
+- URL: `https://antartur.tur.ar/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET`
 - Frecuencia: `0 * * * *` (cada hora)
 
 **Cronjob 2: Reintentar notificaciones**
-- URL: `https://coderoots.tech/api/cron/retry-notifications?secret=TU_CRON_SECRET`
+- URL: `https://antartur.tur.ar/api/cron/retry-notifications?secret=TU_CRON_SECRET`
 - Frecuencia: `*/15 * * * *` (cada 15 minutos)
 
 ### Con crontab en el VPS
@@ -273,10 +276,10 @@ Agregar:
 
 ```cron
 # Cancelar órdenes expiradas (cada hora)
-0 * * * * curl -s "https://coderoots.tech/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET" > /dev/null
+0 * * * * curl -s "https://antartur.tur.ar/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET" > /dev/null
 
 # Reintentar notificaciones fallidas (cada 15 minutos)
-*/15 * * * * curl -s "https://coderoots.tech/api/cron/retry-notifications?secret=TU_CRON_SECRET" > /dev/null
+*/15 * * * * curl -s "https://antartur.tur.ar/api/cron/retry-notifications?secret=TU_CRON_SECRET" > /dev/null
 ```
 
 ## Renovación de Certificados SSL
@@ -336,13 +339,13 @@ docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
 
 1. Verificar que el dominio apunta al servidor:
    ```bash
-   ping coderoots.tech
-   nslookup coderoots.tech
+   ping antartur.tur.ar
+   nslookup antartur.tur.ar
    ```
 
 2. Verificar que los certificados existen:
    ```bash
-   ls -la certbot/conf/live/coderoots.tech/
+   ls -la certbot/conf/live/antartur.tur.ar/
    ```
 
 3. Re-obtener certificados:

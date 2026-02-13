@@ -31,7 +31,7 @@ Esto levantará:
 - Puerto: `5432`
 
 **Credenciales de pgAdmin:**
-- Email: `admin@antartur.com`
+- Email: `admin@antartur.tur.ar`
 - Contraseña: `admin`
 
 ### Opción B: Solo PostgreSQL (sin pgAdmin)
@@ -117,7 +117,7 @@ GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
 
 1. Abre `http://localhost:5050` en tu navegador
 2. Inicia sesión con:
-   - Email: `admin@antartur.com`
+   - Email: `admin@antartur.tur.ar`
    - Contraseña: `admin`
 3. Click derecho en "Servers" → "Register" → "Server"
 4. En la pestaña "General":

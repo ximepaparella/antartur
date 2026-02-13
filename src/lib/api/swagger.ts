@@ -26,19 +26,19 @@ const options: SwaggerOptions = {
             return siteUrl;
           }
           // Fallback a localhost para desarrollo, o URL de producción si estamos en producción
-          return process.env.NODE_ENV === "production" ? "https://coderoots.tech" : "http://localhost:3000";
+          return process.env.NODE_ENV === "production" ? "https://antartur.tur.ar" : "http://localhost:3000";
         })(),
         description: (() => {
           const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
           if (siteUrl) {
             try {
               const hostname = new URL(siteUrl).hostname;
-              return `Production server (${hostname})`;
+              return hostname ? `Production server (${hostname})` : "Production server (antartur.tur.ar)";
             } catch {
               return "Production server";
             }
           }
-          return process.env.NODE_ENV === "production" ? "Production server (coderoots.tech)" : "Development server";
+          return process.env.NODE_ENV === "production" ? "Production server (antartur.tur.ar)" : "Development server";
         })(),
       },
     ],

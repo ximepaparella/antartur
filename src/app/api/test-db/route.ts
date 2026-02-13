@@ -1,12 +1,17 @@
 /**
  * Endpoint de prueba para verificar el schema de base de datos
- * Lista todas las tablas, conteos y verifica relaciones
+ * Lista todas las tablas, conteos y verifica relaciones.
+ * Solo disponible en desarrollo para no exponer información del esquema en producción.
  */
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   try {
     // Verificar conexión básica
     await prisma.$connect();

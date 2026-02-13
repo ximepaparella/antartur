@@ -4,15 +4,9 @@
  *   get:
  *     summary: Reintentar notificaciones fallidas (Cron Job)
  *     tags: [Cron Jobs]
- *     description: Reintenta automáticamente el envío de notificaciones que fallaron. Ejecutar cada 15 minutos. Requiere autenticación con CRON_SECRET. Procesa hasta 100 notificaciones por ejecución.
+ *     description: Reintenta automáticamente el envío de notificaciones que fallaron. Ejecutar cada 15 minutos. Requiere header Authorization Bearer con CRON_SECRET. Procesa hasta 100 notificaciones por ejecución.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: secret
- *         schema:
- *           type: string
- *         description: CRON_SECRET como query parameter (alternativa al header Authorization)
  *     responses:
  *       200:
  *         description: Notificaciones procesadas exitosamente
@@ -43,15 +37,9 @@
  *   post:
  *     summary: Reintentar notificaciones fallidas (método POST alternativo)
  *     tags: [Cron Jobs]
- *     description: Versión POST del endpoint para compatibilidad con algunos sistemas de cron
+ *     description: Versión POST. Misma autenticación (Authorization Bearer CRON_SECRET).
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: secret
- *         schema:
- *           type: string
- *         description: CRON_SECRET como query parameter
  *     responses:
  *       200:
  *         description: Notificaciones procesadas exitosamente
@@ -83,15 +71,8 @@ function isAuthorized(request: NextRequest): boolean {
     return true;
   }
 
-  // También permitir query parameter secret
-  const url = new URL(request.url);
-  const secretParam = url.searchParams.get("secret");
-  if (cronSecret && secretParam === cronSecret) {
-    return true;
-  }
-
-  // En desarrollo, permitir sin autenticación
-  if (process.env.NODE_ENV === "development") {
+  // En desarrollo sin CRON_SECRET configurado, permitir (solo para pruebas locales)
+  if (process.env.NODE_ENV === "development" && !cronSecret) {
     return true;
   }
 

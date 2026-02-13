@@ -4,15 +4,9 @@
  *   get:
  *     summary: Cancelar órdenes expiradas (Cron Job)
  *     tags: [Cron Jobs]
- *     description: Cancela automáticamente las órdenes que han expirado. Ejecutar cada hora. Requiere autenticación con CRON_SECRET.
+ *     description: Cancela automáticamente las órdenes que han expirado. Ejecutar cada hora. Requiere header Authorization Bearer con CRON_SECRET.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: secret
- *         schema:
- *           type: string
- *         description: CRON_SECRET como query parameter (alternativa al header Authorization)
  *     responses:
  *       200:
  *         description: Órdenes canceladas exitosamente
@@ -38,15 +32,9 @@
  *   post:
  *     summary: Cancelar órdenes expiradas (método POST alternativo)
  *     tags: [Cron Jobs]
- *     description: Versión POST del endpoint para compatibilidad con algunos sistemas de cron
+ *     description: Versión POST del endpoint para compatibilidad con algunos sistemas de cron. Misma autenticación (Authorization Bearer CRON_SECRET).
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: secret
- *         schema:
- *           type: string
- *         description: CRON_SECRET como query parameter
  *     responses:
  *       200:
  *         description: Órdenes canceladas exitosamente
@@ -67,14 +55,8 @@ function isAuthorized(request: NextRequest): boolean {
     return true;
   }
 
-  // También permitir si viene de Vercel Cron (tiene header específico)
-  const vercelCron = request.headers.get("x-vercel-cron");
-  if (vercelCron === "1") {
-    return true;
-  }
-
-  // En desarrollo, permitir sin autenticación
-  if (process.env.NODE_ENV === "development") {
+  // En desarrollo sin CRON_SECRET configurado, permitir (solo para pruebas locales)
+  if (process.env.NODE_ENV === "development" && !cronSecret) {
     return true;
   }
 

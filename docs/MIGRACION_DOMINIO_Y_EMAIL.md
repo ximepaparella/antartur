@@ -6,7 +6,7 @@ Guía paso a paso para un developer: pasar el sitio al dominio definitivo en el 
 
 ## 1. Resumen en pocas palabras
 
-- **Situación actual:** El sitio nuevo (Next.js + Docker) está en el “nuevo VPS” con dominio **coderoots.tech**. El sitio viejo (WordPress) y los correos están en otro servidor (VPS antiguo con Ferozo), dominio **antartur.tur.ar**.
+- **Situación actual:** El sitio nuevo (Next.js + Docker) está en el “nuevo VPS” con dominio **antartur.tur.ar**. El sitio viejo (WordPress) y los correos están en otro servidor (VPS antiguo con Ferozo), dominio **antartur.tur.ar**.
 - **Objetivo:**  
   - Que **antartur.tur.ar** apunte al **nuevo VPS del cliente** y muestre el sitio Next.js (nginx + Docker).  
   - Que el **correo** de **@antartur.tur.ar** use **Google Workspace** (ya tenés dominio validado y casillas creadas).  
@@ -170,7 +170,7 @@ El SSL del WordPress viejo está en el servidor viejo. En el **nuevo** VPS tené
    - Asegurate de que en el **.env** (o en la config que use docker-compose) tengas:
      - `SITE_URL=https://antartur.tur.ar`  
      - (y si usás `NEXT_PUBLIC_SITE_URL`, también `https://antartur.tur.ar`).
-   - Que **nginx** (o el proxy que use tu Docker) esté configurado para el **dominio** `antartur.tur.ar` (no solo coderoots.tech). Si tu script o compose usa un “dominio” para Certbot, cambialo a antartur.tur.ar.
+   - Que **nginx** (o el proxy que use tu Docker) esté configurado para el **dominio** `antartur.tur.ar` El repo incluye nginx y Certbot para antartur.tur.ar. Si tu script o compose usa un “dominio” para Certbot, cambialo a antartur.tur.ar.
 
 2. **Solo cuando** el DNS de antartur.tur.ar ya apunte a la IP del nuevo VPS:
    - Ejecutá el script de SSL que usás (ej. el de la doc de deploy):
@@ -184,7 +184,7 @@ El SSL del WordPress viejo está en el servidor viejo. En el **nuevo** VPS tené
      ```
    - Luego recargar nginx para que use los certificados nuevos.
 
-Si el script o el compose están pensados para “coderoots.tech”, tendrás que ajustar dominio a **antartur.tur.ar** (y www si lo usás) en la config de nginx y en el comando de Certbot.
+Si el script o el compose están pensados para “antartur.tur.ar”, verificá la config de nginx y el comando de Certbot en el repo.
 
 ---
 

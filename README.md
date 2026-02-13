@@ -174,7 +174,7 @@ Si prefieres usar PostgreSQL instalado localmente:
 
 1. Abre `http://localhost:5050`
 2. Login con:
-   - Email: `admin@antartur.com`
+   - Email: `admin@antartur.tur.ar`
    - Password: `admin`
 3. Agrega un nuevo servidor:
    - Host: `postgres` (si estás en Docker) o `localhost`
