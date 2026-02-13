@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Modal } from "@/components/common/Modal";
 import { PaywayCardForm } from "../PaywayCardForm";
 import { formatPriceByCurrency } from "@/lib/utils/priceFormat";
 import { Message } from "@/components/common/Message";
 import styles from "./PaywayPaymentModal.module.scss";
+
+const PAYWAY_PROCESS_TIMEOUT_MS = 10000;
 
 interface PaywayPaymentModalProps {
   /** Si el modal está abierto */
@@ -43,11 +45,23 @@ export const PaywayPaymentModal: React.FC<PaywayPaymentModalProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Manejar cierre del modal
+  // Al desmontar o cerrar el modal, abortar cualquier petición en vuelo
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
   const handleClose = useCallback(() => {
-    if (isProcessing) {
-      return; // No permitir cerrar mientras se procesa
+    if (isProcessing && abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    if (isProcessing && !abortControllerRef.current) {
+      return;
     }
     setIsClosing(true);
     setTimeout(() => {
@@ -57,26 +71,29 @@ export const PaywayPaymentModal: React.FC<PaywayPaymentModalProps> = ({
     }, 200);
   }, [isProcessing, onClose]);
 
-  // Manejar cuando se crea el token
   const handleTokenCreated = useCallback(
     async (tokenData: { token: string; bin: string; lastFourDigits: string }) => {
       setIsProcessing(true);
       setError(null);
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), PAYWAY_PROCESS_TIMEOUT_MS);
 
       try {
-        // Llamar al endpoint para procesar el pago
         const response = await fetch("/api/payments/payway/process", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             orderId,
             token: tokenData.token,
             bin: tokenData.bin,
             lastFourDigits: tokenData.lastFourDigits,
           }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
+        abortControllerRef.current = null;
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -90,12 +107,9 @@ export const PaywayPaymentModal: React.FC<PaywayPaymentModalProps> = ({
 
         const result = await response.json();
 
-        // Verificar que el pago fue exitoso
         if (result.success && result.data?.status === "approved") {
-          // Pago exitoso
           onPaymentSuccess();
         } else {
-          // Pago rechazado o pendiente
           const statusMessage =
             result.data?.status === "rejected"
               ? "El pago fue rechazado. Por favor, verifique los datos de su tarjeta."
@@ -105,8 +119,14 @@ export const PaywayPaymentModal: React.FC<PaywayPaymentModalProps> = ({
           throw new Error(statusMessage);
         }
       } catch (err) {
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
+        clearTimeout(timeoutId);
         const errorMessage =
-          err instanceof Error
+          err instanceof Error && err.name === "AbortError"
+            ? "La solicitud tardó demasiado. Intentá de nuevo."
+            : err instanceof Error
             ? err.message
             : "Error al procesar el pago. Por favor, intente nuevamente.";
         setError(errorMessage);

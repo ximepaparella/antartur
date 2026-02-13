@@ -20,27 +20,62 @@ import crypto from "crypto";
 // 
 // Ambientes disponibles:
 // - SANDBOX: https://developers.decidir.com/api/v2
-// - PRODUCCIÓN: https://live.decidir.com/api/v2
+// - PRODUCCIÓN: https://ventasonline.payway.com.ar/api/v2
 //
-// Referencias:
-// - https://developers.payway.com.ar/documentation/Primerospasos
-// - https://decidir.com.ar/documentacion
+// Endpoints oficiales Decidir/Payway (documentación oficial)
+// Sandbox: https://developers.decidir.com/api/v2
+// Producción: https://ventasonline.payway.com.ar/api/v2
 const DECIDIR_API_URL = {
   sandbox: "https://developers.decidir.com/api/v2",
-  production: "https://live.decidir.com/api/v2",
+  production: "https://ventasonline.payway.com.ar/api/v2",
 };
 
 // URLs legacy para compatibilidad (deprecated - no se usan más)
-// Mantenidas solo para funciones deprecated
+// Apuntan a los mismos bases oficiales por consistencia
 const PAYWAY_API_URL = {
-  sandbox: "https://api-sandbox.prismamediosdepago.com",
-  production: "https://api.prismamediosdepago.com",
+  sandbox: "https://developers.decidir.com/api/v2",
+  production: "https://ventasonline.payway.com.ar/api/v2",
 };
 
 const PAYWAY_CHECKOUT_URL = {
-  sandbox: "https://api-sandbox.prismamediosdepago.com/checkout",
-  production: "https://api.prismamediosdepago.com/checkout",
+  sandbox: "https://developers.decidir.com/api/v2",
+  production: "https://ventasonline.payway.com.ar/api/v2",
 };
+
+/**
+ * Decidir payment_method_id por red de tarjeta.
+ * Referencia: documentación Decidir (Visa=1, Mastercard=15, Amex=6, Diners=8).
+ */
+const DECIDIR_PAYMENT_METHOD_IDS = {
+  visa: 1,
+  mastercard: 15,
+  amex: 6,
+  diners: 8,
+} as const;
+
+/**
+ * Deriva payment_method_id de Decidir a partir del BIN (primeros 6-8 dígitos).
+ * Si el BIN está vacío o no se reconoce, se usa 1 (Visa) como fallback.
+ */
+export function getPaymentMethodIdFromBin(bin: string): number {
+  const digits = (bin || "").replace(/\D/g, "").slice(0, 8);
+  if (digits.length < 4) return DECIDIR_PAYMENT_METHOD_IDS.visa;
+
+  // Visa: empieza con 4
+  if (digits.startsWith("4")) return DECIDIR_PAYMENT_METHOD_IDS.visa;
+  // Amex: 34 o 37
+  if (digits.startsWith("34") || digits.startsWith("37")) return DECIDIR_PAYMENT_METHOD_IDS.amex;
+  // Mastercard: 51-55, 2221-2720
+  if (/^5[1-5]/.test(digits)) return DECIDIR_PAYMENT_METHOD_IDS.mastercard;
+  const n = parseInt(digits.slice(0, 4), 10);
+  if (n >= 2221 && n <= 2720) return DECIDIR_PAYMENT_METHOD_IDS.mastercard;
+  // Diners: 36, 38, 300-305
+  if (digits.startsWith("36") || digits.startsWith("38")) return DECIDIR_PAYMENT_METHOD_IDS.diners;
+  const n3 = parseInt(digits.slice(0, 3), 10);
+  if (n3 >= 300 && n3 <= 305) return DECIDIR_PAYMENT_METHOD_IDS.diners;
+
+  return DECIDIR_PAYMENT_METHOD_IDS.visa;
+}
 
 export interface CreatePaywayTransactionRequest {
   orderId: string;
@@ -343,15 +378,17 @@ export async function processPaywayPayment(
   // Generar ID único para la transacción
   const siteTransactionId = `${request.orderId}-${Date.now()}`;
 
+  const paymentMethodId = getPaymentMethodIdFromBin(request.bin ?? "");
+
   // Preparar request body según documentación de Decidir
   const requestBody = {
     site_transaction_id: siteTransactionId,
     token: request.token,
-    payment_method_id: 1, // Tarjeta de crédito
+    payment_method_id: paymentMethodId,
     bin: request.bin,
     amount: amountInCents,
     currency: request.currency,
-    installments: 1, // Pago en un solo pago
+    installments: 1,
     payment_type: "single",
     sub_payments: [],
   };

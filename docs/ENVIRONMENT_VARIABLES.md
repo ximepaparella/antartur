@@ -124,19 +124,27 @@ PAYWAY_SITE_ID=tu_payway_site_id
 PAYWAY_TEMPLATE_ID=tu_payway_template_id
 PAYWAY_ENVIRONMENT=sandbox|production
 
-# Credenciales del Frontend (API Pública - para SDK JavaScript)
-NEXT_PUBLIC_PAYWAY_PUBLIC_KEY=tu_payway_api_key_publica
-NEXT_PUBLIC_PAYWAY_ENVIRONMENT=sandbox|production
+# Public Key para el SDK (frontend la obtiene vía GET /api/config/payway en runtime)
+# Puedes usar PAYWAY_PUBLIC_KEY (solo servidor) o NEXT_PUBLIC_PAYWAY_PUBLIC_KEY
+PAYWAY_PUBLIC_KEY=tu_payway_api_key_publica
+# Opcional: NEXT_PUBLIC_PAYWAY_PUBLIC_KEY y NEXT_PUBLIC_PAYWAY_ENVIRONMENT (alternativa)
 ```
 **Descripción:** Credenciales de Payway API.  
 **Uso:** Solo disponible cuando currency es ARS.  
-**PAYWAY_ENVIRONMENT / NEXT_PUBLIC_PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
+**PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
+
+**Public Key (SDK):** El cliente no usa variables de entorno en build. Obtiene la public key en runtime llamando a `GET /api/config/payway`. En el servidor basta con definir **`PAYWAY_PUBLIC_KEY`** (o `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY`) en `.env`; la API la expone y el formulario de pago funciona sin recompilar.
+
+**Importante – secretos:**
+- Las credenciales reales deben estar **solo en `.env` local** (archivo gitignored). Copiar `.env.example` a `.env` y reemplazar los placeholders; **nunca** commitear `.env` ni valores reales al repositorio.
+- Si alguna clave de Payway llegó a commitearse, debe **rotarse** en el panel de Payway/Decidir.
+
 **Nota:** 
-- `PAYWAY_API_KEY` es la API Key **Privada** (solo backend, nunca exponer al cliente)
-- `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY` es la API Key **Pública** (frontend, para tokenización con SDK)
-- Ambas deben estar configuradas para que Payway funcione correctamente
+- `PAYWAY_API_KEY` es la API Key **Privada** (solo backend)
+- `PAYWAY_PUBLIC_KEY` (o `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY`) es la API Key **Pública**; el frontend la recibe vía `/api/config/payway`
 - `PAYWAY_SITE_ID` es requerido para procesar pagos
-- `PAYWAY_TEMPLATE_ID` es opcional, para personalización del checkout
+- `PAYWAY_TEMPLATE_ID` es opcional
+- `PAYWAY_MERCHANT_ID` y `PAYWAY_SITE_ID` pueden coincidir según la configuración del comercio en Payway
 **Documentación:** https://developers.payway.com.ar/documentation
 
 ## Variables de Cron Job
