@@ -225,8 +225,11 @@ export const PaywayCardForm: React.FC<PaywayCardFormProps> = ({
       setIsProcessing(true);
 
       try {
-        // Pasar los datos directamente al SDK (modo manual)
-        // Esto evita problemas con el SDK intentando leer del DOM usando querySelectorAll
+        if (!formRef.current) {
+          setError("Error al obtener el formulario. Por favor, intente de nuevo.");
+          return;
+        }
+        // El SDK de Decidir solo acepta el elemento del formulario (lee los inputs con querySelectorAll).
         const tokenData = await createToken(
           {
             cardNumber: formData.cardNumber,
@@ -234,7 +237,8 @@ export const PaywayCardForm: React.FC<PaywayCardFormProps> = ({
             expirationYear: formData.expirationYear,
             securityCode: formData.securityCode,
             cardHolderName: formData.cardHolderName,
-          }
+          },
+          formRef.current
         );
 
         onTokenCreated(tokenData);
@@ -307,20 +311,6 @@ export const PaywayCardForm: React.FC<PaywayCardFormProps> = ({
         />
         {errors.cardNumber && (
           <span className={styles.errorText}>{errors.cardNumber}</span>
-        )}
-        {process.env.NEXT_PUBLIC_PAYWAY_ENVIRONMENT === "sandbox" && (
-          <div className={styles.testCardInfo}>
-            <p className={styles.testCardTitle}>Tarjetas de Prueba (Sandbox):</p>
-            <ul className={styles.testCardList}>
-              <li><strong>Visa aprobada:</strong> 4507990000000010</li>
-              <li><strong>Visa rechazada:</strong> 4507990000000002</li>
-              <li><strong>Mastercard aprobada:</strong> 5031433216355901</li>
-              <li><strong>Mastercard rechazada:</strong> 5031433216355902</li>
-            </ul>
-            <p className={styles.testCardNote}>
-              CVV: cualquier 3 dígitos | Fecha: cualquier fecha futura
-            </p>
-          </div>
         )}
       </div>
 

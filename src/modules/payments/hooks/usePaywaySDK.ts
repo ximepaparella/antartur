@@ -12,15 +12,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 interface DecidirSDK {
   init: (publicKey: string, formSelector?: string) => void;
   createToken: (
-    cardDataOrFormSelector: 
-      | {
-          card_number: string;
-          card_expiration_month: string;
-          card_expiration_year: string;
-          security_code: string;
-          card_holder_name: string;
-        }
-      | string, // selector de formulario
+    formOrSelector: HTMLFormElement | string,
     callback: (response: DecidirTokenResponse) => void
   ) => void;
 }
@@ -77,7 +69,9 @@ interface UsePaywaySDKReturn {
       expirationYear: string;
       securityCode: string;
       cardHolderName: string;
-    }
+    },
+    /** Elemento del formulario en el DOM. El SDK de Decidir solo acepta el form (usa querySelectorAll), no un objeto. */
+    formElement: HTMLFormElement
   ) => Promise<{
     token: string;
     bin: string;
@@ -108,23 +102,8 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
       const publicKey = process.env.NEXT_PUBLIC_PAYWAY_PUBLIC_KEY;
       const environment = process.env.NEXT_PUBLIC_PAYWAY_ENVIRONMENT || "sandbox";
 
-      // Debug: Verificar que las variables se cargan (solo en desarrollo)
-      if (process.env.NODE_ENV === "development") {
-        console.log("[Payway SDK] Configuración:", {
-          hasPublicKey: !!publicKey,
-          publicKeyLength: publicKey?.length || 0,
-          publicKeyPreview: publicKey ? `${publicKey.substring(0, 8)}...` : "NO CONFIGURADA",
-          environment,
-          allEnvVars: {
-            NEXT_PUBLIC_PAYWAY_PUBLIC_KEY: process.env.NEXT_PUBLIC_PAYWAY_PUBLIC_KEY ? "✓" : "✗",
-            NEXT_PUBLIC_PAYWAY_ENVIRONMENT: process.env.NEXT_PUBLIC_PAYWAY_ENVIRONMENT || "sandbox (default)",
-          },
-        });
-      }
-
       if (!publicKey) {
         const errorMsg = "Payway Public Key no configurada. Por favor, contacte al soporte.";
-        console.error("[Payway SDK] Error:", errorMsg);
         setSdkError(errorMsg);
         return;
       }
@@ -140,19 +119,7 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
           sdkRef.current = window.Decidir as unknown as DecidirSDK;
           sdkRef.current.init(publicKey);
           setIsSDKLoaded(true);
-          if (process.env.NODE_ENV === "development") {
-            console.log("[Payway SDK] SDK ya cargado, inicializado");
-          }
           return;
-        }
-        // Verificar si es una función constructora o tiene otra estructura
-        if (process.env.NODE_ENV === "development") {
-          console.log("[Payway SDK] window.Decidir existe pero estructura diferente:", {
-            type: typeof window.Decidir,
-            isFunction: typeof window.Decidir === "function",
-            keys: typeof window.Decidir === "object" ? Object.keys(window.Decidir) : [],
-            prototype: window.Decidir && typeof window.Decidir === "function" ? Object.getOwnPropertyNames(window.Decidir.prototype || {}) : [],
-          });
         }
       }
 
@@ -170,11 +137,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
             ? "https://live.decidir.com/static/v2.5/decidir.js"
             : "https://developers.decidir.com/static/v2.5/decidir.js";
 
-        // Debug: Log de la URL que se intentará cargar
-        if (process.env.NODE_ENV === "development") {
-          console.log("[Payway SDK] Intentando cargar SDK desde:", sdkUrl);
-        }
-
         // Verificar si hay scripts de Decidir existentes (cualquier versión)
         // Verificar que document esté disponible (SSR safety)
         if (typeof document === "undefined") {
@@ -185,13 +147,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
         
         const existingScripts = document.querySelectorAll('script[src*="decidir.js"]');
         if (existingScripts.length > 0) {
-          if (process.env.NODE_ENV === "development") {
-            console.log("[Payway SDK] Scripts de Decidir existentes encontrados:", existingScripts.length);
-            existingScripts.forEach((s, i) => {
-              console.log(`[Payway SDK] Script ${i + 1}:`, s.getAttribute("src"));
-            });
-          }
-          
           // Verificar si el SDK ya está disponible
           if (window.Decidir) {
             if (typeof window.Decidir.init === "function") {
@@ -199,18 +154,7 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
               sdkRef.current.init(publicKey);
               setIsSDKLoaded(true);
               setIsSDKLoading(false);
-              if (process.env.NODE_ENV === "development") {
-                console.log("[Payway SDK] SDK ya disponible, inicializado desde script existente");
-              }
               return;
-            } else {
-              // window.Decidir existe pero no tiene init - puede ser una versión diferente del SDK
-              if (process.env.NODE_ENV === "development") {
-                console.warn("[Payway SDK] window.Decidir existe pero no tiene init:", {
-                  type: typeof window.Decidir,
-                  keys: window.Decidir ? Object.keys(window.Decidir) : [],
-                });
-              }
             }
           }
           
@@ -221,12 +165,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
               sdkRef.current.init(publicKey);
               setIsSDKLoaded(true);
               setIsSDKLoading(false);
-            } else {
-              // Intentar cargar el script de nuevo si no funcionó
-              if (process.env.NODE_ENV === "development") {
-                console.warn("[Payway SDK] Scripts existentes pero SDK no inicializado, intentando cargar nuevo script");
-              }
-              // Continuar con la carga del script
             }
           }, 1000);
           
@@ -249,9 +187,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
 
         // Agregar listener antes de agregar al DOM
         script.onload = () => {
-          if (process.env.NODE_ENV === "development") {
-            console.log("[Payway SDK] Script cargado exitosamente desde:", sdkUrl);
-          }
           // Dar un pequeño delay para asegurar que el SDK esté completamente inicializado
           setTimeout(() => {
             // Verificar que el SDK se cargó correctamente
@@ -263,9 +198,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
                 sdkRef.current.init(publicKey);
                 setIsSDKLoaded(true);
                 setIsSDKLoading(false);
-                if (process.env.NODE_ENV === "development") {
-                  console.log("[Payway SDK] SDK inicializado correctamente (con init)");
-                }
                 return;
               }
               
@@ -282,15 +214,10 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
                     } as unknown as DecidirSDK;
                     setIsSDKLoaded(true);
                     setIsSDKLoading(false);
-                    if (process.env.NODE_ENV === "development") {
-                      console.log("[Payway SDK] SDK inicializado correctamente (constructor)");
-                    }
                     return;
                   }
-                } catch (constructorError) {
-                  if (process.env.NODE_ENV === "development") {
-                    console.warn("[Payway SDK] Error al usar constructor:", constructorError);
-                  }
+                } catch {
+                  // Constructor no aplicable, intentar siguiente caso
                 }
               }
               
@@ -310,56 +237,17 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
                 sdkRef.current.init(publicKey);
                 setIsSDKLoaded(true);
                 setIsSDKLoading(false);
-                if (process.env.NODE_ENV === "development") {
-                  console.log("[Payway SDK] SDK inicializado correctamente (métodos directos)");
-                }
                 return;
-              }
-              
-              // Caso 4: window.Decidir es un objeto pero no tiene la estructura esperada
-              if (process.env.NODE_ENV === "development") {
-                console.error("[Payway SDK] window.Decidir existe pero estructura no reconocida:", {
-                  type: typeof window.Decidir,
-                  keys: typeof window.Decidir === "object" && window.Decidir !== null 
-                    ? Object.keys(window.Decidir) 
-                    : typeof window.Decidir === "function"
-                    ? "function (constructor)"
-                    : "N/A",
-                  hasCreateToken: decidirObj && typeof decidirObj.createToken === "function",
-                  hasInit: decidirObj && typeof decidirObj.init === "function",
-                  fullObject: process.env.NODE_ENV === "development" ? decidirObj : "hidden",
-                });
               }
             }
             
             const errorMsg = "El SDK de Payway no se cargó correctamente. Por favor, recargue la página.";
-            console.error("[Payway SDK] Error:", errorMsg, {
-              windowDecidir: typeof window.Decidir,
-              hasInit: window.Decidir && typeof (window.Decidir as any).init,
-            });
             setSdkError(errorMsg);
             setIsSDKLoading(false);
           }, 100);
         };
 
-        script.onerror = (error) => {
-          console.error("[Payway SDK] Error loading Decidir SDK:", error);
-          console.error("[Payway SDK] Error details:", {
-            sdkUrl,
-            errorType: error?.type || "unknown",
-            errorTarget: error?.target || "unknown",
-            timestamp: new Date().toISOString(),
-          });
-          
-          // Intentar verificar si la URL es accesible
-          fetch(sdkUrl, { method: "HEAD", mode: "no-cors" })
-            .then(() => {
-              console.warn("[Payway SDK] URL es accesible pero el script falló al cargar");
-            })
-            .catch((fetchError) => {
-              console.error("[Payway SDK] URL no es accesible:", fetchError);
-            });
-          
+        script.onerror = () => {
           setSdkError(
             `Error al cargar el SDK de Payway desde ${sdkUrl}. ` +
             `Por favor, verifique su conexión a Internet o contacte al soporte. ` +
@@ -370,24 +258,7 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
 
         // Agregar el script al DOM
         document.head.appendChild(script);
-        
-        if (process.env.NODE_ENV === "development") {
-          console.log("[Payway SDK] Script agregado al DOM, esperando carga...");
-          // Verificar después de un tiempo si el script se cargó
-          setTimeout(() => {
-            const scriptElement = document.getElementById("decidir-sdk-script");
-            const sdkLoaded = sdkRef.current !== null;
-            if (scriptElement && !sdkLoaded) {
-              console.warn("[Payway SDK] Script en DOM pero SDK no inicializado después de 2s", {
-                scriptSrc: scriptElement.getAttribute("src"),
-                windowDecidir: typeof window.Decidir,
-                hasInit: window.Decidir && typeof window.Decidir.init,
-              });
-            }
-          }, 2000);
-        }
       } catch (error) {
-        console.error("[Payway SDK] Error en loadSDK:", error);
         setSdkError(
           error instanceof Error
             ? error.message
@@ -409,7 +280,8 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
         expirationYear: string;
         securityCode: string;
         cardHolderName: string;
-      }
+      },
+      formElement: HTMLFormElement
     ): Promise<{
       token: string;
       bin: string;
@@ -418,6 +290,10 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
       // Verificar que estamos en el navegador
       if (typeof window === "undefined" || typeof document === "undefined") {
         throw new Error("createToken solo funciona en el navegador");
+      }
+
+      if (!formElement || !(formElement instanceof HTMLFormElement)) {
+        throw new Error("Se debe pasar el elemento del formulario de tarjeta");
       }
 
       return new Promise((resolve, reject) => {
@@ -441,48 +317,48 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
           // Asegurar que el SDK está inicializado
           try {
             sdkRef.current.init(publicKeyRef.current);
-          } catch (initError) {
-            console.error("[Payway SDK] Error al inicializar SDK:", initError);
+          } catch {
             reject(new Error("Error al inicializar el SDK de Payway"));
             return;
           }
 
-          // Siempre usar modo manual: pasar los datos directamente como objeto
-          // Esto evita problemas con el SDK intentando leer del DOM usando querySelectorAll
-          const decidirCardData = {
-            card_number: cardData.cardNumber.replace(/\s/g, ""), // Remover espacios
-            card_expiration_month: cardData.expirationMonth.padStart(2, "0"),
-            card_expiration_year: cardData.expirationYear.slice(-2), // Solo últimos 2 dígitos
-            security_code: cardData.securityCode,
-            card_holder_name: cardData.cardHolderName.trim(),
-          };
-
-          // Llamar al SDK para crear el token con manejo de errores
+          // El SDK de Decidir solo acepta el elemento del formulario: internamente hace
+          // form.querySelectorAll(...) para leer los inputs (card_number, security_code, etc.).
+          // Si pasamos un objeto, falla con "querySelectorAll is not a function".
           try {
-            sdkRef.current.createToken(decidirCardData, (response: DecidirTokenResponse) => {
+            sdkRef.current.createToken(formElement, (response: DecidirTokenResponse | number) => {
               try {
-                if (response.status === "valid" && response.id) {
-                  // Extraer bin y últimos 4 dígitos
-                  const bin = response.bin || cardData.cardNumber.replace(/\s/g, "").slice(0, 6);
-                  const lastFourDigits =
-                    response.last_four_digits ||
-                    cardData.cardNumber.replace(/\s/g, "").slice(-4);
+                // El SDK a veces devuelve el código HTTP (ej. 422) en lugar del objeto de respuesta
+                const isValidObject =
+                  response &&
+                  typeof response === "object" &&
+                  "status" in response &&
+                  response.status === "valid" &&
+                  typeof (response as DecidirTokenResponse).id === "string";
 
+                if (isValidObject) {
+                  const res = response as DecidirTokenResponse;
+                  const bin = res.bin || cardData.cardNumber.replace(/\s/g, "").slice(0, 6);
+                  const lastFourDigits =
+                    res.last_four_digits || cardData.cardNumber.replace(/\s/g, "").slice(-4);
                   resolve({
-                    token: response.id,
+                    token: res.id,
                     bin,
                     lastFourDigits,
                   });
-                } else {
-                  // Manejar error del SDK
-                  const errorMessage =
-                    response.error?.reason?.description ||
-                    response.error?.reason?.additional_description ||
-                    "Error al tokenizar la tarjeta";
-                  reject(new Error(errorMessage));
+                  return;
                 }
+
+                // Respuesta inválida: puede ser objeto con error o código HTTP (ej. 422)
+                const resObj = response && typeof response === "object" ? (response as DecidirTokenResponse) : null;
+                const errorMessage =
+                  resObj?.error?.reason?.additional_description ||
+                  resObj?.error?.reason?.description ||
+                  (typeof response === "number"
+                    ? `Error al tokenizar la tarjeta (código ${response}). Verificá la Public Key de Payway y que estés en el ambiente correcto (sandbox/producción).`
+                    : "Error al tokenizar la tarjeta.");
+                reject(new Error(errorMessage));
               } catch (callbackError) {
-                console.error("[Payway SDK] Error en callback de createToken:", callbackError);
                 reject(
                   new Error(
                     callbackError instanceof Error
@@ -492,9 +368,8 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
                 );
               }
             });
-          } catch (sdkError) {
-            console.error("[Payway SDK] Error al llamar createToken:", sdkError);
-            reject(
+            } catch (sdkError) {
+              reject(
               new Error(
                 sdkError instanceof Error
                   ? sdkError.message
@@ -503,7 +378,6 @@ export function usePaywaySDK(): UsePaywaySDKReturn {
             );
           }
         } catch (error) {
-          console.error("[Payway SDK] Error general en createToken:", error);
           reject(
             new Error(
               error instanceof Error
