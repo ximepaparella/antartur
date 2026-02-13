@@ -68,7 +68,7 @@ export const Modal: React.FC<ModalProps> = ({
     
     if (!isOpen) return;
 
-    let handleTabKey: ((e: KeyboardEvent) => void) | null = null;
+    let handleTabKey: ((e: Event) => void) | null = null;
     let modalContent: Element | null = null;
 
     // Usar un pequeño delay para asegurar que el DOM esté completamente renderizado
@@ -108,19 +108,20 @@ export const Modal: React.FC<ModalProps> = ({
           }
         }
 
-        handleTabKey = (e: KeyboardEvent) => {
-          if (e.key !== "Tab") return;
+        handleTabKey = (e: Event) => {
+          const keyEvent = e as KeyboardEvent;
+          if (keyEvent.key !== "Tab") return;
 
-          if (e.shiftKey) {
+          if (keyEvent.shiftKey) {
             // Shift + Tab
             if (document.activeElement === firstFocusable) {
-              e.preventDefault();
+              keyEvent.preventDefault();
               lastFocusable?.focus();
             }
           } else {
             // Tab
             if (document.activeElement === lastFocusable) {
-              e.preventDefault();
+              keyEvent.preventDefault();
               firstFocusable?.focus();
             }
           }
