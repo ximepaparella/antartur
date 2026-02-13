@@ -1,0 +1,1 @@
+export { PaywayPaymentModal } from "./PaywayPaymentModal";

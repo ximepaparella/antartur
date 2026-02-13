@@ -34,18 +34,6 @@ export const PricingBreakdown: React.FC<PricingBreakdownProps> = ({
   additionalsSubtotal,
   onRemoveAdditional,
 }) => {
-  // Debug temporal
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[PricingBreakdown Debug]', {
-        additionals,
-        additionalsLength: additionals?.length,
-        currency,
-        onRemoveAdditional: !!onRemoveAdditional,
-      });
-    }
-  }, [additionals, currency, onRemoveAdditional]);
-
   return (
     <>
       {adults > 0 && (

@@ -49,6 +49,11 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Guardar el elemento activo antes de abrir el modal
   useEffect(() => {
+    // Verificar que estamos en el navegador
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+    
     if (isOpen) {
       previousActiveElementRef.current = document.activeElement as HTMLElement;
     }
@@ -56,56 +61,110 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Focus trap: mantener el foco dentro del modal
   useEffect(() => {
-    if (!isOpen || !modalContentRef.current) return;
-
-    const modalContent = modalContentRef.current;
-    const focusableElements = modalContent.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-
-    // Focus en el primer elemento al abrir (con check defensivo)
-    if (firstFocusable && typeof firstFocusable.focus === 'function') {
-      try {
-        firstFocusable.focus();
-      } catch (error) {
-        console.warn("Error focusing first element:", error);
-      }
+    // Verificar que estamos en el navegador
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
     }
+    
+    if (!isOpen) return;
 
-    const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
+    let handleTabKey: ((e: KeyboardEvent) => void) | null = null;
+    let modalContent: Element | null = null;
 
-      if (e.shiftKey) {
-        // Shift + Tab
-        if (document.activeElement === firstFocusable) {
-          e.preventDefault();
-          lastFocusable?.focus();
+    // Usar un pequeño delay para asegurar que el DOM esté completamente renderizado
+    const timeoutId = setTimeout(() => {
+      if (!modalContentRef.current) {
+        console.warn("[Modal] modalContentRef.current es null después del timeout");
+        return;
+      }
+
+      modalContent = modalContentRef.current;
+      
+      // Verificar que modalContent es un elemento DOM válido
+      if (!(modalContent instanceof Element)) {
+        console.warn("[Modal] modalContentRef.current no es una instancia de Element");
+        return;
+      }
+      
+      // Verificar que querySelectorAll está disponible
+      if (typeof modalContent.querySelectorAll !== "function") {
+        console.warn("[Modal] querySelectorAll no está disponible en modalContent");
+        return;
+      }
+      
+      try {
+        const focusableElements = modalContent.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        // Focus en el primer elemento al abrir (con check defensivo)
+        if (firstFocusable && typeof firstFocusable.focus === 'function') {
+          try {
+            firstFocusable.focus();
+          } catch (error) {
+            console.warn("[Modal] Error focusing first element:", error);
+          }
         }
-      } else {
-        // Tab
-        if (document.activeElement === lastFocusable) {
-          e.preventDefault();
-          firstFocusable?.focus();
-        }
+
+        handleTabKey = (e: KeyboardEvent) => {
+          if (e.key !== "Tab") return;
+
+          if (e.shiftKey) {
+            // Shift + Tab
+            if (document.activeElement === firstFocusable) {
+              e.preventDefault();
+              lastFocusable?.focus();
+            }
+          } else {
+            // Tab
+            if (document.activeElement === lastFocusable) {
+              e.preventDefault();
+              firstFocusable?.focus();
+            }
+          }
+        };
+
+        modalContent.addEventListener("keydown", handleTabKey);
+      } catch (error) {
+        console.error("[Modal] Error en focus trap:", error);
+      }
+    }, 0);
+
+    // Cleanup function
+    return () => {
+      clearTimeout(timeoutId);
+      if (handleTabKey && modalContent) {
+        modalContent.removeEventListener("keydown", handleTabKey);
       }
     };
-
-    modalContent.addEventListener("keydown", handleTabKey);
-    return () => modalContent.removeEventListener("keydown", handleTabKey);
   }, [isOpen]);
 
   // Restaurar focus al cerrar el modal
   useEffect(() => {
+    // Verificar que estamos en el navegador
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+    
     if (!isOpen && previousActiveElementRef.current) {
-      previousActiveElementRef.current.focus();
+      try {
+        previousActiveElementRef.current.focus();
+      } catch (error) {
+        console.warn("[Modal] Error al restaurar focus:", error);
+      }
       previousActiveElementRef.current = null;
     }
   }, [isOpen]);
 
   // Cerrar con tecla ESC
   useEffect(() => {
+    // Verificar que estamos en el navegador
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+    
     if (!isOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
@@ -120,13 +179,20 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => {
+    // Verificar que estamos en el navegador
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+    
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "";
+      if (typeof document !== "undefined" && document.body) {
+        document.body.style.overflow = "";
+      }
     };
   }, [isOpen]);
 

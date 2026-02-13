@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import type { PaymentMethod, Pricing, SelectedAdditional } from "@/lib/types/order";
 import { useMiniCartPricing } from "./hooks/useMiniCartPricing";
-import { useAvailablePaymentMethods } from "@/modules/booking/hooks/useAvailablePaymentMethods";
 import { OrderSummary } from "./OrderSummary";
 import { PaymentMethods } from "./PaymentMethods";
 import { CheckoutButton } from "./CheckoutButton";
+import type { AllPaymentMethods } from "@/modules/payments/api/server/paymentsServer";
+import { isValidPaymentMethod } from "@/modules/payments/domain/constants";
 import styles from "./MiniCart.module.scss";
 
 interface MiniCartProps {
@@ -26,6 +27,7 @@ interface MiniCartProps {
   onRemoveAdditional?: (additionalId: string) => void;
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
+  allPaymentMethods: AllPaymentMethods; // Métodos de pago pre-cargados desde el servidor
 }
 
 /**
@@ -48,6 +50,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   onRemoveAdditional,
   onPaymentMethodChange,
   onSubmit,
+  allPaymentMethods,
 }) => {
   // Estado del método de pago seleccionado (puede ser undefined si no hay métodos disponibles)
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | undefined>(undefined);
@@ -61,23 +64,24 @@ export const MiniCart: React.FC<MiniCartProps> = ({
     additionals,
   });
 
-  // Debug temporal
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[MiniCart Debug]', {
-        additionalsRecibidos: additionals,
-        additionalsNormalizados: normalizedAdditionals,
-        additionalsLength: additionals?.length,
-        normalizedLength: normalizedAdditionals?.length,
-        currency: currentPricing.currencyCode,
-      });
-    }
-  }, [additionals, normalizedAdditionals, currentPricing.currencyCode]);
 
-  // Obtener métodos de pago disponibles (centralizado aquí, no en PaymentMethods)
-  const { methods: availableMethods, isLoading: isLoadingMethods, noMethodsAvailable } = useAvailablePaymentMethods(
-    currentPricing.currencyCode
-  );
+  // Filtrar métodos de pago según la moneda actual (en memoria, sin fetch)
+  const { availableMethods, isLoadingMethods, noMethodsAvailable, hasOnlinePayment } = useMemo(() => {
+    const currency = currentPricing.currencyCode as "ARS" | "USD";
+    const methodsForCurrency = allPaymentMethods[currency] || [];
+    
+    // Convertir providers a PaymentMethod type usando validación centralizada
+    const methods = methodsForCurrency
+      .map((m) => m.provider)
+      .filter((provider): provider is PaymentMethod => isValidPaymentMethod(provider));
+    
+    return {
+      availableMethods: methods,
+      isLoadingMethods: false, // Ya están cargados desde el servidor
+      noMethodsAvailable: methods.length === 0,
+      hasOnlinePayment: allPaymentMethods.hasOnlinePayment[currency] || false,
+    };
+  }, [currentPricing.currencyCode, allPaymentMethods]);
 
   // Sincronizar selectedPayment con los métodos disponibles
   useEffect(() => {

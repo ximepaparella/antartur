@@ -129,10 +129,11 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
   }
 
   // Validar formato de credenciales
-  if (apiKey.length < 10) {
+  // Payway API Keys suelen tener al menos 32 caracteres
+  if (!apiKey || apiKey.length < 20) {
     return {
       connected: false,
-      message: "La API Key parece tener un formato inválido (muy corta).",
+      message: `La API Key parece tener un formato inválido (muy corta: ${apiKey?.length || 0} caracteres). Las API Keys de Payway suelen tener al menos 32 caracteres.`,
       environment,
     };
   }
@@ -145,14 +146,15 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
     };
   }
 
-  // Payway Checkout URLs
-  const checkoutUrl = isSandbox
-    ? "https://sandbox.payway.com.ar"
-    : "https://checkout.payway.com.ar";
+  // Payway API URLs según documentación oficial
+  // Documentación: https://developers.payway.com.ar/documentation/Primerospasos
+  const apiUrl = isSandbox
+    ? "https://api-sandbox.prismamediosdepago.com"
+    : "https://api.prismamediosdepago.com";
 
   try {
-    // Intentar hacer un ping al dominio de Payway
-    const response = await fetch(checkoutUrl, {
+    // Intentar hacer un ping al dominio de Payway API
+    const response = await fetch(apiUrl, {
       method: "HEAD",
       signal: AbortSignal.timeout(5000),
     });

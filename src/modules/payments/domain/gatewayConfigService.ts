@@ -39,6 +39,8 @@ export interface PaywayCredentials {
   apiKey: string;
   merchantId: string;
   environment: "sandbox" | "production";
+  siteId?: string; // Opcional: Site ID para checkout personalizado
+  templateId?: string; // Opcional: Template ID para checkout personalizado
 }
 
 /**
@@ -160,6 +162,8 @@ export async function getPaywayCredentials(): Promise<PaywayCredentials | null> 
 
   const apiKey = process.env.PAYWAY_API_KEY;
   const merchantId = process.env.PAYWAY_MERCHANT_ID;
+  const siteId = process.env.PAYWAY_SITE_ID; // Opcional
+  const templateId = process.env.PAYWAY_TEMPLATE_ID; // Opcional
 
   if (!apiKey || !merchantId) {
     return null;
@@ -169,6 +173,8 @@ export async function getPaywayCredentials(): Promise<PaywayCredentials | null> 
     apiKey,
     merchantId,
     environment: config.isSandbox ? "sandbox" : "production",
+    ...(siteId && { siteId }), // Incluir solo si existe
+    ...(templateId && { templateId }), // Incluir solo si existe
   };
 }
 
