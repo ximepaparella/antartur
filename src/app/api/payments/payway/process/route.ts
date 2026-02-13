@@ -53,6 +53,7 @@ import { successResponse, errorResponse } from "@/lib/api/response";
 import { validateBody } from "@/lib/validation/schemas";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { logger } from "@/lib/services/logger";
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { confirmPayment } from "@/modules/orders/domain/orderService";
@@ -133,7 +134,7 @@ export const POST = withRateLimitHandler(
         lastFourDigits: data.lastFourDigits,
       },
       rawResponse: paymentResult.rawResponse
-        ? (paymentResult.rawResponse as Record<string, unknown>)
+        ? (paymentResult.rawResponse as Prisma.InputJsonValue)
         : undefined,
     };
 
