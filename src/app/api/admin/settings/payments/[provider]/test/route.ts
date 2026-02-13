@@ -146,11 +146,12 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
     };
   }
 
-  // Payway API URLs según documentación oficial
-  // Documentación: https://developers.payway.com.ar/documentation/Primerospasos
+  // Endpoints oficiales Decidir/Payway
+  // Sandbox: https://developers.decidir.com/api/v2
+  // Producción: https://ventasonline.payway.com.ar/api/v2
   const apiUrl = isSandbox
-    ? "https://api-sandbox.prismamediosdepago.com"
-    : "https://api.prismamediosdepago.com";
+    ? "https://developers.decidir.com/api/v2"
+    : "https://ventasonline.payway.com.ar/api/v2";
 
   try {
     // Intentar hacer un ping al dominio de Payway API
