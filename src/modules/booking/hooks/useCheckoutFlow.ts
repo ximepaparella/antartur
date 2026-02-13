@@ -14,6 +14,15 @@ export interface UseCheckoutFlowReturn {
   handleCheckoutComplete: (order: Order) => Promise<void>;
   isProcessing: boolean;
   error: string | null;
+  showPaywayModal: boolean;
+  paywayOrderData: {
+    orderId: string;
+    amount: number;
+    currency: string;
+    description: string;
+  } | null;
+  onPaywayPaymentSuccess: () => void;
+  onPaywayModalClose: () => void;
 }
 
 /**
@@ -24,6 +33,13 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
   const router = useRouter();
   const { initiatePayment, isRedirecting, error: paymentError } = usePaymentRedirect();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [showPaywayModal, setShowPaywayModal] = useState(false);
+  const [paywayOrderData, setPaywayOrderData] = useState<{
+    orderId: string;
+    amount: number;
+    currency: string;
+    description: string;
+  } | null>(null);
   
   // Ref para evitar stale closure en finally block
   const isRedirectingRef = useRef(isRedirecting);
@@ -78,16 +94,26 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
           if (order.paymentMethod === "transferencia") {
             // Transferencia bancaria: mostrar página de transferencia
             router.push("/checkout/transfer");
-          } else if (order.paymentMethod === "paypal" || order.paymentMethod === "payway") {
-            // PayPal o Payway: usar hook para iniciar pago y redirect
+          } else if (order.paymentMethod === "paypal") {
+            // PayPal: usar hook para iniciar pago y redirect
             await initiatePayment({
               orderId: order.orderId,
               amount: orderData.totalAmount,
               currency: orderData.currency,
-              paymentMethod: order.paymentMethod,
+              paymentMethod: "paypal",
               customerEmail: orderData.customerEmail,
               customerName: orderData.customerName,
             });
+          } else if (order.paymentMethod === "payway") {
+            // Payway: mostrar modal en lugar de redirect
+            setPaywayOrderData({
+              orderId: order.orderId,
+              amount: orderData.totalAmount,
+              currency: orderData.currency,
+              description: `Orden ${order.orderId} - ${order.tourTitle}`,
+            });
+            setShowPaywayModal(true);
+            setIsNavigating(false); // No navegar, mostrar modal
           } else {
             // Sin método de pago: redirigir a éxito con código de orden
             router.push(`/checkout/success?code=${order.orderId}`);
@@ -106,10 +132,30 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
   // Combinar estados de procesamiento
   const isProcessing = isNavigating || isRedirecting;
 
+  // Callback cuando el pago de Payway es exitoso
+  const onPaywayPaymentSuccess = useCallback(() => {
+    setShowPaywayModal(false);
+    setPaywayOrderData(null);
+    // Redirigir a página de éxito
+    if (paywayOrderData) {
+      router.push(`/checkout/success?orderId=${paywayOrderData.orderId}`);
+    }
+  }, [router, paywayOrderData]);
+
+  // Callback para cerrar el modal de Payway
+  const onPaywayModalClose = useCallback(() => {
+    setShowPaywayModal(false);
+    setPaywayOrderData(null);
+  }, []);
+
   return {
     handleCheckoutComplete,
     isProcessing,
     error: paymentError,
+    showPaywayModal,
+    paywayOrderData,
+    onPaywayPaymentSuccess,
+    onPaywayModalClose,
   };
 }
 

@@ -1,28 +1,45 @@
 /**
- * Servicio de Payway para crear transacciones de pago y obtener URLs de redirect
+ * Servicio de Payway/Decidir para procesar pagos
  * 
- * Integración: Payway Checkout (formulario hosted)
- * - El usuario es redirigido a Payway para completar el pago
+ * Integración: SDK JavaScript + API REST
+ * - El frontend usa el SDK de JavaScript para tokenizar datos de tarjeta
+ * - El backend procesa el pago usando el token via API REST
  * - No se manejan datos de tarjeta en nuestro servidor
- * - No requiere certificación PCI DSS
+ * - No requiere certificación PCI DSS completa (SAQ A-EP)
  * 
  * Documentación: https://developers.payway.com.ar/
+ * API Decidir: https://decidir.com.ar/documentacion
  */
 
 import { logger } from "@/lib/services/logger";
 import { getPaywayCredentials, isGatewayAvailable } from "../domain/gatewayConfigService";
 import crypto from "crypto";
 
-// URLs de Payway Checkout
-const PAYWAY_CHECKOUT_URL = {
-  sandbox: "https://sandbox.payway.com.ar/checkout",
-  production: "https://checkout.payway.com.ar",
+// URLs de API Decidir para procesar pagos
+// Documentación oficial: https://decidir.com.ar/documentacion
+// 
+// Ambientes disponibles:
+// - SANDBOX: https://developers.decidir.com/api/v2
+// - PRODUCCIÓN: https://live.decidir.com/api/v2
+//
+// Referencias:
+// - https://developers.payway.com.ar/documentation/Primerospasos
+// - https://decidir.com.ar/documentacion
+const DECIDIR_API_URL = {
+  sandbox: "https://developers.decidir.com/api/v2",
+  production: "https://live.decidir.com/api/v2",
 };
 
-// URLs de API Payway para consultas
+// URLs legacy para compatibilidad (deprecated - no se usan más)
+// Mantenidas solo para funciones deprecated
 const PAYWAY_API_URL = {
-  sandbox: "https://sandbox.payway.com.ar/api",
-  production: "https://api.payway.com.ar",
+  sandbox: "https://api-sandbox.prismamediosdepago.com",
+  production: "https://api.prismamediosdepago.com",
+};
+
+const PAYWAY_CHECKOUT_URL = {
+  sandbox: "https://api-sandbox.prismamediosdepago.com/checkout",
+  production: "https://api.prismamediosdepago.com/checkout",
 };
 
 export interface CreatePaywayTransactionRequest {
@@ -60,6 +77,10 @@ function generateSignature(data: string, secretKey: string): string {
 /**
  * Crea una transacción de pago en Payway Checkout y retorna la URL de redirect
  * 
+ * @deprecated Esta función ya no se usa. Payway ahora usa SDK JavaScript + API REST.
+ * El checkout hosted no existe en Payway/Decidir.
+ * Usar processPaywayPayment en su lugar.
+ * 
  * El usuario será redirigido al formulario de pago de Payway donde
  * ingresará los datos de su tarjeta de forma segura.
  */
@@ -77,7 +98,7 @@ export async function createPaywayTransaction(
     throw new Error("Payway credentials not configured. Please set PAYWAY_API_KEY and PAYWAY_MERCHANT_ID");
   }
 
-  const { apiKey, merchantId, environment } = credentials;
+  const { apiKey, merchantId, environment, siteId, templateId } = credentials;
   // Usar SITE_URL (servidor) o NEXT_PUBLIC_SITE_URL (cliente), con fallback a URL de producción actual
   const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://coderoots.tech";
   
@@ -90,6 +111,8 @@ export async function createPaywayTransaction(
     environment,
     orderId: request.orderId,
     amount: request.amount,
+    hasSiteId: !!siteId,
+    hasTemplateId: !!templateId,
   });
 
   // Generar ID único para la transacción
@@ -115,6 +138,8 @@ export async function createPaywayTransaction(
     failure_url: `${siteUrl}/checkout/payway/return?orderId=${request.orderId}&status=failure`,
     pending_url: `${siteUrl}/checkout/payway/return?orderId=${request.orderId}&status=pending`,
     cancel_url: request.cancelUrl,
+    ...(siteId && { site_id: siteId }), // Agregar site_id si está disponible
+    ...(templateId && { template_id: templateId }), // Agregar template_id si está disponible
   };
 
   // Generar firma para validación
@@ -135,6 +160,16 @@ export async function createPaywayTransaction(
     cancel_url: checkoutData.cancel_url,
     signature: signature,
   });
+  
+  // Agregar Site ID si está configurado (opcional)
+  if (siteId) {
+    params.append("site_id", siteId);
+  }
+  
+  // Agregar Template ID si está configurado (opcional)
+  if (templateId) {
+    params.append("template_id", templateId);
+  }
 
   const redirectUrl = `${checkoutBaseUrl}?${params.toString()}`;
 
@@ -153,6 +188,9 @@ export async function createPaywayTransaction(
 /**
  * Verifica el estado de un pago con Payway
  * Se llama cuando el usuario vuelve del checkout
+ * 
+ * @deprecated Esta función ya no se usa. Payway ahora usa SDK JavaScript + API REST.
+ * El checkout hosted no existe en Payway/Decidir.
  */
 export async function verifyPaywayPayment(
   transactionId: string,
@@ -247,8 +285,186 @@ export async function verifyPaywayPayment(
 }
 
 /**
+ * Procesa un pago de Payway usando un token generado por el SDK
+ * 
+ * @param token - Token generado por el SDK de JavaScript
+ * @param orderId - ID de la orden
+ * @param amount - Monto a pagar (en la moneda base, ej: 100.00 para $100)
+ * @param currency - Moneda (ARS o USD)
+ * @param bin - Primeros 6 dígitos de la tarjeta (BIN)
+ * @param lastFourDigits - Últimos 4 dígitos de la tarjeta
+ */
+export interface ProcessPaywayPaymentRequest {
+  token: string;
+  orderId: string;
+  amount: number;
+  currency: string;
+  bin: string;
+  lastFourDigits: string;
+}
+
+export interface ProcessPaywayPaymentResponse {
+  success: boolean;
+  status: "approved" | "rejected" | "pending" | "error";
+  transactionId?: string;
+  message?: string;
+  rawResponse?: unknown;
+}
+
+export async function processPaywayPayment(
+  request: ProcessPaywayPaymentRequest
+): Promise<ProcessPaywayPaymentResponse> {
+  // Verificar que el gateway esté disponible
+  const available = await isPaywayAvailable();
+  if (!available) {
+    throw new Error("Payway payment gateway is not available. Please contact support.");
+  }
+
+  const credentials = await getPaywayCredentials();
+  if (!credentials) {
+    throw new Error(
+      "Payway credentials not configured. Please set PAYWAY_API_KEY and PAYWAY_MERCHANT_ID"
+    );
+  }
+
+  const { apiKey, merchantId, environment, siteId } = credentials;
+
+  if (!siteId) {
+    throw new Error("PAYWAY_SITE_ID is required for processing payments");
+  }
+
+  // Determinar URL de API según ambiente
+  const apiUrl =
+    environment === "production" ? DECIDIR_API_URL.production : DECIDIR_API_URL.sandbox;
+
+  // Monto en centavos (Decidir usa enteros)
+  const amountInCents = Math.round(request.amount * 100);
+
+  // Generar ID único para la transacción
+  const siteTransactionId = `${request.orderId}-${Date.now()}`;
+
+  // Preparar request body según documentación de Decidir
+  const requestBody = {
+    site_transaction_id: siteTransactionId,
+    token: request.token,
+    payment_method_id: 1, // Tarjeta de crédito
+    bin: request.bin,
+    amount: amountInCents,
+    currency: request.currency,
+    installments: 1, // Pago en un solo pago
+    payment_type: "single",
+    sub_payments: [],
+  };
+
+  logger.info("Processing Payway payment", {
+    environment,
+    orderId: request.orderId,
+    siteTransactionId,
+    amount: request.amount,
+    currency: request.currency,
+    hasToken: !!request.token,
+  });
+
+  try {
+    const response = await fetch(`${apiUrl}/payments`, {
+      method: "POST",
+      headers: {
+        "apikey": apiKey, // Decidir usa "apikey" en lugar de "Authorization"
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    const responseData = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      // Manejar errores de la API
+      const errorMessage =
+        responseData.error?.reason?.description ||
+        responseData.error?.reason?.additional_description ||
+        responseData.message ||
+        `Error al procesar el pago: ${response.statusText}`;
+
+      logger.error("Payway payment processing failed", {
+        status: response.status,
+        orderId: request.orderId,
+        error: errorMessage,
+        responseData,
+      });
+
+      return {
+        success: false,
+        status: "error",
+        message: errorMessage,
+        rawResponse: responseData,
+      };
+    }
+
+    // Mapear estado de Decidir a nuestros estados
+    const decidirStatus = responseData.status?.toLowerCase();
+    let status: "approved" | "rejected" | "pending" | "error";
+
+    switch (decidirStatus) {
+      case "approved":
+      case "aprobado":
+        status = "approved";
+        break;
+      case "rejected":
+      case "rechazado":
+      case "declined":
+        status = "rejected";
+        break;
+      case "pending":
+      case "pendiente":
+      case "in_process":
+        status = "pending";
+        break;
+      default:
+        status = "error";
+    }
+
+    logger.info("Payway payment processed", {
+      orderId: request.orderId,
+      transactionId: responseData.id,
+      status,
+      decidirStatus,
+    });
+
+    return {
+      success: status === "approved",
+      status,
+      transactionId: responseData.id?.toString(),
+      message:
+        status === "approved"
+          ? "Pago aprobado exitosamente"
+          : status === "rejected"
+          ? responseData.status_details?.reason?.description ||
+            "El pago fue rechazado"
+          : status === "pending"
+          ? "El pago está pendiente de confirmación"
+          : "Estado desconocido del pago",
+      rawResponse: responseData,
+    };
+  } catch (error) {
+    logger.error("Error processing Payway payment", error, {
+      orderId: request.orderId,
+    });
+
+    return {
+      success: false,
+      status: "error",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al procesar el pago",
+    };
+  }
+}
+
+/**
  * Obtiene el estado de una transacción de Payway via API
  * (Para consultas posteriores o verificación)
+ * @deprecated Esta función puede no funcionar con la nueva API de Decidir
  */
 export async function getPaywayTransactionStatus(paywayTransactionId: string): Promise<{
   status: string;
@@ -263,22 +479,19 @@ export async function getPaywayTransactionStatus(paywayTransactionId: string): P
 
   const { apiKey, merchantId, environment } = credentials;
   const apiUrl = environment === "production" 
-    ? PAYWAY_API_URL.production 
-    : PAYWAY_API_URL.sandbox;
+    ? DECIDIR_API_URL.production 
+    : DECIDIR_API_URL.sandbox;
 
   try {
-    const response = await fetch(`${apiUrl}/transactions/${paywayTransactionId}`, {
+    const response = await fetch(`${apiUrl}/payments/${paywayTransactionId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "X-Merchant-Id": merchantId,
+        "apikey": apiKey,
         "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
-      // Si la API no existe o falla, retornar estado desconocido
-      // (algunas integraciones simples no tienen API de consulta)
       if (response.status === 404) {
         return {
           status: "not_found",
@@ -294,13 +507,12 @@ export async function getPaywayTransactionStatus(paywayTransactionId: string): P
 
     return {
       status: result.status || "unknown",
-      orderId: result.order_id || paywayTransactionId.split("-")[0],
+      orderId: result.site_transaction_id?.split("-")[0] || paywayTransactionId.split("-")[0],
       amount: result.amount ? result.amount / 100 : undefined,
       currency: result.currency || "ARS",
     };
   } catch (error) {
     logger.error("Error getting Payway transaction status", error);
-    // No lanzar error, retornar estado desconocido
     return {
       status: "error",
       orderId: paywayTransactionId.split("-")[0],

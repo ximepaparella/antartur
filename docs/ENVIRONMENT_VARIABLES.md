@@ -117,13 +117,26 @@ PAYPAL_MODE=sandbox|live
 
 ### Payway
 ```env
-PAYWAY_API_KEY=tu_payway_api_key
+# Credenciales del Backend (API Privada)
+PAYWAY_API_KEY=tu_payway_api_key_privada
 PAYWAY_MERCHANT_ID=tu_payway_merchant_id
+PAYWAY_SITE_ID=tu_payway_site_id
+PAYWAY_TEMPLATE_ID=tu_payway_template_id
 PAYWAY_ENVIRONMENT=sandbox|production
+
+# Credenciales del Frontend (API Pública - para SDK JavaScript)
+NEXT_PUBLIC_PAYWAY_PUBLIC_KEY=tu_payway_api_key_publica
+NEXT_PUBLIC_PAYWAY_ENVIRONMENT=sandbox|production
 ```
 **Descripción:** Credenciales de Payway API.  
 **Uso:** Solo disponible cuando currency es ARS.  
-**PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
+**PAYWAY_ENVIRONMENT / NEXT_PUBLIC_PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
+**Nota:** 
+- `PAYWAY_API_KEY` es la API Key **Privada** (solo backend, nunca exponer al cliente)
+- `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY` es la API Key **Pública** (frontend, para tokenización con SDK)
+- Ambas deben estar configuradas para que Payway funcione correctamente
+- `PAYWAY_SITE_ID` es requerido para procesar pagos
+- `PAYWAY_TEMPLATE_ID` es opcional, para personalización del checkout
 **Documentación:** https://developers.payway.com.ar/documentation
 
 ## Variables de Cron Job

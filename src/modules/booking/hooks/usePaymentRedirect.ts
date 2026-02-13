@@ -39,7 +39,7 @@ export interface PaymentRedirectOptions {
   orderId: string;
   amount: number;
   currency: string;
-  paymentMethod: "paypal" | "payway";
+  paymentMethod: "paypal"; // Payway ahora se maneja con modal, no redirect
   customerEmail?: string;
   customerName?: string;
 }
@@ -73,15 +73,6 @@ export function usePaymentRedirect(): UsePaymentRedirectReturn {
             orderId: options.orderId,
             amount: options.amount,
             currency: options.currency,
-          };
-        } else if (options.paymentMethod === "payway") {
-          endpoint = "/api/payments/payway/create";
-          body = {
-            orderId: options.orderId,
-            amount: options.amount,
-            currency: options.currency,
-            customerEmail: options.customerEmail,
-            customerName: options.customerName,
           };
         } else {
           throw new Error(`Método de pago no soportado: ${options.paymentMethod}`);

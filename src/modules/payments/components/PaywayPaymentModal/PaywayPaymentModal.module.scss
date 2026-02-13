@@ -1,0 +1,58 @@
+.paymentModal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.orderSummary {
+  padding: 1rem;
+  background-color: var(--color-bg-secondary, #f8f9fa);
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #e0e0e0);
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.orderId {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #666);
+  margin: 0;
+}
+
+.orderAmount {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+  margin: 0;
+}
+
+.orderDescription {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #666);
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.errorContainer {
+  margin-bottom: 0.5rem;
+}
+
+.cardFormContainer {
+  flex: 1;
+}
+
+.securityInfo {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e0e0e0);
+}
+
+.securityText {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #666);
+  text-align: center;
+  margin: 0;
+}

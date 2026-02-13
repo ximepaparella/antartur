@@ -33,7 +33,7 @@ export const PaymentMethodOption: React.FC<PaymentMethodOptionProps> = ({
       case "paypal":
         return "PayPal";
       case "payway":
-        return "Payway Payment";
+        return "Pagar con Payway";
       default:
         return method;
     }

@@ -35,6 +35,15 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://antartur:antartur_dev_password@postgres:5432/antartur
       - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      # Payway Sandbox Credentials
+      - PAYWAY_API_KEY=1WLn54DegiBOPpM0K40b5bTMuFqxv7ld
+      - PAYWAY_MERCHANT_ID=93003147
+      - PAYWAY_ENVIRONMENT=sandbox
+      - PAYWAY_SITE_ID=93003147
+      - PAYWAY_TEMPLATE_ID=42737
+      # Payway Public Key for Frontend SDK
+      - NEXT_PUBLIC_PAYWAY_PUBLIC_KEY=H6Myip546bxogX2oqHxLSYZzCrxwS9ff
+      - NEXT_PUBLIC_PAYWAY_ENVIRONMENT=sandbox
     volumes:
       - .:/app
       - /app/node_modules
