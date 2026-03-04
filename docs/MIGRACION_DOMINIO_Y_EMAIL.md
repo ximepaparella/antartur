@@ -184,7 +184,7 @@ El SSL del WordPress viejo está en el servidor viejo. En el **nuevo** VPS tené
      ```
    - Luego recargar nginx para que use los certificados nuevos.
 
-Si el script o el compose están pensados para “antartur.tur.ar”, verificá la config de nginx y el comando de Certbot en el repo.
+Si el script o el compose están pensados para `antartur.tur.ar`, verificá la config de nginx y el comando de Certbot en el repo. Si vas a usar **otro dominio**, asegurate de actualizar tanto el `server_name` de nginx como el comando de Certbot para que apunten a tu nuevo dominio (no a `antartur.tur.ar`).
 
 ---
 

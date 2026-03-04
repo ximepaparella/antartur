@@ -103,7 +103,19 @@ docker compose -f docker-compose.prod.yml run --rm app npx prisma db seed
 | `CRON_SECRET` | Secret para endpoints cron | (generar con openssl) |
 
 **PostgreSQL: contraseña segura**  
-Sí, conviene usar una contraseña fuerte en producción. Generala con `openssl rand -base64 24` y ponela en `POSTGRES_PASSWORD` del `.env`. El `docker-compose.prod.yml` arma `DATABASE_URL` con esa variable, así que no hace falta tocar la base ya creada: solo asegurate de que en el `.env` esté la misma contraseña y reiniciá los servicios (`docker compose -f docker-compose.prod.yml up -d`). Si en algún momento cambiás la contraseña, actualizá `POSTGRES_PASSWORD` en el `.env` y reiniciá postgres y app.
+Sí, conviene usar una contraseña fuerte en producción. Generala con `openssl rand -base64 24` y **cambiá primero la contraseña dentro de PostgreSQL** y recién después actualizá el `.env`:
+
+```bash
+docker compose -f docker-compose.prod.yml exec -T postgres psql -U antartur -d antartur -c "ALTER USER antartur PASSWORD 'NUEVA_PASSWORD_FUERTE';"
+```
+
+Luego actualizá `POSTGRES_PASSWORD` en el `.env` (y `DATABASE_URL` si la armás a mano) y reiniciá los servicios:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+
+**Importante:** cambiar solo `POSTGRES_PASSWORD` en el `.env` **no** modifica la contraseña del usuario ya creado en PostgreSQL; siempre hay que aplicar el `ALTER USER` primero sobre la base que ya existe.
 
 ### Email (elegir una opción)
 

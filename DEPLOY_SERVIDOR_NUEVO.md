@@ -220,10 +220,18 @@ docker compose -f docker-compose.prod.yml run --rm app npx prisma db seed
 
 Si restauraste un dump que ya tiene usuarios, el admin puede tener la contraseña vieja. Para actualizarla:
 
-```bash
-# Ejecutar el seed (actualiza el usuario admin con ADMIN_PASSWORD del .env)
-docker compose -f docker-compose.prod.yml run --rm -e ADMIN_EMAIL=admin@antartur.tur.ar -e ADMIN_PASSWORD=TU_NUEVA_PASSWORD app npx prisma db seed
-```
+1. Configurá en el `.env` productivo las variables:
+
+   ```env
+   ADMIN_EMAIL=admin@antartur.tur.ar
+   ADMIN_PASSWORD=TU_NUEVA_PASSWORD_FUERTE
+   ```
+
+2. Ejecutá el seed (usa ADMIN_EMAIL y ADMIN_PASSWORD del `.env`):
+
+   ```bash
+   docker compose -f docker-compose.prod.yml run --rm app npx prisma db seed
+   ```
 
 ---
 
@@ -270,7 +278,7 @@ Deberías ver `antartur_postgres`, `antartur_app`, `antartur_nginx` y `antartur_
 
 ## Paso 9: Migraciones (si no las corriste antes)
 
-Si importaste un dump de producción, el schema ya está. Si hiciste instalación limpia, ya corriste `prisma migrate deploy` en el paso 5.4.
+Si importaste un dump de producción, el schema ya está. Si hiciste instalación limpia, ya corriste `prisma migrate deploy` en el paso 5.5.
 
 Para estar seguros, podés ejecutar:
 
@@ -318,12 +326,13 @@ Agregar (reemplazá `TU_CRON_SECRET` por el valor de `CRON_SECRET` del `.env`):
 | 2 | Clonar repo en `/var/www/antartur` |
 | 3 | Crear `.env` con secrets generados y variables de producción |
 | 4 | Verificar DNS (antartur.tur.ar → IP del servidor) |
-| 5 | Levantar postgres, importar dump (o migrate + seed si es nuevo) |
-| 6 | Actualizar contraseña del admin si importaste datos |
-| 7 | Ejecutar `sudo ./scripts/init-ssl.sh` |
-| 8 | `docker compose -f docker-compose.prod.yml up -d --build` |
-| 9 | Verificar sitio y admin |
-| 10 | Configurar crontab para cron jobs |
+| 5 | Levantar Postgres e importar dump de producción (o preparar DB nueva) |
+| 6 | Cambiar contraseña del admin si importaste datos |
+| 7 | Obtener certificado SSL (`sudo ./scripts/init-ssl.sh`) |
+| 8 | Levantar todos los servicios (`docker compose -f docker-compose.prod.yml up -d --build`) |
+| 9 | Ejecutar migraciones si no las corriste antes (`prisma migrate deploy`) |
+| 10 | Verificar sitio público y panel admin |
+| 11 | Configurar crontab para cron jobs |
 
 ---
 
