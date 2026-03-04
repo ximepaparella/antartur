@@ -58,7 +58,7 @@ docker-compose logs -f app
 **Services will be available:**
 - Next.js: http://localhost:3000
 - PostgreSQL: localhost:5432
-- pgAdmin: http://localhost:5050 (admin@antartur.tur.ar / (password del seed))
+- pgAdmin: http://localhost:5050 — por defecto `PGADMIN_DEFAULT_EMAIL` (admin@antartur.tur.ar) / `PGADMIN_DEFAULT_PASSWORD` (admin). Podés override en [docker-compose.yml](docker-compose.yml) o .env.
 
 ### 4. Initialize Database
 

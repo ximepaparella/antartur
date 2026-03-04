@@ -259,11 +259,13 @@ El sistema requiere dos cronjobs para:
 Si Don Web tiene panel de cronjobs, configura:
 
 **Cronjob 1: Cancelar órdenes expiradas**
-- URL: `https://antartur.tur.ar/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET`
+- URL: `https://antartur.tur.ar/api/cron/cancel-expired-orders` (sin query param)
+- Autenticación: header `Authorization: Bearer <CRON_SECRET>` (el valor de `CRON_SECRET` del .env)
 - Frecuencia: `0 * * * *` (cada hora)
 
 **Cronjob 2: Reintentar notificaciones**
-- URL: `https://antartur.tur.ar/api/cron/retry-notifications?secret=TU_CRON_SECRET`
+- URL: `https://antartur.tur.ar/api/cron/retry-notifications` (sin query param)
+- Autenticación: header `Authorization: Bearer <CRON_SECRET>`
 - Frecuencia: `*/15 * * * *` (cada 15 minutos)
 
 ### Con crontab en el VPS
@@ -275,12 +277,14 @@ crontab -e
 Agregar:
 
 ```cron
-# Cancelar órdenes expiradas (cada hora)
-0 * * * * curl -s "https://antartur.tur.ar/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET" > /dev/null
+# Cancelar órdenes expiradas (cada hora). Usar header Authorization: Bearer CRON_SECRET
+0 * * * * curl -s -H "Authorization: Bearer $CRON_SECRET" "https://antartur.tur.ar/api/cron/cancel-expired-orders" > /dev/null
 
 # Reintentar notificaciones fallidas (cada 15 minutos)
-*/15 * * * * curl -s "https://antartur.tur.ar/api/cron/retry-notifications?secret=TU_CRON_SECRET" > /dev/null
+*/15 * * * * curl -s -H "Authorization: Bearer $CRON_SECRET" "https://antartur.tur.ar/api/cron/retry-notifications" > /dev/null
 ```
+
+(Definí `CRON_SECRET` en el .env o exportalo en el crontab.)
 
 ## Renovación de Certificados SSL
 

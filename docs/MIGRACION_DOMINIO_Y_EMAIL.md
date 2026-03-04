@@ -170,7 +170,7 @@ El SSL del WordPress viejo está en el servidor viejo. En el **nuevo** VPS tené
    - Asegurate de que en el **.env** (o en la config que use docker-compose) tengas:
      - `SITE_URL=https://antartur.tur.ar`  
      - (y si usás `NEXT_PUBLIC_SITE_URL`, también `https://antartur.tur.ar`).
-   - Que **nginx** (o el proxy que use tu Docker) esté configurado para el **dominio** `antartur.tur.ar` El repo incluye nginx y Certbot para antartur.tur.ar. Si tu script o compose usa un “dominio” para Certbot, cambialo a antartur.tur.ar.
+   - Que **nginx** (o el proxy que use tu Docker) esté configurado para el **dominio** `antartur.tur.ar`. El repo incluye nginx y Certbot para antartur.tur.ar; si tu script o compose usa otro dominio para Certbot, cambialo a antartur.tur.ar.
 
 2. **Solo cuando** el DNS de antartur.tur.ar ya apunte a la IP del nuevo VPS:
    - Ejecutá el script de SSL que usás (ej. el de la doc de deploy):

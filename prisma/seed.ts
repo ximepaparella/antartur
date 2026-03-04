@@ -136,7 +136,12 @@ async function main() {
   console.log("Creating admin user...");
 
   // Usuario admin: en producción usar siempre ADMIN_EMAIL y ADMIN_PASSWORD desde .env
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@antartur.tur.ar";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail || adminEmail.length < 5) {
+    throw new Error(
+      "ADMIN_EMAIL must be set when running seed (e.g. admin@antartur.tur.ar)."
+    );
+  }
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword || adminPassword.length < 8) {
     throw new Error(
