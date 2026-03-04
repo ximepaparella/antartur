@@ -92,7 +92,7 @@ export const POST = withRateLimitHandler("write", withControllerErrorHandler(asy
 
   // Crear orden en PayPal
   // Usar SITE_URL (servidor) o NEXT_PUBLIC_SITE_URL (cliente), con fallback a URL de producción actual
-  const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://coderoots.tech";
+  const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://antartur.tur.ar";
   const returnUrl = `${siteUrl}/checkout/paypal/return?orderId=${data.orderId}`;
   const cancelUrl = `${siteUrl}/checkout/payment-error?orderId=${data.orderId}&reason=cancelled`;
 

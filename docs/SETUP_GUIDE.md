@@ -119,7 +119,7 @@ Esto abrirá `http://localhost:5555` donde puedes ver las tablas creadas.
 
 1. Abre `http://localhost:5050`
 2. Login:
-   - Email: `admin@antartur.com`
+   - Email: `admin@antartur.tur.ar`
    - Password: `admin`
 3. Click derecho en "Servers" → "Register" → "Server"
 4. **General tab:**

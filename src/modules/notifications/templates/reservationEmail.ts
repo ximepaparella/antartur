@@ -35,7 +35,7 @@ export interface ReservationEmailData {
 }
 
 export function generateReservationEmailHTML(data: ReservationEmailData): string {
-  const logoUrl = "https://coderoots.tech/_next/image?url=%2Fimages%2Flogo-color-2.svg&w=384&q=75";
+  const logoUrl = getSiteUrl() + "/images/logo-color-2.svg";
   const primaryColor = "#24384d"; // Azul primario de Antartur
   const currencySymbol = data.currency === "USD" ? "$" : "$";
   const formattedAmount = `${currencySymbol} ${data.totalAmount.toLocaleString("es-AR", {

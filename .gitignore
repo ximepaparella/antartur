@@ -106,5 +106,12 @@ Desktop.ini
 logs/
 *.log
 
-# Optional: Uncomment if you want to ignore docs during development
-# /docs
+# Documentation and data that could expose internal info
+docs/
+postman/
+
+# Exports, dumps and collections (may contain URLs, tokens, sample data)
+export/
+dumps/
+*.postman_collection.json
+*.postman_environment.json

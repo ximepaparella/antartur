@@ -18,9 +18,9 @@ http {
     server {
         listen 80;
         listen [::]:80;
-        server_name coderoots.tech www.coderoots.tech;
+        server_name antartur.tur.ar www.antartur.tur.ar;
 
-        # Let's Encrypt ACME challenge
+        # Let's Encrypt ACME challenge (webroot under /var/www)
         location /.well-known/acme-challenge/ {
             root /var/www/certbot;
         }

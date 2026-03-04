@@ -31,10 +31,10 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER:-antartur}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-antartur}
       # Site URL: SITE_URL para servidor, NEXT_PUBLIC_SITE_URL para cliente
-      - SITE_URL=${SITE_URL:-https://coderoots.tech}
-      - NEXT_PUBLIC_SITE_URL=${SITE_URL:-https://coderoots.tech}
+      - SITE_URL=${SITE_URL:-https://antartur.tur.ar}
+      - NEXT_PUBLIC_SITE_URL=${SITE_URL:-https://antartur.tur.ar}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - NEXTAUTH_URL=${SITE_URL:-https://coderoots.tech}
+      - NEXTAUTH_URL=${SITE_URL:-https://antartur.tur.ar}
       # Email configuration
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT:-587}
@@ -76,8 +76,8 @@ services:
       - BANK_ALIAS=${BANK_ALIAS}
       # Notifications
       - NOTIFICATION_DRY_RUN=${NOTIFICATION_DRY_RUN:-false}
-      # JWT Authentication
-      - JWT_SECRET=Psj73SF2VuT67xVs8zYhwYcjZQEsX5i/UK6h5ZxT0R8=
+      # JWT Authentication (JWT_SECRET must be set in .env - never commit a real secret)
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET must be set in .env}
       - JWT_ACCESS_EXPIRY=${JWT_ACCESS_EXPIRY:-15m}
       - JWT_REFRESH_EXPIRY=${JWT_REFRESH_EXPIRY:-7d}
     volumes:

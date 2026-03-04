@@ -8,16 +8,16 @@
 #
 # Prerequisites:
 # - Docker and Docker Compose installed
-# - DNS pointing to this server (coderoots.tech and www.coderoots.tech)
+# - DNS pointing to this server (antartur.tur.ar and www.antartur.tur.ar)
 # - Port 80 open and accessible from the internet
 # =============================================================================
 
 set -e
 
 # Configuration
-DOMAIN="coderoots.tech"
-DOMAIN_WWW="www.coderoots.tech"
-EMAIL="${SSL_EMAIL:-admin@coderoots.tech}"  # Email for Let's Encrypt notifications
+DOMAIN="antartur.tur.ar"
+DOMAIN_WWW="www.antartur.tur.ar"
+EMAIL="${SSL_EMAIL:-admin@antartur.tur.ar}"  # Email for Let's Encrypt notifications
 STAGING="${SSL_STAGING:-0}"  # Set to 1 to use staging (for testing)
 
 # Colors for output

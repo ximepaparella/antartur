@@ -130,10 +130,10 @@ async function testPaywayConnection(isSandbox: boolean): Promise<{
 
   // Validar formato de credenciales
   // Payway API Keys suelen tener al menos 32 caracteres
-  if (!apiKey || apiKey.length < 20) {
+  if (!apiKey || apiKey.length < 32) {
     return {
       connected: false,
-      message: `La API Key parece tener un formato inválido (muy corta: ${apiKey?.length || 0} caracteres). Las API Keys de Payway suelen tener al menos 32 caracteres.`,
+      message: "La API Key parece tener un formato inválido. Las API Keys de Payway suelen tener al menos 32 caracteres.",
       environment,
     };
   }

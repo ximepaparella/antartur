@@ -135,16 +135,28 @@ async function main() {
   // 4. Crear usuario administrador
   console.log("Creating admin user...");
 
-  const adminPasswordHash = await hashPassword("admin123");
-  
+  // Usuario admin: en producción usar siempre ADMIN_EMAIL y ADMIN_PASSWORD desde .env
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail || adminEmail.length < 5) {
+    throw new Error(
+      "ADMIN_EMAIL must be set when running seed (e.g. admin@antartur.tur.ar)."
+    );
+  }
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword || adminPassword.length < 8) {
+    throw new Error(
+      "ADMIN_PASSWORD must be set when running seed (min 8 chars). Do not commit real passwords in code."
+    );
+  }
+  const adminPasswordHash = await hashPassword(adminPassword);
+
   const adminUser = await prisma.user.upsert({
-    where: { email: "admin@antartur.com" },
+    where: { email: adminEmail },
     update: {
-      // Actualizar password si el usuario ya existe
       passwordHash: adminPasswordHash,
     },
     create: {
-      email: "admin@antartur.com",
+      email: adminEmail,
       passwordHash: adminPasswordHash,
       name: "Administrador",
       role: "ADMIN",

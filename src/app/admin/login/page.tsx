@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="admin@antartur.com"
+            placeholder="admin@antartur.tur.ar"
             disabled={isLoading}
             autoComplete="email"
           />

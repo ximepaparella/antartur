@@ -16,11 +16,6 @@ La variable `SITE_URL` es **crítica** para el correcto funcionamiento de los pa
 
 2. **Agregar la variable `SITE_URL`:**
    ```env
-   SITE_URL=https://coderoots.tech
-   ```
-   
-   **Nota:** Cuando cambien a `antartur.tur.ar`, actualizar a:
-   ```env
    SITE_URL=https://antartur.tur.ar
    ```
 
@@ -35,7 +30,7 @@ La variable `SITE_URL` es **crítica** para el correcto funcionamiento de los pa
 - `SITE_URL` se usa en el **servidor** (API routes) para construir URLs de retorno de PayPal/Payway
 - `NEXT_PUBLIC_SITE_URL` se usa en el **cliente** (React components) y se expone al navegador
 - Ambas se configuran desde la misma variable `SITE_URL` en el `.env`
-- El fallback en `docker-compose.prod.yml` es `https://coderoots.tech`
+- El fallback en `docker-compose.prod.yml` es `https://antartur.tur.ar`
 
 #### Verificación después del deploy
 
@@ -46,8 +41,8 @@ La variable `SITE_URL` es **crítica** para el correcto funcionamiento de los pa
    
    Deberías ver:
    ```
-   SITE_URL=https://coderoots.tech
-   NEXT_PUBLIC_SITE_URL=https://coderoots.tech
+   SITE_URL=https://antartur.tur.ar
+   NEXT_PUBLIC_SITE_URL=https://antartur.tur.ar
    ```
 
 2. **Verificar en los logs que las URLs se construyen correctamente:**
@@ -58,33 +53,20 @@ La variable `SITE_URL` es **crítica** para el correcto funcionamiento de los pa
 3. **Probar un pago de prueba:**
    - Crear una orden de prueba
    - Iniciar pago con PayPal
-   - Verificar que la URL de retorno sea `https://coderoots.tech/checkout/paypal/return?orderId=...`
+   - Verificar que la URL de retorno sea `https://antartur.tur.ar/checkout/paypal/return?orderId=...`
    - **NO** debería ser `http://localhost:3000/...`
 
-## Cambio de URL de Producción
+## URL de producción
 
-Cuando cambien de `coderoots.tech` a `antartur.tur.ar`:
+El dominio de producción es **antartur.tur.ar**. Asegurate de tener en el servidor:
 
-1. **Actualizar el archivo `.env` en el servidor:**
-   ```env
-   SITE_URL=https://antartur.tur.ar
-   ```
+- `SITE_URL=https://antartur.tur.ar` en el `.env`
+- Nginx y Certbot configurados para `antartur.tur.ar` (ver `docker/nginx.conf` y `scripts/init-ssl.sh`)
 
-2. **Actualizar el fallback en `docker-compose.prod.yml`** (opcional, pero recomendado):
-   ```yaml
-   - SITE_URL=${SITE_URL:-https://antartur.tur.ar}
-   - NEXT_PUBLIC_SITE_URL=${SITE_URL:-https://antartur.tur.ar}
-   ```
-
-3. **Reconstruir y reiniciar:**
-   ```bash
-   docker compose -f docker-compose.prod.yml up -d --build
-   ```
-
-4. **Verificar:**
-   ```bash
-   docker compose -f docker-compose.prod.yml exec app env | grep SITE_URL
-   ```
+Para verificar:
+```bash
+docker compose -f docker-compose.prod.yml exec app env | grep SITE_URL
+```
 
 ## Troubleshooting
 

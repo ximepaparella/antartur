@@ -1547,7 +1547,7 @@ services:
     ports:
       - "5050:80"
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@antartur.com
+      - PGADMIN_DEFAULT_EMAIL=admin@antartur.tur.ar
       - PGADMIN_DEFAULT_PASSWORD=admin
 
 volumes:

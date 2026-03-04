@@ -13,14 +13,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
+  // Durante el build de Next.js (page data collection) DATABASE_URL puede no estar definida.
+  // Prisma requiere una URL válida en el constructor; usamos un placeholder solo para el build.
+  const url =
+    process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
   return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-    // Evitar conexión automática durante inicialización
-    // La conexión se establecerá cuando se ejecute la primera query
     datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
+      db: { url },
     },
   });
 }
