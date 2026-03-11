@@ -3,9 +3,19 @@ import { FooterSection } from "@/components/common/FooterSection/FooterSection";
 import { ContactItem } from "@/components/common/ContactItem/ContactItem";
 import { SocialIcon } from "@/components/common/SocialIcon/SocialIcon";
 import footerData from "@/modules/layout/components/Footer/footerdata.json";
+import { getSiteSettings } from "@/modules/settings/repository";
 import styles from "./ContactInfo.module.scss";
 
-export const ContactInfo: React.FC = () => {
+export const ContactInfo: React.FC = async () => {
+  const settings = await getSiteSettings();
+
+  const emailText = settings.email || "agencias@antartur.tur.ar";
+  const emailHref = `mailto:${emailText}`;
+
+  const phoneText = settings.phone || "+54 2901611338";
+  const phoneHref = `tel:${phoneText.replace(/\s+/g, "")}`;
+
+  const locationText = settings.address || "Juan Manuel de Rosas 184";
   return (
     <div className={styles.contactInfo}>
       <FooterSection 
@@ -17,20 +27,20 @@ export const ContactInfo: React.FC = () => {
         <address className={styles.address}>
           <ContactItem
             icon="email"
-            text="agencias@antartur.tur.ar"
-            href="mailto:agencias@antartur.tur.ar"
-            ariaLabel="Enviar correo electrónico a agencias@antartur.tur.ar"
+            text={emailText}
+            href={emailHref}
+            ariaLabel="Enviar correo electrónico"
           />
           <ContactItem
             icon="phone"
-            text="+54 2901611338"
-            href="tel:+542901611338"
-            ariaLabel="Llamar al teléfono +54 2901611338"
+            text={phoneText}
+            href={phoneHref}
+            ariaLabel="Llamar por teléfono"
           />
           <ContactItem
             icon="location"
-            text="Juan Manuel de Rosas 184"
-            ariaLabel="Dirección: Juan Manuel de Rosas 184"
+            text={locationText}
+            ariaLabel="Dirección"
           />
         </address>
       </FooterSection>

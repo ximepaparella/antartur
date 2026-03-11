@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FooterSection } from "@/components/common/FooterSection/FooterSection";
 import { ContactItem } from "@/components/common/ContactItem/ContactItem";
@@ -5,9 +7,26 @@ import { SocialIcon } from "@/components/common/SocialIcon/SocialIcon";
 import { Badge } from "@/components/common/Badge/Badge";
 import { WhatsAppButton } from "@/components/common/WhatsAppButton/WhatsAppButton";
 import footerData from "./footerdata.json";
+import type { SiteSettings } from "@/modules/settings/types";
 import styles from "./Footer.module.scss";
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  settings: SiteSettings;
+}
+
+export const Footer: React.FC<FooterProps> = ({ settings }) => {
+
+  const emailText = settings.email || footerData.contacto.address.email.text;
+  const emailHref =
+    settings.email ? `mailto:${settings.email}` : footerData.contacto.address.email.href;
+
+  const phoneText = settings.phone || footerData.contacto.address.phone.text;
+  const phoneHref =
+    settings.phone
+      ? `tel:${settings.phone.replace(/\s+/g, "")}`
+      : footerData.contacto.address.phone.href;
+
+         const locationText = settings.address || footerData.contacto.address.location.text;
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -49,8 +68,8 @@ export const Footer: React.FC = () => {
                   <li role="listitem">
                     <ContactItem
                       icon="email"
-                      text={footerData.contacto.address.email.text}
-                      href={footerData.contacto.address.email.href}
+                      text={emailText}
+                      href={emailHref}
                       ariaLabel={footerData.contacto.address.email.ariaLabel}
                       className={styles.contactItem}
                     />
@@ -58,8 +77,8 @@ export const Footer: React.FC = () => {
                   <li role="listitem">
                     <ContactItem
                       icon="phone"
-                      text={footerData.contacto.address.phone.text}
-                      href={footerData.contacto.address.phone.href}
+                      text={phoneText}
+                      href={phoneHref}
                       ariaLabel={footerData.contacto.address.phone.ariaLabel}
                       className={styles.contactItem}
                     />
@@ -67,7 +86,7 @@ export const Footer: React.FC = () => {
                   <li role="listitem">
                     <ContactItem
                       icon="location"
-                      text={footerData.contacto.address.location.text}
+                      text={locationText}
                       href={footerData.contacto.address.location.href}
                       ariaLabel={footerData.contacto.address.location.ariaLabel}
                       className={styles.contactItem}

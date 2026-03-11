@@ -7,6 +7,7 @@ import { Banner, BannerText } from "@/modules/ui/components/Banner";
 import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
 import { getToursServer } from "@/modules/tours/api/server/toursServer";
 import { toTourCardData } from "@/lib/adapters/tourAdapter";
+import { getSiteSettings } from "@/modules/settings/repository";
 
 // Forzar renderizado dinámico ya que depende de datos de la base de datos
 export const dynamic = 'force-dynamic';
@@ -49,20 +50,37 @@ export default async function Home() {
     // Las páginas mostrarán grids vacíos en lugar de fallar completamente
   }
 
+  const settings = await getSiteSettings();
+
+  const showSummerFirst =
+    settings.homePrimarySeason === "SUMMER" ||
+    (settings.homePrimarySeason === "AUTO" &&
+      (new Date().getMonth() >= 9 || new Date().getMonth() <= 2)); // aproximadamente temporada de verano
+
   return (
     <>
       <Hero variant="home" pageKey="home" />
       <main className="mainContainer">
-        <Heading
-          iconName="map-route"
-          title="ELEGÍ TU AVENTURA"
-        />
-        <ToursGrid tours={summerTours} category="summer" />
-        <Heading
-          title="EXCURSIONES DE INVIERNO"
-          paragraph="En antartur tenemos excursiones para todas las temporadas del año, pudiendo así disfrutar de diversas aventuras según la época del año."
-        />
-        <ToursGrid tours={winterTours} category="winter" />
+        <Heading iconName="map-route" title="ELEGÍ TU AVENTURA" />
+        {showSummerFirst ? (
+          <>
+            <ToursGrid tours={summerTours} category="summer" />
+            <Heading
+              title="EXCURSIONES DE INVIERNO"
+              paragraph="En antartur tenemos excursiones para todas las temporadas del año, pudiendo así disfrutar de diversas aventuras según la época del año."
+            />
+            <ToursGrid tours={winterTours} category="winter" />
+          </>
+        ) : (
+          <>
+            <ToursGrid tours={winterTours} category="winter" />
+            <Heading
+              title="EXCURSIONES DE VERANO"
+              paragraph="En antartur tenemos excursiones para todas las temporadas del año, pudiendo así disfrutar de diversas aventuras según la época del año."
+            />
+            <ToursGrid tours={summerTours} category="summer" />
+          </>
+        )}
       </main>
       <Banner backgroundImage="/images/banners/hero-home.jpg">
         <BannerText

@@ -69,6 +69,12 @@ enum ChildPriceType {
   ADULT_PRICE
 }
 
+enum HomePrimarySeason {
+  SUMMER
+  WINTER
+  AUTO
+}
+
 // ============================================
 // MODELS
 // ============================================
@@ -558,3 +564,33 @@ model BankTransfer {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+// ============================================
+// SITE SETTINGS
+// ============================================
+
+model SiteSettings {
+  id                String            @id @default("global")
+  homePrimarySeason HomePrimarySeason @default(SUMMER)
+
+  // Analytics (opcionalmente pueden sobreescribir los valores de entorno)
+  gtmId String?
+  ga4Id String?
+
+  // Datos de contacto
+  phone          String?
+  whatsappNumber String?
+  email          String?
+  address        String?
+  city           String?
+  country        String?
+
+  // Redes sociales
+  facebookUrl  String?
+  instagramUrl String?
+  whatsappUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

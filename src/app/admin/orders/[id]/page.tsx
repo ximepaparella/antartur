@@ -10,6 +10,7 @@ import { Card } from "@/components/common/Card/Card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { OrderStatus, BookingStatus, PaymentStatus } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
+import { Select } from "@/components/common/Select/Select";
 import styles from "./page.module.scss";
 
 // Use DTO types directly
@@ -28,6 +29,8 @@ export default function AdminOrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState<OrderStatus | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -50,6 +53,35 @@ export default function AdminOrderDetailPage() {
       fetchOrder();
     }
   }, [orderId]);
+
+  const handleStatusChange = async (value: string) => {
+    if (!order) return;
+    const nextStatus = value as OrderStatus;
+    if (nextStatus === (order.status as OrderStatus)) {
+      setNewStatus(nextStatus);
+      return;
+    }
+
+    try {
+      setIsUpdatingStatus(true);
+      setError(null);
+      setNewStatus(nextStatus);
+      const response = await adminApiClient.updateOrderStatus(order.id, nextStatus);
+      if (response.success && response.data) {
+        setOrder((prev) => (prev ? { ...prev, status: response.data.status } : prev));
+      } else {
+        setError("No se pudo actualizar el estado de la orden");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al actualizar el estado de la orden"
+      );
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -85,9 +117,26 @@ export default function AdminOrderDetailPage() {
         <Button variant="outline" onClick={() => router.push("/admin/orders")}>
           ← Volver
         </Button>
-        <div>
+        <div className={styles.statusRow}>
           <h1 className={styles.title}>Orden {order.code}</h1>
-          <StatusBadge status={order.status as OrderStatus} />
+          <div className={styles.statusBox}>
+            <span className={styles.statusBoxLabel}>Estado</span>
+            <StatusBadge status={order.status as OrderStatus} />
+            <div className={styles.statusControls}>
+              <Select
+                name="orderStatus"
+                value={newStatus ?? (order.status as OrderStatus)}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                disabled={isUpdatingStatus}
+                options={[
+                  { value: "PENDING_PAYMENT", label: "Pendiente de pago" },
+                  { value: "PAID", label: "Pagada" },
+                  { value: "COMPLETED", label: "Completada" },
+                  { value: "CANCELLED", label: "Cancelada" },
+                ]}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
