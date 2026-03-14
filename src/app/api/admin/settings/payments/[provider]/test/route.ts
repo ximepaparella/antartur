@@ -45,6 +45,15 @@ import { withAuth } from "@/lib/auth";
 const VALID_PROVIDERS = ["PAYPAL", "PAYWAY"] as const;
 
 /**
+ * Normaliza una credencial: quita espacios de los extremos y cualquier salto de línea
+ * (evita fallos si se pegó el valor con Enter en el medio o con CRLF).
+ */
+function normalizePayPalCredential(value: string | undefined): string {
+  if (value == null) return "";
+  return value.trim().replace(/\r\n/g, "").replace(/\n/g, "").replace(/\r/g, "");
+}
+
+/**
  * Test de conexión para PayPal
  * Intenta obtener un access token para verificar las credenciales
  */
@@ -52,9 +61,11 @@ async function testPayPalConnection(isSandbox: boolean): Promise<{
   connected: boolean;
   message: string;
   environment: string;
+  clientIdLength?: number;
+  clientSecretLength?: number;
 }> {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  const clientId = normalizePayPalCredential(process.env.PAYPAL_CLIENT_ID);
+  const clientSecret = normalizePayPalCredential(process.env.PAYPAL_CLIENT_SECRET);
   const environment = isSandbox ? "sandbox" : "production";
 
   if (!clientId || !clientSecret) {
@@ -87,11 +98,16 @@ async function testPayPalConnection(isSandbox: boolean): Promise<{
         environment,
       };
     } else {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = (await response.json().catch(() => ({}))) as { error_description?: string };
+      const errDesc = errorData.error_description || response.statusText;
+      const hint =
+        " Comprobá en el dashboard de PayPal que la app esté en modo Live, que las credenciales sean de Producción (no Sandbox) y que el Secret no se haya regenerado.";
       return {
         connected: false,
-        message: `Error de autenticación: ${errorData.error_description || response.statusText}`,
+        message: `Error de autenticación: ${errDesc}.${hint}`,
         environment,
+        clientIdLength: clientId.length,
+        clientSecretLength: clientSecret.length,
       };
     }
   } catch (error) {
@@ -205,12 +221,22 @@ export const POST = withAuth(
         throw new NotFoundError(`Payment gateway ${providerUpper} not found`);
       }
 
-      let result: { connected: boolean; message: string; environment: string };
+      let result: {
+        connected: boolean;
+        message: string;
+        environment: string;
+        clientIdLength?: number;
+        clientSecretLength?: number;
+      };
 
       switch (providerUpper) {
-        case "PAYPAL":
-          result = await testPayPalConnection(gateway.isSandbox);
+        case "PAYPAL": {
+          const paypalMode = process.env.PAYPAL_MODE?.trim().toLowerCase();
+          const useSandbox =
+            paypalMode === "sandbox" ? true : paypalMode === "live" ? false : gateway.isSandbox;
+          result = await testPayPalConnection(useSandbox);
           break;
+        }
         case "PAYWAY":
           result = await testPaywayConnection(gateway.isSandbox);
           break;
