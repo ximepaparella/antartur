@@ -18,19 +18,6 @@ const MONTHS = [
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
 
-// Generar opciones de horarios (cada hora en punto y y media, de 6:00 a 23:30)
-const generateTimeOptions = () => {
-  const options: Array<{ value: string; label: string }> = [];
-  for (let hour = 6; hour < 24; hour++) {
-    const hourStr = hour.toString().padStart(2, "0");
-    options.push({ value: `${hourStr}:00`, label: `${hourStr}:00` });
-    options.push({ value: `${hourStr}:30`, label: `${hourStr}:30` });
-  }
-  return options;
-};
-
-const TIME_OPTIONS = generateTimeOptions();
-
 export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: AvailabilityManagerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [departures, setDepartures] = useState<Departure[]>([]);
@@ -91,8 +78,6 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
 
   // Form state
-  const [formStartTime, setFormStartTime] = useState("09:00");
-  const [formEndTime, setFormEndTime] = useState("");
   const [formSeatsTotal, setFormSeatsTotal] = useState(20);
   const [formIsActive, setFormIsActive] = useState(true);
 
@@ -235,13 +220,9 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     setSelectedDeparture(departure || null);
 
     if (departure) {
-      setFormStartTime(departure.startTime);
-      setFormEndTime(departure.endTime || "");
       setFormSeatsTotal(departure.seatsTotal);
       setFormIsActive(departure.isActive);
     } else {
-      setFormStartTime("09:00");
-      setFormEndTime("");
       setFormSeatsTotal(20);
       setFormIsActive(true);
     }
@@ -275,13 +256,11 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
 
     try {
       if (selectedDeparture) {
-        // Update existing
+        // Update existing (horario es del tour, no por salida)
         const response = await fetch(`/api/availability/${selectedDeparture.id}`, {
           method: "PUT",
           headers: createAuthHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
-            startTime: formStartTime,
-            endTime: formEndTime && formEndTime.trim() ? formEndTime : null,
             seatsTotal: formSeatsTotal,
             isActive: formIsActive,
           }),
@@ -292,14 +271,12 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           throw new Error(result.error);
         }
       } else {
-        // Create new
+        // Create new (horario se toma del tour)
         const response = await fetch(`/api/tours/${tourId}/availability`, {
           method: "POST",
           headers: createAuthHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             departureDate: dateStr,
-            startTime: formStartTime,
-            endTime: formEndTime && formEndTime.trim() ? formEndTime : null,
             seatsTotal: formSeatsTotal,
           }),
         });
@@ -400,7 +377,6 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
               headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 departureDate: dateStr,
-                startTime: "09:00",
                 seatsTotal: 20,
               }),
             });
@@ -437,37 +413,14 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
               headers: createAuthHeaders({ "Content-Type": "application/json" }),
               body: JSON.stringify({
                 departureDate: dateStr,
-                startTime: "09:00",
                 seatsTotal: seats,
               }),
             });
           }
         },
         setTime: () => {
-          const { startTime, endTime } = params;
-          if (departure) {
-            return fetch(`/api/availability/${departure.id}`, {
-              method: "PUT",
-              headers: createAuthHeaders({ "Content-Type": "application/json" }),
-              body: JSON.stringify({
-                ...departure,
-                startTime,
-                endTime: endTime || null,
-              }),
-            });
-          } else {
-            // Crear nueva disponibilidad
-            return fetch(`/api/tours/${tourId}/availability`, {
-              method: "POST",
-              headers: createAuthHeaders({ "Content-Type": "application/json" }),
-              body: JSON.stringify({
-                departureDate: dateStr,
-                startTime,
-                endTime: endTime || null,
-                seatsTotal: 20,
-              }),
-            });
-          }
+          // El horario es único por tour; se configura en "Horario por defecto" del tour
+          return Promise.resolve(new Response(JSON.stringify({ success: true }), { status: 200 }));
         },
         delete: () => {
           if (!departure) {
@@ -675,34 +628,9 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                   day: "numeric",
                 })}
               </p>
-
-              <div className={styles.formRow} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                <div style={{ flex: 1 }}>
-                <Select
-                    label="Hora inicio *"
-                  value={formStartTime}
-                  onChange={(e) => setFormStartTime(e.target.value)}
-                  disabled={disabled || isSaving}
-                  options={[
-                    { value: "", label: "Seleccionar..." },
-                    ...TIME_OPTIONS,
-                  ]}
-                  required
-                />
-                </div>
-                <div style={{ flex: 1 }}>
-                <Select
-                  label="Hora fin (opcional)"
-                  value={formEndTime}
-                  onChange={(e) => setFormEndTime(e.target.value)}
-                  disabled={disabled || isSaving}
-                  options={[
-                    { value: "", label: "Sin hora fin" },
-                    ...TIME_OPTIONS,
-                  ]}
-                />
-                  </div>
-              </div>
+              <p className={styles.tourScheduleNote}>
+                El horario es el configurado en &quot;Horario por defecto&quot; del tour (Información básica).
+              </p>
 
               <Input
                 label="Cupos totales"
@@ -765,7 +693,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
                   <Button 
                     variant="primary" 
                     onClick={handleSave} 
-                    disabled={isSaving || !formStartTime}
+                    disabled={isSaving}
                   >
                     <Save size={16} />
                     {isSaving ? "Guardando..." : "Guardar"}

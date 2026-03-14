@@ -5,6 +5,9 @@
 import { z } from "zod";
 import { paginationSchema, commonFiltersSchema, idSchema, slugSchema, currencyCodeSchema, priceSchema } from "@/lib/validation/schemas";
 
+/** HH:mm con horas 00-23 y minutos 00-59 */
+const hhMmRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+
 /**
  * Schema para imagen de tour
  */
@@ -100,6 +103,9 @@ export const createTourSchema = z.object({
   minAge: z.coerce.number().int().min(0).optional().nullable(),
   minPassengers: z.coerce.number().int().min(1).optional().nullable(),
   allowsInfants: z.boolean().optional().default(false),
+  // Horario por defecto (HH:mm)
+  defaultStartTime: z.string().regex(hhMmRegex, "Formato HH:mm (00-23:00-59)").optional().nullable(),
+  defaultEndTime: z.string().regex(hhMmRegex, "Formato HH:mm (00-23:00-59)").optional().nullable(),
 });
 
 export type CreateTourInput = z.infer<typeof createTourSchema>;
@@ -181,6 +187,9 @@ export const updateTourSchema = z.object({
   fridayAvailable: z.boolean().optional(),
   saturdayAvailable: z.boolean().optional(),
   sundayAvailable: z.boolean().optional(),
+  // Horario por defecto (HH:mm)
+  defaultStartTime: z.string().regex(hhMmRegex, "Formato HH:mm (00-23:00-59)").optional().nullable(),
+  defaultEndTime: z.string().regex(hhMmRegex, "Formato HH:mm (00-23:00-59)").optional().nullable(),
 });
 
 export type UpdateTourInput = z.infer<typeof updateTourSchema>;

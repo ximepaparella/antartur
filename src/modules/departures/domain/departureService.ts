@@ -68,7 +68,7 @@ export class DepartureService {
         departureDate: new Date(date),
       },
       orderBy: {
-        startTime: "asc",
+        departureDate: "asc",
       },
     });
 
@@ -96,30 +96,39 @@ export class DepartureService {
       throw new NotFoundError("Tour", data.tourId);
     }
 
-    // Validación de negocio: verificar que no exista ya un departure con la misma fecha y hora
+    // Validación de negocio: verificar que no exista ya un departure para esa fecha (un solo horario por tour)
     const existing = await prisma.tourDeparture.findFirst({
       where: {
         tourId: data.tourId,
         departureDate: new Date(data.departureDate),
-        startTime: data.startTime,
       },
     });
 
     if (existing) {
-      throw new ValidationError("Availability already exists for this tour, date and time", {
+      throw new ValidationError("Availability already exists for this tour and date", {
         tourId: data.tourId,
         date: data.departureDate,
-        startTime: data.startTime,
       });
     }
 
-    const departure = await departureRepository.create({
-      ...data,
-      departureDate: new Date(data.departureDate),
-      endTime: data.endTime || null,
-    });
-
-    return departure;
+    try {
+      const departure = await departureRepository.create({
+        tourId: data.tourId,
+        departureDate: new Date(data.departureDate),
+        seatsTotal: data.seatsTotal,
+        isActive: data.isActive ?? true,
+      });
+      return departure;
+    } catch (err) {
+      const code = err && typeof err === "object" && "code" in err ? (err as { code: string }).code : undefined;
+      if (code === "P2002") {
+        throw new ValidationError("Availability already exists for this tour and date", {
+          tourId: data.tourId,
+          date: data.departureDate,
+        });
+      }
+      throw err;
+    }
   }
 
   /**
@@ -139,23 +148,21 @@ export class DepartureService {
       }
     }
 
-    // Validación de negocio: si se actualiza fecha/hora, verificar que no haya conflicto
-    if (data.departureDate || data.startTime) {
-      const checkDate = data.departureDate ? new Date(data.departureDate) : departure.departureDate;
-      const checkTime = data.startTime || departure.startTime;
-      const checkTourId = data.tourId || departure.tourId;
+    // Validación de negocio: si se actualiza fecha o tour, verificar que no haya conflicto
+    if (data.departureDate != null || data.tourId != null) {
+      const checkDate = data.departureDate != null ? new Date(data.departureDate) : departure.departureDate;
+      const checkTourId = data.tourId ?? departure.tourId;
 
       const existing = await prisma.tourDeparture.findFirst({
         where: {
           tourId: checkTourId,
           departureDate: checkDate,
-          startTime: checkTime,
           NOT: { id },
         },
       });
 
       if (existing) {
-        throw new ValidationError("Availability already exists for this tour, date and time");
+        throw new ValidationError("Availability already exists for this tour and date");
       }
     }
 

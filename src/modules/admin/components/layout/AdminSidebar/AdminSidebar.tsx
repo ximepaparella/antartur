@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
 ];
 
 const settingsItems: NavItem[] = [
+  { href: "/admin/settings/site", label: "Configuración general", icon: "home" },
   { href: "/admin/settings/payments", label: "Medios de Pago", icon: "wallet" },
 ];
 

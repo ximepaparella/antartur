@@ -9,9 +9,40 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: $spacing-32;
   gap: $spacing-16;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+}
+
+.statusControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+}
+
+.statusBox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-12;
+  padding: $spacing-8 $spacing-12;
+  margin-bottom: $spacing-24;
+  border-radius: $spacing-8;
+  border: 1px solid $gray-200;
+  background-color: $gray-50;
+}
+
+.statusBoxLabel {
+  font-size: $font-size-14;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .title {

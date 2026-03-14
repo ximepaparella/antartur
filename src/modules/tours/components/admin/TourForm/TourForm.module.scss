@@ -310,6 +310,17 @@
   }
 }
 
+.defaultScheduleCard {
+  margin-top: $spacing-24;
+}
+
+.defaultScheduleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-16;
+  margin-top: $spacing-8;
+}
+
 .weekdayCheckbox {
   display: flex;
   align-items: center;

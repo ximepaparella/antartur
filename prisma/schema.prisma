@@ -69,6 +69,12 @@ enum ChildPriceType {
   ADULT_PRICE
 }
 
+enum HomePrimarySeason {
+  SUMMER
+  WINTER
+  AUTO
+}
+
 // ============================================
 // MODELS
 // ============================================
@@ -138,6 +144,10 @@ model Tour {
   saturdayAvailable  Boolean @default(true)
   sundayAvailable    Boolean @default(true)
 
+  // Horario por defecto del tour (aplica a nuevas salidas; cada salida puede override)
+  defaultStartTime String? // HH:mm
+  defaultEndTime   String? // HH:mm
+
   // Relaciones
   images         TourImage[]
   departures     TourDeparture[]
@@ -204,8 +214,6 @@ model TourDeparture {
   id             String   @id @default(cuid())
   tourId         String
   departureDate  DateTime @db.Date
-  startTime      String // HH:mm format
-  endTime        String? // HH:mm format
   seatsTotal     Int
   seatsHeld      Int      @default(0)
   seatsConfirmed Int      @default(0)
@@ -218,7 +226,7 @@ model TourDeparture {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([tourId, departureDate, startTime])
+  @@unique([tourId, departureDate])
   @@index([tourId, departureDate])
   @@index([departureDate, isActive])
 }
@@ -558,3 +566,36 @@ model BankTransfer {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+// ============================================
+// SITE SETTINGS
+// ============================================
+
+model SiteSettings {
+  id                String            @id @default("global")
+  homePrimarySeason HomePrimarySeason @default(SUMMER)
+
+  // Reservas: antelación mínima en horas (24, 48 o 72) para permitir una reserva
+  minimumAdvanceBookingHours Int? // 24 | 48 | 72; null = sin restricción (tratar como 0 o 24 según política)
+
+  // Analytics (opcionalmente pueden sobreescribir los valores de entorno)
+  gtmId String?
+  ga4Id String?
+
+  // Datos de contacto
+  phone          String?
+  whatsappNumber String?
+  email          String?
+  address        String?
+  city           String?
+  country        String?
+
+  // Redes sociales
+  facebookUrl  String?
+  instagramUrl String?
+  whatsappUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

@@ -127,7 +127,16 @@ export async function getActiveGateways(): Promise<GatewayConfig[]> {
 }
 
 /**
- * Obtiene las credenciales de PayPal combinando BD y .env
+ * Normaliza credencial PayPal: trim y quita saltos de línea (evita fallos al copiar/pegar).
+ */
+function normalizePayPalCredential(value: string | undefined): string {
+  if (value == null) return "";
+  return value.trim().replace(/\r\n/g, "").replace(/\n/g, "").replace(/\r/g, "");
+}
+
+/**
+ * Obtiene las credenciales de PayPal combinando BD y .env.
+ * PAYPAL_MODE en .env (live|sandbox) tiene prioridad sobre el modo guardado en BD.
  */
 export async function getPayPalCredentials(): Promise<PayPalCredentials | null> {
   const config = await getGatewayConfig("PAYPAL");
@@ -136,17 +145,23 @@ export async function getPayPalCredentials(): Promise<PayPalCredentials | null> 
     return null;
   }
 
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  const clientId = normalizePayPalCredential(process.env.PAYPAL_CLIENT_ID);
+  const clientSecret = normalizePayPalCredential(process.env.PAYPAL_CLIENT_SECRET);
 
   if (!clientId || !clientSecret) {
     return null;
   }
 
+  const envMode = process.env.PAYPAL_MODE?.trim().toLowerCase();
+  const useLiveFromEnv = envMode === "live";
+  const useSandboxFromEnv = envMode === "sandbox";
+  const mode: "sandbox" | "live" =
+    useLiveFromEnv ? "live" : useSandboxFromEnv ? "sandbox" : (config.isSandbox ? "sandbox" : "live");
+
   return {
     clientId,
     clientSecret,
-    mode: config.isSandbox ? "sandbox" : "live",
+    mode,
   };
 }
 

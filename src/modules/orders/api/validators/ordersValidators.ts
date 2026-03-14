@@ -13,7 +13,7 @@ export const createOrderSchema = z.object({
   tourId: idSchema, // Puede ser slug o ID
   departureId: idSchema.optional(), // Opcional si se proporciona date + startTime
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), // YYYY-MM-DD
-  startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // HH:mm
+  startTime: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/).optional(), // HH:mm (00-23:00-59)
   numAdults: z.coerce.number().int().positive("Number of adults must be positive"),
   numChildren: z.coerce.number().int().min(0, "Number of children cannot be negative"),
   numInfants: z.coerce.number().int().min(0, "Number of infants cannot be negative").optional(),

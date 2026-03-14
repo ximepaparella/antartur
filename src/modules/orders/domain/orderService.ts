@@ -224,7 +224,7 @@ export async function createReservation(input: ReservationInput) {
         currency: input.currency,
         tourNameSnapshot: tour.name,
         departureDateSnapshot: departure.departureDate,
-        startTimeSnapshot: departure.startTime,
+        startTimeSnapshot: (tour as { defaultStartTime?: string | null }).defaultStartTime?.trim() || "09:00",
         meetingPointSnapshot: null, // TODO: agregar meeting point al modelo TourDeparture si es necesario
       },
     });
@@ -377,7 +377,7 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
   }));
 
     const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
-    const startTime = booking.startTimeSnapshot || departure.startTime;
+    const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
     const { sendEmail } = await import("../../notifications/domain/emailService");
     const { generatePaymentConfirmationEmailHTML, generatePaymentConfirmationEmailText } = await import("../../notifications/templates/paymentConfirmationEmail");
@@ -515,19 +515,18 @@ export async function findDepartureByTourDateAndTime(
     throw new NotFoundError("Tour", tourIdOrSlug);
   }
 
-  // Buscar departure por tourId, date y startTime
+  // Buscar departure por tourId y date (un solo horario por tour)
   const departure = await prisma.tourDeparture.findFirst({
     where: {
       tourId: tour.id,
       departureDate: new Date(date),
-      startTime: startTime,
     },
   });
 
   if (!departure) {
     throw new NotFoundError(
       "TourDeparture",
-      `Tour ${tourIdOrSlug} on ${date} at ${startTime}`
+      `Tour ${tourIdOrSlug} on ${date}`
     );
   }
 
@@ -699,9 +698,9 @@ export async function sendOrderEmails(order: {
     }>;
     tourDeparture?: {
       departureDate: Date;
-      startTime: string;
       tour?: {
         name: string;
+        defaultStartTime?: string | null;
       };
     };
   }>;
@@ -741,7 +740,7 @@ export async function sendOrderEmails(order: {
   }));
 
   const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
-  const startTime = booking.startTimeSnapshot || departure.startTime;
+  const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
   if (order.type === "ENQUIRY") {
     // Email de consulta

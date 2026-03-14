@@ -35,6 +35,8 @@ export interface CreateTourDto {
   fridayAvailable?: boolean;
   saturdayAvailable?: boolean;
   sundayAvailable?: boolean;
+  defaultStartTime?: string | null;
+  defaultEndTime?: string | null;
   // SEO fields
   metaTitle?: string | null;
   metaDescription?: string | null;

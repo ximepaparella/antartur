@@ -119,7 +119,6 @@ async function main() {
           },
           select: {
             departureDate: true,
-            startTime: true,
           },
         });
 
@@ -143,12 +142,10 @@ async function main() {
           continue;
         }
 
-        // Crear departures solo para fechas faltantes
+        // Crear departures solo para fechas faltantes (horario viene del tour defaultStartTime/defaultEndTime)
         const departures = datesToCreate.map((date) => ({
           tourId: tour.id,
           departureDate: date,
-          startTime: defaultStartTime,
-          endTime: defaultEndTime,
           seatsTotal: defaultSeats,
           seatsHeld: 0,
           seatsConfirmed: 0,
@@ -184,7 +181,6 @@ async function main() {
           },
           select: {
             departureDate: true,
-            startTime: true,
           },
         });
 
@@ -208,12 +204,10 @@ async function main() {
           continue;
         }
 
-        // Crear departures solo para fechas faltantes
+        // Crear departures solo para fechas faltantes (horario viene del tour defaultStartTime/defaultEndTime)
         const departures = datesToCreate.map((date) => ({
           tourId: tour.id,
           departureDate: date,
-          startTime: defaultStartTime,
-          endTime: defaultEndTime,
           seatsTotal: defaultSeats,
           seatsHeld: 0,
           seatsConfirmed: 0,

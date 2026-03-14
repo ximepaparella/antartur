@@ -129,6 +129,8 @@ export interface UpdateTourBasicInput {
   fridayAvailable?: boolean;
   saturdayAvailable?: boolean;
   sundayAvailable?: boolean;
+  defaultStartTime?: string | null;
+  defaultEndTime?: string | null;
 }
 
 /**

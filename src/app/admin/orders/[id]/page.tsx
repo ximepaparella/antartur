@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import { getAllowedOrderStatusTransitions, ORDER_STATUS_LABELS } from "@/modules/orders/lib/orderStatusTransitions";
 import type { OrderFullResponse, BookingResponse, PassengerResponse, PaymentResponse } from "@/modules/orders/api/dto/ordersDto";
 import { calculateAge } from "@/lib/utils/pricing";
 import { formatRestrictions } from "@/modules/notifications/utils/formatRestrictions";
@@ -10,6 +11,7 @@ import { Card } from "@/components/common/Card/Card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { OrderStatus, BookingStatus, PaymentStatus } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
+import { Select } from "@/components/common/Select/Select";
 import styles from "./page.module.scss";
 
 // Use DTO types directly
@@ -28,6 +30,8 @@ export default function AdminOrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState<OrderStatus | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -50,6 +54,38 @@ export default function AdminOrderDetailPage() {
       fetchOrder();
     }
   }, [orderId]);
+
+  const handleStatusChange = async (value: string) => {
+    if (!order) return;
+    const nextStatus = value as OrderStatus;
+    const prevStatus = order.status as OrderStatus;
+    if (nextStatus === prevStatus) {
+      setNewStatus(nextStatus);
+      return;
+    }
+
+    try {
+      setIsUpdatingStatus(true);
+      setError(null);
+      setNewStatus(nextStatus);
+      const response = await adminApiClient.updateOrderStatus(order.id, nextStatus);
+      if (response.success && response.data) {
+        setOrder((prev) => (prev ? { ...prev, status: response.data.status } : prev));
+      } else {
+        setNewStatus(prevStatus);
+        setError("No se pudo actualizar el estado de la orden");
+      }
+    } catch (err) {
+      setNewStatus(prevStatus);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error desconocido al actualizar el estado de la orden"
+      );
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -85,11 +121,29 @@ export default function AdminOrderDetailPage() {
         <Button variant="outline" onClick={() => router.push("/admin/orders")}>
           ← Volver
         </Button>
-        <div>
+        <div className={styles.statusRow}>
           <h1 className={styles.title}>Orden {order.code}</h1>
-          <StatusBadge status={order.status as OrderStatus} />
         </div>
       </div>
+
+      <div className={styles.statusBox}>
+            <span className={styles.statusBoxLabel}>Estado</span>
+            <StatusBadge status={order.status as OrderStatus} />
+            <div className={styles.statusControls}>
+              <Select
+                name="orderStatus"
+                value={newStatus ?? (order.status as OrderStatus)}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                disabled={isUpdatingStatus}
+                options={(() => {
+                  const current = order.status as OrderStatus;
+                  const allowed = getAllowedOrderStatusTransitions(current);
+                  const statuses = allowed.length > 0 ? allowed : [current];
+                  return statuses.map((s) => ({ value: s, label: ORDER_STATUS_LABELS[s] ?? s }));
+                })()}
+              />
+            </div>
+          </div>
 
       <div className={styles.content}>
         {/* Información de la Orden */}

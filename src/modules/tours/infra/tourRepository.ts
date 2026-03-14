@@ -24,10 +24,7 @@ export class TourRepository {
                   gte: new Date(), // Solo fechas futuras
                 },
               },
-              orderBy: [
-                { departureDate: "asc" },
-                { startTime: "asc" },
-              ],
+              orderBy: [{ departureDate: "asc" }],
             }
           : false,
         prices: includePrices,
@@ -89,10 +86,7 @@ export class TourRepository {
                   gte: new Date(), // Solo fechas futuras
                 },
               },
-              orderBy: [
-                { departureDate: "asc" },
-                { startTime: "asc" },
-              ],
+              orderBy: [{ departureDate: "asc" }],
             }
           : false,
         prices: includePrices,
@@ -154,10 +148,7 @@ export class TourRepository {
                   gte: new Date(), // Solo fechas futuras
                 },
               },
-              orderBy: [
-                { departureDate: "asc" },
-                { startTime: "asc" },
-              ],
+              orderBy: [{ departureDate: "asc" }],
             }
           : false,
         prices: includePrices,
