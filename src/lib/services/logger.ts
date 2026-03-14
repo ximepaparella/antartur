@@ -19,8 +19,8 @@ class Logger {
   debug(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
       console.debug(`[DEBUG] ${message}`, {
-        env: this.appEnv,
         ...(context || {}),
+        env: this.appEnv,
       });
     }
   }
@@ -31,8 +31,8 @@ class Logger {
   info(message: string, context?: LogContext): void {
     if (this.isDevelopment) {
       console.info(`[INFO] ${message}`, {
-        env: this.appEnv,
         ...(context || {}),
+        env: this.appEnv,
       });
     }
     // En producción, aquí se podría enviar a un servicio de logging externo
@@ -43,8 +43,8 @@ class Logger {
    */
   warn(message: string, context?: LogContext): void {
     console.warn(`[WARN] ${message}`, {
-      env: this.appEnv,
       ...(context || {}),
+      env: this.appEnv,
     });
     // En producción, aquí se podría enviar a un servicio de logging externo
   }
@@ -57,9 +57,9 @@ class Logger {
     console.error(
       `[ERROR] ${message}`,
       {
+        ...(context || {}),
         env: this.appEnv,
         error: errorDetails,
-        ...(context || {}),
       }
     );
     // En producción, aquí se podría enviar a Sentry, LogRocket, etc.

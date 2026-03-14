@@ -1,4 +1,3 @@
-import React from "react";
 import { FooterSection } from "@/components/common/FooterSection/FooterSection";
 import { ContactItem } from "@/components/common/ContactItem/ContactItem";
 import { SocialIcon } from "@/components/common/SocialIcon/SocialIcon";
@@ -6,7 +5,7 @@ import footerData from "@/modules/layout/components/Footer/footerdata.json";
 import { getSiteSettings } from "@/modules/settings/repository";
 import styles from "./ContactInfo.module.scss";
 
-export const ContactInfo: React.FC = async () => {
+export async function ContactInfo() {
   const settings = await getSiteSettings();
 
   const emailText = settings.email || "agencias@antartur.tur.ar";

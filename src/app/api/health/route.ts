@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { logger } from "@/lib/services/logger";
 
 const DB_CHECK_TIMEOUT_MS = 1000;
 
@@ -14,8 +15,8 @@ async function checkDatabase() {
 
     return { ok: true as const };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error";
-    return { ok: false as const, error: message };
+    logger.error("Health check: database unavailable", error);
+    return { ok: false as const, error: "database unavailable" };
   }
 }
 

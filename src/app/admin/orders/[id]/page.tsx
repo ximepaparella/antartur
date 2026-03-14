@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
+import { getAllowedOrderStatusTransitions, ORDER_STATUS_LABELS } from "@/modules/orders/lib/orderStatusTransitions";
 import type { OrderFullResponse, BookingResponse, PassengerResponse, PaymentResponse } from "@/modules/orders/api/dto/ordersDto";
 import { calculateAge } from "@/lib/utils/pricing";
 import { formatRestrictions } from "@/modules/notifications/utils/formatRestrictions";
@@ -57,7 +58,8 @@ export default function AdminOrderDetailPage() {
   const handleStatusChange = async (value: string) => {
     if (!order) return;
     const nextStatus = value as OrderStatus;
-    if (nextStatus === (order.status as OrderStatus)) {
+    const prevStatus = order.status as OrderStatus;
+    if (nextStatus === prevStatus) {
       setNewStatus(nextStatus);
       return;
     }
@@ -70,9 +72,11 @@ export default function AdminOrderDetailPage() {
       if (response.success && response.data) {
         setOrder((prev) => (prev ? { ...prev, status: response.data.status } : prev));
       } else {
+        setNewStatus(prevStatus);
         setError("No se pudo actualizar el estado de la orden");
       }
     } catch (err) {
+      setNewStatus(prevStatus);
       setError(
         err instanceof Error
           ? err.message
@@ -119,7 +123,10 @@ export default function AdminOrderDetailPage() {
         </Button>
         <div className={styles.statusRow}>
           <h1 className={styles.title}>Orden {order.code}</h1>
-          <div className={styles.statusBox}>
+        </div>
+      </div>
+
+      <div className={styles.statusBox}>
             <span className={styles.statusBoxLabel}>Estado</span>
             <StatusBadge status={order.status as OrderStatus} />
             <div className={styles.statusControls}>
@@ -128,17 +135,15 @@ export default function AdminOrderDetailPage() {
                 value={newStatus ?? (order.status as OrderStatus)}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 disabled={isUpdatingStatus}
-                options={[
-                  { value: "PENDING_PAYMENT", label: "Pendiente de pago" },
-                  { value: "PAID", label: "Pagada" },
-                  { value: "COMPLETED", label: "Completada" },
-                  { value: "CANCELLED", label: "Cancelada" },
-                ]}
+                options={(() => {
+                  const current = order.status as OrderStatus;
+                  const allowed = getAllowedOrderStatusTransitions(current);
+                  const statuses = allowed.length > 0 ? allowed : [current];
+                  return statuses.map((s) => ({ value: s, label: ORDER_STATUS_LABELS[s] ?? s }));
+                })()}
               />
             </div>
           </div>
-        </div>
-      </div>
 
       <div className={styles.content}>
         {/* Información de la Orden */}

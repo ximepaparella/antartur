@@ -10,19 +10,32 @@ import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
 import { getSiteSettings, updateSiteSettings } from "@/modules/settings/repository";
 
+const gtmIdSchema = z.string().regex(/^GTM-[A-Z0-9]+$/, "Formato GTM-XXXXXXX").max(100).optional().nullable();
+const ga4IdSchema = z.string().regex(/^G-[A-Z0-9]+$/, "Formato G-XXXXXXXXXX").max(100).optional().nullable();
+
+function httpOrHttpsUrl(s: string): boolean {
+  try {
+    const u = new URL(s);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 const updateSiteSettingsSchema = z.object({
   homePrimarySeason: z.enum(["SUMMER", "WINTER", "AUTO"]).optional(),
-  gtmId: z.string().max(100).optional(),
-  ga4Id: z.string().max(100).optional(),
-  phone: z.string().max(100).optional(),
-  whatsappNumber: z.string().max(100).optional(),
-  email: z.string().email().max(200).optional(),
-  address: z.string().max(200).optional(),
-  city: z.string().max(100).optional(),
-  country: z.string().max(100).optional(),
-  facebookUrl: z.string().url().max(300).optional(),
-  instagramUrl: z.string().url().max(300).optional(),
-  whatsappUrl: z.string().url().max(300).optional(),
+  minimumAdvanceBookingHours: z.union([z.literal(24), z.literal(48), z.literal(72)]).nullable().optional(),
+  gtmId: gtmIdSchema,
+  ga4Id: ga4IdSchema,
+  phone: z.string().max(100).optional().nullable(),
+  whatsappNumber: z.string().max(100).optional().nullable(),
+  email: z.string().email().max(200).optional().nullable(),
+  address: z.string().max(200).optional().nullable(),
+  city: z.string().max(100).optional().nullable(),
+  country: z.string().max(100).optional().nullable(),
+  facebookUrl: z.string().url().max(300).refine(httpOrHttpsUrl, "Solo http o https").optional().nullable(),
+  instagramUrl: z.string().url().max(300).refine(httpOrHttpsUrl, "Solo http o https").optional().nullable(),
+  whatsappUrl: z.string().url().max(300).refine(httpOrHttpsUrl, "Solo http o https").optional().nullable(),
 });
 
 function normalizeBody(body: unknown) {

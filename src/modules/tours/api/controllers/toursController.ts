@@ -24,6 +24,8 @@ import {
   type TourWithImagesResponse,
   type TourFullResponse,
 } from "../dto/toursDto";
+import { getSiteSettings } from "@/modules/settings/repository";
+import { filterDeparturesByAdvanceBooking } from "@/modules/departures/lib/advanceBookingFilter";
 
 const tourService = new TourService();
 
@@ -48,7 +50,10 @@ export class ToursController {
     const tour = await tourService.getTourById(id, includeAvailability, includeContent);
 
     if (includeAvailability || includeContent) {
-      return toTourFullResponse(tour);
+      const settings = await getSiteSettings();
+      const hours = settings.minimumAdvanceBookingHours ?? 24;
+      const departures = tour.departures ? filterDeparturesByAdvanceBooking(tour.departures, hours) : [];
+      return toTourFullResponse({ ...tour, departures });
     }
 
     return toTourWithImagesResponse(tour);
@@ -73,7 +78,10 @@ export class ToursController {
     );
 
     if (includeDepartures || includeContent) {
-      return toTourFullResponse(tour);
+      const settings = await getSiteSettings();
+      const hours = settings.minimumAdvanceBookingHours ?? 24;
+      const departures = tour.departures ? filterDeparturesByAdvanceBooking(tour.departures, hours) : [];
+      return toTourFullResponse({ ...tour, departures });
     }
 
     if (includeImages) {

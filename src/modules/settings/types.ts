@@ -1,8 +1,14 @@
 export type HomePrimarySeason = "SUMMER" | "WINTER" | "AUTO";
 
+/** Antelación mínima en horas para permitir una reserva (24, 48 o 72). */
+export type MinimumAdvanceBookingHours = 24 | 48 | 72;
+
 export interface SiteSettings {
   id: string;
   homePrimarySeason: HomePrimarySeason;
+
+  /** Antelación mínima en horas (24, 48, 72). null = sin restricción (por defecto 24). */
+  minimumAdvanceBookingHours: MinimumAdvanceBookingHours | null;
 
   gtmId: string | null;
   ga4Id: string | null;

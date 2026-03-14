@@ -18,13 +18,11 @@ const MONTHS = [
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
 
-export function AvailabilityManager({ tourId, disabled = false, tourWeekdays, defaultStartTime: propDefaultStartTime, defaultEndTime: propDefaultEndTime }: AvailabilityManagerProps) {
+export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: AvailabilityManagerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [departures, setDepartures] = useState<Departure[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [fetchedDefaultStartTime, setFetchedDefaultStartTime] = useState<string | null>(null);
-  const [fetchedDefaultEndTime, setFetchedDefaultEndTime] = useState<string | null>(null);
   const [weekdays, setWeekdays] = useState(tourWeekdays || {
     mondayAvailable: true,
     tuesdayAvailable: true,
@@ -60,8 +58,6 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays, de
               saturdayAvailable: data.data.saturdayAvailable ?? true,
               sundayAvailable: data.data.sundayAvailable ?? true,
             });
-            setFetchedDefaultStartTime(data.data.defaultStartTime ?? null);
-            setFetchedDefaultEndTime(data.data.defaultEndTime ?? null);
             setLoadError(null);
           } else {
             throw new Error(data.error || "Failed to load tour weekdays");

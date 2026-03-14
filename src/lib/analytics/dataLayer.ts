@@ -13,7 +13,7 @@ declare global {
 export function pushToDataLayer(event: Record<string, unknown>): void {
   if (typeof window === "undefined") return;
 
-  if (!window.dataLayer) {
+  if (!Array.isArray(window.dataLayer)) {
     window.dataLayer = [];
   }
 

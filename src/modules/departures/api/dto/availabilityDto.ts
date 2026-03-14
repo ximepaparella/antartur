@@ -34,7 +34,7 @@ export function toAvailabilityResponse(
   schedule: TourScheduleDefaults
 ): AvailabilityResponse {
   const available = departure.seatsTotal - departure.seatsHeld - departure.seatsConfirmed;
-  const startTime = schedule.defaultStartTime?.trim() ? schedule.defaultStartTime : "09:00";
+  const startTime = schedule.defaultStartTime?.trim() ? schedule.defaultStartTime.trim() : "09:00";
   const endTime = schedule.defaultEndTime?.trim() || null;
 
   return {

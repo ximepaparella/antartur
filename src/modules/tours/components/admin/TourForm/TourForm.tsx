@@ -494,7 +494,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
             <div className={styles.defaultScheduleCard}>
               <Card title="Horario por defecto">
                 <p className={styles.weekdaysDescription}>
-                  Hora de inicio y fin que se usará al crear nuevas salidas en el calendario de disponibilidad. Cada salida puede editarse después para override.
+                  Hora de inicio y fin del tour. Todas las salidas usan este horario; no se puede configurar un horario distinto por salida.
                 </p>
                 <div className={styles.defaultScheduleRow}>
                   <Input

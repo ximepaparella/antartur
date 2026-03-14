@@ -575,6 +575,9 @@ model SiteSettings {
   id                String            @id @default("global")
   homePrimarySeason HomePrimarySeason @default(SUMMER)
 
+  // Reservas: antelación mínima en horas (24, 48 o 72) para permitir una reserva
+  minimumAdvanceBookingHours Int? // 24 | 48 | 72; null = sin restricción (tratar como 0 o 24 según política)
+
   // Analytics (opcionalmente pueden sobreescribir los valores de entorno)
   gtmId String?
   ga4Id String?

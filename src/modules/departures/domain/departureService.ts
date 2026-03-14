@@ -111,14 +111,24 @@ export class DepartureService {
       });
     }
 
-    const departure = await departureRepository.create({
-      tourId: data.tourId,
-      departureDate: new Date(data.departureDate),
-      seatsTotal: data.seatsTotal,
-      isActive: data.isActive ?? true,
-    });
-
-    return departure;
+    try {
+      const departure = await departureRepository.create({
+        tourId: data.tourId,
+        departureDate: new Date(data.departureDate),
+        seatsTotal: data.seatsTotal,
+        isActive: data.isActive ?? true,
+      });
+      return departure;
+    } catch (err) {
+      const code = err && typeof err === "object" && "code" in err ? (err as { code: string }).code : undefined;
+      if (code === "P2002") {
+        throw new ValidationError("Availability already exists for this tour and date", {
+          tourId: data.tourId,
+          date: data.departureDate,
+        });
+      }
+      throw err;
+    }
   }
 
   /**
@@ -138,10 +148,10 @@ export class DepartureService {
       }
     }
 
-    // Validación de negocio: si se actualiza fecha, verificar que no haya conflicto
-    if (data.departureDate) {
-      const checkDate = new Date(data.departureDate);
-      const checkTourId = data.tourId || departure.tourId;
+    // Validación de negocio: si se actualiza fecha o tour, verificar que no haya conflicto
+    if (data.departureDate != null || data.tourId != null) {
+      const checkDate = data.departureDate != null ? new Date(data.departureDate) : departure.departureDate;
+      const checkTourId = data.tourId ?? departure.tourId;
 
       const existing = await prisma.tourDeparture.findFirst({
         where: {

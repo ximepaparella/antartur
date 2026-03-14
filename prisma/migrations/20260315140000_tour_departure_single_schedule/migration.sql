@@ -1,6 +1,16 @@
 -- Drop existing unique constraint (tourId, departureDate, startTime)
 ALTER TABLE "TourDeparture" DROP CONSTRAINT IF EXISTS "TourDeparture_tourId_departureDate_startTime_key";
 
+-- Point any Booking that references a duplicate departure to the kept row (MIN id per tourId, departureDate)
+UPDATE "Booking" b
+SET "tourDepartureId" = k.kept_id
+FROM (
+  SELECT t.id AS dup_id, MIN(t.id) OVER (PARTITION BY t."tourId", t."departureDate") AS kept_id
+  FROM "TourDeparture" t
+) k
+WHERE b."tourDepartureId" = k.dup_id
+  AND b."tourDepartureId" != k.kept_id;
+
 -- Remove duplicate rows: keep one row per (tourId, departureDate), the one with smallest id
 DELETE FROM "TourDeparture" a
 USING "TourDeparture" b

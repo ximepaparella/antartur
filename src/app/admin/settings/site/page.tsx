@@ -7,8 +7,11 @@ import styles from "./page.module.scss";
 
 type HomePrimarySeason = "SUMMER" | "WINTER" | "AUTO";
 
+type MinimumAdvanceBookingHours = 24 | 48 | 72;
+
 interface SiteSettingsFormState {
   homePrimarySeason: HomePrimarySeason;
+  minimumAdvanceBookingHours: MinimumAdvanceBookingHours;
   gtmId: string;
   ga4Id: string;
   phone: string;
@@ -24,6 +27,7 @@ interface SiteSettingsFormState {
 
 const DEFAULT_FORM_STATE: SiteSettingsFormState = {
   homePrimarySeason: "SUMMER",
+  minimumAdvanceBookingHours: 24,
   gtmId: "",
   ga4Id: "",
   phone: "",
@@ -67,8 +71,12 @@ export default function SiteSettingsPage() {
 
       const settings = data.data as any;
 
+      const hours = settings.minimumAdvanceBookingHours;
+      const validHours = (hours === 24 || hours === 48 || hours === 72 ? hours : 24) as MinimumAdvanceBookingHours;
+
       setForm({
         homePrimarySeason: settings.homePrimarySeason ?? "SUMMER",
+        minimumAdvanceBookingHours: validHours,
         gtmId: settings.gtmId ?? "",
         ga4Id: settings.ga4Id ?? "",
         phone: settings.phone ?? "",
@@ -97,6 +105,11 @@ export default function SiteSettingsPage() {
     (field: keyof SiteSettingsFormState) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const value = event.target.value;
+      if (field === "minimumAdvanceBookingHours") {
+        const num = parseInt(value, 10);
+        setForm((prev) => ({ ...prev, [field]: (num === 24 || num === 48 || num === 72 ? num : 24) as MinimumAdvanceBookingHours }));
+        return;
+      }
       setForm((prev) => ({ ...prev, [field]: value }));
     };
 
@@ -110,8 +123,8 @@ export default function SiteSettingsPage() {
 
       (Object.keys(form) as (keyof SiteSettingsFormState)[]).forEach((key) => {
         const value = form[key];
-        // Enviar undefined para campos vacíos opcionales
-        body[key] = value === "" ? undefined : value;
+        // Enviar null para campos vacíos para que el servidor pueda limpiar el valor en DB
+        body[key] = value === "" ? null : value;
       });
 
       const response = await fetch("/api/admin/settings/site", {
@@ -185,6 +198,30 @@ export default function SiteSettingsPage() {
       )}
 
       <form className={styles.form} onSubmit={handleSubmit}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Reservas</h2>
+          <p className={styles.sectionDescription}>
+            Antelación mínima para permitir una reserva. Si hoy es lunes y elegís 72 horas, los
+            calendarios solo mostrarán fechas disponibles a partir del jueves.
+          </p>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="minimumAdvanceBookingHours" className={styles.label}>
+              Reservas permitidas a partir de
+            </label>
+            <select
+              id="minimumAdvanceBookingHours"
+              name="minimumAdvanceBookingHours"
+              className={styles.select}
+              value={form.minimumAdvanceBookingHours}
+              onChange={handleChange("minimumAdvanceBookingHours")}
+            >
+              <option value={24}>24 horas</option>
+              <option value={48}>48 horas</option>
+              <option value={72}>72 horas</option>
+            </select>
+          </div>
+        </section>
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Home</h2>
           <p className={styles.sectionDescription}>
