@@ -161,16 +161,19 @@ export function toPassengerResponse(passenger: Passenger): PassengerResponse {
 }
 
 /**
- * Transforma un TourDeparture de Prisma a TourDepartureResponse
+ * Transforma un TourDeparture de Prisma a TourDepartureResponse.
+ * startTime/endTime vienen del tour (defaultStartTime/defaultEndTime) si está incluido.
  */
 export function toTourDepartureResponse(departure: any): TourDepartureResponse | undefined {
   if (!departure) return undefined;
-  
+  const startTime = departure.tour?.defaultStartTime?.trim() || "09:00";
+  const endTime = departure.tour?.defaultEndTime?.trim() || null;
+
   return {
     id: departure.id,
     departureDate: departure.departureDate.toISOString().split("T")[0],
-    startTime: departure.startTime,
-    endTime: departure.endTime,
+    startTime,
+    endTime,
     seatsTotal: departure.seatsTotal,
     seatsHeld: departure.seatsHeld,
     seatsConfirmed: departure.seatsConfirmed,

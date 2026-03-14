@@ -38,8 +38,6 @@ export class DepartureRepository {
       data: {
         tourId: data.tourId,
         departureDate: data.departureDate,
-        startTime: data.startTime,
-        endTime: data.endTime,
         seatsTotal: data.seatsTotal,
         isActive: data.isActive ?? true,
       },
@@ -47,11 +45,9 @@ export class DepartureRepository {
   }
 
   async update(id: string, data: UpdateDepartureInput) {
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (data.tourId !== undefined) updateData.tourId = data.tourId;
     if (data.departureDate !== undefined) updateData.departureDate = data.departureDate;
-    if (data.startTime !== undefined) updateData.startTime = data.startTime;
-    if (data.endTime !== undefined) updateData.endTime = data.endTime;
     if (data.seatsTotal !== undefined) updateData.seatsTotal = data.seatsTotal;
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
 

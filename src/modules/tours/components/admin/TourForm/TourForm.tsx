@@ -69,6 +69,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         fridayAvailable: tour.fridayAvailable ?? true,
         saturdayAvailable: tour.saturdayAvailable ?? true,
         sundayAvailable: tour.sundayAvailable ?? true,
+        defaultStartTime: tour.defaultStartTime ?? null,
+        defaultEndTime: tour.defaultEndTime ?? null,
         allowsInfants: tour.allowsInfants ?? false,
         additionals: transformedAdditionals,
         // Valores por defecto para campos no configurables
@@ -485,6 +487,30 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       </label>
                     </div>
                   ))}
+                </div>
+              </Card>
+            </div>
+
+            <div className={styles.defaultScheduleCard}>
+              <Card title="Horario por defecto">
+                <p className={styles.weekdaysDescription}>
+                  Hora de inicio y fin que se usará al crear nuevas salidas en el calendario de disponibilidad. Cada salida puede editarse después para override.
+                </p>
+                <div className={styles.defaultScheduleRow}>
+                  <Input
+                    label="Hora de inicio"
+                    type="time"
+                    value={formData.defaultStartTime ?? ""}
+                    onChange={(e) => updateField("defaultStartTime", e.target.value || null)}
+                    disabled={!isEditing}
+                  />
+                  <Input
+                    label="Hora de fin (opcional)"
+                    type="time"
+                    value={formData.defaultEndTime ?? ""}
+                    onChange={(e) => updateField("defaultEndTime", e.target.value || null)}
+                    disabled={!isEditing}
+                  />
                 </div>
               </Card>
             </div>
@@ -1114,6 +1140,8 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
               saturdayAvailable: formData.saturdayAvailable ?? true,
               sundayAvailable: formData.sundayAvailable ?? true,
             }}
+            defaultStartTime={formData.defaultStartTime ?? null}
+            defaultEndTime={formData.defaultEndTime ?? null}
           />
         )}
 

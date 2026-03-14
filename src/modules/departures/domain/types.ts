@@ -6,8 +6,6 @@ export interface Departure {
   id: string;
   tourId: string;
   departureDate: Date;
-  startTime: string;
-  endTime?: string | null;
   seatsTotal: number;
   seatsHeld: number;
   seatsConfirmed: number;
@@ -17,8 +15,6 @@ export interface Departure {
 export interface CreateDepartureInput {
   tourId: string;
   departureDate: Date;
-  startTime: string;
-  endTime?: string | null;
   seatsTotal: number;
   isActive?: boolean;
 }

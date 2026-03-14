@@ -38,6 +38,9 @@ export interface AvailabilityManagerProps {
     saturdayAvailable: boolean;
     sundayAvailable: boolean;
   };
+  /** Horario por defecto del tour para prellenar al crear salidas */
+  defaultStartTime?: string | null;
+  defaultEndTime?: string | null;
 }
 
 // Types para ImagePicker

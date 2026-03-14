@@ -83,6 +83,9 @@ export interface TourResponse {
   fridayAvailable: boolean;
   saturdayAvailable: boolean;
   sundayAvailable: boolean;
+  // Horario por defecto (nuevas salidas)
+  defaultStartTime: string | null;
+  defaultEndTime: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -224,6 +227,8 @@ export function toTourResponse(tour: TourWithRelations): TourResponse {
     fridayAvailable: tour.fridayAvailable ?? true,
     saturdayAvailable: tour.saturdayAvailable ?? true,
     sundayAvailable: tour.sundayAvailable ?? true,
+    defaultStartTime: tour.defaultStartTime ?? null,
+    defaultEndTime: tour.defaultEndTime ?? null,
     createdAt: tour.createdAt.toISOString(),
     updatedAt: tour.updatedAt.toISOString(),
   };
@@ -338,7 +343,13 @@ export function toTourFullResponse(tour: TourWithRelations): TourFullResponse {
   const base = toTourWithImagesResponse(tour);
   return {
     ...base,
-    availability: tour.departures?.map(toAvailabilityResponse) || [],
+    availability:
+      tour.departures?.map((d) =>
+        toAvailabilityResponse(d, {
+          defaultStartTime: tour.defaultStartTime,
+          defaultEndTime: tour.defaultEndTime,
+        })
+      ) || [],
     timelineItems: tour.timelineItems?.map(toTimelineItemResponse),
     featuredInfos: tour.featuredInfos?.map(toFeaturedInfoResponse),
     testimonials: tour.testimonials?.map(toTestimonialResponse),

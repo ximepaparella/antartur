@@ -3,16 +3,14 @@
  */
 
 import { z } from "zod";
-import { idSchema, dateSchema, timeSchema } from "@/lib/validation/schemas";
+import { idSchema, dateSchema } from "@/lib/validation/schemas";
 
 /**
- * Schema para crear Availability
+ * Schema para crear Availability (horario viene del tour)
  */
 export const createAvailabilitySchema = z.object({
   tourId: idSchema,
   departureDate: dateSchema,
-  startTime: timeSchema,
-  endTime: timeSchema.optional().nullable(),
   seatsTotal: z.coerce.number().int().positive("Seats total must be positive"),
   isActive: z.boolean().default(true),
 });

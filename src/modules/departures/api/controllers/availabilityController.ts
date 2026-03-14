@@ -1,15 +1,15 @@
 /**
  * Controller para Availability (TourDepartures)
  * Solo orquesta: valida entrada, llama servicios, transforma salida
+ * El horario (startTime/endTime) se toma del tour.
  */
 
-import { NextRequest } from "next/server";
 import { DepartureService } from "../../domain/departureService";
-import { validateQuery, validateBody } from "@/lib/validation/schemas";
+import { TourRepository } from "@/modules/tours/infra/tourRepository";
+import { validateBody } from "@/lib/validation/schemas";
 import {
   createAvailabilitySchema,
   updateAvailabilitySchema,
-  tourAvailabilityQuerySchema,
   type CreateAvailabilityInput,
   type UpdateAvailabilityInput,
   type TourAvailabilityQuery,
@@ -17,27 +17,42 @@ import {
 import {
   toAvailabilityResponse,
   toAvailabilityDetailResponse,
-  type AvailabilityResponse,
-  type AvailabilityDetailResponse,
+  type TourScheduleDefaults,
 } from "../dto/availabilityDto";
 
 const departureService = new DepartureService();
+const tourRepository = new TourRepository();
+
+function scheduleFromTour(tour: { defaultStartTime: string | null; defaultEndTime: string | null }): TourScheduleDefaults {
+  return {
+    defaultStartTime: tour.defaultStartTime,
+    defaultEndTime: tour.defaultEndTime,
+  };
+}
 
 export class AvailabilityController {
   /**
    * Obtener disponibilidad de un tour
    */
   async getByTourId(tourId: string, query: TourAvailabilityQuery) {
-    const departures = await departureService.getAvailabilityByTourId(tourId, query);
-    return departures.map(toAvailabilityResponse);
+    const [departures, tour] = await Promise.all([
+      departureService.getAvailabilityByTourId(tourId, query),
+      tourRepository.findById(tourId),
+    ]);
+    const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
+    return departures.map((d) => toAvailabilityResponse(d, schedule));
   }
 
   /**
    * Obtener disponibilidad para una fecha específica
    */
   async getByTourIdAndDate(tourId: string, date: string) {
-    const departures = await departureService.getAvailabilityByTourIdAndDate(tourId, date);
-    return departures.map(toAvailabilityResponse);
+    const [departures, tour] = await Promise.all([
+      departureService.getAvailabilityByTourIdAndDate(tourId, date),
+      tourRepository.findById(tourId),
+    ]);
+    const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
+    return departures.map((d) => toAvailabilityResponse(d, schedule));
   }
 
   /**
@@ -45,7 +60,9 @@ export class AvailabilityController {
    */
   async getById(id: string) {
     const departure = await departureService.getAvailabilityById(id);
-    return toAvailabilityDetailResponse(departure);
+    const tour = departure ? await tourRepository.findById(departure.tourId) : null;
+    const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
+    return toAvailabilityDetailResponse(departure, schedule);
   }
 
   /**
@@ -54,7 +71,9 @@ export class AvailabilityController {
   async create(body: unknown) {
     const data = validateBody(createAvailabilitySchema, body);
     const departure = await departureService.createAvailability(data);
-    return toAvailabilityDetailResponse(departure);
+    const tour = await tourRepository.findById(departure.tourId);
+    const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
+    return toAvailabilityDetailResponse(departure, schedule);
   }
 
   /**
@@ -63,7 +82,9 @@ export class AvailabilityController {
   async update(id: string, body: unknown) {
     const data = validateBody(updateAvailabilitySchema, body);
     const updated = await departureService.updateAvailability(id, data);
-    return toAvailabilityDetailResponse(updated);
+    const tour = await tourRepository.findById(updated.tourId);
+    const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
+    return toAvailabilityDetailResponse(updated, schedule);
   }
 
   /**

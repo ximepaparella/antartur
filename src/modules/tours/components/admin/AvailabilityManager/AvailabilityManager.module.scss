@@ -224,6 +224,12 @@
   font-weight: $font-weight-semibold;
   margin: 0;
   text-transform: capitalize;
+}
+
+.tourScheduleNote {
+  font-size: $font-size-14;
+  color: $gray-600;
+  margin: 0;
   padding: $spacing-8 $spacing-12;
   background: rgba($primary-color, 0.08);
   border-radius: $spacing-4;

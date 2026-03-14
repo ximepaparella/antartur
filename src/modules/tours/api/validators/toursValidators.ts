@@ -181,6 +181,9 @@ export const updateTourSchema = z.object({
   fridayAvailable: z.boolean().optional(),
   saturdayAvailable: z.boolean().optional(),
   sundayAvailable: z.boolean().optional(),
+  // Horario por defecto (HH:mm)
+  defaultStartTime: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:mm").optional().nullable(),
+  defaultEndTime: z.string().regex(/^\d{2}:\d{2}$/, "Formato HH:mm").optional().nullable(),
 });
 
 export type UpdateTourInput = z.infer<typeof updateTourSchema>;
