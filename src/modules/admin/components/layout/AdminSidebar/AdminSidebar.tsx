@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { href: "/admin/tours", label: "Tours", icon: "map-route" },
   { href: "/admin/orders", label: "Órdenes y Reservas", icon: "credit-card" },
   { href: "/admin/notifications", label: "Notificaciones", icon: "email" },
+  { href: "/admin/users", label: "Usuarios", icon: "users" },
 ];
 
 const settingsItems: NavItem[] = [

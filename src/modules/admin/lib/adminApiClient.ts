@@ -14,6 +14,9 @@ import type {
   NotificationResponse,
   CreateTourDto,
   UpdateTourDto,
+  UserSummary,
+  CreateUserDto,
+  ChangeUserPasswordDto,
 } from "./types";
 
 // toursClient tiene estructura diferente, usamos fetch directo
@@ -434,6 +437,108 @@ class AdminApiClient {
       throw new Error(`Failed to update booking status: ${response.statusText}`);
     }
 
+    return response.json();
+  }
+
+  /**
+   * Get users with pagination
+   */
+  async getUsers(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: string;
+    isActive?: string;
+  }): Promise<ApiResponse<UserSummary[]>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.role) queryParams.append("role", params.role);
+    if (params?.isActive) queryParams.append("isActive", params.isActive);
+
+    const url = `${API_BASE_URL}/admin/users${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+    const response = await fetchWithAuth(url, { method: "GET" });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Create user
+   */
+  async createUser(data: CreateUserDto): Promise<ApiResponse<UserSummary>> {
+    // Basic runtime validation
+    if (!data.email || typeof data.email !== "string" || data.email.trim().length === 0) {
+      throw new Error("Email is required");
+    }
+    if (!data.password || typeof data.password !== "string" || data.password.length < 8) {
+      throw new Error("Password must be at least 8 characters");
+    }
+    if (data.password !== data.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    const response = await fetchWithAuth(`${API_BASE_URL}/admin/users`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create user: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Delete user
+   */
+  async deleteUser(id: string): Promise<ApiResponse<void>> {
+    const response = await fetchWithAuth(`${API_BASE_URL}/admin/users/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to delete user: ${response.statusText}`);
+    }
+
+    if (response.status === 204) {
+      return {
+        success: true,
+        data: undefined as void,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Change user password
+   */
+  async changeUserPassword(id: string, data: ChangeUserPasswordDto): Promise<ApiResponse<UserSummary>> {
+    if (!data.newPassword || typeof data.newPassword !== "string" || data.newPassword.length < 8) {
+      throw new Error("New password must be at least 8 characters");
+    }
+    if (data.newPassword !== data.confirmNewPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    const response = await fetchWithAuth(`${API_BASE_URL}/admin/users/${id}/password`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to change password: ${response.statusText}`);
+    }
+
+    // Devolvemos el usuario actualizado (sin password)
     return response.json();
   }
 }
