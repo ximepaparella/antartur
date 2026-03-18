@@ -7,6 +7,7 @@ import type { DashboardStats } from "../hooks/useDashboardStats";
 import type { OrderResponse, OrderFullResponse, BookingResponse } from "@/modules/orders/api/dto/ordersDto";
 import type { TourResponse, TourFullResponse } from "@/modules/tours/api/dto/toursDto";
 import type { NotificationResponse } from "@/modules/notifications/api/dto/notificationsDto";
+import type { UserRole } from "@prisma/client";
 
 // Re-export existing types
 export type { DashboardStats };
@@ -102,3 +103,31 @@ export interface CreateTourDto {
 }
 
 export type UpdateTourDto = Partial<CreateTourDto>;
+
+// =============================
+// Admin Users (ABM)
+// =============================
+
+export interface UserSummary {
+  id: string;
+  email: string;
+  name: string | null;
+  role: UserRole;
+  isActive: boolean;
+  lastLoginAt: string | null;
+  createdAt: string;
+}
+
+export interface CreateUserDto {
+  email: string;
+  name?: string | null;
+  role?: UserRole;
+  password: string;
+  confirmPassword: string;
+  isActive?: boolean;
+}
+
+export interface ChangeUserPasswordDto {
+  newPassword: string;
+  confirmNewPassword: string;
+}
