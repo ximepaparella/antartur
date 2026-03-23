@@ -107,7 +107,9 @@ logs/
 *.log
 
 # Documentation and data that could expose internal info
-docs/
+docs/*
+# Exception: SaaS template PRD is versioned for the product roadmap
+!docs/README_SAAS_TEMPLATE.md
 postman/
 
 # Exports, dumps and collections (may contain URLs, tokens, sample data)

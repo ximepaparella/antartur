@@ -2,6 +2,24 @@
 
 Migración de WordPress/Elementor a Next.js 100% - Sistema de reservas y gestión de tours.
 
+## 🚀 Plan SaaS Genérico (Nuevo)
+
+El plan completo para convertir este proyecto en un **template SaaS reutilizable** (productos, servicios, turnos, reservas de canchas y tours) está documentado en:
+
+- **[Plan Maestro SaaS Template](./docs/README_SAAS_TEMPLATE.md)**
+
+Incluye en detalle:
+
+- Arquitectura objetivo (core + módulos activables)
+- Estrategia de extracción y conversión por fases
+- Modelo de datos genérico (entidades, campos y tipos)
+- RBAC (roles/permisos) y seguridad
+- Front desacoplado (admin / storefront / API)
+- Multi-moneda, multi-idioma, pagos y facturación
+- Diagramas Mermaid (módulos, ERD, flujos, despliegue y onboarding)
+
+Si querés, este README principal también puede convertirse en la versión SaaS-first y mover la documentación actual de Antartur a un archivo histórico.
+
 ## 📋 Tabla de Contenidos
 
 - [Stack Tecnológico](#stack-tecnológico)
@@ -532,6 +550,7 @@ npx prisma migrate deploy
 ## 📚 Documentación Adicional
 
 - [Documentación Técnica](./docs/TECHNICAL_DOCUMENTATION.md)
+- [Plan Maestro SaaS Template](./docs/README_SAAS_TEMPLATE.md)
 - [Guía de Variables de Entorno](./docs/ENVIRONMENT_VARIABLES.md)
 - [Setup de Docker](./docs/DOCKER_SETUP.md)
 - [Deploy en VPS](./docs/VPS_DEPLOY.md)
