@@ -4,6 +4,7 @@
  */
 
 import type { Order as PrismaOrder, Booking, Passenger, Payment } from "@prisma/client";
+import { toArDateKey } from "@/lib/utils/dateTimeAr";
 
 /**
  * DTO de respuesta para Order básico
@@ -148,7 +149,7 @@ export function toPassengerResponse(passenger: Passenger): PassengerResponse {
     type: passenger.type,
     firstName: passenger.firstName,
     lastName: passenger.lastName,
-    birthDate: passenger.birthDate?.toISOString().split("T")[0] || null,
+    birthDate: passenger.birthDate ? toArDateKey(passenger.birthDate) : null,
     documentType: passenger.documentType,
     documentNumber: passenger.documentNumber,
     nationality: passenger.nationality,
@@ -171,7 +172,7 @@ export function toTourDepartureResponse(departure: any): TourDepartureResponse |
 
   return {
     id: departure.id,
-    departureDate: departure.departureDate.toISOString().split("T")[0],
+    departureDate: toArDateKey(departure.departureDate),
     startTime,
     endTime,
     seatsTotal: departure.seatsTotal,
@@ -207,7 +208,7 @@ export function toBookingResponse(
     unitPriceChild: Number(booking.unitPriceChild),
     currency: booking.currency,
     tourNameSnapshot: booking.tourNameSnapshot,
-    departureDateSnapshot: booking.departureDateSnapshot.toISOString().split("T")[0],
+    departureDateSnapshot: toArDateKey(booking.departureDateSnapshot),
     startTimeSnapshot: booking.startTimeSnapshot,
     meetingPointSnapshot: booking.meetingPointSnapshot,
     passengers: booking.passengers?.map(toPassengerResponse) || [],

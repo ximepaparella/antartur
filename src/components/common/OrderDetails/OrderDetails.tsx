@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card } from "@/components/common/Card";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./OrderDetails.module.scss";
 
 interface OrderDetailsProps {
@@ -44,7 +45,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
   passengers,
 }) => {
   // Formatear fecha
-  const formattedDate = new Date(date).toLocaleDateString("es-AR", {
+  const formattedDate = formatArDate(date, {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -100,8 +101,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
                 const formatDate = (dateStr?: string) => {
                   if (!dateStr) return null;
                   try {
-                    const date = new Date(dateStr);
-                    return date.toLocaleDateString("es-AR", {
+                    return formatArDate(dateStr, {
                       year: "numeric",
                       month: "long",
                       day: "numeric",

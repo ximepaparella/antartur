@@ -14,12 +14,13 @@ import { Input } from "@/components/common/Input/Input";
 import { Select } from "@/components/common/Select/Select";
 import { Button } from "@/components/common/Button/Button";
 import { Message } from "@/components/common/Message/Message";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 
 function formatMaybeDate(value: string | null | undefined): string {
   if (!value) return "-";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("es-AR", {
+  return formatArDate(d, {
     year: "numeric",
     month: "short",
     day: "numeric",

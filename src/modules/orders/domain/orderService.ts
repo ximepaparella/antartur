@@ -15,6 +15,7 @@ import { prisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { logger } from "@/lib/services/logger";
+import { formatArDate, parseDateKeyToLocalDate, toArDateKey } from "@/lib/utils/dateTimeAr";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -97,7 +98,7 @@ export async function createReservation(input: ReservationInput) {
     if (tour.minAge && input.passengers) {
       for (const passenger of input.passengers) {
         if (passenger.birthDate) {
-          const age = calculateAge(passenger.birthDate.toISOString().split("T")[0]);
+          const age = calculateAge(toArDateKey(passenger.birthDate));
           if (!validateMinAge(age, tour.minAge)) {
             throw new Error(`Passenger ${passenger.firstName} ${passenger.lastName} does not meet the minimum age requirement of ${tour.minAge} years (age: ${age})`);
           }
@@ -365,7 +366,9 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
     firstName: p.firstName,
     lastName: p.lastName,
     type: p.type,
-    birthDate: p.birthDate ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0]) : null,
+    birthDate: p.birthDate
+      ? (typeof p.birthDate === "string" ? p.birthDate : toArDateKey(p.birthDate))
+      : null,
     documentType: p.documentType || null,
     documentNumber: p.documentNumber || null,
     nationality: p.nationality || null,
@@ -376,7 +379,7 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       : null,
   }));
 
-    const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+    const departureDate = formatArDate(booking.departureDateSnapshot || departure.departureDate);
     const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
     const { sendEmail } = await import("../../notifications/domain/emailService");
@@ -519,7 +522,7 @@ export async function findDepartureByTourDateAndTime(
   const departure = await prisma.tourDeparture.findFirst({
     where: {
       tourId: tour.id,
-      departureDate: new Date(date),
+      departureDate: parseDateKeyToLocalDate(date),
     },
   });
 
@@ -726,8 +729,8 @@ export async function sendOrderEmails(order: {
     firstName: p.firstName,
     lastName: p.lastName,
     type: p.type,
-    birthDate: p.birthDate 
-      ? (typeof p.birthDate === 'string' ? p.birthDate : p.birthDate.toISOString().split('T')[0])
+    birthDate: p.birthDate
+      ? (typeof p.birthDate === "string" ? p.birthDate : toArDateKey(p.birthDate))
       : null,
     documentType: p.documentType || null,
     documentNumber: p.documentNumber || null,
@@ -739,7 +742,7 @@ export async function sendOrderEmails(order: {
       : null,
   }));
 
-  const departureDate = new Date(booking.departureDateSnapshot || departure.departureDate).toLocaleDateString("es-AR");
+  const departureDate = formatArDate(booking.departureDateSnapshot || departure.departureDate);
   const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
   if (order.type === "ENQUIRY") {
@@ -889,9 +892,9 @@ export function generateWhatsAppLinkForEnquiry(order: {
   const departure = booking.tourDeparture;
   const tourName = booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
   const departureDate = booking.departureDateSnapshot 
-    ? new Date(booking.departureDateSnapshot).toLocaleDateString("es-AR")
+    ? formatArDate(booking.departureDateSnapshot)
     : departure?.departureDate 
-      ? new Date(departure.departureDate).toLocaleDateString("es-AR")
+      ? formatArDate(departure.departureDate)
       : "Fecha no disponible";
   const totalPassengers = booking.numAdults + booking.numChildren;
   const totalAmount = Number(order.totalAmount).toLocaleString("es-AR", {

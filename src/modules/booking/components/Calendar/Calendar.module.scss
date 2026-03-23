@@ -7,8 +7,9 @@
   border-radius: $spacing-8;
   padding: $spacing-16;
   width: 100%;
-  max-width: 400px;
-  margin:0 auto;
+  max-width: min(400px, 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .header {
@@ -69,6 +70,30 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: $spacing-8;
+}
+
+@media (max-width: 480px) {
+  .calendar {
+    padding: $spacing-12;
+  }
+
+  .monthYear {
+    font-size: $font-size-18;
+  }
+
+  .daysOfWeek,
+  .daysGrid {
+    gap: $spacing-4;
+  }
+
+  .dayName {
+    font-size: $font-size-12;
+    padding: $spacing-8;
+  }
+
+  .dayCell {
+    font-size: $font-size-14;
+  }
 }
 
 .dayCell {

@@ -2,6 +2,7 @@
 
 import { Users, Trash2 } from "lucide-react";
 import type { Departure } from "@/modules/tours/types/admin";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./DayCell.module.scss";
 
 interface DayCellProps {
@@ -77,7 +78,7 @@ export function DayCell({
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (departure && onDelete) {
-      if (confirm(`¿Eliminar disponibilidad del ${date.toLocaleDateString("es-AR")}?`)) {
+      if (confirm(`¿Eliminar disponibilidad del ${formatArDate(date)}?`)) {
         onDelete(departure.id);
       }
     }

@@ -8,6 +8,7 @@ import { TourRepository } from "../../tours/infra/tourRepository";
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { prisma } from "@/lib/db";
 import type { CreateAvailabilityInput, UpdateAvailabilityInput, TourAvailabilityQuery } from "../api/validators/availabilityValidators";
+import { parseDateKeyToLocalDate } from "@/lib/utils/dateTimeAr";
 
 const departureRepository = new DepartureRepository();
 const tourRepository = new TourRepository();
@@ -26,17 +27,17 @@ export class DepartureService {
     // Construir where clause
     const where: Record<string, unknown> = { tourId };
     if (query.date) {
-      where.departureDate = new Date(query.date);
+      where.departureDate = parseDateKeyToLocalDate(query.date);
     }
     if (query.startDate && query.endDate) {
       where.departureDate = {
-        gte: new Date(query.startDate),
-        lte: new Date(query.endDate),
+        gte: parseDateKeyToLocalDate(query.startDate),
+        lte: parseDateKeyToLocalDate(query.endDate),
       };
     } else if (query.startDate) {
-      where.departureDate = { gte: new Date(query.startDate) };
+      where.departureDate = { gte: parseDateKeyToLocalDate(query.startDate) };
     } else if (query.endDate) {
-      where.departureDate = { lte: new Date(query.endDate) };
+      where.departureDate = { lte: parseDateKeyToLocalDate(query.endDate) };
     }
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
@@ -65,7 +66,7 @@ export class DepartureService {
     const departures = await prisma.tourDeparture.findMany({
       where: {
         tourId,
-        departureDate: new Date(date),
+        departureDate: parseDateKeyToLocalDate(date),
       },
       orderBy: {
         departureDate: "asc",
@@ -100,7 +101,7 @@ export class DepartureService {
     const existing = await prisma.tourDeparture.findFirst({
       where: {
         tourId: data.tourId,
-        departureDate: new Date(data.departureDate),
+        departureDate: parseDateKeyToLocalDate(data.departureDate),
       },
     });
 
@@ -114,7 +115,7 @@ export class DepartureService {
     try {
       const departure = await departureRepository.create({
         tourId: data.tourId,
-        departureDate: new Date(data.departureDate),
+        departureDate: parseDateKeyToLocalDate(data.departureDate),
         seatsTotal: data.seatsTotal,
         isActive: data.isActive ?? true,
       });
@@ -150,7 +151,8 @@ export class DepartureService {
 
     // Validación de negocio: si se actualiza fecha o tour, verificar que no haya conflicto
     if (data.departureDate != null || data.tourId != null) {
-      const checkDate = data.departureDate != null ? new Date(data.departureDate) : departure.departureDate;
+      const checkDate =
+        data.departureDate != null ? parseDateKeyToLocalDate(data.departureDate) : departure.departureDate;
       const checkTourId = data.tourId ?? departure.tourId;
 
       const existing = await prisma.tourDeparture.findFirst({
@@ -168,7 +170,7 @@ export class DepartureService {
 
     const updated = await departureRepository.update(id, {
       ...data,
-      departureDate: data.departureDate ? new Date(data.departureDate) : undefined,
+      departureDate: data.departureDate ? parseDateKeyToLocalDate(data.departureDate) : undefined,
     });
 
     return updated;

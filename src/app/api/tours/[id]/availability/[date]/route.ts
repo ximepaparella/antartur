@@ -38,12 +38,15 @@ import { AvailabilityController } from "@/modules/departures/api/controllers/ava
 import { withControllerErrorHandler } from "@/lib/api/controllerWrapper";
 import { withRateLimitHandler } from "@/lib/middleware/rateLimiter";
 import { successResponse } from "@/lib/api/response";
+import { getAuthUser } from "@/lib/auth";
 
 const controller = new AvailabilityController();
 
 export const GET = withRateLimitHandler("public", withControllerErrorHandler(async (request, context) => {
   const { id, date } = await context.params;
-  const availability = await controller.getByTourIdAndDate(id, date);
+  const authUser = await getAuthUser(request);
+  const includeUnbookable = authUser?.role === "ADMIN";
+  const availability = await controller.getByTourIdAndDate(id, date, { includeUnbookable });
   return successResponse(availability);
 }));
 

@@ -2,9 +2,13 @@
  * Hook para manejar el estado del calendario
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import type { TimeSlot } from "@/lib/types/order";
-import { formatDate, generateCalendarDays } from "../utils/dateUtils";
+import {
+  formatDate,
+  generateCalendarDays,
+  getInitialCalendarDateFromAvailability,
+} from "../utils/dateUtils";
 
 // Extensión del TimeSlot compartido para incluir disponibilidad
 interface TimeSlotWithAvailability extends TimeSlot {
@@ -32,10 +36,13 @@ interface UseCalendarStateProps {
 }
 
 export function useCalendarState({ availability }: UseCalendarStateProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(() =>
+    getInitialCalendarDateFromAvailability(availability)
+  );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlotWithAvailability | null>(null);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
+  const hasUserChangedMonth = useRef(false);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -79,12 +86,21 @@ export function useCalendarState({ availability }: UseCalendarStateProps) {
 
   // Navegación de meses
   const goToPreviousMonth = () => {
+    hasUserChangedMonth.current = true;
     setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
   };
 
   const goToNextMonth = () => {
+    hasUserChangedMonth.current = true;
     setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
   };
+
+  useEffect(() => {
+    if (hasUserChangedMonth.current || availability.length === 0) {
+      return;
+    }
+    setCurrentDate(getInitialCalendarDateFromAvailability(availability));
+  }, [availability]);
 
   // Manejar click en fecha
   const handleDateClick = (date: Date) => {

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Icon } from "@/components/icons/Icon";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./PaymentGatewayCard.module.scss";
 
 export interface PaymentGatewayData {
@@ -207,7 +208,7 @@ export const PaymentGatewayCard: React.FC<PaymentGatewayCardProps> = ({
 
       <div className={styles.footer}>
         <span className={styles.lastUpdate}>
-          Última actualización: {new Date(gateway.updatedAt).toLocaleDateString("es-AR", {
+          Última actualización: {formatArDate(gateway.updatedAt, {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",

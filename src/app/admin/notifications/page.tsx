@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { MetricCard } from "@/components/common/MetricCard";
 import type { TableColumn } from "@/components/common/Table/Table";
 import type { FilterConfig } from "@/components/common/FiltersBar";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./page.module.scss";
 
 const columns: TableColumn<NotificationResponse>[] = [
@@ -44,8 +45,7 @@ const columns: TableColumn<NotificationResponse>[] = [
     label: "Enviado",
     render: (value) => {
       if (!value) return "-";
-      const date = new Date(value);
-      return date.toLocaleDateString("es-AR", {
+      return formatArDate(value, {
         year: "numeric",
         month: "short",
         day: "numeric",

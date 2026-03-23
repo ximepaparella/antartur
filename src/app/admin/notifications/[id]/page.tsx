@@ -9,6 +9,7 @@ import type { NotificationStatus } from "@/components/common/StatusBadge";
 import { Card } from "@/components/common/Card/Card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./page.module.scss";
 
 export default function AdminNotificationDetailPage() {
@@ -103,7 +104,7 @@ export default function AdminNotificationDetailPage() {
               <div className={styles.infoItem}>
                 <span className={styles.label}>Enviado:</span>
                 <span className={styles.value}>
-                  {new Date(notification.sentAt).toLocaleDateString("es-AR", {
+                  {formatArDate(notification.sentAt, {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

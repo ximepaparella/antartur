@@ -5,9 +5,11 @@ import { ChevronLeft, ChevronRight, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
 import { Select } from "@/components/common/Select/Select";
+import { Modal } from "@/components/common/Modal/Modal";
 import { DayCell } from "./DayCell";
 import { BulkActions } from "./BulkActions";
 import { createAuthHeaders } from "@/modules/admin/lib/authHelpers";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./AvailabilityManager.module.scss";
 
 import type { AvailabilityManagerProps, Departure } from "@/modules/tours/types/admin";
@@ -17,6 +19,14 @@ const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
+
+interface PendingBulkOverwrite {
+  action: string;
+  params: Record<string, any>;
+  dates: Date[];
+  existingCount: number;
+  departuresByDate: Record<string, Departure>;
+}
 
 export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: AvailabilityManagerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -73,6 +83,8 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedDeparture, setSelectedDeparture] = useState<Departure | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOverwriteModalOpen, setIsOverwriteModalOpen] = useState(false);
+  const [pendingBulkOverwrite, setPendingBulkOverwrite] = useState<PendingBulkOverwrite | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
@@ -81,18 +93,40 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   const [formSeatsTotal, setFormSeatsTotal] = useState(20);
   const [formIsActive, setFormIsActive] = useState(true);
 
+  const toLocalDateKey = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const normalizeLocalDate = (date: Date): Date =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  const getDepartureDateKey = (departure: Departure): string | null => {
+    const rawDate = departure.date || departure.departureDate;
+    if (!rawDate) return null;
+    if (typeof rawDate === "string") {
+      return rawDate.split("T")[0];
+    }
+    return toLocalDateKey(new Date(rawDate));
+  };
+
   const fetchDepartures = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
-    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+    const startDate = toLocalDateKey(new Date(year, month, 1));
+    const endDate = toLocalDateKey(new Date(year, month + 1, 0));
 
     try {
       const response = await fetch(
-        `/api/tours/${tourId}/availability?startDate=${startDate}&endDate=${endDate}`
+        `/api/tours/${tourId}/availability?startDate=${startDate}&endDate=${endDate}`,
+        {
+          headers: createAuthHeaders(),
+        }
       );
       const result = await response.json();
 
@@ -143,19 +177,10 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   };
 
   const getDepartureForDate = (date: Date): Departure | undefined => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = toLocalDateKey(date);
     return departures.find((d) => {
-      // La API devuelve 'date' en formato YYYY-MM-DD
-      const departureDateStr = d.date || d.departureDate;
-      if (!departureDateStr) return false;
-      
-      // Si es string, puede venir como YYYY-MM-DD o ISO string
-      if (typeof departureDateStr === 'string') {
-        return departureDateStr.split("T")[0] === dateStr;
-      }
-      
-      // Si es Date object, convertir a string
-      return new Date(departureDateStr).toISOString().split("T")[0] === dateStr;
+      const departureDateKey = getDepartureDateKey(d);
+      return departureDateKey === dateStr;
     });
   };
 
@@ -204,11 +229,11 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
   const handleDaySelect = (date: Date, departure?: Departure, event?: React.MouseEvent) => {
     // Si está en modo selección múltiple (Ctrl/Cmd presionado)
     if (event && (event.ctrlKey || event.metaKey)) {
-      const dateStr = date.toISOString();
-      const isSelected = selectedDates.some(d => d.toISOString() === dateStr);
+      const dateStr = toLocalDateKey(date);
+      const isSelected = selectedDates.some((d) => toLocalDateKey(d) === dateStr);
       
       if (isSelected) {
-        setSelectedDates(selectedDates.filter(d => d.toISOString() !== dateStr));
+        setSelectedDates(selectedDates.filter((d) => toLocalDateKey(d) !== dateStr));
       } else {
         setSelectedDates([...selectedDates, date]);
       }
@@ -252,7 +277,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     setIsSaving(true);
     setError(null);
 
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    const dateStr = toLocalDateKey(selectedDate);
 
     try {
       if (selectedDeparture) {
@@ -355,7 +380,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
     departure: Departure | null,
     params: Record<string, any>
   ): Promise<{ success: boolean; error?: string }> => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = toLocalDateKey(date);
 
     try {
       // Handlers para cada tipo de acción
@@ -439,7 +464,15 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
       }
 
       const response = await handler();
-      const result = await response.json();
+
+      if (response.status === 204) {
+        return { success: true };
+      }
+
+      const result = await response.json().catch(() => ({
+        success: false,
+        error: `Error ${response.status}: ${response.statusText}`,
+      }));
 
       if (!response.ok || !result.success) {
         return {
@@ -466,11 +499,11 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
       if (action === "selectRange") {
         const { startDate, endDate } = params;
         const dates: Date[] = [];
-        const current = new Date(startDate);
-        const end = new Date(endDate);
+        const current = normalizeLocalDate(new Date(startDate));
+        const end = normalizeLocalDate(new Date(endDate));
         
         while (current <= end) {
-          dates.push(new Date(current));
+          dates.push(normalizeLocalDate(current));
           current.setDate(current.getDate() + 1);
         }
         
@@ -483,15 +516,55 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
         throw new Error("No hay fechas seleccionadas");
       }
 
+      const sortedDates = [...dates].sort((a, b) => a.getTime() - b.getTime());
+      const minDate = toLocalDateKey(sortedDates[0]);
+      const maxDate = toLocalDateKey(sortedDates[sortedDates.length - 1]);
+
+      const rangeResponse = await fetch(
+        `/api/tours/${tourId}/availability?startDate=${minDate}&endDate=${maxDate}`,
+        {
+          headers: createAuthHeaders(),
+        }
+      );
+      const rangeResult = await rangeResponse.json();
+      if (!rangeResponse.ok || !rangeResult.success) {
+        throw new Error(rangeResult.error || "No se pudo cargar disponibilidad del rango seleccionado");
+      }
+
+      const rangeDepartures: Departure[] = Array.isArray(rangeResult.data) ? rangeResult.data : [];
+      const departuresByDate = new Map<string, Departure>();
+      rangeDepartures.forEach((departure) => {
+        const dateKey = getDepartureDateKey(departure);
+        if (dateKey) {
+          departuresByDate.set(dateKey, departure);
+        }
+      });
+
+      if (action === "enable" || action === "setSeats") {
+        const existingCount = dates.filter((date) => departuresByDate.has(toLocalDateKey(date))).length;
+        if (existingCount > 0) {
+          setPendingBulkOverwrite({
+            action,
+            params,
+            dates,
+            existingCount,
+            departuresByDate: Object.fromEntries(departuresByDate),
+          });
+          setIsOverwriteModalOpen(true);
+          setIsSaving(false);
+          return;
+        }
+      }
+
       // Procesar cada fecha
       const errors: string[] = [];
       let successCount = 0;
 
       for (const date of dates) {
-        const dateStr = date.toISOString().split("T")[0];
-        const departure = getDepartureForDate(date);
+        const dateStr = toLocalDateKey(date);
+        const departure = departuresByDate.get(dateStr) || null;
         
-        const result = await processBulkAction(action, date, departure ?? null, params);
+        const result = await processBulkAction(action, date, departure, params);
         
         if (result.success) {
           successCount++;
@@ -506,7 +579,64 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
 
       // Mostrar mensaje de resultado
       if (errors.length > 0) {
-        setError(`${successCount} día(s) procesado(s) correctamente. Errores: ${errors.join(", ")}`);
+        const previewErrors = errors.slice(0, 6).join(", ");
+        const hiddenCount = Math.max(0, errors.length - 6);
+        const hiddenSummary = hiddenCount > 0 ? ` (+${hiddenCount} más)` : "";
+        setError(
+          `${successCount} día(s) procesado(s) correctamente. ` +
+          `${errors.length} error(es): ${previewErrors}${hiddenSummary}`
+        );
+      } else if (successCount > 0) {
+        setError(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error en acción masiva");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancelOverwrite = () => {
+    setIsOverwriteModalOpen(false);
+    setPendingBulkOverwrite(null);
+  };
+
+  const handleConfirmOverwrite = async () => {
+    if (!pendingBulkOverwrite) return;
+
+    const { action, params, dates, departuresByDate } = pendingBulkOverwrite;
+    setIsOverwriteModalOpen(false);
+    setPendingBulkOverwrite(null);
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const errors: string[] = [];
+      let successCount = 0;
+
+      for (const date of dates) {
+        const dateStr = toLocalDateKey(date);
+        const departure = departuresByDate[dateStr] || null;
+        const result = await processBulkAction(action, date, departure, params);
+
+        if (result.success) {
+          successCount++;
+        } else {
+          errors.push(`${dateStr}: ${result.error || "Error desconocido"}`);
+        }
+      }
+
+      await fetchDepartures();
+      setSelectedDates([]);
+
+      if (errors.length > 0) {
+        const previewErrors = errors.slice(0, 6).join(", ");
+        const hiddenCount = Math.max(0, errors.length - 6);
+        const hiddenSummary = hiddenCount > 0 ? ` (+${hiddenCount} más)` : "";
+        setError(
+          `${successCount} día(s) procesado(s) correctamente. ` +
+          `${errors.length} error(es): ${previewErrors}${hiddenSummary}`
+        );
       } else if (successCount > 0) {
         setError(null);
       }
@@ -583,8 +713,8 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
 
           <div className={styles.daysGrid}>
             {days.map((date, index) => {
-              const dateStr = date.toISOString();
-              const isSelected = selectedDates.some(d => d.toISOString() === dateStr);
+              const dateStr = toLocalDateKey(date);
+              const isSelected = selectedDates.some((d) => toLocalDateKey(d) === dateStr);
               
               return (
                 <DayCell
@@ -621,7 +751,7 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
 
             <div className={styles.modalBody}>
               <p className={styles.dateLabel}>
-                {selectedDate.toLocaleDateString("es-AR", {
+                {formatArDate(selectedDate, {
                   weekday: "long",
                   year: "numeric",
                   month: "long",
@@ -704,6 +834,32 @@ export function AvailabilityManager({ tourId, disabled = false, tourWeekdays }: 
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={isOverwriteModalOpen}
+        title="Sobrescribir disponibilidad existente"
+        onClose={handleCancelOverwrite}
+        size="medium"
+      >
+        <div className={styles.overwriteModalContent}>
+          <p className={styles.overwriteMessage}>
+            {pendingBulkOverwrite?.existingCount === 1
+              ? "Ya existe disponibilidad en 1 fecha seleccionada."
+              : `Ya existe disponibilidad en ${pendingBulkOverwrite?.existingCount || 0} fechas seleccionadas.`}
+          </p>
+          <p className={styles.overwriteSubmessage}>
+            Si continuás, se aplicarán los nuevos valores y se sobrescribirán los datos actuales de esas fechas.
+          </p>
+          <div className={styles.overwriteActions}>
+            <Button variant="outline" onClick={handleCancelOverwrite} disabled={isSaving}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={handleConfirmOverwrite} disabled={isSaving}>
+              Sobrescribir
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
