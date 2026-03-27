@@ -327,6 +327,14 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
           <Card title="Información Básica">
             <div className={styles.formGrid}>
               <Input
+                label="Nombre (Título)"
+                value={formData.name || ""}
+                onChange={(e) => updateField("name", e.target.value)}
+                disabled={!isEditing}
+                required
+                placeholder="Título principal de la excursión"
+              />
+              <Input
                 label="Slug"
                 value={formData.slug || ""}
                 onChange={(e) => updateField("slug", e.target.value)}
@@ -761,14 +769,6 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                   imageType="featured"
                   disabled={!isEditing}
                 />
-              <Input
-                label="Nombre (Título)"
-                value={formData.name || ""}
-                onChange={(e) => updateField("name", e.target.value)}
-                disabled={!isEditing}
-                required
-                placeholder="Título que aparece en la card del grid"
-              />
               <Input
                 label="Subtítulo"
                 value={formData.subtitle || ""}

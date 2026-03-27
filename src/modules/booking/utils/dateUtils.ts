@@ -13,6 +13,40 @@ export function formatDate(date: Date): string {
 }
 
 /**
+ * Obtiene la mejor fecha inicial para abrir el calendario:
+ * - Primera fecha disponible mayor o igual a hoy
+ * - Si todas son pasadas, la primera fecha disponible
+ * - Si no hay disponibilidad, fecha actual
+ */
+export function getInitialCalendarDateFromAvailability(
+  availability: Array<{ date: string }>
+): Date {
+  if (!availability || availability.length === 0) {
+    return new Date();
+  }
+
+  const sortedDates = availability
+    .map((item) => item.date)
+    .filter(Boolean)
+    .sort();
+
+  if (sortedDates.length === 0) {
+    return new Date();
+  }
+
+  const todayStr = formatDate(new Date());
+  const firstFutureOrToday = sortedDates.find((date) => date >= todayStr);
+  const targetDate = firstFutureOrToday || sortedDates[0];
+  const [year, month, day] = targetDate.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return new Date();
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+/**
  * Formatea una fecha en formato español legible
  * Ejemplo: "19 noviembre, 2025"
  */

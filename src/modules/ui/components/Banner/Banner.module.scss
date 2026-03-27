@@ -5,7 +5,8 @@
   position: relative;
   width: 100%;
   min-height: 500px;
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: hidden;
   display: flex;
   align-items: center;
   justify-content: center;

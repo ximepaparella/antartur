@@ -3,13 +3,16 @@
  */
 
 import type { Pricing, SelectedAdditional } from "@/lib/types/order";
+import { parseDateKeyToLocalDate } from "@/lib/utils/dateTimeAr";
 
 /**
  * Calcula la edad a partir de una fecha de nacimiento
  */
 export function calculateAge(birthDate: string): number {
   const today = new Date();
-  const birth = new Date(birthDate);
+  const birth = /^\d{4}-\d{2}-\d{2}$/.test(birthDate)
+    ? parseDateKeyToLocalDate(birthDate)
+    : new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {

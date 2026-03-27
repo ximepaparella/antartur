@@ -1,5 +1,6 @@
 import React from "react";
 import { Tooltip } from "@/components/common/Tooltip";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import type { GroupedAvailability } from "../../hooks/useCalendarState";
 import { useDateCellState } from "../../hooks/useDateCellState";
 import styles from "./Calendar.module.scss";
@@ -61,7 +62,7 @@ export const DateCell: React.FC<DateCellProps> = React.memo(({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={onMouseLeave}
       disabled={cellState.isDisabled}
-      aria-label={`${date.getDate()} de ${date.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })}${cellState.isAvailable ? `, ${cellState.totalAvailable} disponibles` : ', no disponible'}`}
+      aria-label={`${date.getDate()} de ${formatArDate(date, { month: "long", year: "numeric" })}${cellState.isAvailable ? `, ${cellState.totalAvailable} disponibles` : ", no disponible"}`}
       aria-pressed={cellState.isSelected}
     >
       <span className={styles.dayNumber}>{date.getDate()}</span>

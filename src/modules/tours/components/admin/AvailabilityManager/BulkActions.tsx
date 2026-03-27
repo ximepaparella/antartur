@@ -28,14 +28,21 @@ export function BulkActions({
   // Formulario para acciones masivas
   const [bulkSeats, setBulkSeats] = useState("");
 
+  const parseLocalInputDate = (value: string): Date => {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   const handleRangeSelect = async () => {
     if (!startDate || !endDate) {
       setError("Selecciona fecha de inicio y fin");
       return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = parseLocalInputDate(startDate);
+    const end = parseLocalInputDate(endDate);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
     if (start > end) {
       setError("La fecha de inicio debe ser anterior a la fecha de fin");

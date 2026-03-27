@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import type { OrderStatus, BookingStatus, PaymentStatus } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
 import { Select } from "@/components/common/Select/Select";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./page.module.scss";
 
 // Use DTO types directly
@@ -182,7 +183,7 @@ export default function AdminOrderDetailPage() {
             <div className={styles.infoItem}>
               <span className={styles.label}>Fecha:</span>
               <span className={styles.value}>
-                {new Date(order.createdAt).toLocaleDateString("es-AR", {
+                {formatArDate(order.createdAt, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -214,7 +215,7 @@ export default function AdminOrderDetailPage() {
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Fecha:</span>
                     <span className={styles.detailValue}>
-                      {new Date(booking.departureDateSnapshot).toLocaleDateString("es-AR", {
+                      {formatArDate(booking.departureDateSnapshot, {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -268,7 +269,7 @@ export default function AdminOrderDetailPage() {
                                 <div className={styles.passengerDetail}>
                                   <span className={styles.passengerLabel}>Fecha de nacimiento:</span>
                                   <span className={styles.passengerValue}>
-                                    {new Date(passenger.birthDate).toLocaleDateString("es-AR")}
+                                    {formatArDate(passenger.birthDate)}
                                   </span>
                                 </div>
                               )}
@@ -338,7 +339,7 @@ export default function AdminOrderDetailPage() {
                       <div className={styles.paymentDetail}>
                         <span className={styles.paymentLabel}>Fecha de pago:</span>
                         <span className={styles.paymentValue}>
-                          {new Date(payment.paidAt).toLocaleDateString("es-AR", {
+                          {formatArDate(payment.paidAt, {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

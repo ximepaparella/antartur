@@ -1,3 +1,5 @@
+import { formatArDate } from "@/lib/utils/dateTimeAr";
+
 /**
  * Utilidades para generar links de WhatsApp
  */
@@ -55,7 +57,7 @@ export interface OrderWhatsAppData {
  */
 export function generateOrderWhatsAppMessage(orderData: OrderWhatsAppData): string {
   // Formatear fecha
-  const formattedDate = new Date(orderData.date).toLocaleDateString("es-AR", {
+  const formattedDate = formatArDate(orderData.date, {
     weekday: "long",
     year: "numeric",
     month: "long",

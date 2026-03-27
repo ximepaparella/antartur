@@ -5,6 +5,7 @@
  */
 
 import type { TourDeparture } from "@prisma/client";
+import { toArDateKey } from "@/lib/utils/dateTimeAr";
 
 /**
  * DTO de respuesta para Availability (mapeo de TourDeparture + horario del tour)
@@ -39,7 +40,7 @@ export function toAvailabilityResponse(
 
   return {
     id: departure.id,
-    date: departure.departureDate.toISOString().split("T")[0], // YYYY-MM-DD
+    date: toArDateKey(departure.departureDate), // YYYY-MM-DD
     startTime,
     endTime,
     available: Math.max(0, available),

@@ -34,6 +34,7 @@ import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
 import { OrderRepository } from "../../infra/orderRepository";
 import { logger } from "@/lib/services/logger";
+import { parseDateKeyToLocalDate } from "@/lib/utils/dateTimeAr";
 
 const orderRepository = new OrderRepository();
 
@@ -65,7 +66,7 @@ export class OrdersController {
       type: p.type as "ADULT" | "CHILD" | "INFANT",
       firstName: p.firstName,
       lastName: p.lastName,
-      birthDate: p.birthDate ? new Date(p.birthDate) : undefined,
+      birthDate: p.birthDate ? parseDateKeyToLocalDate(p.birthDate) : undefined,
       documentType: p.documentType,
       documentNumber: p.documentNumber,
       nationality: p.nationality,

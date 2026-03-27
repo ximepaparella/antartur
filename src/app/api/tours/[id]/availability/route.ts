@@ -97,6 +97,7 @@ import { successResponse, createdResponse } from "@/lib/api/response";
 import { validateQuery } from "@/lib/validation/schemas";
 import { tourAvailabilityQuerySchema } from "@/modules/departures/api/validators/availabilityValidators";
 import { withAuth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
 
 const controller = new AvailabilityController();
 
@@ -105,8 +106,10 @@ export const GET = withRateLimitHandler("public", withControllerErrorHandler(asy
   const { id } = await context.params;
   const { searchParams } = new URL(request.url);
   const query = validateQuery(tourAvailabilityQuerySchema, Object.fromEntries(searchParams));
+  const authUser = await getAuthUser(request);
+  const includeUnbookable = authUser?.role === "ADMIN";
 
-  const availability = await controller.getByTourId(id, query);
+  const availability = await controller.getByTourId(id, query, { includeUnbookable });
   return successResponse(availability);
 }));
 

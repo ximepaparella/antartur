@@ -40,7 +40,11 @@ export class AvailabilityController {
   /**
    * Obtener disponibilidad de un tour
    */
-  async getByTourId(tourId: string, query: TourAvailabilityQuery) {
+  async getByTourId(
+    tourId: string,
+    query: TourAvailabilityQuery,
+    options?: { includeUnbookable?: boolean }
+  ) {
     const [departures, tour, settings] = await Promise.all([
       departureService.getAvailabilityByTourId(tourId, query),
       tourRepository.findById(tourId),
@@ -48,7 +52,10 @@ export class AvailabilityController {
     ]);
     const hours = settings.minimumAdvanceBookingHours ?? 24;
     const minimumBookableDate = getMinimumBookableDate(hours);
-    const filtered = departures.filter((d) => isDepartureBookableByAdvance(d, minimumBookableDate));
+    const includeUnbookable = options?.includeUnbookable === true;
+    const filtered = includeUnbookable
+      ? departures
+      : departures.filter((d) => isDepartureBookableByAdvance(d, minimumBookableDate));
     const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
     return filtered.map((d) => toAvailabilityResponse(d, schedule));
   }
@@ -56,7 +63,7 @@ export class AvailabilityController {
   /**
    * Obtener disponibilidad para una fecha específica
    */
-  async getByTourIdAndDate(tourId: string, date: string) {
+  async getByTourIdAndDate(tourId: string, date: string, options?: { includeUnbookable?: boolean }) {
     const [departures, tour, settings] = await Promise.all([
       departureService.getAvailabilityByTourIdAndDate(tourId, date),
       tourRepository.findById(tourId),
@@ -64,7 +71,10 @@ export class AvailabilityController {
     ]);
     const hours = settings.minimumAdvanceBookingHours ?? 24;
     const minimumBookableDate = getMinimumBookableDate(hours);
-    const filtered = departures.filter((d) => isDepartureBookableByAdvance(d, minimumBookableDate));
+    const includeUnbookable = options?.includeUnbookable === true;
+    const filtered = includeUnbookable
+      ? departures
+      : departures.filter((d) => isDepartureBookableByAdvance(d, minimumBookableDate));
     const schedule = tour ? scheduleFromTour(tour) : { defaultStartTime: "09:00", defaultEndTime: null };
     return filtered.map((d) => toAvailabilityResponse(d, schedule));
   }

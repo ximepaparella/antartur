@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Icon } from "@/components/icons/Icon";
 import { Button } from "@/components/common/Button/Button";
 import { Input } from "@/components/common/Input/Input";
+import { formatArDate } from "@/lib/utils/dateTimeAr";
 import styles from "./PaymentGatewayCard.module.scss";
 
 export interface BankTransferData {
@@ -227,7 +228,7 @@ export const BankTransferCard: React.FC<BankTransferCardProps> = ({
 
       <div className={styles.footer}>
         <span className={styles.lastUpdate}>
-          Última actualización: {new Date(bankTransfer.updatedAt).toLocaleDateString("es-AR", {
+          Última actualización: {formatArDate(bankTransfer.updatedAt, {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
