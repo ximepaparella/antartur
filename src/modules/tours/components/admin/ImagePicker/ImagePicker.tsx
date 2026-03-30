@@ -62,18 +62,6 @@ export function ImagePicker({
   const handleRemove = async () => {
     if (!value) return;
 
-    // Si es una URL local, intentar eliminar el archivo
-    if (value.startsWith("/images/tours/")) {
-      try {
-        await fetch(`/api/admin/upload?url=${encodeURIComponent(value)}`, {
-          method: "DELETE",
-          headers: createAuthHeaders(),
-        });
-      } catch (err) {
-        console.error("Error al eliminar archivo:", err);
-      }
-    }
-
     onChange("");
   };
 

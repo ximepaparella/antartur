@@ -114,19 +114,6 @@ export function GalleryManager({
   };
 
   const handleRemove = async (id: string) => {
-    const imageToRemove = images.find((img) => img.id === id);
-    
-    if (imageToRemove && imageToRemove.url.startsWith("/images/tours/")) {
-      try {
-        await fetch(`/api/admin/upload?url=${encodeURIComponent(imageToRemove.url)}`, {
-          method: "DELETE",
-          headers: createAuthHeaders(),
-        });
-      } catch (err) {
-        console.error("Error al eliminar archivo:", err);
-      }
-    }
-
     const filtered = images
       .filter((img) => img.id !== id)
       .map((img, index) => ({ ...img, sortOrder: index }));
