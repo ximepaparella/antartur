@@ -1,42 +1,33 @@
 import { getSiteSettings } from "@/modules/settings/repository";
+import type { SiteSettings } from "@/modules/settings/types";
 
-let cachedGtmId: string | null = null;
-let cachedGa4Id: string | null = null;
-let settingsLoaded = false;
+export const GTM_ID = (process.env.NEXT_PUBLIC_GTM_ID ?? "").trim();
 
-async function ensureSettingsLoaded() {
-  if (settingsLoaded) return;
+export const GA4_ID = (process.env.NEXT_PUBLIC_GA4_ID ?? "").trim();
 
+export async function getEffectiveGtmId(siteSettings?: SiteSettings): Promise<string | null> {
   try {
-    const settings = await getSiteSettings();
-    cachedGtmId = settings.gtmId;
-    cachedGa4Id = settings.ga4Id;
+    const settings = siteSettings ?? await getSiteSettings();
+    const configured = settings.gtmId?.trim();
+    if (configured) {
+      return configured;
+    }
   } catch {
-    // Ignorar errores: en el peor caso se usan solo las env vars
-  } finally {
-    settingsLoaded = true;
-  }
-}
-
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
-
-export const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID ?? "";
-
-export async function getEffectiveGtmId(): Promise<string | null> {
-  await ensureSettingsLoaded();
-
-  if (cachedGtmId && cachedGtmId.trim() !== "") {
-    return cachedGtmId;
+    // Ignorar errores: en el peor caso se usa env.
   }
 
   return GTM_ID || null;
 }
 
-export async function getEffectiveGa4Id(): Promise<string | null> {
-  await ensureSettingsLoaded();
-
-  if (cachedGa4Id && cachedGa4Id.trim() !== "") {
-    return cachedGa4Id;
+export async function getEffectiveGa4Id(siteSettings?: SiteSettings): Promise<string | null> {
+  try {
+    const settings = siteSettings ?? await getSiteSettings();
+    const configured = settings.ga4Id?.trim();
+    if (configured) {
+      return configured;
+    }
+  } catch {
+    // Ignorar errores: en el peor caso se usa env.
   }
 
   return GA4_ID || null;

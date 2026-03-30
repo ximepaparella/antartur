@@ -64,7 +64,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const siteSettings = await getSiteSettings();
-  const gtmId = await getEffectiveGtmId();
+  const gtmId = await getEffectiveGtmId(siteSettings);
 
   return (
     <html lang="es" className={`${workSans.variable} ${roboto.variable}`}>

@@ -24,6 +24,7 @@ import {
   removeEmptyArrays,
 } from "./helpers/tourFormValidation";
 import { generateSlug } from "@/lib/utils/slug";
+import { normalizeDifficultyForForm } from "@/modules/tours/lib/difficulty";
 import styles from "./TourForm.module.scss";
 
 export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
@@ -71,6 +72,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
         sundayAvailable: tour.sundayAvailable ?? true,
         defaultStartTime: tour.defaultStartTime ?? null,
         defaultEndTime: tour.defaultEndTime ?? null,
+        difficulty: normalizeDifficultyForForm(tour.difficulty),
         allowsInfants: tour.allowsInfants ?? false,
         additionals: transformedAdditionals,
         // Valores por defecto para campos no configurables
@@ -143,8 +145,11 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     // Filtrar quickInfoItems con campos vacíos
     if (cleanedFormData.quickInfoItems) {
       cleanedFormData.quickInfoItems = cleanedFormData.quickInfoItems.filter(
-        (item: QuickInfoItem) => item.icon && item.label && item.value
-      );
+        (item: QuickInfoItem) => item.icon && item.value
+      ).map((item: QuickInfoItem) => ({
+        ...item,
+        label: item.label || "",
+      }));
     }
     
     // Filtrar timelineItems con campos vacíos
@@ -338,9 +343,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 label="Slug"
                 value={formData.slug || ""}
                 onChange={(e) => updateField("slug", e.target.value)}
-                disabled={true}
+                disabled={!isEditing}
                 required
-                placeholder="Se genera automáticamente desde el nombre"
+                placeholder="Slug editable (único)"
               />
               <Input
                 label="Duración (horas)"
@@ -783,9 +788,9 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 disabled={!isEditing}
                 options={[
                   { value: "", label: "Seleccionar..." },
-                  { value: "bajo", label: "Bajo" },
-                  { value: "medio", label: "Medio" },
-                  { value: "dificil", label: "Difícil" },
+                  { value: "Baja", label: "Baja" },
+                  { value: "Media", label: "Media" },
+                  { value: "Alta", label: "Alta" },
                 ]}
                 required
               />
@@ -845,11 +850,54 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                 rows={8}
                 required
               />
+              <Textarea
+                label="Texto importante del itinerario"
+                value={formData.timelineImportantNote || ""}
+                onChange={(e) => updateField("timelineImportantNote", e.target.value)}
+                disabled={!isEditing}
+                rows={3}
+                placeholder="Texto que aparece antes/durante la sección de itinerario"
+              />
             </div>
 
             <div className={styles.singleColumnLayout}>
             <section className={styles.relationSection}>
-                <h3 className={styles.relationSectionTitle}>Información Destacada</h3>
+                <h3 className={styles.relationSectionTitle}>CTA y texto alternativo</h3>
+                <Input
+                  label="Etiqueta CTA"
+                  value={formData.ctaLabel || ""}
+                  onChange={(e) => updateField("ctaLabel", e.target.value)}
+                  disabled={!isEditing}
+                  placeholder="Ej: RESERVAR"
+                />
+                <Input
+                  label="Link CTA"
+                  value={formData.ctaHref || ""}
+                  onChange={(e) => updateField("ctaHref", e.target.value)}
+                  disabled={!isEditing}
+                  placeholder="Ej: /booking o URL completa"
+                />
+                <Input
+                  label="Texto alternativo de precio"
+                  value={formData.alternativeText || ""}
+                  onChange={(e) => updateField("alternativeText", e.target.value)}
+                  disabled={!isEditing}
+                  placeholder="Ej: Consultar precio"
+                />
+                <Input
+                  label="Precio alternativo"
+                  value={formData.alternativePrice || ""}
+                  onChange={(e) => updateField("alternativePrice", e.target.value)}
+                  disabled={!isEditing}
+                  placeholder="Ej: Consultar"
+                />
+            </section>
+
+            <section className={styles.relationSection}>
+                <h3 className={styles.relationSectionTitle}>Tour Quick Info (franja superior)</h3>
+                <p className={styles.sectionDescription}>
+                  Aquí editás los textos de la franja superior del tour (por ejemplo: duración, dificultad y textos como &quot;Todo el año...&quot;).
+                </p>
               <ArrayFieldManager
                 title=""
                 items={(formData.quickInfoItems as any) || []}
@@ -882,18 +930,19 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
                       placeholder="Seleccionar icono"
                     />
                     <Input
-                      label="Texto"
+                      label="Texto (opcional)"
                       value={item.label || ""}
                       onChange={(e) => onUpdate({ ...item, label: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
                       placeholder="Ej: Duración"
                     />
                     <Input
-                      label="Valor"
+                      label="Valor *"
                       value={item.value || ""}
                       onChange={(e) => onUpdate({ ...item, value: e.target.value })}
                       disabled={!isEditingItem || !isEditing}
-                      placeholder="Ej: 4 horas"
+                      placeholder="Ej: 4 horas / Moderada / Todo el año..."
+                      required
                     />
                   </div>
                 )}

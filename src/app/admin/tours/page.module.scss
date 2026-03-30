@@ -37,3 +37,29 @@
   color: $gray-600;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-8;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.modalMessage {
+  margin: 0;
+  color: $gray-700;
+  font-size: $font-size-16;
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-8;
+}
+

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/common/Textarea/Textarea";
 import { Select } from "@/components/common/Select/Select";
 import { ImagePicker } from "@/modules/tours/components/admin/ImagePicker";
 import { generateSlug } from "@/lib/utils/slug";
+import { normalizeDifficultyForForm } from "@/modules/tours/lib/difficulty";
 import styles from "./page.module.scss";
 
 export default function AdminTourCreatePage() {
@@ -139,15 +140,15 @@ export default function AdminTourCreatePage() {
           </div>
           <Select
             label="Dificultad"
-            value={formData.difficulty}
+            value={normalizeDifficultyForForm(formData.difficulty)}
             onChange={(e) =>
               setFormData({ ...formData, difficulty: e.target.value })
             }
             options={[
               { value: "", label: "Seleccionar..." },
-              { value: "bajo", label: "Bajo" },
-              { value: "medio", label: "Medio" },
-              { value: "dificil", label: "Difícil" },
+              { value: "Baja", label: "Baja" },
+              { value: "Media", label: "Media" },
+              { value: "Alta", label: "Alta" },
             ]}
             required
           />

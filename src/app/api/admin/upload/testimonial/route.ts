@@ -23,8 +23,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
+import { writeFile, mkdir, access } from "fs/promises";
+import { constants } from "fs";
 import path from "path";
 import { withAuth } from "@/lib/auth";
 
@@ -63,9 +63,7 @@ async function handlePost(request: NextRequest) {
     // Crear directorio si no existe
     const testimonialsDir = path.join(process.cwd(), "public", "images", "testimonials");
 
-    if (!existsSync(testimonialsDir)) {
-      await mkdir(testimonialsDir, { recursive: true });
-    }
+    await mkdir(testimonialsDir, { recursive: true, mode: 0o755 });
 
     // Generar nombre único con timestamp
     const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -75,10 +73,12 @@ async function handlePost(request: NextRequest) {
     const filePath = path.join(testimonialsDir, fileName);
     const publicUrl = `/images/testimonials/${fileName}`;
 
+    await access(path.dirname(filePath), constants.W_OK);
+
     // Guardar archivo
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    await writeFile(filePath, buffer, { mode: 0o644 });
 
     return NextResponse.json(
       {
@@ -91,9 +91,15 @@ async function handlePost(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error uploading testimonial avatar:", error);
+    console.error("Error uploading testimonial avatar:", error instanceof Error ? error.message : String(error));
     return NextResponse.json(
-      { success: false, error: "Error al subir el archivo" },
+      {
+        success: false,
+        error: "Error al subir el archivo",
+        details: process.env.NODE_ENV === "development"
+          ? (error instanceof Error ? error.message : String(error))
+          : undefined,
+      },
       { status: 500 }
     );
   }

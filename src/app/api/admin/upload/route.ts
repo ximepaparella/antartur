@@ -29,13 +29,18 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
+import { writeFile, mkdir, access } from "fs/promises";
+import { constants } from "fs";
 import path from "path";
 import { withAuth } from "@/lib/auth";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const TOUR_SLUG_REGEX = /^[a-z0-9-]+$/;
+
+function isSafeTourSlug(slug: string): boolean {
+  return TOUR_SLUG_REGEX.test(slug);
+}
 
 async function handlePost(request: NextRequest) {
   try {
@@ -55,6 +60,12 @@ async function handlePost(request: NextRequest) {
     if (!tourSlug) {
       return NextResponse.json(
         { success: false, error: "El slug del tour es requerido" },
+        { status: 400 }
+      );
+    }
+    if (!isSafeTourSlug(tourSlug)) {
+      return NextResponse.json(
+        { success: false, error: "El slug del tour es inválido" },
         { status: 400 }
       );
     }
@@ -87,11 +98,8 @@ async function handlePost(request: NextRequest) {
     const galleryDir = path.join(tourDir, "gallery");
 
     try {
-      if (!existsSync(tourDir)) {
-        await mkdir(tourDir, { recursive: true, mode: 0o755 });
-      }
-
-      if (imageType === "gallery" && !existsSync(galleryDir)) {
+      await mkdir(tourDir, { recursive: true, mode: 0o755 });
+      if (imageType === "gallery") {
         await mkdir(galleryDir, { recursive: true, mode: 0o755 });
       }
     } catch (mkdirError) {
@@ -126,13 +134,39 @@ async function handlePost(request: NextRequest) {
       publicUrl = `/images/tours/${tourSlug}/${fileName}`;
     }
 
+    try {
+      await access(path.dirname(filePath), constants.W_OK);
+    } catch (accessError) {
+      const accessErrorMsg = accessError instanceof Error ? accessError.message : String(accessError);
+      console.error("Upload directory is not writable", {
+        filePath,
+        directory: path.dirname(filePath),
+        error: accessErrorMsg,
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Directorio de destino sin permisos de escritura",
+          details: process.env.NODE_ENV === "development" ? accessErrorMsg : undefined,
+        },
+        { status: 500 }
+      );
+    }
+
     // Guardar archivo
     try {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       await writeFile(filePath, buffer, { mode: 0o644 });
     } catch (writeError) {
-      console.error("Error writing file:", writeError);
+      console.error("Error writing file:", {
+        filePath,
+        tourSlug,
+        imageType,
+        mimeType: file.type,
+        size: file.size,
+        error: writeError instanceof Error ? writeError.message : String(writeError),
+      });
       const writeErrorMsg = writeError instanceof Error ? writeError.message : String(writeError);
       return NextResponse.json(
         { 
