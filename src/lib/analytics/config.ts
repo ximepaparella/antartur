@@ -1,27 +1,27 @@
 import { getSiteSettings } from "@/modules/settings/repository";
+import type { SiteSettings } from "@/modules/settings/types";
 
-const DEFAULT_GTM_ID = "GTM-KZR649ZB";
-export const GTM_ID = (process.env.NEXT_PUBLIC_GTM_ID ?? DEFAULT_GTM_ID).trim();
+export const GTM_ID = (process.env.NEXT_PUBLIC_GTM_ID ?? "").trim();
 
 export const GA4_ID = (process.env.NEXT_PUBLIC_GA4_ID ?? "").trim();
 
-export async function getEffectiveGtmId(): Promise<string | null> {
+export async function getEffectiveGtmId(siteSettings?: SiteSettings): Promise<string | null> {
   try {
-    const settings = await getSiteSettings();
+    const settings = siteSettings ?? await getSiteSettings();
     const configured = settings.gtmId?.trim();
     if (configured) {
       return configured;
     }
   } catch {
-    // Ignorar errores: en el peor caso se usa env/default.
+    // Ignorar errores: en el peor caso se usa env.
   }
 
   return GTM_ID || null;
 }
 
-export async function getEffectiveGa4Id(): Promise<string | null> {
+export async function getEffectiveGa4Id(siteSettings?: SiteSettings): Promise<string | null> {
   try {
-    const settings = await getSiteSettings();
+    const settings = siteSettings ?? await getSiteSettings();
     const configured = settings.ga4Id?.trim();
     if (configured) {
       return configured;

@@ -30,8 +30,6 @@ export class TourService {
       const normalizedDifficulty = normalizeDifficultyInput(query.difficulty);
       if (normalizedDifficulty) {
         where.difficulty = normalizedDifficulty;
-      } else {
-        where.difficulty = query.difficulty;
       }
     }
     if (query.isActive !== undefined) {
