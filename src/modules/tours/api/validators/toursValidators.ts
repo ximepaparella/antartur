@@ -59,7 +59,7 @@ export const testimonialSchema = z.object({
 export const quickInfoItemSchema = z.object({
   id: z.string().optional(),
   icon: z.string().min(1),
-  label: z.string().min(1),
+  label: z.string().optional().default(""),
   value: z.string().min(1),
   sortOrder: z.coerce.number().int().min(0).default(0),
 });

@@ -9,6 +9,7 @@ import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
 import { prisma } from "@/lib/db";
 import type { ListToursQuery, CreateTourInput, UpdateTourInput } from "../api/validators/toursValidators";
+import { normalizeDifficultyInput } from "../lib/difficulty";
 
 const tourRepository = new TourRepository();
 const restrictionRepository = new TourRestrictionRepository();
@@ -26,7 +27,12 @@ export class TourService {
       where.category = query.category;
     }
     if (query.difficulty) {
-      where.difficulty = query.difficulty;
+      const normalizedDifficulty = normalizeDifficultyInput(query.difficulty);
+      if (normalizedDifficulty) {
+        where.difficulty = normalizedDifficulty;
+      } else {
+        where.difficulty = query.difficulty;
+      }
     }
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
@@ -110,13 +116,23 @@ export class TourService {
    * Crear nuevo tour
    */
   async createTour(data: CreateTourInput) {
-    // Validación de negocio: verificar que el slug no exista
-    const existingTour = await tourRepository.findBySlug(data.slug);
-    if (existingTour) {
-      throw new ValidationError("Tour with this slug already exists", { slug: data.slug });
+    const normalizedDifficulty = normalizeDifficultyInput(data.difficulty);
+    if (!normalizedDifficulty) {
+      throw new ValidationError("Invalid difficulty value", { difficulty: data.difficulty });
     }
 
-    const tour = await tourRepository.create(data);
+    const normalizedData: CreateTourInput = {
+      ...data,
+      difficulty: normalizedDifficulty,
+    };
+
+    // Validación de negocio: verificar que el slug no exista
+    const existingTour = await tourRepository.findBySlug(normalizedData.slug);
+    if (existingTour) {
+      throw new ValidationError("Tour with this slug already exists", { slug: normalizedData.slug });
+    }
+
+    const tour = await tourRepository.create(normalizedData);
     
     // Obtener tour completo con precios para la respuesta
     const tourWithPrices = await tourRepository.findById(tour.id, false, false, true);
@@ -157,6 +173,14 @@ export class TourService {
       additionals,
       ...tourFields 
     } = data;
+
+    if (tourFields.difficulty !== undefined) {
+      const normalizedDifficulty = normalizeDifficultyInput(tourFields.difficulty);
+      if (!normalizedDifficulty) {
+        throw new ValidationError("Invalid difficulty value", { difficulty: tourFields.difficulty });
+      }
+      tourFields.difficulty = normalizedDifficulty;
+    }
 
     // Usar una transacción para actualizar todo
     await prisma.$transaction(async (tx) => {
