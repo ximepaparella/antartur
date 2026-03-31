@@ -37,26 +37,38 @@ export default function CheckoutSuccessPage() {
           return;
         }
 
-        // Construir URL del endpoint según el identificador disponible
-        const apiUrl = orderId
-          ? `/api/orders/${orderId}?includePayments=true`
-          : `/api/orders/code/${orderCode}?includePayments=true`;
+        let order: OrderFullResponse | null = null;
+        let lastFetchError: string | null = null;
 
-        // Obtener datos desde la base de datos
-        const response = await fetch(apiUrl);
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          const errorMessage = errorData.error || `Error ${response.status}: ${response.statusText}`;
-          throw new Error(`No se pudo cargar la orden: ${errorMessage}`);
+        const tryLoadOrder = async (apiUrl: string): Promise<OrderFullResponse | null> => {
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            lastFetchError = errorData.error || `Error ${response.status}: ${response.statusText}`;
+            return null;
+          }
+          const result = await response.json();
+          if (!result.success || !result.data) {
+            lastFetchError = "Orden no encontrada";
+            return null;
+          }
+          return result.data as OrderFullResponse;
+        };
+
+        if (orderId) {
+          order = await tryLoadOrder(`/api/orders/${orderId}?includePayments=true`);
+        } else if (orderCode) {
+          // Primero intentar como código público (ANT-....)
+          order = await tryLoadOrder(`/api/orders/code/${orderCode}?includePayments=true`);
+          // Compatibilidad: algunos flujos históricos enviaban el id interno en el query param "code"
+          if (!order) {
+            order = await tryLoadOrder(`/api/orders/${orderCode}?includePayments=true`);
+          }
         }
 
-        const result = await response.json();
-        if (!result.success || !result.data) {
-          throw new Error("Orden no encontrada");
+        if (!order) {
+          throw new Error(`No se pudo cargar la orden: ${lastFetchError || "Orden no encontrada"}`);
         }
-
-        const order: OrderFullResponse = result.data;
 
         // Mapear datos de la BD al formato esperado
         const booking = order.bookings?.[0];

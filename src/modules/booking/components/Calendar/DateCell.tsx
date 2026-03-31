@@ -38,6 +38,12 @@ export const DateCell: React.FC<DateCellProps> = React.memo(({
 
   const isHovered = hoveredDate === cellState.dateStr;
   const showTooltip = isHovered && cellState.isAvailable && cellState.availability;
+  const dayNumber = Number(cellState.dateStr.slice(8, 10));
+  const formattedDateForAria = formatArDate(cellState.dateStr, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   const handleClick = () => {
     if (cellState.canClick) {
@@ -62,10 +68,10 @@ export const DateCell: React.FC<DateCellProps> = React.memo(({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={onMouseLeave}
       disabled={cellState.isDisabled}
-      aria-label={`${date.getDate()} de ${formatArDate(date, { month: "long", year: "numeric" })}${cellState.isAvailable ? `, ${cellState.totalAvailable} disponibles` : ", no disponible"}`}
+      aria-label={`${formattedDateForAria}${cellState.isAvailable ? `, ${cellState.totalAvailable} disponibles` : ", no disponible"}`}
       aria-pressed={cellState.isSelected}
     >
-      <span className={styles.dayNumber}>{date.getDate()}</span>
+      <span className={styles.dayNumber}>{dayNumber}</span>
       {showTooltip && cellState.availability && (
         <Tooltip position="top">
           {cellState.totalAvailable} cupo{cellState.totalAvailable !== 1 ? 's' : ''} disponible{cellState.totalAvailable !== 1 ? 's' : ''}
