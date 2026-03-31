@@ -1,5 +1,28 @@
 import type { NextConfig } from "next";
 
+function getConfiguredImageHosts(): string[] {
+  const defaults = ["www.afip.gob.ar", "antartur.tur.ar", "www.antartur.tur.ar"];
+  const envUrls = [process.env.NEXT_PUBLIC_SITE_URL, process.env.SITE_URL].filter(Boolean) as string[];
+
+  const envHosts = envUrls
+    .map((value) => {
+      try {
+        return new URL(value).hostname;
+      } catch {
+        return null;
+      }
+    })
+    .filter((value): value is string => Boolean(value));
+
+  return [...new Set([...defaults, ...envHosts])];
+}
+
+const remotePatterns = getConfiguredImageHosts().map((hostname) => ({
+  protocol: "https" as const,
+  hostname,
+  pathname: "/**",
+}));
+
 const nextConfig: NextConfig = {
   // Docker standalone output
   output: 'standalone',
@@ -12,13 +35,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "www.afip.gob.ar",
-        pathname: "/images/**",
-      },
-    ],
+    remotePatterns,
   },
 
   // Compresión

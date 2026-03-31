@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Image from "next/image";
 import styles from "./TourGallery.module.scss";
 
 export interface GalleryImage {
@@ -124,15 +123,12 @@ export const TourGallery: React.FC<TourGalleryProps> = ({ images }) => {
                 className={styles.slide} 
                 style={{ width: `${slideWidth}%` }}
               >
-                <Image
+                <img
                   src={image.src}
                   alt={image.alt}
                   className={styles.image}
-                  width={800}
-                  height={400}
-                  priority={index === 0}
-                  placeholder={image.blurDataURL ? "blur" : undefined}
-                  blurDataURL={image.blurDataURL}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
                 />
               </div>
               );
