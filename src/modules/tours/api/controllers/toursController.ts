@@ -8,6 +8,7 @@ import { TourService } from "../../domain/tourService";
 import { validateQuery, validateBody } from "@/lib/validation/schemas";
 import {
   createTourSchema,
+  duplicateTourSchema,
   updateTourSchema,
   listToursQuerySchema,
   tourIdParamsSchema,
@@ -115,6 +116,15 @@ export class ToursController {
   async delete(id: string) {
     await tourService.deleteTour(id);
     return null;
+  }
+
+  /**
+   * Duplicar tour completo (sin departures)
+   */
+  async duplicate(id: string, body: unknown) {
+    const data = validateBody(duplicateTourSchema, body ?? {});
+    const tour = await tourService.duplicateTour(id, data);
+    return toTourResponse(tour);
   }
 }
 

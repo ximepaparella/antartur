@@ -4,13 +4,11 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useDataTable } from "@/modules/admin/hooks/useDataTable";
 import { adminApiClient } from "@/modules/admin/lib/adminApiClient";
-import type { CreateTourDto } from "@/modules/admin/lib/types";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/common/Button/Button";
 import { Modal } from "@/components/common/Modal/Modal";
 import { Copy, Trash2 } from "lucide-react";
-import { generateSlug } from "@/lib/utils/slug";
 import type { TableColumn } from "@/components/common/Table/Table";
 import type { FilterConfig } from "@/components/common/FiltersBar";
 import styles from "./page.module.scss";
@@ -203,103 +201,12 @@ export default function AdminToursPage() {
   const executeDuplicate = useCallback(async (tourId: string) => {
     try {
       setDuplicatingId(tourId);
-      const sourceResponse = await adminApiClient.getTourById(tourId);
-      if (!sourceResponse.success || !sourceResponse.data) {
-        throw new Error("No se pudo cargar el tour a duplicar");
-      }
-
-      const source = sourceResponse.data as any;
-      const clonedName = `${source.name} (Copia)`;
-      const clonedSlug = generateSlug(clonedName) || `${source.slug}-copia`;
-
-      const payload: CreateTourDto = {
-        name: clonedName,
-        slug: clonedSlug,
-        subtitle: source.subtitle || null,
-        category: source.category,
-        difficulty: source.difficulty,
-        durationHours: source.durationHours,
-        featuredImage: source.featuredImage,
-        heroImage: source.heroImage,
-        heroSubheadline: source.heroSubheadline || null,
-        shortDescription: source.shortDescription,
-        longDescription: source.longDescription,
-        restrictionText: source.restrictionText || "",
-        isActive: source.isActive,
-        metaTitle: source.metaTitle || null,
-        metaDescription: source.metaDescription || null,
-        canonicalUrl: null,
-        ogImage: source.ogImage || source.heroImage || null,
-        ctaLabel: source.ctaLabel || "RESERVAR",
-        ctaHref: source.ctaHref || "",
-        alternativeText: source.alternativeText || "Consultar precio",
-        alternativePrice: source.alternativePrice || "Consultar",
-        timelineImportantNote: source.timelineImportantNote || null,
-        minAge: source.minAge ?? null,
-        minPassengers: source.minPassengers ?? null,
-        mondayAvailable: source.mondayAvailable ?? true,
-        tuesdayAvailable: source.tuesdayAvailable ?? true,
-        wednesdayAvailable: source.wednesdayAvailable ?? true,
-        thursdayAvailable: source.thursdayAvailable ?? true,
-        fridayAvailable: source.fridayAvailable ?? true,
-        saturdayAvailable: source.saturdayAvailable ?? true,
-        sundayAvailable: source.sundayAvailable ?? true,
-        defaultStartTime: source.defaultStartTime ?? null,
-        defaultEndTime: source.defaultEndTime ?? null,
-        images: (source.images || []).map((img: any) => ({
-          imageType: img.imageType,
-          url: img.url,
-          altText: img.altText,
-          sortOrder: img.sortOrder,
-        })),
-        prices: (source.prices || []).map((price: any) => ({
-          currency: price.currency,
-          priceAdult: Number(price.priceAdult),
-          priceChild: Number(price.priceChild),
-        })),
-        quickInfoItems: (source.quickInfoItems || []).map((item: any) => ({
-          icon: item.icon,
-          label: item.label || "",
-          value: item.value,
-        })),
-        timelineItems: (source.timelineItems || []).map((item: any) => ({
-          timeLabel: item.timeLabel,
-          title: item.title,
-          description: item.description,
-        })),
-        featuredInfos: (source.featuredInfos || []).map((item: any) => ({
-          icon: item.icon,
-          title: item.title,
-          description: item.description,
-        })),
-        testimonials: (source.testimonials || []).map((item: any) => ({
-          text: item.text,
-          author: item.author,
-          avatar: item.avatar,
-          country: item.country,
-        })),
-        restrictions: (source.restrictions || []).map((item: any) => ({
-          text: item.text,
-          sortOrder: item.sortOrder,
-        })),
-        additionals: (source.additionals || []).map((additional: any) => ({
-          name: additional.name,
-          description: additional.description || null,
-          isActive: additional.isActive ?? true,
-          sortOrder: additional.sortOrder ?? 0,
-          prices: (additional.prices || []).map((price: any) => ({
-            currency: price.currency,
-            price: Number(price.priceAdult),
-          })),
-        })),
-      };
-
-      const createResponse = await adminApiClient.createTour(payload);
-      if (!createResponse.success || !createResponse.data) {
+      const duplicateResponse = await adminApiClient.duplicateTour(tourId);
+      if (!duplicateResponse.success || !duplicateResponse.data) {
         throw new Error("No se pudo crear la copia del tour");
       }
 
-      router.push(`/admin/tours/${createResponse.data.id}`);
+      router.push(`/admin/tours/${duplicateResponse.data.id}`);
     } catch (err) {
       setFeedbackMessage(`Error al duplicar: ${err instanceof Error ? err.message : "Error desconocido"}`);
     } finally {

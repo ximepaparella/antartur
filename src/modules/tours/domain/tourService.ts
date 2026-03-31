@@ -8,13 +8,27 @@ import { TourRestrictionRepository } from "../infra/tourRestrictionRepository";
 import { NotFoundError, ValidationError } from "@/lib/api/errorHandler";
 import { normalizePagination, calculatePaginationMeta } from "@/lib/api/response";
 import { prisma } from "@/lib/db";
-import type { ListToursQuery, CreateTourInput, UpdateTourInput } from "../api/validators/toursValidators";
+import type { ListToursQuery, CreateTourInput, UpdateTourInput, DuplicateTourInput } from "../api/validators/toursValidators";
 import { normalizeDifficultyInput } from "../lib/difficulty";
+import { generateSlug } from "@/lib/utils/slug";
 
 const tourRepository = new TourRepository();
 const restrictionRepository = new TourRestrictionRepository();
 
 export class TourService {
+  private async buildUniqueSlug(initialSlug: string): Promise<string> {
+    const base = initialSlug || `tour-${Date.now()}`;
+    let candidate = base;
+    let counter = 2;
+
+    while (await prisma.tour.findUnique({ where: { slug: candidate }, select: { id: true } })) {
+      candidate = `${base}-${counter}`;
+      counter += 1;
+    }
+
+    return candidate;
+  }
+
   /**
    * Listar tours con filtros y paginación
    */
@@ -444,6 +458,192 @@ export class TourService {
     // (esto se puede expandir en el futuro para verificar bookings, etc.)
     
     await tourRepository.delete(id);
+  }
+
+  /**
+   * Duplica un tour completo (sin departures)
+   */
+  async duplicateTour(id: string, input: DuplicateTourInput = {}) {
+    const source = await prisma.tour.findUnique({
+      where: { id },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+        prices: true,
+        additionals: {
+          include: { prices: true },
+          orderBy: { sortOrder: "asc" },
+        },
+        timelineItems: { orderBy: { sortOrder: "asc" } },
+        featuredInfos: { orderBy: { sortOrder: "asc" } },
+        testimonials: { orderBy: { sortOrder: "asc" } },
+        quickInfoItems: { orderBy: { sortOrder: "asc" } },
+        restrictions: { orderBy: { sortOrder: "asc" } },
+      },
+    });
+
+    if (!source) {
+      throw new NotFoundError("Tour", id);
+    }
+
+    const duplicateName = input.name?.trim() || `${source.name} (Copia)`;
+    const requestedSlug = input.slug?.trim();
+    const duplicateSlug = await this.buildUniqueSlug(
+      requestedSlug || generateSlug(duplicateName) || `${source.slug}-copia`
+    );
+
+    const duplicated = await prisma.$transaction(async (tx) => {
+      const createdTour = await tx.tour.create({
+        data: {
+          slug: duplicateSlug,
+          name: duplicateName,
+          subtitle: source.subtitle,
+          category: source.category,
+          difficulty: source.difficulty,
+          durationHours: source.durationHours,
+          featuredImage: source.featuredImage,
+          heroImage: source.heroImage,
+          heroSubheadline: source.heroSubheadline,
+          shortDescription: source.shortDescription,
+          longDescription: source.longDescription,
+          restrictionText: source.restrictionText,
+          isActive: source.isActive,
+          metaTitle: source.metaTitle,
+          metaDescription: source.metaDescription,
+          canonicalUrl: null, // Avoid duplicate canonical by default
+          ogImage: source.ogImage,
+          ctaLabel: source.ctaLabel,
+          ctaHref: source.ctaHref,
+          alternativeText: source.alternativeText,
+          alternativePrice: source.alternativePrice,
+          timelineImportantNote: source.timelineImportantNote,
+          minAge: source.minAge,
+          minPassengers: source.minPassengers,
+          allowsInfants: source.allowsInfants,
+          mondayAvailable: source.mondayAvailable,
+          tuesdayAvailable: source.tuesdayAvailable,
+          wednesdayAvailable: source.wednesdayAvailable,
+          thursdayAvailable: source.thursdayAvailable,
+          fridayAvailable: source.fridayAvailable,
+          saturdayAvailable: source.saturdayAvailable,
+          sundayAvailable: source.sundayAvailable,
+          defaultStartTime: source.defaultStartTime,
+          defaultEndTime: source.defaultEndTime,
+        },
+      });
+
+      if (source.images.length > 0) {
+        await tx.tourImage.createMany({
+          data: source.images.map((item) => ({
+            tourId: createdTour.id,
+            imageType: item.imageType,
+            url: item.url,
+            altText: item.altText,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      if (source.prices.length > 0) {
+        await tx.tourPrice.createMany({
+          data: source.prices.map((item) => ({
+            tourId: createdTour.id,
+            currency: item.currency,
+            priceAdult: item.priceAdult,
+            priceChild: item.priceChild,
+            priceInfantFree: item.priceInfantFree,
+            childAgeRange: item.childAgeRange,
+            childPriceType: item.childPriceType,
+            infantMaxAge: item.infantMaxAge,
+          })),
+        });
+      }
+
+      if (source.timelineItems.length > 0) {
+        await tx.tourTimelineItem.createMany({
+          data: source.timelineItems.map((item) => ({
+            tourId: createdTour.id,
+            timeLabel: item.timeLabel,
+            title: item.title,
+            description: item.description,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      if (source.featuredInfos.length > 0) {
+        await tx.tourFeaturedInfo.createMany({
+          data: source.featuredInfos.map((item) => ({
+            tourId: createdTour.id,
+            icon: item.icon,
+            title: item.title,
+            description: item.description,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      if (source.testimonials.length > 0) {
+        await tx.tourTestimonial.createMany({
+          data: source.testimonials.map((item) => ({
+            tourId: createdTour.id,
+            text: item.text,
+            author: item.author,
+            avatar: item.avatar,
+            country: item.country,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      if (source.quickInfoItems.length > 0) {
+        await tx.tourQuickInfoItem.createMany({
+          data: source.quickInfoItems.map((item) => ({
+            tourId: createdTour.id,
+            icon: item.icon,
+            label: item.label,
+            value: item.value,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      if (source.restrictions.length > 0) {
+        await tx.tourRestriction.createMany({
+          data: source.restrictions.map((item) => ({
+            tourId: createdTour.id,
+            text: item.text,
+            sortOrder: item.sortOrder,
+          })),
+        });
+      }
+
+      for (const additional of source.additionals) {
+        const createdAdditional = await tx.tourAdditional.create({
+          data: {
+            tourId: createdTour.id,
+            name: additional.name,
+            description: additional.description,
+            isActive: additional.isActive,
+            sortOrder: additional.sortOrder,
+          },
+        });
+
+        if (additional.prices.length > 0) {
+          await tx.tourAdditionalPrice.createMany({
+            data: additional.prices.map((price) => ({
+              tourAdditionalId: createdAdditional.id,
+              currency: price.currency,
+              priceAdult: price.priceAdult,
+              priceChild: price.priceChild,
+            })),
+          });
+        }
+      }
+
+      return createdTour;
+    });
+
+    return duplicated;
   }
 }
 
