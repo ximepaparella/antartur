@@ -46,8 +46,7 @@ import { withAuth } from "@/lib/auth";
 
 const controller = new OrdersController();
 
-// PUT requiere autenticación de admin
-export const PUT = withAuth(
+const updateOrderStatusHandler = withAuth(
   withRateLimitHandler("write", withControllerErrorHandler(async (request, context) => {
     const { id } = await context.params;
     const body = await request.json();
@@ -57,4 +56,10 @@ export const PUT = withAuth(
   })),
   { roles: ["ADMIN"] }
 );
+
+// PUT requiere autenticación de admin
+export const PUT = updateOrderStatusHandler;
+
+// PATCH alias para compatibilidad con clientes existentes del dashboard
+export const PATCH = updateOrderStatusHandler;
 
