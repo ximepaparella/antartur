@@ -26,7 +26,14 @@ function normalizeImageUrl(rawUrl: string | null | undefined, tourSlug?: string,
     try {
       const parsed = new URL(value);
       const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
-      const envHost = envUrl ? new URL(envUrl).hostname : null;
+      let envHost: string | null = null;
+      if (envUrl) {
+        try {
+          envHost = new URL(envUrl).hostname;
+        } catch {
+          envHost = null;
+        }
+      }
       const sameKnownHost =
         parsed.hostname === "antartur.tur.ar" ||
         parsed.hostname === "www.antartur.tur.ar" ||

@@ -12,7 +12,7 @@ const imageUrlSchema = z
   .string()
   .trim()
   .refine(
-    (value) => value.startsWith("/") || /^https?:\/\//i.test(value),
+    (value) => (value.startsWith("/") && !value.startsWith("//")) || /^https?:\/\//i.test(value),
     "Image URL must be an absolute http(s) URL or a relative path starting with /"
   );
 
