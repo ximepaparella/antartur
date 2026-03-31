@@ -17,40 +17,41 @@ interface HeroProps {
   ctaHref?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ 
-  variant = "internal", 
+export const Hero: React.FC<HeroProps> = ({
+  variant = "internal",
   pageKey,
   title,
   backgroundImage,
   ctaText = "RESERVAR",
-  ctaHref = "#booking"
+  ctaHref = "#booking",
 }) => {
   const isHome = variant === "home";
   const isTour = variant === "tour";
-  
-  // Para variante tour, usar props directas
-  if (isTour) {
-    const hasBackgroundImage = backgroundImage && backgroundImage.length > 0;
-    const sectionStyle: React.CSSProperties = {
-      backgroundPosition: "center center",
-    };
 
-    if (hasBackgroundImage) {
-      sectionStyle.backgroundImage = `url(${backgroundImage})`;
-    }
+  if (isTour) {
+    const hasBackgroundImage = Boolean(backgroundImage && backgroundImage.length > 0);
 
     return (
       <section
         className={`${styles.hero} ${styles.heroTour} ${!hasBackgroundImage ? styles.heroNoImage : ""}`}
-        style={sectionStyle}
       >
-        {hasBackgroundImage && (
-          <div
-            className={styles.overlay}
-            style={{
-              opacity: 0.5,
-            }}
-          />
+        {hasBackgroundImage && backgroundImage && (
+          <>
+            <img
+              src={backgroundImage}
+              alt=""
+              className={styles.heroBackground}
+              style={{ objectPosition: "center center" }}
+              fetchPriority="high"
+              decoding="async"
+            />
+            <div
+              className={styles.overlay}
+              style={{
+                opacity: 0.5,
+              }}
+            />
+          </>
         )}
         <div className={styles.content}>
           <h1 className={styles.title}>{title}</h1>
@@ -62,42 +63,40 @@ export const Hero: React.FC<HeroProps> = ({
     );
   }
 
-  // Para variantes home/internal, usar heroData
   const dataKey = pageKey || "home";
   const heroContent: HeroContent = (heroData[dataKey as keyof typeof heroData] || heroData.home) as HeroContent;
 
   const hasSubtitle = heroContent.subtitle && heroContent.subtitle.length > 0;
-  const hasBackgroundImage = heroContent.backgroundImage && heroContent.backgroundImage.length > 0;
-
-  // Estilos dinámicos
-  const sectionStyle: React.CSSProperties = {
-    backgroundPosition: heroContent.backgroundPosition || "center center",
-  };
-
-  if (hasBackgroundImage) {
-    sectionStyle.backgroundImage = `url(${heroContent.backgroundImage})`;
-  }
+  const hasBackgroundImage = Boolean(heroContent.backgroundImage && heroContent.backgroundImage.length > 0);
 
   return (
     <section
       className={`${styles.hero} ${isHome ? styles.heroFull : styles.heroInternal} ${!hasBackgroundImage ? styles.heroNoImage : ""}`}
-      style={sectionStyle}
     >
-      {hasBackgroundImage && (
-        <div
-          className={styles.overlay}
-          style={{
-            opacity: heroContent.overlayOpacity || 0.5,
-          }}
-        />
+      {hasBackgroundImage && heroContent.backgroundImage && (
+        <>
+          <img
+            src={heroContent.backgroundImage}
+            alt=""
+            className={styles.heroBackground}
+            style={{
+              objectPosition: heroContent.backgroundPosition || "center center",
+            }}
+            fetchPriority="high"
+            decoding="async"
+          />
+          <div
+            className={styles.overlay}
+            style={{
+              opacity: heroContent.overlayOpacity || 0.5,
+            }}
+          />
+        </>
       )}
       <div className={styles.content}>
         <h1 className={styles.title}>{heroContent.title}</h1>
-        {hasSubtitle && (
-          <h3 className={styles.subtitle}>{heroContent.subtitle}</h3>
-        )}
+        {hasSubtitle && <h3 className={styles.subtitle}>{heroContent.subtitle}</h3>}
       </div>
     </section>
   );
 };
-

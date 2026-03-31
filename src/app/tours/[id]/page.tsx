@@ -38,6 +38,8 @@ export async function generateMetadata({ params }: TourPageProps): Promise<Metad
     const title = tour.metaTitle || `${tour.name} | Antartur`;
     const description = tour.metaDescription || tour.shortDescription;
 
+    const shareImage = tour.ogImage || tour.heroImage;
+
     return {
       title,
       description,
@@ -46,7 +48,13 @@ export async function generateMetadata({ params }: TourPageProps): Promise<Metad
         description,
         type: "website",
         locale: "es_AR",
-        images: tour.ogImage ? [{ url: tour.ogImage }] : undefined,
+        images: shareImage ? [{ url: shareImage }] : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: shareImage ? [shareImage] : undefined,
       },
       alternates: {
         canonical: tour.canonicalUrl || undefined,
