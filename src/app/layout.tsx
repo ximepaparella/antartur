@@ -5,7 +5,7 @@ import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoundaryClient";
 import { Providers } from "@/components/providers/Providers";
 import { CookieBanner } from "@/components/common/CookieBanner/CookieBanner";
-import { getEffectiveGtmId } from "@/lib/analytics/config";
+import { getEffectiveGtmId, getEffectiveGa4Id } from "@/lib/analytics/config";
 import { getSiteSettings } from "@/modules/settings/repository";
 import "@/styles/globals.scss";
 
@@ -56,6 +56,22 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Antartur",
+    statusBarStyle: "default",
+  },
 };
 
 export default async function RootLayout({
@@ -65,6 +81,7 @@ export default async function RootLayout({
 }>) {
   const siteSettings = await getSiteSettings();
   const gtmId = await getEffectiveGtmId(siteSettings);
+  const ga4Id = await getEffectiveGa4Id(siteSettings);
 
   return (
     <html lang="es" className={`${workSans.variable} ${roboto.variable}`}>
@@ -79,6 +96,22 @@ export default async function RootLayout({
               })(window,document,'script','dataLayer','${gtmId}');
             `}
           </Script>
+        )}
+        {ga4Id && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-config" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${ga4Id}');
+              `}
+            </Script>
+          </>
         )}
       </head>
       <body>

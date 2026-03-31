@@ -200,14 +200,6 @@ export const HeaderClient: React.FC = () => {
         {/* Currency Switcher */}
         <CurrencySwitcher />
 
-        {/* Cart Icon */}
-        <Link
-          href={headerData.cart.href}
-          className={styles.cartIcon}
-          aria-label={headerData.cart.ariaLabel}
-        >
-          <Icon name="bag" size={24} />
-        </Link>
 
         {/* Mobile Menu Toggle */}
         <button
