@@ -25,11 +25,12 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: $spacing-16 $spacing-16;
-  height: 80px;
+  height: $header-height-mobile;
+  box-sizing: border-box;
   
   @include desktop {
     padding: $spacing-20 $spacing-32;
-    height: 90px;
+    height: $header-height-desktop;
   }
 }
 
@@ -40,8 +41,14 @@
 .logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   z-index: 1001;
   flex-shrink: 0;
+  min-height: 50px;
+  
+  @include desktop {
+    min-height: 60px;
+  }
 }
 
 .logoImage {
@@ -401,10 +408,11 @@
   color: $black;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
+  // Misma altura y padding vertical que el estado no-sticky para evitar micro-CLS al hacer scroll
   .headerInner {
     @include desktop {
-      padding: $spacing-4 $spacing-32;
-      height: 90px;
+      padding: $spacing-20 $spacing-32;
+      height: $header-height-desktop;
     }
   }
 

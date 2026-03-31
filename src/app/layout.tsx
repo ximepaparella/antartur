@@ -6,8 +6,11 @@ import { ErrorBoundaryClient } from "@/components/common/ErrorBoundary/ErrorBoun
 import { Providers } from "@/components/providers/Providers";
 import { CookieBanner } from "@/components/common/CookieBanner/CookieBanner";
 import { getEffectiveGtmId, getEffectiveGa4Id } from "@/lib/analytics/config";
+import { getSiteUrl } from "@/lib/siteUrl";
 import { getSiteSettings } from "@/modules/settings/repository";
 import "@/styles/globals.scss";
+
+const metadataBaseUrl = new URL(getSiteUrl());
 
 const workSans = Work_Sans({
   subsets: ["latin"],
@@ -24,6 +27,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: metadataBaseUrl,
   title: {
     default: "Antartur - Experiencia & Aventura en Tierra del Fuego",
     template: "%s | Antartur",
