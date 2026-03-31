@@ -30,7 +30,13 @@ export function formatArDate(
   input: DateInput,
   options: Intl.DateTimeFormatOptions = {}
 ): string {
-  const date = input instanceof Date ? input : new Date(input);
+  let date: Date;
+  if (typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    // Keep date-only values stable across timezones (avoid off-by-one day).
+    date = new Date(`${input}T12:00:00.000Z`);
+  } else {
+    date = input instanceof Date ? input : new Date(input);
+  }
   return new Intl.DateTimeFormat("es-AR", {
     timeZone: AR_TIMEZONE,
     ...options,

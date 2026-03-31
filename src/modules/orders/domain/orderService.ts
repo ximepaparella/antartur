@@ -379,7 +379,9 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
       : null,
   }));
 
-    const departureDate = formatArDate(booking.departureDateSnapshot || departure.departureDate);
+    const departureDate = formatArDate(
+      booking.departureDateSnapshot ? toArDateKey(booking.departureDateSnapshot) : toArDateKey(departure.departureDate)
+    );
     const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
     const { sendEmail } = await import("../../notifications/domain/emailService");
@@ -742,7 +744,9 @@ export async function sendOrderEmails(order: {
       : null,
   }));
 
-  const departureDate = formatArDate(booking.departureDateSnapshot || departure.departureDate);
+  const departureDate = formatArDate(
+    booking.departureDateSnapshot ? toArDateKey(booking.departureDateSnapshot) : toArDateKey(departure.departureDate)
+  );
   const startTime = booking.startTimeSnapshot || (tour.defaultStartTime ?? "09:00");
 
   if (order.type === "ENQUIRY") {
@@ -891,10 +895,10 @@ export function generateWhatsAppLinkForEnquiry(order: {
   const booking = order.bookings[0];
   const departure = booking.tourDeparture;
   const tourName = booking.tourNameSnapshot || departure?.tour?.name || "Excursión";
-  const departureDate = booking.departureDateSnapshot 
-    ? formatArDate(booking.departureDateSnapshot)
-    : departure?.departureDate 
-      ? formatArDate(departure.departureDate)
+  const departureDate = booking.departureDateSnapshot
+    ? formatArDate(toArDateKey(booking.departureDateSnapshot))
+    : departure?.departureDate
+      ? formatArDate(toArDateKey(departure.departureDate))
       : "Fecha no disponible";
   const totalPassengers = booking.numAdults + booking.numChildren;
   const totalAmount = Number(order.totalAmount).toLocaleString("es-AR", {

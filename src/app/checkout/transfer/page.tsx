@@ -9,6 +9,7 @@ import { Message } from "@/components/common/Message";
 import { OrderDetails } from "@/components/common/OrderDetails";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard";
 import { getCompletedOrderData, type CompletedOrderData } from "@/lib/utils/orderStorage";
+import type { OrderFullResponse } from "@/modules/orders/api/dto/ordersDto";
 import styles from "./page.module.scss";
 
 interface BankData {
@@ -30,6 +31,35 @@ export default function CheckoutTransferPage() {
     
     if (completedData) {
       setOrderData(completedData);
+
+      const loadPublicOrderCode = async () => {
+        const rawCode = completedData.code;
+        let order: OrderFullResponse | null = null;
+
+        const tryLoadOrder = async (apiUrl: string): Promise<OrderFullResponse | null> => {
+          const response = await fetch(apiUrl);
+          if (!response.ok) return null;
+          const result = await response.json();
+          if (!result.success || !result.data) return null;
+          return result.data as OrderFullResponse;
+        };
+
+        // Primero intentar como código público (ANT-....)
+        order = await tryLoadOrder(`/api/orders/code/${rawCode}?includePayments=true`);
+        // Compatibilidad: algunos flujos guardaban el id interno en completedData.code
+        if (!order) {
+          order = await tryLoadOrder(`/api/orders/${rawCode}?includePayments=true`);
+        }
+
+        if (order?.code && order.code !== completedData.code) {
+          setOrderData({
+            ...completedData,
+            code: order.code,
+          });
+        }
+      };
+
+      void loadPublicOrderCode();
     } else {
       // Si no hay datos, redirigir al inicio
       router.push("/");
