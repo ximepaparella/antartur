@@ -9,21 +9,12 @@ const HERO_PRELOAD: Record<string, string> = {
   "/turismo-corporativo": "/images/banners/hero-corporativo.jpg",
 };
 
-function getBaseUrl(): string {
-  const raw =
-    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
-    process.env.SITE_URL?.trim() ||
-    "https://antartur.tur.ar";
-  return raw.replace(/\/$/, "");
-}
-
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const path = request.nextUrl.pathname;
   const relative = HERO_PRELOAD[path];
   if (relative) {
-    const absolute = `${getBaseUrl()}${relative}`;
-    response.headers.append("Link", `<${absolute}>; rel=preload; as=image`);
+    response.headers.append("Link", `<${relative}>; rel=preload; as=image`);
   }
   return response;
 }

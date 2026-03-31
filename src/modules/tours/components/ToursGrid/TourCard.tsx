@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import styles from "./TourCard.module.scss";
 import { Button } from "@/components/common/Button/Button";
@@ -108,12 +107,12 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
     <div className={styles.tourCard}>
       <Link href={`/tours/${tour.id}`} className={styles.cardLink}>
         <div className={styles.imageWrapper}>
-          <Image
+          <img
             src={tour.featuredImage}
             alt={tour.title}
-            fill
             className={styles.image}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="lazy"
+            decoding="async"
           />
           <div className={styles.overlay} />
           <div className={styles.content}>

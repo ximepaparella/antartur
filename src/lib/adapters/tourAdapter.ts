@@ -14,6 +14,51 @@ import type {
 } from "@/modules/tours/api/dto/toursDto";
 import type { TourCardData, Tour, TourHero, TourQuickInfo, TourDescription } from "@/modules/tours/types/tourTypes";
 
+function normalizeImageUrl(rawUrl: string | null | undefined, tourSlug?: string, isGallery = false): string {
+  const value = (rawUrl || "").trim();
+  if (!value) return "";
+
+  if (value.startsWith("/")) {
+    return value;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      const parsed = new URL(value);
+      const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
+      let envHost: string | null = null;
+      if (envUrl) {
+        try {
+          envHost = new URL(envUrl).hostname;
+        } catch {
+          envHost = null;
+        }
+      }
+      const sameKnownHost =
+        parsed.hostname === "antartur.tur.ar" ||
+        parsed.hostname === "www.antartur.tur.ar" ||
+        (envHost ? parsed.hostname === envHost : false);
+
+      if (sameKnownHost && parsed.pathname.startsWith("/images/")) {
+        return `${parsed.pathname}${parsed.search || ""}`;
+      }
+      return value;
+    } catch {
+      return value;
+    }
+  }
+
+  // Legacy data may store only file names; map to expected public folders.
+  if (tourSlug && !value.includes("/")) {
+    if (isGallery) {
+      return `/images/tours/${tourSlug}/gallery/${value}`;
+    }
+    return `/images/tours/${tourSlug}/${value}`;
+  }
+
+  return value;
+}
+
 /**
  * Transforma TourResponse a TourCardData para ToursGrid
  */
@@ -29,7 +74,7 @@ export function toTourCardData(tour: TourResponse): TourCardData {
 
   return {
     id: tour.slug,
-    featuredImage: tour.featuredImage,
+    featuredImage: normalizeImageUrl(tour.featuredImage, tour.slug, false),
     subtitle: tour.subtitle || "",
     title: tour.name,
     difficulty: tour.difficulty,
@@ -128,7 +173,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
   return {
     card: {
       id: tour.slug,
-      featuredImage: tour.featuredImage,
+      featuredImage: normalizeImageUrl(tour.featuredImage, tour.slug, false),
       subtitle: tour.subtitle || "",
       title: tour.name,
       difficulty: tour.difficulty,
@@ -137,7 +182,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
     hero: {
       headline: tour.name,
       subheadline: tour.heroSubheadline || undefined,
-      backgroundImage: heroImage?.url || tour.heroImage,
+      backgroundImage: normalizeImageUrl(heroImage?.url || tour.heroImage, tour.slug, false),
     },
     quickInfo: {
       price: arsPrice ? `$${Number(arsPrice.priceAdult).toLocaleString("es-AR")}` : "",
@@ -163,7 +208,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
     featuredInfo: featuredInfos.length > 0 ? featuredInfos : undefined,
     gallery: galleryImages.map((img) => ({
       id: img.id,
-      src: img.url,
+      src: normalizeImageUrl(img.url, tour.slug, true),
       alt: img.altText,
     })),
     timeline: {
@@ -175,7 +220,7 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
       metaTitle: tour.metaTitle || tour.name,
       metaDescription: tour.metaDescription || tour.shortDescription,
       canonicalUrl: tour.canonicalUrl || "",
-      ogImage: tour.ogImage || tour.featuredImage,
+      ogImage: normalizeImageUrl(tour.ogImage || tour.featuredImage, tour.slug, false),
     },
     booking: arsPrice || usdPrice
       ? {

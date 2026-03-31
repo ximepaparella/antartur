@@ -8,13 +8,21 @@ import { paginationSchema, commonFiltersSchema, idSchema, slugSchema, currencyCo
 /** HH:mm con horas 00-23 y minutos 00-59 */
 const hhMmRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
+const imageUrlSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => (value.startsWith("/") && !value.startsWith("//")) || /^https?:\/\//i.test(value),
+    "Image URL must be an absolute http(s) URL or a relative path starting with /"
+  );
+
 /**
  * Schema para imagen de tour
  */
 export const tourImageSchema = z.object({
   id: z.string().optional(),
   imageType: z.enum(["FEATURED", "HERO", "GALLERY"]),
-  url: z.string().min(1),
+  url: imageUrlSchema,
   altText: z.string().min(1),
   sortOrder: z.coerce.number().int().min(0).default(0),
 });
@@ -93,8 +101,8 @@ export const createTourSchema = z.object({
   category: z.string().min(1, "Category is required"),
   difficulty: z.string().min(1, "Difficulty is required"),
   durationHours: z.coerce.number().int().positive("Duration must be positive"),
-  featuredImage: z.string().url("Featured image must be a valid URL").or(z.string().startsWith("/")),
-  heroImage: z.string().url("Hero image must be a valid URL").or(z.string().startsWith("/")),
+  featuredImage: imageUrlSchema,
+  heroImage: imageUrlSchema,
   shortDescription: z.string().min(1, "Short description is required"),
   longDescription: z.string().min(1, "Long description is required"),
   restrictionText: z.string().optional().default(""),
@@ -128,8 +136,8 @@ export const updateTourSchema = z.object({
   category: z.string().optional(),
   difficulty: z.string().optional(),
   durationHours: z.coerce.number().int().positive().optional(),
-  featuredImage: z.string().optional(),
-  heroImage: z.string().optional(),
+  featuredImage: imageUrlSchema.optional(),
+  heroImage: imageUrlSchema.optional(),
   shortDescription: z.string().optional(),
   longDescription: z.string().optional(),
   restrictionText: z.string().optional(), // NOT nullable en Prisma
