@@ -50,6 +50,11 @@ export function sanitizeImages(formData: TourFormData): TourImage[] {
     });
   }
 
+  images = images.filter(
+    (img) =>
+      !(img.imageType === "FEATURED" && !featured) && !(img.imageType === "HERO" && !hero)
+  );
+
   return images
     .filter((item) => item.imageType && item.url)
     .map((item) => ({
