@@ -111,36 +111,7 @@ export function TourForm({ tour, isEditing, onSave, onCancel }: TourFormProps) {
     // Filtrar items vacíos de las relaciones antes de guardar
     const cleanedFormData = { ...formData };
     
-    // Asegurar que las imágenes featured y hero estén en el array images
-    const images: any[] = cleanedFormData.images || [];
-    const hasFeatured = images.some((img: any) => img.imageType === "FEATURED");
-    const hasHero = images.some((img: any) => img.imageType === "HERO");
-    
-    if (cleanedFormData.featuredImage && !hasFeatured) {
-      images.push({
-        imageType: "FEATURED",
-        url: cleanedFormData.featuredImage,
-        altText: cleanedFormData.name || "Featured image",
-        sortOrder: 0,
-      });
-    }
-    
-    if (cleanedFormData.heroImage && !hasHero) {
-      images.push({
-        imageType: "HERO",
-        url: cleanedFormData.heroImage,
-        altText: cleanedFormData.name || "Hero image",
-        sortOrder: 1,
-      });
-    }
-    
-    // Filtrar images con campos vacíos (permitir altText vacío si hay URL válida)
-    cleanedFormData.images = images.filter(
-      (item) => item.imageType && item.url
-    ).map((item) => ({
-      ...item,
-      altText: item.altText || item.url.split('/').pop() || 'Imagen', // Asegurar altText
-    }));
+    cleanedFormData.images = sanitizeImages(cleanedFormData);
     
     // Filtrar quickInfoItems con campos vacíos
     if (cleanedFormData.quickInfoItems) {

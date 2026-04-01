@@ -10,39 +10,51 @@ export interface ValidationResult {
 }
 
 /**
- * Sanitize images array, ensuring featured and hero images are included
+ * Sanitize images array, ensuring featured and hero images are included.
+ * Pickers update `featuredImage` / `heroImage` on the tour but not always the
+ * matching FEATURED/HERO rows in `images`; on save the API replaces TourImage
+ * from this array, so we must sync row URLs from those scalars.
  */
 export function sanitizeImages(formData: TourFormData): TourImage[] {
-  const images: TourImage[] = formData.images || [];
+  const featured = formData.featuredImage?.trim() || "";
+  const hero = formData.heroImage?.trim() || "";
+  const name = formData.name || "";
+
+  let images: TourImage[] = (formData.images || []).map((img) => {
+    if (img.imageType === "FEATURED" && featured) {
+      return { ...img, url: featured, altText: img.altText || name || "Featured image" };
+    }
+    if (img.imageType === "HERO" && hero) {
+      return { ...img, url: hero, altText: img.altText || name || "Hero image" };
+    }
+    return img;
+  });
+
   const hasFeatured = images.some((img) => img.imageType === "FEATURED");
   const hasHero = images.some((img) => img.imageType === "HERO");
-  
-  // Add featured image if not present
-  if (formData.featuredImage && !hasFeatured) {
+
+  if (featured && !hasFeatured) {
     images.push({
       imageType: "FEATURED",
-      url: formData.featuredImage,
-      altText: formData.name || "Featured image",
+      url: featured,
+      altText: name || "Featured image",
       sortOrder: 0,
     });
   }
-  
-  // Add hero image if not present
-  if (formData.heroImage && !hasHero) {
+  if (hero && !hasHero) {
     images.push({
       imageType: "HERO",
-      url: formData.heroImage,
-      altText: formData.name || "Hero image",
+      url: hero,
+      altText: name || "Hero image",
       sortOrder: 1,
     });
   }
-  
-  // Filter and ensure altText
+
   return images
     .filter((item) => item.imageType && item.url)
     .map((item) => ({
       ...item,
-      altText: item.altText || item.url.split('/').pop() || 'Imagen',
+      altText: item.altText || item.url.split("/").pop() || "Imagen",
     }));
 }
 
