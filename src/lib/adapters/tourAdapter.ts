@@ -59,6 +59,12 @@ function normalizeImageUrl(rawUrl: string | null | undefined, tourSlug?: string,
   return value;
 }
 
+function appendImageVersion(url: string, version?: string): string {
+  if (!url || !version) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
 /**
  * Transforma TourResponse a TourCardData para ToursGrid
  */
@@ -74,7 +80,10 @@ export function toTourCardData(tour: TourResponse): TourCardData {
 
   return {
     id: tour.slug,
-    featuredImage: normalizeImageUrl(tour.featuredImage, tour.slug, false),
+    featuredImage: appendImageVersion(
+      normalizeImageUrl(tour.featuredImage, tour.slug, false),
+      tour.updatedAt
+    ),
     subtitle: tour.subtitle || "",
     title: tour.name,
     difficulty: tour.difficulty,
