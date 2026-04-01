@@ -173,7 +173,11 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
   return {
     card: {
       id: tour.slug,
-      featuredImage: normalizeImageUrl(tour.featuredImage, tour.slug, false),
+      featuredImage: normalizeImageUrl(
+        tour.featuredImage || featuredImage?.url,
+        tour.slug,
+        false
+      ),
       subtitle: tour.subtitle || "",
       title: tour.name,
       difficulty: tour.difficulty,
@@ -182,7 +186,11 @@ export function toFullTourData(tour: TourFullResponse | TourWithImagesResponse):
     hero: {
       headline: tour.name,
       subheadline: tour.heroSubheadline || undefined,
-      backgroundImage: normalizeImageUrl(heroImage?.url || tour.heroImage, tour.slug, false),
+      backgroundImage: normalizeImageUrl(
+        tour.heroImage || heroImage?.url,
+        tour.slug,
+        false
+      ),
     },
     quickInfo: {
       price: arsPrice ? `$${Number(arsPrice.priceAdult).toLocaleString("es-AR")}` : "",
