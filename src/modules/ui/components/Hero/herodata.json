@@ -69,6 +69,13 @@
     "backgroundPosition": "center center",
     "overlayOpacity": 0.5
   },
+  "boton-de-arrepentimiento": {
+    "title": "BOTÓN DE ARREPENTIMIENTO",
+    "subtitle": "EJERCÉ TU DERECHO DE ARREPENTIMIENTO DE FORMA SIMPLE Y RÁPIDA.",
+    "backgroundImage": "",
+    "backgroundPosition": "center center",
+    "overlayOpacity": 0.5
+  },
   "checkout": {
     "title": "FINALIZAR RESERVA",
     "subtitle": "",

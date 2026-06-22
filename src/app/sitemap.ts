@@ -10,6 +10,7 @@ const STATIC_PATHS: Array<{
   { path: "/", priority: 1, changeFrequency: "weekly" },
   { path: "/tours", priority: 0.9, changeFrequency: "weekly" },
   { path: "/contacto", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/boton-de-arrepentimiento", priority: 0.5, changeFrequency: "yearly" },
   { path: "/invierno", priority: 0.85, changeFrequency: "weekly" },
   { path: "/verano", priority: 0.85, changeFrequency: "weekly" },
   { path: "/antartida", priority: 0.85, changeFrequency: "weekly" },

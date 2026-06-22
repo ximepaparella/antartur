@@ -25,9 +25,9 @@
     "title": "Datos de Contacto",
     "address": {
       "email": {
-        "text": "agencias@antartur.tur.ar",
-        "href": "mailto:agencias@antartur.tur.ar",
-        "ariaLabel": "Enviar correo electrónico a agencias@antartur.tur.ar"
+        "text": "reservas@antartur.tur.ar",
+        "href": "mailto:reservas@antartur.tur.ar",
+        "ariaLabel": "Enviar correo electrónico a reservas@antartur.tur.ar"
       },
       "phone": {
         "text": "+54 9 2901 48-7838",
@@ -55,6 +55,11 @@
     "legajo": {
       "text": "N° Legajo 12896 del Ministerio de Turismo de la República Argentina",
       "ariaLabel": "Número de legajo 12896 del Ministerio de Turismo de la República Argentina"
+    },
+    "arrepentimiento": {
+      "text": "Botón de Arrepentimiento",
+      "href": "/boton-de-arrepentimiento",
+      "ariaLabel": "Acceder al formulario de Botón de Arrepentimiento"
     }
   },
   "badges": [

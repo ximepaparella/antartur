@@ -5,9 +5,11 @@
 import { getSiteUrl } from "../utils/siteUrl";
 import { calculateAge } from "@/lib/utils/pricing";
 import { formatRestrictions } from "../utils/formatRestrictions";
+import { formatOrderStatusLabel } from "../utils/formatOrderStatus";
 
 export interface ReservationEmailData {
   orderCode: string;
+  status: string;
   customerName: string;
   tourName: string;
   departureDate: string;
@@ -42,6 +44,7 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+  const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
 <!DOCTYPE html>
@@ -82,6 +85,12 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
                   <td style="padding-bottom: 10px;">
                     <strong style="color: ${primaryColor};">Código de Orden:</strong>
                     <span style="color: ${primaryColor}; font-family: monospace;">${data.orderCode}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 10px;">
+                    <strong style="color: ${primaryColor};">Estado:</strong>
+                    <span style="color: ${primaryColor};">${statusLabel}</span>
                   </td>
                 </tr>
                 <tr>
@@ -186,6 +195,8 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
 }
 
 export function generateReservationEmailText(data: ReservationEmailData): string {
+  const statusLabel = formatOrderStatusLabel(data.status);
+
   return `
 Confirmación de Reserva - ${data.orderCode}
 
@@ -195,6 +206,7 @@ Tu reserva ha sido confirmada exitosamente.
 
 Detalles:
 - Código de Orden: ${data.orderCode}
+- Estado: ${statusLabel}
 - Excursión: ${data.tourName}
 - Fecha: ${data.departureDate}
 - Hora de inicio: ${data.startTime}

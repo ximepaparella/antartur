@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { Hero } from "@/modules/ui/components/Hero/Hero";
 import { Heading } from "@/components/common/Heading/Heading";
-import { ToursGrid } from "@/modules/tours/components/ToursGrid/ToursGrid";
-import { getToursServer } from "@/modules/tours/api/server/toursServer";
-import { toTourCardData } from "@/lib/adapters/tourAdapter";
-
-// Forzar renderizado dinámico ya que depende de datos de la base de datos
-export const dynamic = 'force-dynamic';
+import { AntartidaInquiryCta } from "@/modules/content/components/AntartidaInquiryCta/AntartidaInquiryCta";
 
 export const metadata: Metadata = {
   title: "Antártida - Viajes al Continente Blanco desde Ushuaia | Antartur",
@@ -25,17 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function AntartidaPage() {
-  let winterTours: ReturnType<typeof toTourCardData>[] = [];
-
-  try {
-    const winterToursResponse = await getToursServer({ category: "winter", isActive: true, includeImages: true, includePrices: true });
-    winterTours = winterToursResponse.data.map(toTourCardData);
-  } catch (error) {
-    console.error("Error loading winter tours:", error);
-    // Continuar con array vacío para mostrar página sin tours
-  }
-
+export default function AntartidaPage() {
   return (
     <>
       <Hero variant="internal" pageKey="antartida" />
@@ -47,9 +32,8 @@ export default async function AntartidaPage() {
             "La Antártida...Una tierra de hielo brillante, picos majestuosos y belleza deslumbrante, la Antártida es el continente Menos visitado en el fin del mundo. Explora la Península Antártica, la parte septentrional del Último continente, donde te deleitarás con uno de los Entornos Naturales Más pristinos e Inolvidables del mundo. Su Viaje Será resaltado por Pingüinos, focas Y ballenas Que acompañan al barco Durante su viaje a lo largo de la costa antártica. Sus Primeros Pasos en el continente seran inolvidables a medida que visitamos Impresionantes Lugares Históricos."
           ]}
         />
-        <ToursGrid tours={winterTours} category="winter" />
+        <AntartidaInquiryCta />
       </main>
     </>
   );
 }
-

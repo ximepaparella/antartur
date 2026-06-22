@@ -25,6 +25,7 @@ export default function EmailPreviewPage() {
     if (template === "reservation") {
       const data = {
         orderCode: "RES-2024-001",
+        status: "PENDING_PAYMENT",
         customerName: "Juan Pérez",
         tourName: "Experiencia Antártica",
         departureDate: "15 de marzo de 2024",
@@ -44,6 +45,7 @@ export default function EmailPreviewPage() {
     } else {
       const data = {
         orderCode: "ENQ-2024-001",
+        status: "PENDING_PAYMENT",
         customerName: "Ana García",
         customerEmail: "ana.garcia@example.com",
         customerPhone: "+54 9 2901 123456",

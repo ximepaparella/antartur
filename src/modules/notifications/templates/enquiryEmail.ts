@@ -3,9 +3,11 @@
  */
 
 import { getSiteUrl } from "../utils/siteUrl";
+import { formatOrderStatusLabel } from "../utils/formatOrderStatus";
 
 export interface EnquiryEmailData {
   orderCode: string;
+  status: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -38,6 +40,7 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
     : data.reason.includes("hasRestrictionViolations")
     ? "Algunos pasajeros no cumplen con las restricciones del tour"
     : "Consulta general";
+  const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
 <!DOCTYPE html>
@@ -89,6 +92,12 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
                   <td style="padding-bottom: 10px;">
                     <strong style="color: ${primaryColor};">Código de Consulta:</strong>
                     <span style="color: ${primaryColor}; font-family: monospace;">${data.orderCode}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 10px;">
+                    <strong style="color: ${primaryColor};">Estado:</strong>
+                    <span style="color: ${primaryColor};">${statusLabel}</span>
                   </td>
                 </tr>
                 <tr>
@@ -172,6 +181,7 @@ export function generateEnquiryEmailText(data: EnquiryEmailData): string {
     : data.reason.includes("hasRestrictionViolations")
     ? "Algunos pasajeros no cumplen con las restricciones del tour"
     : "Consulta general";
+  const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
 Consulta Recibida - ${data.orderCode}
@@ -184,6 +194,7 @@ Motivo de consulta: ${reasonText}
 
 Detalles:
 - Código de Consulta: ${data.orderCode}
+- Estado: ${statusLabel}
 - Excursión: ${data.tourName}
 - Fecha solicitada: ${data.departureDate}
 - Hora solicitada: ${data.startTime}

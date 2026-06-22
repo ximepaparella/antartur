@@ -389,6 +389,7 @@ export async function sendPaymentConfirmationEmail(orderId: string, paymentProvi
 
     const emailData = {
       orderCode: order.code,
+      status: order.status,
       customerName: order.customerName,
       tourName: booking.tourNameSnapshot || tour.name,
       departureDate,
@@ -676,6 +677,7 @@ export async function sendOrderEmails(order: {
   id: string;
   code: string;
   type: "RESERVATION" | "ENQUIRY";
+  status: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -753,6 +755,7 @@ export async function sendOrderEmails(order: {
     // Email de consulta
     const enquiryData = {
       orderCode: order.code,
+      status: order.status,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
       customerPhone: order.customerPhone,
@@ -795,6 +798,7 @@ export async function sendOrderEmails(order: {
     // Email de reserva confirmada
     const reservationData = {
       orderCode: order.code,
+      status: order.status,
       customerName: order.customerName,
       tourName: booking.tourNameSnapshot || tour.name,
       departureDate,

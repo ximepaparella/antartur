@@ -1,0 +1,91 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.cta {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: $spacing-32 0 $spacing-64;
+  padding: 0 $spacing-16;
+
+  @include desktop {
+    margin: $spacing-48 0 $spacing-80;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 720px;
+  padding: $spacing-32 $spacing-24;
+  background-color: rgba($tertiary-color, 0.08);
+  border: 1px solid rgba($tertiary-color, 0.35);
+  border-radius: $spacing-8;
+
+  @include desktop {
+    padding: $spacing-48 $spacing-40;
+  }
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-16;
+  color: $tertiary-color;
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    color: currentColor;
+  }
+}
+
+.title {
+  font-family: $font-primary;
+  font-size: $font-size-24;
+  font-weight: $font-weight-normal;
+  color: $gray-700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: $line-height-tight;
+  margin: 0 0 $spacing-16;
+
+  @include desktop {
+    font-size: $font-size-28;
+  }
+}
+
+.description {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  line-height: $line-height-relaxed;
+  color: $gray-500;
+  margin: 0 0 $spacing-16;
+  max-width: 560px;
+}
+
+.emailHint {
+  font-family: $font-roboto;
+  font-size: $font-size-16;
+  line-height: $line-height-normal;
+  color: $gray-700;
+  margin: 0 0 $spacing-24;
+}
+
+.emailLink {
+  color: $primary-color;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.button {
+  align-self: center;
+}
