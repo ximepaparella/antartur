@@ -332,7 +332,7 @@ SMTP_FROM="noreply@antartur.tur.ar"
 # CONTACT FORM
 # ============================================
 CONTACT_EMAIL="contacto@antartur.tur.ar"
-CONTACT_RECIPIENT_EMAIL="agencias@antartur.tur.ar"
+CONTACT_RECIPIENT_EMAIL="reservas@antartur.tur.ar"
 
 # ============================================
 # RECAPTCHA (Opcional)

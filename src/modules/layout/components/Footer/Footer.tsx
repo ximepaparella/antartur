@@ -111,6 +111,15 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
                       className={styles.contactItem}
                     />
                   </li>
+                  <li role="listitem">
+                    <ContactItem
+                      icon="document"
+                      text={footerData.contacto.arrepentimiento.text}
+                      href={footerData.contacto.arrepentimiento.href}
+                      ariaLabel={footerData.contacto.arrepentimiento.ariaLabel}
+                      className={styles.contactItem}
+                    />
+                  </li>
                 </ul>
               </nav>
             </FooterSection>

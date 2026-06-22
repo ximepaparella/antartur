@@ -8,7 +8,7 @@ import styles from "./ContactInfo.module.scss";
 export async function ContactInfo() {
   const settings = await getSiteSettings();
 
-  const emailText = settings.email || "agencias@antartur.tur.ar";
+  const emailText = settings.email || "reservas@antartur.tur.ar";
   const emailHref = `mailto:${emailText}`;
 
   const phoneText = settings.phone || "+54 2901611338";

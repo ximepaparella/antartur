@@ -5,9 +5,11 @@
 import { getSiteUrl } from "../utils/siteUrl";
 import { calculateAge } from "@/lib/utils/pricing";
 import { formatRestrictions } from "../utils/formatRestrictions";
+import { formatOrderStatusLabel } from "../utils/formatOrderStatus";
 
 export interface PaymentConfirmationEmailData {
   orderCode: string;
+  status: string;
   customerName: string;
   tourName: string;
   departureDate: string;
@@ -42,6 +44,7 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
   });
   const currencySymbol = data.currency === "USD" ? "$" : "$";
   const paymentMethodName = data.paymentMethod === "PAYPAL" ? "PayPal" : data.paymentMethod === "PAYWAY" ? "Payway" : "Transferencia Bancaria";
+  const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
 <!DOCTYPE html>
@@ -82,6 +85,10 @@ export function generatePaymentConfirmationEmailHTML(data: PaymentConfirmationEm
                   <tr>
                     <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;"><strong>Código de Orden:</strong></td>
                     <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;"><strong>${data.orderCode}</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;"><strong>Estado:</strong></td>
+                    <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0; text-align: right;"><strong>${statusLabel}</strong></td>
                   </tr>
                   <tr>
                     <td style="color: ${primaryColor}; font-size: 14px; padding: 5px 0;">Excursión:</td>
@@ -188,6 +195,7 @@ export function generatePaymentConfirmationEmailText(data: PaymentConfirmationEm
   });
   const currencySymbol = data.currency === "USD" ? "$" : "$";
   const paymentMethodName = data.paymentMethod === "PAYPAL" ? "PayPal" : data.paymentMethod === "PAYWAY" ? "Payway" : "Transferencia Bancaria";
+  const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
 Pago Confirmado - ${data.orderCode}
@@ -198,6 +206,7 @@ Hola ${data.customerName},
 
 Detalles de tu Reserva:
 - Código de Orden: ${data.orderCode}
+- Estado: ${statusLabel}
 - Excursión: ${data.tourName}
 - Fecha: ${data.departureDate}
 - Hora: ${data.startTime}

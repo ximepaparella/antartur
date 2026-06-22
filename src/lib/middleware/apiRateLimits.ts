@@ -47,6 +47,7 @@ export const apiRateLimits: Record<string, RateLimitConfig | string> = {
 
   // Contact form - límite estricto (ya implementado en route)
   "/api/contact": "contact",
+  "/api/arrepentimiento": "contact",
 };
 
 /**
