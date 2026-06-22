@@ -1,213 +1,89 @@
-# Variables de Entorno - Configuración Completa
+# Environment Variables
 
-Este documento describe todas las variables de entorno necesarias para el funcionamiento completo del sistema de checkout y pagos.
+Fuente base: `.env.example`.  
+Regla: si hay conflicto entre este documento y `.env.example`, prevalece `.env.example`.
 
-## Variables Obligatorias
+## Obligatorias (core)
 
-### Database
-```env
-DATABASE_URL=postgresql://usuario:contraseña@host:puerto/base_de_datos
-```
-**Descripción:** URL de conexión a PostgreSQL.  
-**Ejemplo:** `postgresql://antartur:password@db.railway.app:5432/antartur`  
-**Environments:** Production, Preview, Development
+- `DATABASE_URL`
+- `SITE_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- `JWT_SECRET`
+- `JWT_ACCESS_EXPIRY`
+- `JWT_REFRESH_EXPIRY`
+- `CRON_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
 
-### Site URL
-```env
-NEXT_PUBLIC_SITE_URL=https://antartur.tur.ar
-```
-**Descripción:** URL base del sitio (usado en emails y links).  
-**Environments:** Production, Preview
+## Email
 
-## Variables de Email
+### Opcion Gmail
 
-### Opción A: Gmail (Recomendado para empezar)
-```env
-GMAIL_USER=tu_email@gmail.com
-GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
-```
-**Descripción:** Credenciales de Gmail para enviar emails.  
-**Nota:** Requiere contraseña de aplicación (no la contraseña normal).
+- `GMAIL_USER`
+- `GMAIL_APP_PASSWORD`
 
-### Opción B: SMTP (Para producción profesional)
-```env
-SMTP_HOST=smtp.tu-servidor.com
-SMTP_PORT=587
-SMTP_USER=tu_usuario_smtp
-SMTP_PASSWORD=tu_contraseña_smtp
-SMTP_FROM=noreply@antartur.tur.ar
-```
-**Descripción:** Configuración SMTP para envío de emails.
+### Opcion SMTP
 
-### Opción C: Mailtrap (Para testing y desarrollo)
-```env
-SMTP_HOST=smtp.mailtrap.io
-SMTP_PORT=2525
-SMTP_USER=tu_usuario_mailtrap
-SMTP_PASSWORD=tu_password_mailtrap
-SMTP_FROM=noreply@antartur.tur.ar
-```
-**Descripción:** Configuración SMTP de Mailtrap para testing de emails.  
-**Nota:** Mailtrap captura todos los emails enviados para testing sin enviarlos realmente. Ideal para desarrollo.
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
 
-### Email Destinatario
-```env
-CONTACT_RECIPIENT_EMAIL=agencias@antartur.tur.ar
-```
-**Descripción:** Email donde se reciben consultas del formulario de contacto y copias de reservas.  
-**Environments:** Production, Preview
+### Destinatarios
 
-## Variables de Expiración de Órdenes
+- `CONTACT_EMAIL`
+- `CONTACT_RECIPIENT_EMAIL`
 
-```env
-ORDER_EXPIRATION_HOURS=1
-```
-**Descripción:** Tiempo en horas antes de cancelar automáticamente órdenes pendientes (consultas, PayPal, Payway).  
-**Default:** 1 hora
-
-```env
-BANK_TRANSFER_EXPIRATION_HOURS=24
-```
-**Descripción:** Tiempo en horas antes de cancelar automáticamente órdenes con transferencia bancaria.  
-**Default:** 24 horas
-
-```env
-PENDING_RESERVATION_HOLD_HOURS=2
-```
-**Descripción:** Tiempo en horas que una reserva pendiente retiene los cupos antes de cancelarse automáticamente.  
-**Default:** 2 horas  
-**Nota:** Aplica a reservas pendientes por cualquier razón (pago no confirmado, excede disponibilidad, violación de restricciones). Después de este tiempo, si la reserva no se confirma, se cancela automáticamente y los cupos se liberan.
-
-## Variables de Restricciones de Reserva
-
-```env
-NEXT_PUBLIC_BOOKING_CUTOFF_HOUR=20
-```
-**Descripción:** Hora (0-23) después de la cual se bloquean las reservas para el día siguiente.  
-**Default:** 20 (8 PM hora Argentina)  
-**Ejemplo:** Si son las 20:30 en Argentina, no se puede reservar para mañana.  
-**Nota:** Usa la zona horaria de Argentina (UTC-3). Esta variable tiene prefijo `NEXT_PUBLIC_` porque se usa en el frontend.
-
-## Variables de Datos Bancarios
-
-Estas variables se usan en la página de transferencia bancaria:
-
-```env
-BANK_ACCOUNT_NAME=Gustavo Adolfo Francisco Giro
-BANK_ACCOUNT_NUMBER=6893238937
-BANK_NAME=HSBC
-BANK_CUIT=20-20453913-9
-BANK_CBU=1500689100068932389378
-BANK_ALIAS=Antartur
-```
-**Descripción:** Datos bancarios para transferencias.  
-**Nota:** Estos son valores por defecto. Pueden configurarse en variables de entorno para facilitar cambios.
-
-## Variables de Gateways de Pago
+## Pagos
 
 ### PayPal
-```env
-PAYPAL_CLIENT_ID=tu_paypal_client_id
-PAYPAL_CLIENT_SECRET=tu_paypal_client_secret
-PAYPAL_MODE=sandbox|live
-```
-**Descripción:** Credenciales de PayPal API.  
-**Uso:** Solo disponible cuando currency es USD.  
-**PAYPAL_MODE:** `sandbox` para testing, `live` para producción.
+
+- `PAYPAL_CLIENT_ID`
+- `PAYPAL_CLIENT_SECRET`
+- `PAYPAL_MODE` (`sandbox` o `live`)
 
 ### Payway
-```env
-# Credenciales del Backend (API Privada)
-PAYWAY_API_KEY=tu_payway_api_key_privada
-PAYWAY_MERCHANT_ID=tu_payway_merchant_id
-PAYWAY_SITE_ID=tu_payway_site_id
-PAYWAY_TEMPLATE_ID=tu_payway_template_id
-PAYWAY_ENVIRONMENT=sandbox|production
 
-# Public Key para el SDK (frontend la obtiene vía GET /api/config/payway en runtime)
-# Puedes usar PAYWAY_PUBLIC_KEY (solo servidor) o NEXT_PUBLIC_PAYWAY_PUBLIC_KEY
-PAYWAY_PUBLIC_KEY=tu_payway_api_key_publica
-# Opcional: NEXT_PUBLIC_PAYWAY_PUBLIC_KEY y NEXT_PUBLIC_PAYWAY_ENVIRONMENT (alternativa)
-```
-**Descripción:** Credenciales de Payway API.  
-**Uso:** Solo disponible cuando currency es ARS.  
-**PAYWAY_ENVIRONMENT:** `sandbox` para testing, `production` para producción.  
+- `PAYWAY_API_KEY`
+- `PAYWAY_MERCHANT_ID`
+- `PAYWAY_SITE_ID`
+- `PAYWAY_TEMPLATE_ID`
+- `PAYWAY_ENVIRONMENT`
+- `PAYWAY_PUBLIC_KEY`
+- `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY`
+- `NEXT_PUBLIC_PAYWAY_ENVIRONMENT`
 
-**Public Key (SDK):** El cliente no usa variables de entorno en build. Obtiene la public key en runtime llamando a `GET /api/config/payway`. En el servidor basta con definir **`PAYWAY_PUBLIC_KEY`** (o `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY`) en `.env`; la API la expone y el formulario de pago funciona sin recompilar.
+## Configuracion de reserva y expiracion
 
-**Importante – secretos:**
-- Las credenciales reales deben estar **solo en `.env` local** (archivo gitignored). Copiar `.env.example` a `.env` y reemplazar los placeholders; **nunca** commitear `.env` ni valores reales al repositorio.
-- Si alguna clave de Payway llegó a commitearse, debe **rotarse** en el panel de Payway/Decidir.
+- `ORDER_EXPIRATION_HOURS`
+- `BANK_TRANSFER_EXPIRATION_HOURS`
+- `PENDING_RESERVATION_HOLD_HOURS`
+- `NEXT_PUBLIC_BOOKING_CUTOFF_HOUR`
 
-**Nota:** 
-- `PAYWAY_API_KEY` es la API Key **Privada** (solo backend)
-- `PAYWAY_PUBLIC_KEY` (o `NEXT_PUBLIC_PAYWAY_PUBLIC_KEY`) es la API Key **Pública**; el frontend la recibe vía `/api/config/payway`
-- `PAYWAY_SITE_ID` es requerido para procesar pagos
-- `PAYWAY_TEMPLATE_ID` es opcional
-- `PAYWAY_MERCHANT_ID` y `PAYWAY_SITE_ID` pueden coincidir según la configuración del comercio en Payway
-**Documentación:** https://developers.payway.com.ar/documentation
+## Transferencia bancaria
 
-## Variables de Cron Job
+- `BANK_ACCOUNT_NAME`
+- `BANK_ACCOUNT_NUMBER`
+- `BANK_NAME`
+- `BANK_CUIT`
+- `BANK_CBU`
+- `BANK_ALIAS`
 
-```env
-CRON_SECRET=tu_secret_aleatorio_para_cron
-```
-**Descripción:** Secret para proteger los endpoints de cron (cancelación de órdenes y reintentos de notificaciones).  
-**Uso:** Configurar en Don Web, Vercel Cron o sistema de cron similar.  
-**Generación:** Usar un string aleatorio seguro (ej: `openssl rand -hex 32`)  
-**Endpoints protegidos:**
-- `/api/cron/cancel-expired-orders`
-- `/api/cron/retry-notifications`
+## Seguridad y anti abuso
 
-## Variables de Notificaciones
+- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
+- `RECAPTCHA_SECRET_KEY`
+- `NOTIFICATION_DRY_RUN`
 
-```env
-NOTIFICATION_DRY_RUN=true|false
-```
-**Descripción:** Flag opcional para modo "dry-run" de notificaciones. Si está en `true`, los emails no se envían realmente, solo se registran en la base de datos y se loguean.  
-**Default:** `false` (los emails se envían normalmente)  
-**Uso:** Útil para desarrollo y testing sin enviar emails reales.  
-**Nota:** En producción, debe estar en `false` o no configurado para que los clientes reciban las notificaciones.
+## Analytics y tracking (opcionales)
 
-## Variables Opcionales
+- `NEXT_PUBLIC_GTM_ID`
+- `NEXT_PUBLIC_GA4_ID`
 
-### reCAPTCHA (para formulario de contacto)
-```env
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=tu_site_key
-RECAPTCHA_SECRET_KEY=tu_secret_key
-```
-**Descripción:** Credenciales de Google reCAPTCHA para protección del formulario de contacto.
+## Reglas de manejo
 
-## Configuración en Vercel
-
-1. Ve a **Settings** → **Environment Variables**
-2. Agrega cada variable según el ambiente (Production, Preview, Development)
-3. Redesplega después de agregar variables
-
-## Configuración Local
-
-1. Crea un archivo `.env.local` en la raíz del proyecto
-2. Copia las variables necesarias desde este documento
-3. Reemplaza los valores con tus credenciales reales
-4. **IMPORTANTE:** `.env.local` está en `.gitignore` y no se subirá al repositorio
-
-## Verificación
-
-Después de configurar las variables:
-
-1. **Database:** Verifica conexión en `/api/test-db` (si existe)
-2. **Email:** Envía un test desde el formulario de contacto
-3. **Checkout:** Crea una orden de prueba y verifica que se envíen emails
-4. **Cron:** Verifica que los endpoints de cron respondan (requieren autenticación):
-   - `/api/cron/cancel-expired-orders?secret=TU_CRON_SECRET`
-   - `/api/cron/retry-notifications?secret=TU_CRON_SECRET`
-5. **Notificaciones:** Verifica en la base de datos que se creen registros en la tabla `Notification` cuando se envían emails
-
-## Notas Importantes
-
-- Las variables con prefijo `NEXT_PUBLIC_` son accesibles en el cliente (frontend)
-- Las variables sin prefijo solo están disponibles en el servidor
-- Nunca subas archivos `.env` o `.env.local` al repositorio
-- Usa diferentes valores para Production y Development cuando sea necesario
-- Las variables se aplican después de redesplegar en Vercel
-
+- No commitear `.env` ni secretos reales.
+- Rotar claves si hubo exposicion.
+- Mantener valores separados por entorno (dev/preview/prod).
+- Validar cambios de variables con smoke tests de checkout, auth admin y pagos.
