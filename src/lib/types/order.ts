@@ -133,6 +133,8 @@ export interface Order {
   paymentMethod?: PaymentMethod;
   /** Tipo de orden: reserva o consulta */
   orderType: OrderType;
+  /** Número de WhatsApp configurado para continuar una consulta. */
+  whatsappNumber?: string | null;
   /** Si excede la disponibilidad */
   exceedsAvailability: boolean;
   /** Fecha de creación de la orden */

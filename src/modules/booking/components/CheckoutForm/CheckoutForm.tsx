@@ -14,6 +14,8 @@ import { RemovePassengerModal } from "./RemovePassengerModal";
 import styles from "./CheckoutForm.module.scss";
 
 interface CheckoutFormProps {
+  /** Número de WhatsApp configurado para continuar consultas. */
+  whatsappNumber?: string | null;
   /** Si el tour tiene restricciones para embarazadas */
   hasPregnancyRestriction?: boolean;
   /** Si el tour tiene restricciones para problemas de columna/salud */
@@ -45,6 +47,7 @@ export interface CheckoutFormRef {
  * Componente principal del formulario de checkout
  */
 export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
+  whatsappNumber,
   hasPregnancyRestriction = false,
   hasHealthRestriction = false,
   minAge,
@@ -98,6 +101,7 @@ export const CheckoutForm = forwardRef<CheckoutFormRef, CheckoutFormProps>(({
   // Order submission hook
   const { submitOrder, isSubmitting } = useOrderSubmission({
     onCheckoutComplete,
+    whatsappNumber,
   });
   
   // Notificar cambios en el estado de envío

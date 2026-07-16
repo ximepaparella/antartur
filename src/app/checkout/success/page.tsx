@@ -9,7 +9,7 @@ import { OrderDetails } from "@/components/common/OrderDetails";
 import { OrderSummaryCard } from "@/components/common/OrderSummaryCard";
 import { PaymentDetails } from "@/components/common/PaymentDetails";
 import { getCompletedOrderData, type CompletedOrderData } from "@/lib/utils/orderStorage";
-import { generateOrderWhatsAppLink } from "@/lib/utils/whatsapp";
+import { generateEnquiryWhatsAppLink } from "@/lib/utils/whatsapp";
 import type { OrderFullResponse } from "@/modules/orders/api/dto/ordersDto";
 import styles from "./page.module.scss";
 
@@ -129,6 +129,7 @@ export default function CheckoutSuccessPage() {
           customerName: order.customerName,
           customerEmail: order.customerEmail,
           customerPhone: order.customerPhone,
+          whatsappNumber: completedDataFromStorage?.whatsappNumber,
           totalAmount: order.totalAmount,
           currency: order.currency,
           type: order.type as "RESERVATION" | "ENQUIRY",
@@ -141,6 +142,8 @@ export default function CheckoutSuccessPage() {
           },
           adults: booking.numAdults,
           children: booking.numChildren,
+          additionals: completedDataFromStorage?.additionals,
+          notes: completedDataFromStorage?.notes,
           passengers,
         };
 
@@ -189,7 +192,7 @@ export default function CheckoutSuccessPage() {
 
   // Generar link de WhatsApp para consultas
   const whatsappLink = orderData && isEnquiry
-    ? generateOrderWhatsAppLink({
+    ? generateEnquiryWhatsAppLink({
         code: orderData.code,
         tourTitle: orderData.tourTitle,
         date: orderData.date,
@@ -200,8 +203,11 @@ export default function CheckoutSuccessPage() {
         currency: orderData.currency,
         customerName: orderData.customerName,
         customerPhone: orderData.customerPhone,
+        customerEmail: orderData.customerEmail,
+        additionals: orderData.additionals,
+        notes: orderData.notes,
         passengers: orderData.passengers,
-      })
+      }, orderData.whatsappNumber)
     : null;
 
   return (

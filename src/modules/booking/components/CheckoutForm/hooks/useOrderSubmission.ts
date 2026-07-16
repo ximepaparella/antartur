@@ -20,6 +20,7 @@ interface OrderSubmissionData {
 
 interface UseOrderSubmissionProps {
   onCheckoutComplete: (order: Order) => void;
+  whatsappNumber?: string | null;
   /** Si usar API en lugar de localStorage (default: true en producción) */
   useAPI?: boolean;
 }
@@ -40,6 +41,7 @@ interface UseOrderSubmissionReturn {
  */
 export function useOrderSubmission({
   onCheckoutComplete,
+  whatsappNumber,
   useAPI = true, // Siempre usar API para crear órdenes reales en BD
 }: UseOrderSubmissionProps): UseOrderSubmissionReturn {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -153,6 +155,7 @@ export function useOrderSubmission({
           billingInfo,
           paymentMethod,
           orderType,
+          whatsappNumber,
           exceedsAvailability: bookingData.exceedsAvailability,
           createdAt: new Date().toISOString(),
         };
@@ -188,8 +191,13 @@ export function useOrderSubmission({
           // Llamar a la API
           const createdOrder = await createOrder(apiData);
           
-          // Actualizar order con datos de la respuesta
+          // La respuesta del backend es la fuente de verdad: el flag global puede
+          // haber cambiado después de que el usuario abrió el checkout.
           order.orderId = createdOrder.id;
+          order.orderType = createdOrder.type === "ENQUIRY" ? "consulta" : "reserva";
+          if (createdOrder.type === "ENQUIRY") {
+            order.paymentMethod = undefined;
+          }
           
           clearPendingBooking();
           onCheckoutComplete(order);
@@ -220,7 +228,7 @@ export function useOrderSubmission({
         setIsSubmitting(false);
       }
     },
-    [onCheckoutComplete, useAPI, convertPassengerToAPI]
+    [onCheckoutComplete, whatsappNumber, useAPI, convertPassengerToAPI]
   );
 
   return {

@@ -12,6 +12,7 @@ type MinimumAdvanceBookingHours = 24 | 48 | 72;
 interface SiteSettingsFormState {
   homePrimarySeason: HomePrimarySeason;
   minimumAdvanceBookingHours: MinimumAdvanceBookingHours;
+  onlineBookingsEnabled: boolean;
   gtmId: string;
   ga4Id: string;
   phone: string;
@@ -28,6 +29,7 @@ interface SiteSettingsFormState {
 const DEFAULT_FORM_STATE: SiteSettingsFormState = {
   homePrimarySeason: "SUMMER",
   minimumAdvanceBookingHours: 24,
+  onlineBookingsEnabled: true,
   gtmId: "",
   ga4Id: "",
   phone: "",
@@ -77,6 +79,7 @@ export default function SiteSettingsPage() {
       setForm({
         homePrimarySeason: settings.homePrimarySeason ?? "SUMMER",
         minimumAdvanceBookingHours: validHours,
+        onlineBookingsEnabled: settings.onlineBookingsEnabled ?? true,
         gtmId: settings.gtmId ?? "",
         ga4Id: settings.ga4Id ?? "",
         phone: settings.phone ?? "",
@@ -104,6 +107,11 @@ export default function SiteSettingsPage() {
   const handleChange =
     (field: keyof SiteSettingsFormState) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      if (field === "onlineBookingsEnabled" && event.target instanceof HTMLInputElement) {
+        const checked = event.target.checked;
+        setForm((prev) => ({ ...prev, onlineBookingsEnabled: checked }));
+        return;
+      }
       const value = event.target.value;
       if (field === "minimumAdvanceBookingHours") {
         const num = parseInt(value, 10);
@@ -201,9 +209,24 @@ export default function SiteSettingsPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Reservas</h2>
           <p className={styles.sectionDescription}>
-            Antelación mínima para permitir una reserva. Si hoy es lunes y elegís 72 horas, los
-            calendarios solo mostrarán fechas disponibles a partir del jueves.
+            Configurá si el sitio acepta reservas con pago y la antelación mínima requerida.
           </p>
+          <div className={styles.toggleGroup}>
+            <label htmlFor="onlineBookingsEnabled" className={styles.toggleLabel}>
+              <input
+                id="onlineBookingsEnabled"
+                name="onlineBookingsEnabled"
+                type="checkbox"
+                checked={form.onlineBookingsEnabled}
+                onChange={handleChange("onlineBookingsEnabled")}
+              />
+              <span>Reservas online habilitadas</span>
+            </label>
+            <p className={styles.helpText}>
+              Si está desactivado, todas las solicitudes del checkout se registran como Consulta,
+              sin pago ni retención de cupos.
+            </p>
+          </div>
           <div className={styles.fieldGroup}>
             <label htmlFor="minimumAdvanceBookingHours" className={styles.label}>
               Reservas permitidas a partir de

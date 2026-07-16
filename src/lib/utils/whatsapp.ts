@@ -24,7 +24,8 @@ export function generateWhatsAppLink(tourName: string, phoneNumber: string = "54
  */
 export function generateWhatsAppLinkWithMessage(message: string, phoneNumber: string = "5492901487838"): string {
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  const normalizedPhone = phoneNumber.replace(/\D/g, "") || "5492901487838";
+  return `https://wa.me/${normalizedPhone}?text=${encodedMessage}`;
 }
 
 /**
@@ -125,5 +126,74 @@ export function generateOrderWhatsAppLink(
 ): string {
   const message = generateOrderWhatsAppMessage(orderData);
   return generateWhatsAppLinkWithMessage(message, phoneNumber);
+}
+
+export interface EnquiryWhatsAppData extends OrderWhatsAppData {
+  customerEmail?: string;
+  notes?: string;
+  additionals?: Array<{ name: string }>;
+  passengers: Array<OrderWhatsAppData["passengers"][number] & {
+    fechaNacimiento?: string;
+  }>;
+}
+
+/**
+ * Genera el mensaje para continuar por WhatsApp una consulta registrada.
+ */
+export function generateEnquiryWhatsAppMessage(data: EnquiryWhatsAppData): string {
+  const formattedDate = formatArDate(data.date, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const currencyPrefix = data.currency === "USD" ? "USD $" : "$";
+  const totalPassengers = data.adults + data.children;
+  const passengerList = data.passengers
+    .map((passenger, index) => {
+      const birthDate = passenger.fechaNacimiento
+        ? `, nacimiento: ${passenger.fechaNacimiento}`
+        : "";
+      return `${index + 1}. ${passenger.nombreCompleto} (${passenger.esAdulto ? "Adulto" : "Menor"}${birthDate})`;
+    })
+    .join("\n");
+
+  let message =
+    `*Consulta de reserva ${data.code}*\n\n` +
+    `*Cliente:* ${data.customerName}\n` +
+    `${data.customerEmail ? `*Email:* ${data.customerEmail}\n` : ""}` +
+    `${data.customerPhone ? `*Teléfono:* ${data.customerPhone}\n` : ""}` +
+    `\n*Detalle de la consulta:*\n` +
+    `• Excursión: ${data.tourTitle}\n` +
+    `• Fecha: ${formattedDate}\n` +
+    `• Horario: ${data.timeSlot.start} – ${data.timeSlot.end}\n` +
+    `• Pasajeros: ${totalPassengers} (${data.adults} adultos, ${data.children} menores)\n` +
+    `• Total estimado: ${currencyPrefix} ${data.totalAmount.toLocaleString("es-AR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}\n`;
+
+  if (data.additionals?.length) {
+    message += `• Adicionales: ${data.additionals.map((additional) => additional.name).join(", ")}\n`;
+  }
+  if (passengerList) {
+    message += `\n*Pasajeros:*\n${passengerList}\n`;
+  }
+  if (data.notes) {
+    message += `\n*Comentarios:* ${data.notes}\n`;
+  }
+
+  message += "\nQuiero continuar esta consulta con un asesor.";
+  return message;
+}
+
+export function generateEnquiryWhatsAppLink(
+  data: EnquiryWhatsAppData,
+  phoneNumber?: string | null
+): string {
+  return generateWhatsAppLinkWithMessage(
+    generateEnquiryWhatsAppMessage(data),
+    phoneNumber || "5492901487838"
+  );
 }
 

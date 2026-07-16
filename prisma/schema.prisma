@@ -577,6 +577,7 @@ model SiteSettings {
 
   // Reservas: antelación mínima en horas (24, 48 o 72) para permitir una reserva
   minimumAdvanceBookingHours Int? // 24 | 48 | 72; null = sin restricción (tratar como 0 o 24 según política)
+  onlineBookingsEnabled      Boolean @default(true)
 
   // Analytics (opcionalmente pueden sobreescribir los valores de entorno)
   gtmId String?

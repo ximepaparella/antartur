@@ -9,6 +9,8 @@ export interface SiteSettings {
 
   /** Antelación mínima en horas (24, 48, 72). null = sin restricción (por defecto 24). */
   minimumAdvanceBookingHours: MinimumAdvanceBookingHours | null;
+  /** Habilita reservas con pago. Si es false, el checkout registra consultas. */
+  onlineBookingsEnabled: boolean;
 
   gtmId: string | null;
   ga4Id: string | null;

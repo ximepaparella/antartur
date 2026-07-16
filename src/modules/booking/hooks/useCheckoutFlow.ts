@@ -60,6 +60,7 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
           customerName: order.billingInfo.nombreCompleto,
           customerEmail: order.billingInfo.email,
           customerPhone: order.billingInfo.telefono,
+          whatsappNumber: order.whatsappNumber,
           totalAmount: calculateOrderTotal(order.adults, order.children, order.pricing),
           currency: order.pricing.currencyCode,
           type: order.orderType === "consulta" ? ("ENQUIRY" as const) : ("RESERVATION" as const),
@@ -70,6 +71,10 @@ export function useCheckoutFlow(): UseCheckoutFlowReturn {
           timeSlot: order.timeSlot,
           adults: order.adults,
           children: order.children,
+          additionals: order.additionals?.map((additional) => ({
+            name: additional.name,
+          })),
+          notes: order.billingInfo.notasPedido,
           passengers: order.passengers.map((p) => ({
             nombreCompleto: p.nombreCompleto,
             fechaNacimiento: p.fechaNacimiento,

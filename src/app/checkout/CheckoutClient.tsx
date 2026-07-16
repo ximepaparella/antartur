@@ -22,9 +22,15 @@ import styles from "./page.module.scss";
 
 interface CheckoutClientProps {
   allPaymentMethods: AllPaymentMethods;
+  onlineBookingsEnabled: boolean;
+  whatsappNumber: string | null;
 }
 
-export function CheckoutClient({ allPaymentMethods }: CheckoutClientProps) {
+export function CheckoutClient({
+  allPaymentMethods,
+  onlineBookingsEnabled,
+  whatsappNumber,
+}: CheckoutClientProps) {
   const router = useRouter();
   const {
     handleCheckoutComplete,
@@ -354,6 +360,7 @@ export function CheckoutClient({ allPaymentMethods }: CheckoutClientProps) {
             <div className={styles.leftColumn}>
               <CheckoutForm
                 ref={checkoutFormRef}
+                whatsappNumber={whatsappNumber}
                 hasPregnancyRestriction={hasPregnancyRestriction}
                 hasHealthRestriction={hasHealthRestriction}
                 minAge={tourMinAge}
@@ -387,6 +394,7 @@ export function CheckoutClient({ allPaymentMethods }: CheckoutClientProps) {
                   onPaymentMethodChange={handlePaymentMethodChange}
                   onSubmit={handleSubmitFromCart}
                   allPaymentMethods={allPaymentMethods}
+                  onlineBookingsEnabled={onlineBookingsEnabled}
                 />
               )}
             </div>

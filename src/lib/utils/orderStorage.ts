@@ -179,6 +179,7 @@ export interface CompletedOrderData {
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
+  whatsappNumber?: string | null;
   totalAmount: number;
   currency: string;
   type?: "RESERVATION" | "ENQUIRY";
@@ -192,6 +193,10 @@ export interface CompletedOrderData {
   };
   adults: number;
   children: number;
+  additionals?: Array<{
+    name: string;
+  }>;
+  notes?: string;
   passengers: Array<{
     nombreCompleto: string;
     fechaNacimiento?: string;

@@ -28,6 +28,7 @@ interface MiniCartProps {
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onSubmit: (paymentMethod?: PaymentMethod) => void;
   allPaymentMethods: AllPaymentMethods; // Métodos de pago pre-cargados desde el servidor
+  onlineBookingsEnabled?: boolean;
 }
 
 /**
@@ -51,6 +52,7 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   onPaymentMethodChange,
   onSubmit,
   allPaymentMethods,
+  onlineBookingsEnabled = true,
 }) => {
   // Estado del método de pago seleccionado (puede ser undefined si no hay métodos disponibles)
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | undefined>(undefined);
@@ -66,7 +68,15 @@ export const MiniCart: React.FC<MiniCartProps> = ({
 
 
   // Filtrar métodos de pago según la moneda actual (en memoria, sin fetch)
-  const { availableMethods, isLoadingMethods, noMethodsAvailable, hasOnlinePayment } = useMemo(() => {
+  const { availableMethods, isLoadingMethods, noMethodsAvailable } = useMemo(() => {
+    if (!onlineBookingsEnabled) {
+      return {
+        availableMethods: [] as PaymentMethod[],
+        isLoadingMethods: false,
+        noMethodsAvailable: true,
+      };
+    }
+
     const currency = currentPricing.currencyCode as "ARS" | "USD";
     const methodsForCurrency = allPaymentMethods[currency] || [];
     
@@ -79,9 +89,8 @@ export const MiniCart: React.FC<MiniCartProps> = ({
       availableMethods: methods,
       isLoadingMethods: false, // Ya están cargados desde el servidor
       noMethodsAvailable: methods.length === 0,
-      hasOnlinePayment: allPaymentMethods.hasOnlinePayment[currency] || false,
     };
-  }, [currentPricing.currencyCode, allPaymentMethods]);
+  }, [currentPricing.currencyCode, allPaymentMethods, onlineBookingsEnabled]);
 
   // Sincronizar selectedPayment con los métodos disponibles
   useEffect(() => {
@@ -109,7 +118,9 @@ export const MiniCart: React.FC<MiniCartProps> = ({
   const showPaymentBlur = hasRestrictionViolations;
 
   // Determinar si forzar modo consulta (sin métodos de pago disponibles)
-  const forceEnquiryMode = noMethodsAvailable && !exceedsAvailability && !hasRestrictionViolations;
+  const forceEnquiryMode =
+    !onlineBookingsEnabled ||
+    (noMethodsAvailable && !exceedsAvailability && !hasRestrictionViolations);
 
   return (
     <div className={styles.miniCart}>
@@ -129,15 +140,17 @@ export const MiniCart: React.FC<MiniCartProps> = ({
         onRemoveAdditional={onRemoveAdditional}
       />
 
-      <PaymentMethods
-        selectedPayment={selectedPayment}
-        availableMethods={availableMethods}
-        isLoading={isLoadingMethods}
-        showBlur={showPaymentBlur}
-        exceedsAvailability={exceedsAvailability}
-        hasRestrictionViolations={hasRestrictionViolations}
-        onPaymentChange={handlePaymentChange}
-      />
+      {onlineBookingsEnabled && (
+        <PaymentMethods
+          selectedPayment={selectedPayment}
+          availableMethods={availableMethods}
+          isLoading={isLoadingMethods}
+          showBlur={showPaymentBlur}
+          exceedsAvailability={exceedsAvailability}
+          hasRestrictionViolations={hasRestrictionViolations}
+          onPaymentChange={handlePaymentChange}
+        />
+      )}
 
       <CheckoutButton
         exceedsAvailability={exceedsAvailability}

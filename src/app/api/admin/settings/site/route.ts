@@ -25,6 +25,7 @@ function httpOrHttpsUrl(s: string): boolean {
 const updateSiteSettingsSchema = z.object({
   homePrimarySeason: z.enum(["SUMMER", "WINTER", "AUTO"]).optional(),
   minimumAdvanceBookingHours: z.union([z.literal(24), z.literal(48), z.literal(72)]).nullable().optional(),
+  onlineBookingsEnabled: z.boolean().optional(),
   gtmId: gtmIdSchema,
   ga4Id: ga4IdSchema,
   phone: z.string().max(100).optional().nullable(),

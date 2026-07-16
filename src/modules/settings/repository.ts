@@ -8,6 +8,7 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
   id: SETTINGS_ID,
   homePrimarySeason: "SUMMER",
   minimumAdvanceBookingHours: 24,
+  onlineBookingsEnabled: true,
   gtmId: null,
   ga4Id: null,
   phone: null,
@@ -35,6 +36,7 @@ function normalize(raw: PrismaSiteSettings | null): SiteSettings {
     id: raw.id ?? SETTINGS_ID,
     homePrimarySeason: raw.homePrimarySeason ?? "SUMMER",
     minimumAdvanceBookingHours: validHours,
+    onlineBookingsEnabled: raw.onlineBookingsEnabled ?? true,
   };
 }
 

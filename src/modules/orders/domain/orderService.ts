@@ -16,6 +16,7 @@ import type { PrismaClient } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { logger } from "@/lib/services/logger";
 import { formatArDate, parseDateKeyToLocalDate, toArDateKey } from "@/lib/utils/dateTimeAr";
+import { getSiteSettings } from "@/modules/settings/repository";
 
 const orderRepo = new OrderRepository();
 const bookingRepo = new BookingRepository();
@@ -57,6 +58,8 @@ async function generateOrderCode(tx: Omit<PrismaClient, "$connect" | "$disconnec
  * Implementa transacción con SELECT FOR UPDATE para prevenir condiciones de carrera
  */
 export async function createReservation(input: ReservationInput) {
+  const settings = await getSiteSettings();
+
   return prisma.$transaction(async (tx) => {
     // 1. Bloquear el departure para actualización con SELECT FOR UPDATE
     await tx.$queryRaw`
@@ -107,7 +110,12 @@ export async function createReservation(input: ReservationInput) {
     }
 
     // 5. Determinar tipo de orden
-    const isEnquiry = input.exceedsAvailability || input.hasRestrictionViolations || false;
+    const onlineBookingsDisabled = !settings.onlineBookingsEnabled;
+    const isEnquiry =
+      onlineBookingsDisabled ||
+      input.exceedsAvailability ||
+      input.hasRestrictionViolations ||
+      false;
     const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
 
     // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
@@ -181,8 +189,13 @@ export async function createReservation(input: ReservationInput) {
       : "";
     
     // Agregar información sobre motivo de consulta si es ENQUIRY
+    const enquiryReasons = [
+      onlineBookingsDisabled ? "Reservas online deshabilitadas" : null,
+      input.exceedsAvailability ? "Excede disponibilidad" : null,
+      input.hasRestrictionViolations ? "Violación de restricciones" : null,
+    ].filter((reason): reason is string => Boolean(reason));
     const enquiryNote = isEnquiry
-      ? `\n\nMotivo de consulta: ${input.exceedsAvailability ? "Excede disponibilidad" : ""}${input.hasRestrictionViolations ? (input.exceedsAvailability ? " y " : "") + "Violación de restricciones" : ""}`
+      ? `\n\nMotivo de consulta: ${enquiryReasons.join(" y ")}`
       : "";
 
     // 11. Crear Order
