@@ -35,10 +35,12 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
     maximumFractionDigits: 2,
   })}`;
 
-  const reasonText = data.reason.includes("exceedsAvailability")
+  const reasonText = data.reason.includes("exceedsAvailability") || data.reason.includes("Excede disponibilidad")
     ? "La cantidad de pasajeros excede la disponibilidad disponible"
-    : data.reason.includes("hasRestrictionViolations")
+    : data.reason.includes("hasRestrictionViolations") || data.reason.includes("Violación de restricciones")
     ? "Algunos pasajeros no cumplen con las restricciones del tour"
+    : data.reason.includes("Sin método de pago")
+    ? "Consulta (sin métodos de pago online disponibles)"
     : "Consulta general";
   const statusLabel = formatOrderStatusLabel(data.status);
 
@@ -48,7 +50,7 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consulta Recibida - ${data.orderCode}</title>
+  <title>Gracias por tu Consulta - ${data.orderCode}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px;">
@@ -65,7 +67,7 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
           <!-- Content -->
           <tr>
             <td style="padding: 40px 30px;">
-              <h1 style="color: ${primaryColor}; font-size: 24px; margin: 0 0 20px 0;">Consulta Recibida</h1>
+              <h1 style="color: ${primaryColor}; font-size: 24px; margin: 0 0 20px 0;">Gracias por tu Consulta</h1>
               
               <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                 Hola ${data.customerName},
@@ -176,15 +178,17 @@ export function generateEnquiryEmailHTML(data: EnquiryEmailData): string {
 }
 
 export function generateEnquiryEmailText(data: EnquiryEmailData): string {
-  const reasonText = data.reason.includes("exceedsAvailability")
+  const reasonText = data.reason.includes("exceedsAvailability") || data.reason.includes("Excede disponibilidad")
     ? "La cantidad de pasajeros excede la disponibilidad disponible"
-    : data.reason.includes("hasRestrictionViolations")
+    : data.reason.includes("hasRestrictionViolations") || data.reason.includes("Violación de restricciones")
     ? "Algunos pasajeros no cumplen con las restricciones del tour"
+    : data.reason.includes("Sin método de pago")
+    ? "Consulta (sin métodos de pago online disponibles)"
     : "Consulta general";
   const statusLabel = formatOrderStatusLabel(data.status);
 
   return `
-Consulta Recibida - ${data.orderCode}
+Gracias por tu Consulta - ${data.orderCode}
 
 Hola ${data.customerName},
 

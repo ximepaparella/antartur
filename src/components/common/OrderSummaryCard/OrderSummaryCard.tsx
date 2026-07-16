@@ -32,9 +32,12 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
 
   const isEnquiry = orderData.type === "ENQUIRY";
 
-  // Mensaje por defecto según el tipo de orden
+  // Mensaje por defecto según el tipo de orden / método de pago.
+  // Solo reservas pagadas online se muestran como confirmadas.
   const defaultMessage = isEnquiry
     ? `Hemos recibido tu consulta. Nuestro equipo se contactará contigo a la brevedad al correo ${orderData.customerEmail}.`
+    : orderData.paymentMethod === "transferencia"
+    ? `Tu reserva está pendiente de confirmación. Hemos enviado los detalles a ${orderData.customerEmail}.`
     : `Tu reserva ha sido confirmada. Hemos enviado los detalles a ${orderData.customerEmail}.`;
 
   const message = customMessage || defaultMessage;

@@ -34,6 +34,15 @@ export default function EmailPreviewPage() {
         numChildren: 1,
         totalAmount: 150000,
         currency: "ARS",
+        isBankTransfer: true,
+        bankDetails: {
+          accountName: "Gustavo Adolfo Francisco Giro",
+          accountNumber: "6893238937",
+          bank: "HSBC",
+          cuit: "20-20453913-9",
+          cbu: "1500689100068932389378",
+          alias: "Antartur",
+        },
         passengers: [
           { firstName: "Juan", lastName: "Pérez", type: "ADULT" },
           { firstName: "María", lastName: "Pérez", type: "ADULT" },

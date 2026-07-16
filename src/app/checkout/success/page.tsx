@@ -186,6 +186,17 @@ export default function CheckoutSuccessPage() {
   }
 
   const isEnquiry = orderData?.type === "ENQUIRY";
+  const isTransfer = orderData?.paymentMethod === "transferencia";
+  const isPaidOnline =
+    orderData?.paymentMethod === "paypal" || orderData?.paymentMethod === "payway";
+
+  // Mensaje del resumen según el estado real de la orden.
+  // Solo las reservas pagadas online se muestran como "confirmadas".
+  const summaryMessage = isEnquiry
+    ? undefined
+    : isPaidOnline
+    ? undefined
+    : `Tu reserva está pendiente de confirmación. Hemos enviado los detalles a ${orderData?.customerEmail}.`;
 
   // Generar link de WhatsApp para consultas
   const whatsappLink = orderData && isEnquiry
@@ -215,9 +226,9 @@ export default function CheckoutSuccessPage() {
 
           <h1 className={styles.title}>
             {isEnquiry 
-              ? "Consulta enviada exitosamente" 
-              : orderData?.paymentMethod === "transferencia"
-              ? "¡Reserva creada exitosamente!"
+              ? "Gracias por tu Consulta" 
+              : isTransfer
+              ? "¡Reserva recibida! Pendiente de pago"
               : "¡Reserva confirmada!"}
           </h1>
           
@@ -239,7 +250,8 @@ export default function CheckoutSuccessPage() {
                 orderData={orderData}
                 showTotal={true}
                 showMessage={true}
-                messageVariant={isEnquiry ? "info" : "success"}
+                messageVariant={isPaidOnline ? "success" : "info"}
+                customMessage={summaryMessage}
               />
 
               <div className={styles.orderDetailsWrapper}>

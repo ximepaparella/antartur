@@ -188,8 +188,9 @@ export function useOrderSubmission({
           // Llamar a la API
           const createdOrder = await createOrder(apiData);
           
-          // Actualizar order con datos de la respuesta
-          order.orderId = createdOrder.id;
+          // Sincronizar con la respuesta real del backend (tipo/código público)
+          order.orderId = createdOrder.code || createdOrder.id;
+          order.orderType = createdOrder.type === "ENQUIRY" ? "consulta" : "reserva";
           
           clearPendingBooking();
           onCheckoutComplete(order);

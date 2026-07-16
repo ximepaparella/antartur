@@ -1,11 +1,20 @@
 /**
- * Template HTML para email de reserva confirmada
+ * Template HTML para email de reserva (confirmada o pendiente de pago)
  */
 
 import { getSiteUrl } from "../utils/siteUrl";
 import { calculateAge } from "@/lib/utils/pricing";
 import { formatRestrictions } from "../utils/formatRestrictions";
 import { formatOrderStatusLabel } from "../utils/formatOrderStatus";
+
+export interface BankDetailsForEmail {
+  accountName: string;
+  accountNumber?: string | null;
+  bank?: string | null;
+  cuit: string;
+  cbu: string;
+  alias: string;
+}
 
 export interface ReservationEmailData {
   orderCode: string;
@@ -19,6 +28,9 @@ export interface ReservationEmailData {
   numChildren: number;
   totalAmount: number;
   currency: string;
+  /** Si true, se muestran instrucciones de transferencia bancaria */
+  isBankTransfer?: boolean;
+  bankDetails?: BankDetailsForEmail | null;
   passengers: Array<{
     firstName: string;
     lastName: string;
@@ -36,6 +48,110 @@ export interface ReservationEmailData {
   }>;
 }
 
+function isReservationConfirmed(status: string): boolean {
+  return status === "PAID" || status === "COMPLETED";
+}
+
+function renderBankDetailsHTML(
+  data: ReservationEmailData,
+  primaryColor: string,
+  formattedAmount: string
+): string {
+  if (!data.isBankTransfer || isReservationConfirmed(data.status) || !data.bankDetails) {
+    return "";
+  }
+
+  const bank = data.bankDetails;
+  const optionalRows = [
+    bank.accountNumber
+      ? `<tr>
+                  <td style="padding-bottom: 8px;">
+                    <strong style="color: ${primaryColor};">Número de cuenta:</strong>
+                    <span style="color: ${primaryColor};">${bank.accountNumber}</span>
+                  </td>
+                </tr>`
+      : "",
+    bank.bank
+      ? `<tr>
+                  <td style="padding-bottom: 8px;">
+                    <strong style="color: ${primaryColor};">Banco:</strong>
+                    <span style="color: ${primaryColor};">${bank.bank}</span>
+                  </td>
+                </tr>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  return `
+              <h2 style="color: ${primaryColor}; font-size: 20px; margin: 0 0 15px 0;">Instrucciones de pago</h2>
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fff8e1; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
+                <tr>
+                  <td style="padding-bottom: 12px;">
+                    <p style="color: ${primaryColor}; font-size: 14px; line-height: 1.6; margin: 0;">
+                      Tu reserva está <strong>pendiente de confirmación</strong> hasta que se acredite el pago.
+                      Realizá una transferencia por <strong>${formattedAmount}</strong> usando el código
+                      <strong>${data.orderCode}</strong> como referencia, y enviá el comprobante a
+                      <a href="mailto:agencias@antartur.tur.ar" style="color: ${primaryColor};">agencias@antartur.tur.ar</a>.
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 8px;">
+                    <strong style="color: ${primaryColor};">Titular:</strong>
+                    <span style="color: ${primaryColor};">${bank.accountName}</span>
+                  </td>
+                </tr>
+                ${optionalRows}
+                <tr>
+                  <td style="padding-bottom: 8px;">
+                    <strong style="color: ${primaryColor};">CUIT:</strong>
+                    <span style="color: ${primaryColor};">${bank.cuit}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 8px;">
+                    <strong style="color: ${primaryColor};">CBU:</strong>
+                    <span style="color: ${primaryColor}; font-family: monospace;">${bank.cbu}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong style="color: ${primaryColor};">Alias:</strong>
+                    <span style="color: ${primaryColor};">${bank.alias}</span>
+                  </td>
+                </tr>
+              </table>
+`;
+}
+
+function renderBankDetailsText(data: ReservationEmailData, formattedAmount: string): string {
+  if (!data.isBankTransfer || isReservationConfirmed(data.status) || !data.bankDetails) {
+    return "";
+  }
+
+  const bank = data.bankDetails;
+  const optionalLines = [
+    bank.accountNumber ? `- Número de cuenta: ${bank.accountNumber}` : "",
+    bank.bank ? `- Banco: ${bank.bank}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return `
+Instrucciones de pago:
+Tu reserva está pendiente de confirmación hasta que se acredite el pago.
+Realizá una transferencia por ${formattedAmount} usando el código ${data.orderCode} como referencia,
+y enviá el comprobante a agencias@antartur.tur.ar.
+
+Datos bancarios:
+- Titular: ${bank.accountName}
+${optionalLines ? optionalLines + "\n" : ""}- CUIT: ${bank.cuit}
+- CBU: ${bank.cbu}
+- Alias: ${bank.alias}
+`;
+}
+
 export function generateReservationEmailHTML(data: ReservationEmailData): string {
   const logoUrl = getSiteUrl() + "/images/logo-color-2.svg";
   const primaryColor = "#24384d"; // Azul primario de Antartur
@@ -45,6 +161,15 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
     maximumFractionDigits: 2,
   })}`;
   const statusLabel = formatOrderStatusLabel(data.status);
+  const isConfirmed = isReservationConfirmed(data.status);
+  const headingText = isConfirmed ? "¡Reserva Confirmada!" : "¡Reserva recibida! Pendiente de pago";
+  const introText = isConfirmed
+    ? "Tu reserva ha sido confirmada exitosamente. A continuación encontrarás los detalles:"
+    : "Hemos recibido tu reserva. Está pendiente de confirmación hasta que se acredite el pago. A continuación encontrarás los detalles:";
+  const emailTitle = isConfirmed
+    ? `Confirmación de Reserva - ${data.orderCode}`
+    : `Reserva recibida (pendiente de pago) - ${data.orderCode}`;
+  const totalLabel = isConfirmed ? "Total:" : "Total a pagar:";
 
   return `
 <!DOCTYPE html>
@@ -52,7 +177,7 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmación de Reserva - ${data.orderCode}</title>
+  <title>${emailTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px;">
@@ -69,14 +194,14 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
           <!-- Content -->
           <tr>
             <td style="padding: 40px 30px;">
-              <h1 style="color: ${primaryColor}; font-size: 24px; margin: 0 0 20px 0;">¡Reserva Confirmada!</h1>
+              <h1 style="color: ${primaryColor}; font-size: 24px; margin: 0 0 20px 0;">${headingText}</h1>
               
               <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                 Hola ${data.customerName},
               </p>
               
               <p style="color: ${primaryColor}; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                Tu reserva ha sido confirmada exitosamente. A continuación encontrarás los detalles:
+                ${introText}
               </p>
               
               <!-- Order Details -->
@@ -135,11 +260,13 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
                 ` : ""}
                 <tr>
                   <td>
-                    <strong style="color: ${primaryColor}; font-size: 18px;">Total:</strong>
+                    <strong style="color: ${primaryColor}; font-size: 18px;">${totalLabel}</strong>
                     <span style="color: ${primaryColor}; font-size: 18px; font-weight: bold;">${formattedAmount}</span>
                   </td>
                 </tr>
               </table>
+
+              ${renderBankDetailsHTML(data, primaryColor, formattedAmount)}
               
               <!-- Passengers List -->
               <h2 style="color: ${primaryColor}; font-size: 20px; margin: 30px 0 15px 0;">Pasajeros</h2>
@@ -196,13 +323,22 @@ export function generateReservationEmailHTML(data: ReservationEmailData): string
 
 export function generateReservationEmailText(data: ReservationEmailData): string {
   const statusLabel = formatOrderStatusLabel(data.status);
+  const isConfirmed = isReservationConfirmed(data.status);
+  const headingText = isConfirmed
+    ? `Confirmación de Reserva - ${data.orderCode}`
+    : `Reserva recibida (pendiente de pago) - ${data.orderCode}`;
+  const introText = isConfirmed
+    ? "Tu reserva ha sido confirmada exitosamente."
+    : "Hemos recibido tu reserva. Está pendiente de confirmación hasta que se acredite el pago.";
+  const totalLabel = isConfirmed ? "Total" : "Total a pagar";
+  const formattedAmount = `${data.currency === "USD" ? "$" : "$"} ${data.totalAmount.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return `
-Confirmación de Reserva - ${data.orderCode}
+${headingText}
 
 Hola ${data.customerName},
 
-Tu reserva ha sido confirmada exitosamente.
+${introText}
 
 Detalles:
 - Código de Orden: ${data.orderCode}
@@ -211,8 +347,8 @@ Detalles:
 - Fecha: ${data.departureDate}
 - Hora de inicio: ${data.startTime}
 - Pasajeros: ${data.numAdults} adulto${data.numAdults !== 1 ? "s" : ""}${data.numChildren > 0 ? `, ${data.numChildren} menor${data.numChildren !== 1 ? "es" : ""}` : ""}
-${data.additionals && data.additionals.length > 0 ? `- Adicionales: ${data.additionals.map(a => a.name).join(", ")}\n` : ""}- Total: ${data.currency === "USD" ? "$" : "$"} ${data.totalAmount.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-
+${data.additionals && data.additionals.length > 0 ? `- Adicionales: ${data.additionals.map(a => a.name).join(", ")}\n` : ""}- ${totalLabel}: ${formattedAmount}
+${renderBankDetailsText(data, formattedAmount)}
 Pasajeros:
 ${data.passengers.map((p, i) => {
   const age = p.birthDate ? calculateAge(p.birthDate) : null;
@@ -235,4 +371,3 @@ Si tienes alguna pregunta, contacta a agencias@antartur.tur.ar
 Antartur - Turismo de Aventura
   `.trim();
 }
-

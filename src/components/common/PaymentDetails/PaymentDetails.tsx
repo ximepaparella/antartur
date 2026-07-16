@@ -54,6 +54,9 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
     }
   };
 
+  const isPendingTransfer = paymentMethod === "transferencia";
+  const totalLabel = isPendingTransfer ? "Total a pagar:" : "Total pagado:";
+
   return (
     <Card className={styles.paymentDetailsCard}>
       <h3 className={styles.title}>Detalles del Pago</h3>
@@ -68,7 +71,7 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </div>
         
         <div className={styles.detailRow}>
-          <span className={styles.label}>Total pagado:</span>
+          <span className={styles.label}>{totalLabel}</span>
           <span className={`${styles.value} ${styles.totalAmount}`}>
             {formatPrice(totalAmount, currency)}
           </span>
