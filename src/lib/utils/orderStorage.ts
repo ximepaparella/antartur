@@ -183,6 +183,10 @@ export interface CompletedOrderData {
   currency: string;
   type?: "RESERVATION" | "ENQUIRY";
   paymentMethod?: "transferencia" | "paypal" | "payway";
+  /** Fecha de expiración de la orden (ISO) para calcular vigencia */
+  expiresAt?: string | null;
+  /** Horas de vigencia de la reserva (derivadas de createdAt→expiresAt) */
+  validityHours?: number;
   // Detalles de la orden
   tourTitle: string;
   date: string;

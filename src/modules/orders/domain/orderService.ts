@@ -107,7 +107,14 @@ export async function createReservation(input: ReservationInput) {
     }
 
     // 5. Determinar tipo de orden
-    const isEnquiry = input.exceedsAvailability || input.hasRestrictionViolations || false;
+    // Alineado con el frontend (CheckoutButton / useOrderSubmission):
+    // es consulta si excede disponibilidad, tiene restricciones, o no hay método de pago
+    // (p. ej. transferencia/PayPal deshabilitados → CTA "ENVIAR CONSULTA").
+    const isEnquiry = Boolean(
+      input.exceedsAvailability ||
+      input.hasRestrictionViolations ||
+      !input.paymentMethod
+    );
     const orderType: "RESERVATION" | "ENQUIRY" = isEnquiry ? "ENQUIRY" : "RESERVATION";
 
     // 6. Calcular cupos disponibles (solo validar si NO es ENQUIRY)
@@ -174,15 +181,26 @@ export async function createReservation(input: ReservationInput) {
       expiresAt.setHours(expiresAt.getHours() + pendingHoldHours);
     }
 
-    // 10. Crear Order con información de additionals en notes si existen
+    // 10. Crear Order con información de additionals / método de pago en notes
     const orderNotes = input.notes || "";
     const additionalsNote = input.additionals && input.additionals.length > 0
       ? `\n\nAdditionals seleccionados: ${input.additionals.map(a => a.name).join(", ")}`
       : "";
     
     // Agregar información sobre motivo de consulta si es ENQUIRY
-    const enquiryNote = isEnquiry
-      ? `\n\nMotivo de consulta: ${input.exceedsAvailability ? "Excede disponibilidad" : ""}${input.hasRestrictionViolations ? (input.exceedsAvailability ? " y " : "") + "Violación de restricciones" : ""}`
+    const enquiryReasons: string[] = [];
+    if (input.exceedsAvailability) enquiryReasons.push("Excede disponibilidad");
+    if (input.hasRestrictionViolations) enquiryReasons.push("Violación de restricciones");
+    if (!input.paymentMethod && !input.exceedsAvailability && !input.hasRestrictionViolations) {
+      enquiryReasons.push("Sin método de pago disponible");
+    }
+    const enquiryNote = isEnquiry && enquiryReasons.length > 0
+      ? `\n\nMotivo de consulta: ${enquiryReasons.join(" y ")}`
+      : "";
+
+    // Persistir método de pago para emails / success page (no hay columna dedicada)
+    const paymentMethodNote = input.paymentMethod
+      ? `\n\nMétodo de pago: ${input.paymentMethod}`
       : "";
 
     // 11. Crear Order
@@ -197,7 +215,7 @@ export async function createReservation(input: ReservationInput) {
         currency: input.currency,
         totalAmount,
         expiresAt,
-        notes: orderNotes + additionalsNote + enquiryNote,
+        notes: orderNotes + additionalsNote + enquiryNote + paymentMethodNote,
       },
     });
 
@@ -776,7 +794,7 @@ export async function sendOrderEmails(order: {
     // Enviar al cliente
     await sendEmail({
       to: order.customerEmail,
-      subject: `Consulta Recibida - ${order.code}`,
+      subject: `Gracias por tu Consulta - ${order.code}`,
       html,
       text,
       replyTo: "agencias@antartur.tur.ar",
@@ -795,7 +813,44 @@ export async function sendOrderEmails(order: {
       templateKey: "enquiry-notification",
     });
   } else {
-    // Email de reserva confirmada
+    // Email de reserva (confirmada o pendiente de transferencia)
+    const notesLower = (order.notes || "").toLowerCase();
+    const isPaypalOrPayway =
+      notesLower.includes("método de pago: paypal") ||
+      notesLower.includes("metodo de pago: paypal") ||
+      notesLower.includes("método de pago: payway") ||
+      notesLower.includes("metodo de pago: payway");
+    const isBankTransfer =
+      !isPaypalOrPayway &&
+      (notesLower.includes("método de pago: transferencia") ||
+        notesLower.includes("metodo de pago: transferencia") ||
+        notesLower.includes("transferencia"));
+
+    let bankDetails: {
+      accountName: string;
+      accountNumber: string | null;
+      bank: string | null;
+      cuit: string;
+      cbu: string;
+      alias: string;
+    } | null = null;
+
+    if (isBankTransfer && order.status === "PENDING_PAYMENT") {
+      const bankTransfer = await prisma.bankTransfer.findFirst({
+        where: { isActive: true },
+      });
+      if (bankTransfer) {
+        bankDetails = {
+          accountName: bankTransfer.accountName,
+          accountNumber: bankTransfer.accountNumber,
+          bank: bankTransfer.bank,
+          cuit: bankTransfer.cuit,
+          cbu: bankTransfer.cbu,
+          alias: bankTransfer.alias,
+        };
+      }
+    }
+
     const reservationData = {
       orderCode: order.code,
       status: order.status,
@@ -808,6 +863,8 @@ export async function sendOrderEmails(order: {
       numChildren: booking.numChildren,
       totalAmount: Number(order.totalAmount),
       currency: order.currency,
+      isBankTransfer,
+      bankDetails,
       passengers: passengerList,
       additionals: [], // TODO: obtener additionals de order.notes si están disponibles
     };
@@ -815,10 +872,15 @@ export async function sendOrderEmails(order: {
     const html = generateReservationEmailHTML(reservationData);
     const text = generateReservationEmailText(reservationData);
 
+    const isReservationConfirmed = order.status === "PAID" || order.status === "COMPLETED";
+    const customerSubject = isReservationConfirmed
+      ? `Confirmación de Reserva - ${order.code}`
+      : `Reserva recibida (pendiente de pago) - ${order.code}`;
+
     // Enviar al cliente
     await sendEmail({
       to: order.customerEmail,
-      subject: `Confirmación de Reserva - ${order.code}`,
+      subject: customerSubject,
       html,
       text,
       replyTo: "agencias@antartur.tur.ar",

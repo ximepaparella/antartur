@@ -51,10 +51,21 @@ export default function CheckoutTransferPage() {
           order = await tryLoadOrder(`/api/orders/${rawCode}?includePayments=true`);
         }
 
-        if (order?.code && order.code !== completedData.code) {
+        if (order) {
+          // Calcular vigencia real (createdAt → expiresAt), que respeta la env del backend
+          let validityHours: number | undefined;
+          if (order.expiresAt && order.createdAt) {
+            const diffMs = new Date(order.expiresAt).getTime() - new Date(order.createdAt).getTime();
+            if (diffMs > 0) {
+              validityHours = Math.round(diffMs / (1000 * 60 * 60));
+            }
+          }
+
           setOrderData({
             ...completedData,
-            code: order.code,
+            code: order.code || completedData.code,
+            expiresAt: order.expiresAt,
+            validityHours,
           });
         }
       };
@@ -124,8 +135,11 @@ export default function CheckoutTransferPage() {
 
           <Message variant="warning" className={styles.expirationWarning}>
             <p>
-              <strong>Importante:</strong> La reserva estará vigente por 5 horas. Si no se efectúa el pago
-              correspondiente, será dada de baja y los cupos liberados.
+              <strong>Importante:</strong> La reserva está pendiente de confirmación
+              {orderData?.validityHours && orderData.validityHours > 0
+                ? ` y estará vigente por ${orderData.validityHours} ${orderData.validityHours === 1 ? "hora" : "horas"} desde su creación`
+                : ""}
+              . Si no se efectúa el pago correspondiente, será dada de baja y los cupos liberados.
             </p>
           </Message>
 

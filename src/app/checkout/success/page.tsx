@@ -124,6 +124,16 @@ export default function CheckoutSuccessPage() {
           };
         });
 
+        // Calcular vigencia real de la reserva (createdAt → expiresAt),
+        // que ya respeta la variable de entorno usada por el backend.
+        let validityHours: number | undefined;
+        if (order.expiresAt && order.createdAt) {
+          const diffMs = new Date(order.expiresAt).getTime() - new Date(order.createdAt).getTime();
+          if (diffMs > 0) {
+            validityHours = Math.round(diffMs / (1000 * 60 * 60));
+          }
+        }
+
         const mappedData: CompletedOrderData = {
           code: order.code,
           customerName: order.customerName,
@@ -133,6 +143,8 @@ export default function CheckoutSuccessPage() {
           currency: order.currency,
           type: order.type as "RESERVATION" | "ENQUIRY",
           paymentMethod,
+          expiresAt: order.expiresAt,
+          validityHours,
           tourTitle,
           date: departureDate,
           timeSlot: {
@@ -186,6 +198,17 @@ export default function CheckoutSuccessPage() {
   }
 
   const isEnquiry = orderData?.type === "ENQUIRY";
+  const isTransfer = orderData?.paymentMethod === "transferencia";
+  const isPaidOnline =
+    orderData?.paymentMethod === "paypal" || orderData?.paymentMethod === "payway";
+
+  // Mensaje del resumen según el estado real de la orden.
+  // Solo las reservas pagadas online se muestran como "confirmadas".
+  const summaryMessage = isEnquiry
+    ? undefined
+    : isPaidOnline
+    ? undefined
+    : `Tu reserva está pendiente de confirmación. Hemos enviado los detalles a ${orderData?.customerEmail}.`;
 
   // Generar link de WhatsApp para consultas
   const whatsappLink = orderData && isEnquiry
@@ -215,9 +238,9 @@ export default function CheckoutSuccessPage() {
 
           <h1 className={styles.title}>
             {isEnquiry 
-              ? "Consulta enviada exitosamente" 
-              : orderData?.paymentMethod === "transferencia"
-              ? "¡Reserva creada exitosamente!"
+              ? "Gracias por tu Consulta" 
+              : isTransfer
+              ? "¡Reserva recibida! Pendiente de pago"
               : "¡Reserva confirmada!"}
           </h1>
           
@@ -239,7 +262,8 @@ export default function CheckoutSuccessPage() {
                 orderData={orderData}
                 showTotal={true}
                 showMessage={true}
-                messageVariant={isEnquiry ? "info" : "success"}
+                messageVariant={isPaidOnline ? "success" : "info"}
+                customMessage={summaryMessage}
               />
 
               <div className={styles.orderDetailsWrapper}>
@@ -259,6 +283,7 @@ export default function CheckoutSuccessPage() {
                     totalAmount={orderData.totalAmount}
                     currency={orderData.currency}
                     orderCode={orderData.code}
+                    validityHours={orderData.validityHours}
                   />
                 )}
               </div>
