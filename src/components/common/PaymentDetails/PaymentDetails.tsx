@@ -12,6 +12,8 @@ interface PaymentDetailsProps {
   totalAmount: number;
   currency: string;
   orderCode: string;
+  /** Horas de vigencia de la reserva (derivadas de la orden / env del backend) */
+  validityHours?: number;
 }
 
 /**
@@ -22,6 +24,7 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   totalAmount,
   currency,
   orderCode,
+  validityHours,
 }) => {
   const formatPrice = (amount: number, currency: string) => {
     const symbol = currency === "USD" ? "$" : "$";
@@ -56,6 +59,10 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
 
   const isPendingTransfer = paymentMethod === "transferencia";
   const totalLabel = isPendingTransfer ? "Total a pagar:" : "Total pagado:";
+  const validityText =
+    validityHours && validityHours > 0
+      ? ` y estará vigente por ${validityHours} ${validityHours === 1 ? "hora" : "horas"} desde su creación`
+      : "";
 
   return (
     <Card className={styles.paymentDetailsCard}>
@@ -69,6 +76,13 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
             {getPaymentMethodLabel(paymentMethod)}
           </span>
         </div>
+
+        {isPendingTransfer && (
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Estado del pago:</span>
+            <strong className={styles.value}>Pendiente de pago</strong>
+          </div>
+        )}
         
         <div className={styles.detailRow}>
           <span className={styles.label}>{totalLabel}</span>
@@ -87,7 +101,7 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({
             <Icon name="info" size={16} className={styles.infoIcon} />
             <p>
               Recibirás las instrucciones de transferencia por correo electrónico.
-              La reserva estará vigente por 24 horas desde la confirmación.
+              La reserva está pendiente de confirmación{validityText}.
             </p>
           </div>
         )}

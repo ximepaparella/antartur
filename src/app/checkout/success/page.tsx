@@ -124,6 +124,16 @@ export default function CheckoutSuccessPage() {
           };
         });
 
+        // Calcular vigencia real de la reserva (createdAt → expiresAt),
+        // que ya respeta la variable de entorno usada por el backend.
+        let validityHours: number | undefined;
+        if (order.expiresAt && order.createdAt) {
+          const diffMs = new Date(order.expiresAt).getTime() - new Date(order.createdAt).getTime();
+          if (diffMs > 0) {
+            validityHours = Math.round(diffMs / (1000 * 60 * 60));
+          }
+        }
+
         const mappedData: CompletedOrderData = {
           code: order.code,
           customerName: order.customerName,
@@ -133,6 +143,8 @@ export default function CheckoutSuccessPage() {
           currency: order.currency,
           type: order.type as "RESERVATION" | "ENQUIRY",
           paymentMethod,
+          expiresAt: order.expiresAt,
+          validityHours,
           tourTitle,
           date: departureDate,
           timeSlot: {
@@ -271,6 +283,7 @@ export default function CheckoutSuccessPage() {
                     totalAmount={orderData.totalAmount}
                     currency={orderData.currency}
                     orderCode={orderData.code}
+                    validityHours={orderData.validityHours}
                   />
                 )}
               </div>
