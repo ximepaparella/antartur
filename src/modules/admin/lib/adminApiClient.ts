@@ -254,6 +254,28 @@ class AdminApiClient {
   }
 
   /**
+   * Duplicate tour
+   */
+  async duplicateTour(
+    id: string,
+    data?: { name?: string; slug?: string }
+  ): Promise<ApiResponse<TourResponse>> {
+    const response = await fetchWithAuth(
+      `${API_BASE_URL}/tours/${id}/duplicate`,
+      {
+        method: "POST",
+        body: JSON.stringify(data || {}),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to duplicate tour: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
    * Update tour
    */
   async updateTour(id: string, data: UpdateTourDto): Promise<ApiResponse<TourResponse>> {

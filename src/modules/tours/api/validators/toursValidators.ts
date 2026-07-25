@@ -231,3 +231,13 @@ export const tourSlugParamsSchema = z.object({
 
 export type TourSlugParams = z.infer<typeof tourSlugParamsSchema>;
 
+/**
+ * Schema para duplicar un tour
+ */
+export const duplicateTourSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  slug: slugSchema.optional(),
+});
+
+export type DuplicateTourInput = z.infer<typeof duplicateTourSchema>;
+
